@@ -12,6 +12,7 @@
 
 import { create } from 'zustand';
 import { getModuleDefaults, getModuleDependents, getModuleDependencies } from '@/modules/_registry';
+import { isProductModule } from '@/modules/productManifest';
 import { apiGet, apiPatch } from '@/shared/lib/api';
 
 const STORE_KEY = 'oe_enabled_modules';
@@ -157,11 +158,13 @@ export const useModuleStore = create<ModuleStore>((set, get) => ({
   enabledModules: readState(),
 
   isModuleEnabled: (key: string) => {
+    if (!isProductModule(key)) return false;
     if (CORE_MODULES.has(key)) return true;
     return get().enabledModules[key] ?? true;
   },
 
   setModuleEnabled: (key: string, enabled: boolean) => {
+    if (!isProductModule(key)) return;
     if (CORE_MODULES.has(key)) return; // Can't disable core
     set((state) => {
       const next = { ...state.enabledModules, [key]: enabled };

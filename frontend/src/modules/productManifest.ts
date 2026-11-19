@@ -1,0 +1,45 @@
+// Product allowlist for the Evolux SaaS edition.
+//
+// This is deliberately separate from the module manifests so pruning is
+// reversible: restoring an id here restores the existing module without
+// deleting or moving its source files.
+
+/** Modules that may be loaded by this product build. */
+export const PRODUCT_MODULE_IDS = new Set([
+  'assemblies',
+  'validation',
+  'schedule',
+  '5d',
+  'tendering', // infrastructure: required by quote capture, not a menu item
+  'reports',
+  'pdf-takeoff',
+  'estimate-checks',
+  'gaeb-exchange',
+  'ddc-ifc-converter',
+  'ddc-rvt-converter',
+  'quote_capture',
+]);
+
+/** Modules loaded for infrastructure but intentionally hidden from product navigation. */
+export const PRODUCT_INFRA_MODULE_IDS = new Set(['tendering']);
+
+/** Module ids exposed in the product module menu and sidebar. */
+export const PRODUCT_NAV_MODULE_IDS = new Set(
+  [...PRODUCT_MODULE_IDS].filter((id) => !PRODUCT_INFRA_MODULE_IDS.has(id)),
+);
+
+/** Static nav keys used by catalogue rows whose manifest id differs from its feature id. */
+const PRODUCT_NAV_ALIASES: Record<string, string> = {
+  cost_control: '5d',
+  '5d_cost_model': '5d',
+  quote_capture: 'quote_capture',
+};
+
+export function isProductModule(id: string): boolean {
+  return PRODUCT_MODULE_IDS.has(id);
+}
+
+export function isProductNavModule(id: string): boolean {
+  const resolved = PRODUCT_NAV_ALIASES[id] ?? id;
+  return PRODUCT_NAV_MODULE_IDS.has(resolved);
+}

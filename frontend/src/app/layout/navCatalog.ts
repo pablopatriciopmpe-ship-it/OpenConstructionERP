@@ -14,6 +14,7 @@
 // Adding a screen: add it to exactly one group. Every consumer picks it up.
 
 import type { LucideIcon } from 'lucide-react';
+import { isProductNavModule } from '@/modules/productManifest';
 
 import {
   Bookmark,
@@ -215,7 +216,7 @@ export const LEARN_GROUP_ID = 'grp_learn';
 // Group labels use `t('sidebar.group.<slug>', { defaultValue: '<EN>' })`.
 // The locale keys are added by a later pass; until then the English
 // default renders. Item labelKeys reuse the existing locale strings.
-export const navGroups: NavGroup[] = [
+const ALL_NAV_GROUPS: NavGroup[] = [
   // ── 0. LEARN (videos and cases) ────────────────────────────────────
   // The two ways into the product for somebody new: watch it, or walk a
   // guided case in the app. The sidebar does not render this group in the
@@ -1049,6 +1050,16 @@ export const navGroups: NavGroup[] = [
     ],
   },
 ];
+
+/** Product sidebar catalogue. Learn/demo/help surfaces are deliberately not
+ * product modules and therefore disappear without deleting their routes. */
+export const navGroups: NavGroup[] = ALL_NAV_GROUPS
+  .filter((group) => group.id !== LEARN_GROUP_ID)
+  .map((group) => ({
+    ...group,
+    items: group.items.filter((item) => !item.moduleKey || isProductNavModule(item.moduleKey)),
+  }))
+  .filter((group) => group.items.length > 0);
 
 /** Group ids that are not in the catalogue, and the group that holds their
  *  rows. Stored state, tour steps and ZIP module manifests may still name them:

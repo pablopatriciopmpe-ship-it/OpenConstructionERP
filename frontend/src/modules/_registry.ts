@@ -18,6 +18,7 @@ import type {
   ModuleRoute,
   ModuleNavItem,
 } from './_types';
+import { isProductModule, PRODUCT_INFRA_MODULE_IDS } from './productManifest';
 
 /* ── Module manifest imports ───────────────────────────────────────── */
 
@@ -53,7 +54,7 @@ import { manifest as surveyMine } from './survey-mine/manifest';
 
 /* ── Registry ──────────────────────────────────────────────────────── */
 
-export const MODULE_REGISTRY: ModuleManifest[] = [
+const ALL_MODULES: ModuleManifest[] = [
   assemblies,
   methodology,
   validation,
@@ -81,6 +82,11 @@ export const MODULE_REGISTRY: ModuleManifest[] = [
   surveyStockpiles,
   surveyMine,
 ];
+
+/** Product-scoped registry. Re-adding an id in productManifest.ts restores it. */
+export const MODULE_REGISTRY: ModuleManifest[] = ALL_MODULES.filter((module) =>
+  isProductModule(module.id),
+);
 
 /* ── Helper functions ──────────────────────────────────────────────── */
 
@@ -136,6 +142,7 @@ export function getModuleDependencies(moduleId: string): string[] {
 export function getModulesByCategory(): Record<string, ModuleManifest[]> {
   const groups: Record<string, ModuleManifest[]> = {};
   for (const m of MODULE_REGISTRY) {
+    if (PRODUCT_INFRA_MODULE_IDS.has(m.id)) continue;
     if (!groups[m.category]) groups[m.category] = [];
     groups[m.category]!.push(m);
   }
