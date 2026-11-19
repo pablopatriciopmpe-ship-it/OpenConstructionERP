@@ -4,7 +4,7 @@ import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import { useTranslation as useI18nTranslation } from 'react-i18next';
 
-export const SUPPORTED_LANGUAGES = [
+const ALL_SUPPORTED_LANGUAGES = [
   // Plain English names no region, and the two entries under it are how a
   // reader says which one they mean rather than working out what unqualified
   // `English` is. It used to fly a Union Jack over a `gb` country, which said
@@ -101,6 +101,13 @@ export const SUPPORTED_LANGUAGES = [
   { code: 'uz', name: 'Oʻzbekcha', english: 'Uzbek', flag: '🇺🇿', country: 'uz' },
 ];
 
+// Brazil product scope: keep all locale source files on disk for reversible
+// re-enablement, but expose and load only the shipped product languages.
+const PRODUCT_LANGUAGE_CODES = ['pt-BR', 'en'] as const;
+export const SUPPORTED_LANGUAGES = PRODUCT_LANGUAGE_CODES
+  .map((code) => ALL_SUPPORTED_LANGUAGES.find((language) => language.code === code))
+  .filter((language): language is (typeof ALL_SUPPORTED_LANGUAGES)[number] => Boolean(language));
+
 export function getLanguageByCode(code: string): (typeof SUPPORTED_LANGUAGES)[number] {
   return SUPPORTED_LANGUAGES.find((l) => l.code === code) ?? SUPPORTED_LANGUAGES[0]!;
 }
@@ -189,6 +196,7 @@ export function matchSupportedLanguage(raw: string | null | undefined): string |
     }
   }
   const base = parts[0]!.toLowerCase();
+  if (base === 'pt' && SUPPORTED_LANGUAGES.some((l) => l.code === 'pt-BR')) return 'pt-BR';
   return SUPPORTED_LANGUAGES.some((l) => l.code === base) ? base : null;
 }
 
@@ -323,8 +331,8 @@ const loadedLocales = new Set<string>(['en']);
 // Keep unfinished Mongolian source available to translation tests without
 // shipping a chunk for a language the runtime deliberately does not offer.
 const localeLoaders = import.meta.glob<{ default: { translation: Record<string, string> } }>([
-  './locales/*.ts',
-  '!./locales/mn.ts',
+  './locales/en.ts',
+  './locales/pt-BR.ts',
 ]);
 
 /**
@@ -495,7 +503,7 @@ export function resolveInitialLanguage(): string {
   const isValid = (code: string | null | undefined): code is string =>
     !!code && supported.includes(code);
 
-  if (typeof window === 'undefined') return 'en';
+  if (typeof window === 'undefined') return 'pt-BR';
 
   // 1. URL ?lang= param wins — useful for shareable localised links.
   try {
@@ -531,7 +539,7 @@ export function resolveInitialLanguage(): string {
   if (browserMatch) return browserMatch;
 
   // 4. Final fallback.
-  return 'en';
+  return 'pt-BR';
 }
 
 /**
@@ -618,14 +626,7 @@ i18n
     // enUSFallsBackToEnglish.test.ts
     // rather than assumed, because a missing key and a resolved one look alike
     // on screen when every call site passes a defaultValue.
-    fallbackLng: {
-      'es-MX': ['es', 'en'],
-      'es-CL': ['es', 'en'],
-      'es-CO': ['es', 'en'],
-      'pt-BR': ['pt', 'en'],
-      'zh-HK': ['en'],
-      default: ['en'],
-    },
+    fallbackLng: { 'pt-BR': ['en'], default: ['en'] },
     // Resolve the active code and then the fallback map only. The default
     // ('all') would put the bare language between them, so zh-HK would read a
     // loaded Simplified `zh` bundle before English.

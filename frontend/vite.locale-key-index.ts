@@ -27,7 +27,7 @@ import type { Plugin } from 'vite';
 const KEYS_ID = 'virtual:locale-keys';
 const RESOLVED_KEYS_ID = '\0' + KEYS_ID;
 const LOCALE_FILE = /[\\/]src[\\/]app[\\/]locales[\\/]([a-z]{2,3}(?:-[A-Z]{2})?)\.ts$/;
-const SKIPPED = new Set(['en', 'mn']);
+const SHIPPED_PACKED_LOCALES = new Set(['pt-BR']);
 
 type Catalogue = Record<string, string>;
 
@@ -37,7 +37,7 @@ export const LOCALE_KEYS_CHUNK = 'i18n-idx';
 
 export function isPackedLocaleId(id: string): boolean {
   const match = id.match(LOCALE_FILE);
-  return match !== null && !SKIPPED.has(match[1]!);
+  return match !== null && SHIPPED_PACKED_LOCALES.has(match[1]!);
 }
 
 export function isLocaleKeysId(id: string): boolean {
