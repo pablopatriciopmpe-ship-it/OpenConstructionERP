@@ -568,6 +568,9 @@ class ProjectService:
         owner_id: uuid.UUID,
     ) -> Project:
         """Create a new project owned by the given user."""
+        from app.core.product_defaults import with_product_defaults  # noqa: PLC0415
+
+        data = with_product_defaults(data)
         # Auto-generate project_code if not explicitly provided. The
         # generator reserves the code in ``_PROJECT_CODE_RESERVED`` so a
         # second concurrent create can't reuse it before this session

@@ -220,3 +220,23 @@ async def test_import_is_idempotent_and_keeps_regimes_apart(session, tmp_path: P
     assert item.metadata_["sinapi"]["reference_month"] == "2026-10"
     assert len(item.metadata_["sinapi"]["file_sha256"]) == 64
     assert str(item.price_as_of) == "2026-10-01"
+
+
+# ── Padroes Brasil em projetos novos ───────────────────────────────────────
+def test_product_defaults_fill_only_what_the_caller_left_blank(monkeypatch):
+    from app.core.product_defaults import with_product_defaults
+    from app.modules.projects.schemas import ProjectCreate
+
+    monkeypatch.setenv("OE_PRODUCT_DEFAULTS", "brasil")
+    out = with_product_defaults(ProjectCreate(name="Obra", currency="USD"))
+    assert (out.currency, out.locale, out.country_code, out.region) == ("USD", "pt-BR", "BR", "Brazil")
+    assert out.classification_standard == "sinapi"
+
+
+def test_product_defaults_are_off_without_the_switch(monkeypatch):
+    from app.core.product_defaults import with_product_defaults
+    from app.modules.projects.schemas import ProjectCreate
+
+    monkeypatch.delenv("OE_PRODUCT_DEFAULTS", raising=False)
+    out = with_product_defaults(ProjectCreate(name="Obra"))
+    assert (out.currency, out.locale, out.country_code) == ("", "en", None)
