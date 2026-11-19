@@ -1,0 +1,65 @@
+name: Preview build (frontend)
+
+on:
+  push:
+    branches: ['preview/**']
+  workflow_dispatch:
+    inputs:
+      backend_url:
+        description: 'URL HTTPS do backend de teste'
+        required: false
+        default: ''
+
+permissions:
+  contents: write
+
+concurrency:
+  group: preview-build-${{ github.ref_name }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Resolver URL do backend
+        id: backend
+        env:
+          INPUT_URL: ${{ github.event.inputs.backend_url }}
+        run: |
+          url="${INPUT_URL:-}"
+          if [ -z "$url" ] && [ -f deploy/preview-backend-url.txt ]; then url="$(tr -d ' \r\n' < deploy/preview-backend-url.txt)"; fi
+          url="${url%/}"
+          printf '%s' "$url" | grep -Eq '^https://[A-Za-z0-9.-]+(:[0-9]+)?$' || { echo "URL de backend inválida"; exit 1; }
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+      - name: Instalar dependências
+        working-directory: frontend
+        run: npm ci --no-audit --no-fund --legacy-peer-deps
+      - name: Build do Vite
+        working-directory: frontend
+        run: |
+          /usr/bin/time -v -o /tmp/f6-vite-time.txt node --max-old-space-size=12288 ./node_modules/vite/bin/vite.js build
+          cat /tmp/f6-vite-time.txt
+      - name: Publicar preview
+        env:
+          BACKEND_URL: ${{ steps.backend.outputs.url }}
+          SRC_REF: ${{ github.ref_name }}
+          SRC_SHA: ${{ github.sha }}
+        run: |
+          test -f frontend/dist/index.html
+          out="$RUNNER_TEMP/publish"
+          mkdir -p "$out/frontend"
+          cp -r frontend/dist "$out/frontend/dist"
+          printf 'source_ref=%s\nsource_sha=%s\nbackend=%s\n' "$SRC_REF" "$SRC_SHA" "$BACKEND_URL" > "$out/PREVIEW-INFO.txt"
+          cd "$out"
+          git init -q -b "dist/${SRC_REF//\//-}"
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add -A && git commit -q -m "preview dist de ${SRC_REF} @ ${SRC_SHA}"
+          git push -q --force "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" "dist/${SRC_REF//\//-}"
