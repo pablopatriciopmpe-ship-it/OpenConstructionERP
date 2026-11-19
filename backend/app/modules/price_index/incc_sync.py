@@ -17,7 +17,6 @@ from __future__ import annotations
 
 import hashlib
 import json
-import os
 import re
 from collections.abc import Awaitable, Callable
 from datetime import date
@@ -123,7 +122,13 @@ async def sync_incc(
     variations = parse_sgs(raw)
     index = build_index(variations, base_month)
     sha = hashlib.sha256(raw).hexdigest()
-    folder = Path(data_dir or os.environ.get("OE_DATA_DIR") or ".") / "price_index"
+    if data_dir is None:
+        from app.core.demo_seed import resolve_data_dir
+
+        base = Path(resolve_data_dir())
+    else:
+        base = Path(data_dir)
+    folder = base.expanduser().resolve() / "price_index"
     folder.mkdir(parents=True, exist_ok=True)
     raw_path = folder / f"incc_sgs{SGS_CODE}_{date.today().isoformat()}_{sha[:12]}.json"
     raw_path.write_bytes(raw)
