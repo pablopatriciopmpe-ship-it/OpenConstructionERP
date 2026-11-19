@@ -588,6 +588,18 @@ class ModuleLoader:
 
         self.discover()
 
+        # Product pruning is intentionally applied after manifest discovery
+        # (manifests are the registry contract) but before dependency
+        # resolution, package/router/model imports, and route mounting.  The
+        # allowlist is reversible and leaves every disabled module on disk.
+        from app.core.product_manifest import filter_manifest_names
+
+        allowed = set(filter_manifest_names(tuple(self._manifests)))
+        for name in tuple(self._manifests):
+            if name not in allowed:
+                self._manifests.pop(name, None)
+                self._manifest_dirs.pop(name, None)
+
         # Apply persisted states: mark non-core modules as disabled
         states = load_module_states()
         for name, state in states.items():

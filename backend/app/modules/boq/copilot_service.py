@@ -648,8 +648,25 @@ class BOQCopilotService:
         friendly assistant message is returned with no actions (HTTP 200) - the
         copilot degrades gracefully rather than erroring.
         """
-        from app.modules.ai.ai_client import call_ai, extract_json, resolve_provider_key_model
-        from app.modules.ai.prompts import sanitize_user_text
+        # AI is a hard dependency of the product manifest today, but keep the
+        # BOQ core usable if a deployment intentionally ships without the AI
+        # adapter.  The rest of this method already has a deterministic,
+        # persisted no-provider path.
+        try:
+            from app.modules.ai.ai_client import call_ai, extract_json, resolve_provider_key_model
+            from app.modules.ai.prompts import sanitize_user_text
+        except ModuleNotFoundError as exc:
+            if not (exc.name or "").startswith("app.modules.ai"):
+                raise
+
+            def sanitize_user_text(value: str, max_len: int = 2000) -> str:
+                return str(value)[:max_len]
+
+            def resolve_provider_key_model(_settings: Any) -> tuple[str, str, None]:
+                raise ValueError("AI adapter is not installed")
+
+            call_ai = None
+            extract_json = None
 
         position = await self._load_position_scoped(position_id, user)
         project = await self._load_project(position.boq_id)
