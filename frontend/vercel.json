@@ -5,7 +5,7 @@
   "buildCommand": "node scripts/build-dist.mjs",
   "outputDirectory": "dist",
   "routes": [
-    { "src": "^/api/(.*)$", "dest": "https://openconstructionerp.com/api/$1" },
+    { "src": "^/api/(.*)$", "dest": "https://loading-deposits-techrepublic-bring.trycloudflare.com/api/$1" },
     { "handle": "filesystem" },
     { "src": "^/(?!api/|assets/|cesium/|pwa/|brand/|favicon|manifest|sw\\.js|workbox-)(.*)$", "dest": "/index.html" }
   ]
