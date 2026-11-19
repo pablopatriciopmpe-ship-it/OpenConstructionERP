@@ -3185,6 +3185,75 @@ async def delete_markup(
     await service.delete_markup(markup_id)
 
 
+class BDITaxIn(BaseModel):
+    name: str = Field(..., min_length=1, max_length=100)
+    percentage: float = Field(..., ge=0, lt=100)
+
+
+class BDIRequest(BaseModel):
+    """Componentes do BDI em percentual (formula TCU Acordao 2.622/2013)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    ac: float = Field(..., ge=0, lt=100)
+    s: float = Field(..., ge=0, lt=100)
+    r: float = Field(..., ge=0, lt=100)
+    g: float = Field(..., ge=0, lt=100)
+    df: float = Field(..., ge=0, lt=100)
+    l: float = Field(..., ge=0, lt=100)  # noqa: E741
+    taxes: list[BDITaxIn] = Field(default_factory=list)
+    sinapi_reference: dict[str, str] | None = Field(
+        default=None, description="uf, tax_regime (desonerado|nao_desonerado) e reference_month (AAAA-MM) usados"
+    )
+
+
+@router.put(
+    "/boqs/{boq_id}/bdi/",
+    summary="Definir o BDI do orcamento (formula TCU)",
+    dependencies=[Depends(RequirePermission("boq.update"))],
+)
+async def set_boq_bdi(
+    boq_id: uuid.UUID,
+    data: BDIRequest,
+    user_id: CurrentUserId,
+    payload: CurrentUserPayload,
+    session: SessionDep,
+    service: BOQService = Depends(_get_service),
+) -> dict:
+    from app.modules.boq.bdi import BDIComponents, BDIError
+    from app.modules.boq.bdi_service import apply_bdi
+
+    await _verify_boq_owner(session, boq_id, user_id, payload)
+    try:
+        comps = BDIComponents.from_dict(
+            {
+                **{k: str(getattr(data, k)) for k in ("ac", "s", "r", "g", "df", "l")},
+                "taxes": [{"name": t.name, "percentage": str(t.percentage)} for t in data.taxes],
+            }
+        )
+    except BDIError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    return await apply_bdi(service, boq_id, comps, sinapi_reference=data.sinapi_reference)
+
+
+@router.get(
+    "/boqs/{boq_id}/bdi/",
+    summary="BDI do orcamento (formula e valor efetivo)",
+    dependencies=[Depends(RequirePermission("boq.read"))],
+)
+async def get_boq_bdi(
+    boq_id: uuid.UUID,
+    user_id: CurrentUserId,
+    payload: CurrentUserPayload,
+    session: SessionDep,
+    service: BOQService = Depends(_get_service),
+) -> dict:
+    from app.modules.boq.bdi_service import read_bdi
+
+    await _verify_boq_owner(session, boq_id, user_id, payload)
+    return await read_bdi(service, boq_id)
+
+
 @router.post(
     "/boqs/{boq_id}/markups/apply-defaults/",
     response_model=list[MarkupResponse],

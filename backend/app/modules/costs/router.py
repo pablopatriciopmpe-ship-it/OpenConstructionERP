@@ -4853,6 +4853,36 @@ async def _discard_failed_import(
 
 
 @router.post(
+    "/import/sinapi/",
+    dependencies=[Depends(RequireRole("admin"))],
+    summary="Importar a tabela SINAPI (CAIXA) de uma UF e regime",
+)
+async def import_sinapi_file(
+    session: SessionDep,
+    file: UploadFile = File(..., description="SINAPI_Referencia_AAAA_MM.xlsx do ZIP oficial da CAIXA"),
+    uf: str = Form(..., min_length=2, max_length=2),
+    regime: str = Form(..., pattern=r"^(desonerado|nao_desonerado)$"),
+) -> dict[str, Any]:
+    """Importa insumos e composicoes de uma UF/regime; reimportar atualiza, nao duplica."""
+    import asyncio  # noqa: PLC0415
+    import tempfile  # noqa: PLC0415
+    from pathlib import Path  # noqa: PLC0415
+
+    from app.modules.costs.sinapi_import import SinapiFormatError, import_sinapi, parse_sinapi  # noqa: PLC0415
+
+    with tempfile.TemporaryDirectory(prefix="sinapi-") as tmp:
+        path = Path(tmp) / "sinapi.xlsx"
+        with open(path, "wb") as out:
+            while chunk := await file.read(1 << 20):
+                out.write(chunk)
+        try:
+            bundle = await asyncio.to_thread(parse_sinapi, path, uf, regime)
+        except SinapiFormatError as exc:
+            raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_CONTENT, detail=str(exc)) from exc
+    return await import_sinapi(session, bundle)
+
+
+@router.post(
     "/import/file/",
     dependencies=[Depends(RequirePermission("costs.create"))],
 )
