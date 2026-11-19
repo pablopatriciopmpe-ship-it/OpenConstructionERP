@@ -17,7 +17,6 @@ import {
   CalendarDays,
   Boxes,
   Settings,
-  Info,
   ChevronDown,
   ChevronUp,
   ChevronRight,
