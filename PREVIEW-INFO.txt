@@ -1,0 +1,3 @@
+source_ref=preview/brasil
+source_sha=814f97154c71ba8b131c8439913d4b3c73f744ce
+backend=https://loading-deposits-techrepublic-bring.trycloudflare.com
