@@ -14,6 +14,12 @@ import { apiGet, apiPost, apiPatch, apiDelete, fetchWithAuth, triggerDownload } 
 
 const BASE = '/v1/price-index';
 
+export interface InccSyncResult { series_id?: string; series_name?: string; points_created?: number; points_updated?: number; points_unchanged?: number }
+
+export async function syncIncc(baseMonth = '2023-12'): Promise<InccSyncResult> {
+  return apiPost<InccSyncResult>(`${BASE}/sync/incc/`, { base_month: baseMonth });
+}
+
 /* -- Types ---------------------------------------------------------------- */
 
 export interface CostIndexSeries {
