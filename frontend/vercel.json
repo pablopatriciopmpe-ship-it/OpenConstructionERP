@@ -1,0 +1,11 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "vite",
+  "installCommand": "npm install --no-audit --no-fund --legacy-peer-deps",
+  "buildCommand": "node --max-old-space-size=6144 ./node_modules/vite/bin/vite.js build",
+  "outputDirectory": "dist",
+  "rewrites": [
+    { "source": "/api/:path*", "destination": "https://openconstructionerp.com/api/:path*" },
+    { "source": "/((?!api/|assets/|cesium/|pwa/|brand/|favicon|manifest|sw\\.js|workbox-).*)", "destination": "/index.html" }
+  ]
+}
