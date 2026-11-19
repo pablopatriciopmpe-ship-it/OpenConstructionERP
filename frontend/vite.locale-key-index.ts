@@ -1,5 +1,6 @@
 import path from 'path';
-import { readdirSync, readFileSync } from 'fs';
+import os from 'node:os';
+import { mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'fs';
 import * as nodeModule from 'node:module';
 import type { Plugin } from 'vite';
 
@@ -71,17 +72,19 @@ function readCatalogue(file: string): Catalogue {
   return translation;
 }
 
-/** Pure packing step, exported so it can be exercised without a build. */
-export function packCatalogue(keys: string[], translation: Catalogue): string {
-  const index = new Map(keys.map((k, i) => [k, i] as const));
-  const values: Array<string | null> = new Array(keys.length).fill(null);
+function packWithIndex(
+  index: ReadonlyMap<string, number>,
+  keyCount: number,
+  translation: Catalogue,
+): string {
+  const values: Array<string | null> = new Array(keyCount).fill(null);
   for (const [key, value] of Object.entries(translation)) {
     values[index.get(key)!] = value;
   }
   while (values.length > 0 && values[values.length - 1] === null) values.pop();
   return [
     `import K from '${KEYS_ID}';`,
-    `const V = ${JSON.stringify(values)};`,
+    `const V = JSON.parse(${JSON.stringify(JSON.stringify(values))});`,
     'const translation = {};',
     'for (let i = 0; i < V.length; i++) { if (V[i] !== null) translation[K[i]] = V[i]; }',
     'export default { translation };',
@@ -89,39 +92,96 @@ export function packCatalogue(keys: string[], translation: Catalogue): string {
   ].join('\n');
 }
 
+/** Pure packing step, exported so it can be exercised without a build. */
+export function packCatalogue(keys: string[], translation: Catalogue): string {
+  const index = new Map(keys.map((k, i) => [k, i] as const));
+  return packWithIndex(index, keys.length, translation);
+}
+
 export function localeKeyIndex(root: string): Plugin {
   const localesDir = path.resolve(root, 'src/app/locales');
-  let catalogues: Map<string, Catalogue> | null = null;
-  let keys: string[] = [];
+  let cacheDir: string | null = null;
+  let keysFile: string | null = null;
+  const packedPaths = new Map<string, string>();
+
+  const cleanup = () => {
+    packedPaths.clear();
+    keysFile = null;
+    if (cacheDir) {
+      rmSync(cacheDir, { recursive: true, force: true });
+      cacheDir = null;
+    }
+  };
 
   return {
     name: 'locale-key-index',
     apply: 'build',
     enforce: 'pre',
     buildStart() {
-      const loaded = new Map<string, Catalogue>();
+      cleanup();
+      cacheDir = mkdtempSync(path.join(os.tmpdir(), 'oce-locales-'));
       const union = new Set<string>();
+      const packedEntries: Array<{ file: string; name: string }> = [];
+
       for (const name of readdirSync(localesDir).sort()) {
         const file = path.join(localesDir, name);
+        if (name === 'en.ts') {
+          const translation = readCatalogue(file);
+          const enOut = path.join(cacheDir, 'en.js');
+          writeFileSync(
+            enOut,
+            `export default { translation: JSON.parse(${JSON.stringify(JSON.stringify(translation))}) };\n`,
+            'utf8',
+          );
+          packedPaths.set(path.normalize(file), enOut);
+          continue;
+        }
         if (!isPackedLocaleId(file)) continue;
+        packedEntries.push({ file, name });
         const translation = readCatalogue(file);
-        loaded.set(path.normalize(file), translation);
         for (const key of Object.keys(translation)) union.add(key);
       }
-      catalogues = loaded;
-      keys = [...union].sort();
+
+      const keys = [...union].sort();
+      union.clear();
+      keysFile = path.join(cacheDir, '_keys.js');
+      writeFileSync(
+        keysFile,
+        `export default JSON.parse(${JSON.stringify(JSON.stringify(keys))});\n`,
+        'utf8',
+      );
+
+      const index = new Map(keys.map((k, i) => [k, i] as const));
+      const keyCount = keys.length;
+      keys.length = 0;
+
+      for (const { file, name } of packedEntries) {
+        const translation = readCatalogue(file);
+        const outPath = path.join(cacheDir, name.replace(/\.ts$/, '.js'));
+        writeFileSync(outPath, packWithIndex(index, keyCount, translation), 'utf8');
+        packedPaths.set(path.normalize(file), outPath);
+      }
+      index.clear();
     },
     resolveId(id) {
       return id === KEYS_ID ? RESOLVED_KEYS_ID : null;
     },
     load(id) {
-      return id === RESOLVED_KEYS_ID ? `export default ${JSON.stringify(keys)};` : null;
+      if (id === RESOLVED_KEYS_ID && keysFile) {
+        return readFileSync(keysFile, 'utf8');
+      }
+      const cleanId = path.normalize(id.split('?')[0]!);
+      const cached = packedPaths.get(cleanId);
+      return cached ? readFileSync(cached, 'utf8') : null;
     },
-    transform(_code, id) {
-      if (!isPackedLocaleId(id) || catalogues === null) return null;
-      const translation = catalogues.get(path.normalize(id.split('?')[0]!));
-      if (!translation) return null;
-      return { code: packCatalogue(keys, translation), map: null };
+    transform() {
+      return null;
+    },
+    buildEnd(error) {
+      if (error) cleanup();
+    },
+    closeBundle() {
+      cleanup();
     },
   };
 }
