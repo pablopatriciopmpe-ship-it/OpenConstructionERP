@@ -7,6 +7,8 @@
 // unchecked. Runtime was never affected - vitest reads this file either way.
 import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
+import { BRAND } from './src/brand';
+import { renderBrandHtml } from './vite.brand';
 import { visualizer } from 'rollup-plugin-visualizer';
 import { VitePWA } from 'vite-plugin-pwa';
 import path from 'path';
@@ -198,6 +200,7 @@ export default defineConfig({
     __APP_VERSION__: JSON.stringify(pkg.version),
   },
   plugins: [
+    { name: 'product-brand-html', transformIndexHtml: (html) => renderBrandHtml(html) },
     react(),
     process.env.ANALYZE === '1' && visualizer({
       filename: 'stats.html',
@@ -248,26 +251,20 @@ export default defineConfig({
       // server is HMR-driven and a stale workbox precache would mask
       // edits during development.  ``npm run build`` still emits both.
       devOptions: { enabled: false },
-      includeAssets: ['favicon.svg', 'favicon.ico', 'apple-touch-icon.png', 'brand/erp/*.svg', 'pwa/*.png'],
+      includeAssets: [BRAND.symbol.slice(1)],
       manifest: {
-        name: 'OpenConstructionERP',
-        short_name: 'OCERP',
-        description:
-          'Open-source construction cost estimation, BIM takeoff, BOQ, tendering and field operations.',
-        theme_color: '#2987F8',
+        name: BRAND.name,
+        short_name: BRAND.shortName,
+        description: BRAND.description,
+        theme_color: BRAND.themeColor,
         background_color: '#F0EEEB',
         display: 'standalone',
         orientation: 'any',
         start_url: './',
         scope: './',
-        lang: 'en',
+        lang: BRAND.language,
         icons: [
-          { src: 'brand/erp/erp-appicon-512.svg', sizes: 'any', type: 'image/svg+xml', purpose: 'any' },
-          { src: 'pwa/icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
-          { src: 'pwa/icon-256.png', sizes: '256x256', type: 'image/png', purpose: 'any' },
-          { src: 'pwa/icon-384.png', sizes: '384x384', type: 'image/png', purpose: 'any' },
-          { src: 'pwa/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
-          { src: 'pwa/icon-maskable-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
+          { src: BRAND.symbol, sizes: 'any', type: 'image/svg+xml', purpose: 'any' },
         ],
       },
       workbox: {
