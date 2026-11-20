@@ -163,6 +163,23 @@ async def import_quarterly(
     }
 
 
+@router.post("/sync/incc/", dependencies=[_MANAGE])
+async def sync_incc_series(
+    session: SessionDep,
+    _user_id: CurrentUserId,
+    base_month: str = Form(default="2023-12", pattern=r"^\d{4}-(0[1-9]|1[0-2])$"),
+) -> dict[str, object]:
+    """Sincroniza o INCC-M (BCB SGS 7456) na serie ``INCC-M``; guarda a resposta bruta."""
+    import httpx  # noqa: PLC0415
+
+    from app.modules.price_index.incc_sync import InccError, sync_incc  # noqa: PLC0415
+
+    try:
+        return await sync_incc(session, base_month=base_month)
+    except (InccError, httpx.HTTPError) as exc:
+        raise HTTPException(status_code=status.HTTP_502_BAD_GATEWAY, detail=str(exc)) from exc
+
+
 @router.post("/import/statssa-p0151/", dependencies=[_MANAGE])
 async def import_statssa_p0151(
     session: SessionDep,
