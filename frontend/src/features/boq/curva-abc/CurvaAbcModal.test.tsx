@@ -10,6 +10,7 @@ vi.mock('react-i18next', () => ({
     t: (key: string, options: Record<string, unknown> = {}) =>
       String(options.defaultValue ?? key).replace(/{{(\w+)}}/g, (_, name) => String(options[name] ?? '')),
   }),
+  initReactI18next: { type: '3rdParty', init: () => {} },
 }));
 
 vi.mock('@tanstack/react-query', () => ({
