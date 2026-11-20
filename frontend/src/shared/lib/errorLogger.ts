@@ -10,6 +10,7 @@
  */
 
 import { APP_VERSION } from './version';
+import { PRODUCT_DISABLE_ERROR_REPORTING } from '@/modules/productManifest';
 import { isDemoReadOnly } from '@/stores/useDemoReadOnlyStore';
 
 // ---------------------------------------------------------------------------
@@ -543,6 +544,7 @@ function saveToStorage(): void {
  */
 function postToBackend(entry: ErrorLogEntry): void {
   try {
+    if (PRODUCT_DISABLE_ERROR_REPORTING) return;
     const flag =
       typeof import.meta !== 'undefined' &&
       typeof (import.meta as { env?: Record<string, string | undefined> }).env !==
