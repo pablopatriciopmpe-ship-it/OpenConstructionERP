@@ -1,0 +1,3 @@
+source_ref=preview/release
+source_sha=b5526defd682a1659d803d93716d873066a73efe
+backend=https://erp-teste.evolux-erp.workers.dev
