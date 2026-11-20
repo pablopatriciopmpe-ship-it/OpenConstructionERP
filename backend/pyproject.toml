@@ -367,6 +367,16 @@ analytics = []
 s3 = [
     "aioboto3>=12.0.0,<16",
 ]
+# Real IFC geometry (app/modules/bim_hub/ifc_geometry.py). IfcOpenShell is
+# LGPL-3.0-or-later, so it is used as an imported library (compatible with this
+# project's AGPL). Wheels exist for CPython 3.9-3.13 on Linux x64/arm64, macOS
+# and Windows. It is OPTIONAL: without it the IFC pipeline falls back to the text
+# parser (placeholder boxes), exactly as before. Install with
+# ``pip install openconstructionerp[ifc]``. Tunables: OE_IFC_GEOMETRY=off,
+# OE_IFC_GEOM_THREADS, OE_IFC_GEOM_MAX_MB, OE_IFC_GEOM_MAX_SECONDS.
+ifc = [
+    "ifcopenshell>=0.8.4,<0.10",
+]
 # Everything
 all = [
     "openconstructionerp[server,vector,semantic,cv,s3,pointcloud,geo,analytics]",
