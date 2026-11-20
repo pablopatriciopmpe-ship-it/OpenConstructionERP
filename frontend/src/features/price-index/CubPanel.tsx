@@ -1081,7 +1081,8 @@ export function CubPanel() {
                         </td>
                       )}
                     </tr>
-                  ))}
+                  );
+                })}
                 </tbody>
               </table>
             </div>
