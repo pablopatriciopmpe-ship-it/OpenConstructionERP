@@ -113,6 +113,7 @@ import { ImportPreviewDialog } from './ImportPreviewDialog';
 import { ExchangeFidelityDialog } from './ExchangeFidelityDialog';
 import { ResourceScalingDialog, type ResourceScalingScope } from './ResourceScalingDialog';
 import { reportFromHeaders } from './exchangeFidelityApi';
+import { CurvaAbcModal } from './curva-abc';
 import type { ScaleMetric } from './resourceScalingApi';
 import { BOQFilterBar, type BoqFilterKind } from './BOQFilterBar';
 import { BOQOutline } from './BOQOutline';
@@ -1471,6 +1472,7 @@ export function BOQEditorPage() {
   const [aiChatOpen, setAiChatOpen] = useState(false);
   const [costFinderOpen, setCostFinderOpen] = useState(false);
   const [smartPanelOpen, setSmartPanelOpen] = useState(false);
+  const [curvaAbcOpen, setCurvaAbcOpen] = useState(false);
   /**
    * Per-position AI copilot dock. ``aiCopilotOpen`` controls visibility;
    * ``aiCopilotPositionId`` is the position it acts on. While open the dock
@@ -5697,6 +5699,8 @@ export function BOQEditorPage() {
           t={t}
           projectId={boq.project_id}
           boqId={boq.id}
+          onOpenCurvaAbc={() => setCurvaAbcOpen(true)}
+          curvaAbcOpen={curvaAbcOpen}
           exportEmbedMarkups={boq.metadata?.export_embed_markups === true}
           canUndo={canUndo}
           canRedo={canRedo}
@@ -6206,6 +6210,19 @@ export function BOQEditorPage() {
           }}
           onBatchFindReplace={handleBatchFindReplace}
           onBatchSetValue={handleBatchSetValue}
+        />
+      )}
+
+      {/* ── Curva ABC e Análise de Pareto ─────────────────────────── */}
+      {boqId && (
+        <CurvaAbcModal
+          open={curvaAbcOpen}
+          onClose={() => setCurvaAbcOpen(false)}
+          boqId={boqId}
+          projectName={project?.name || 'Projeto'}
+          boqName={boq?.name || 'Planilha Orçamentária'}
+          positions={positions}
+          readOnly={Boolean(boq?.is_locked)}
         />
       )}
 

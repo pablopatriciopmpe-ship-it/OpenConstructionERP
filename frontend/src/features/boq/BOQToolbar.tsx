@@ -67,6 +67,7 @@ import {
   ListCollapse,
   Ruler,
   FileSearch,
+  TrendingUp,
 } from 'lucide-react';
 import { Button } from '@/shared/ui';
 import { getNumberLocale } from '@/stores/usePreferencesStore';
@@ -137,6 +138,9 @@ export interface BOQToolbarProps {
   // AI Smart Panel
   smartPanelOpen: boolean;
   onToggleSmartPanel: () => void;
+  // Curva ABC
+  onOpenCurvaAbc?: () => void;
+  curvaAbcOpen?: boolean;
   // Excel paste
   onPasteFromExcel?: () => void;
   // Custom columns
@@ -258,6 +262,8 @@ export function BOQToolbar({
   onAcceptAllAnomalies,
   smartPanelOpen,
   onToggleSmartPanel,
+  onOpenCurvaAbc,
+  curvaAbcOpen,
   onPasteFromExcel,
   onManageColumns,
   customColumnList,
@@ -445,6 +451,21 @@ export function BOQToolbar({
               smartPanelOpen={smartPanelOpen}
               onToggleSmartPanel={onToggleSmartPanel}
             />
+            {onOpenCurvaAbc && (
+              <Button
+                variant={curvaAbcOpen ? 'secondary' : 'ghost'}
+                size="sm"
+                aria-pressed={!!curvaAbcOpen}
+                icon={<TrendingUp size={16} className="text-[#156D61]" />}
+                onClick={onOpenCurvaAbc}
+                title={t('boq.curva_abc_tooltip', {
+                  defaultValue: 'Curva ABC e Análise de Pareto (visões por Serviços e Insumos)',
+                })}
+                data-testid="boq-curva-abc-button"
+              >
+                {t('boq.curva_abc', { defaultValue: 'Curva ABC' })}
+              </Button>
+            )}
           </div>
         </div>
         {/* end Row 1 */}
@@ -549,6 +570,20 @@ export function BOQToolbar({
                 >
                   <ExportEmbeddingPanel t={t} boqId={boqId} enabled={exportEmbedMarkups} currency={summary?.currencyCode} readOnly={readOnly} />
                   <PdfDetailsPanel t={t} projectId={projectId} readOnly={readOnly} />
+                  {onOpenCurvaAbc && (
+                    <button
+                      role="menuitem"
+                      onClick={() => {
+                        setShowExportMenu(false);
+                        onOpenCurvaAbc();
+                      }}
+                      className="flex w-full items-center gap-2 px-3 py-2.5 text-sm font-medium text-[#156D61] bg-[#156D61]/5 hover:bg-[#156D61]/10 transition-colors"
+                      data-testid="boq-export-curva-abc"
+                    >
+                      <TrendingUp size={16} className="text-[#156D61]" />
+                      {t('boq.export_curva_abc', { defaultValue: 'Curva ABC (Excel / PDF)' })}
+                    </button>
+                  )}
                   <button role="menuitem" onClick={() => handleExportItem('excel')} className="flex w-full items-center gap-2 px-3 py-2.5 text-sm text-content-primary hover:bg-surface-secondary transition-colors">
                     <FileSpreadsheet size={16} className="text-content-tertiary" />
                     {t('boq.export_format_excel', { defaultValue: 'Excel (.xlsx)' })}
