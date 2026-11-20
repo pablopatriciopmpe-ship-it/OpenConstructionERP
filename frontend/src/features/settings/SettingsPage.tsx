@@ -3,7 +3,7 @@
 import { PackagesSettings } from '@/features/solution_packages/PackagesSettings';
 import { ConverterReleaseNotice } from '@/shared/ui/ConverterReleaseNotice';
 import { useState, useCallback, useEffect, useMemo, lazy, Suspense } from 'react';
-import { Link, useSearchParams, useNavigate } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { getIntlLocale, fmtFixed } from '@/shared/lib/formatters';
 import { TranslationManager } from './TranslationManager';
@@ -28,7 +28,6 @@ import { MenuAppearanceCard } from './MenuAppearanceCard';
 import { MenuSizeCard } from './MenuSizeCard';
 import { TopBarCard } from './TopBarCard';
 import { FloatingButtonsCard } from './FloatingButtonsCard';
-import { LearningTipsCard } from './LearningTipsCard';
 import { NotificationChannelsCard } from './NotificationChannelsCard';
 import { ChordShortcutsCard } from './ChordShortcutsCard';
 import VectorStatusCard from './VectorStatusCard';
@@ -72,9 +71,9 @@ import {
   Boxes,
   Database,
 } from 'lucide-react';
-import { Card, CardHeader, CardContent, CardFooter, Button, Badge, InfoHint, Skeleton, Breadcrumb, DismissibleInfo, IntroRichText, ConfirmDialog, ModuleGuideButton, CountryFlag } from '@/shared/ui';
+import { Card, CardHeader, CardContent, CardFooter, Button, Badge, InfoHint, Skeleton, Breadcrumb, ConfirmDialog, CountryFlag } from '@/shared/ui';
 import { PageHeader } from '@/shared/ui/PageHeader';
-import { settingsGuide } from './settingsGuide';
+import { passwordErrorMessage } from './passwordError';
 import { useTabKeyboardNav } from '@/shared/hooks/useTabKeyboardNav';
 import { DashboardLayoutManager } from '@/features/dashboard/DashboardLayoutManager';
 import { UpdateInlineNotice } from '@/shared/ui/UpdateChecker';
@@ -1369,7 +1368,7 @@ interface DemoLoginSetting {
  * for a caller allowed to read the setting. The switch flips optimistically and
  * rolls back if the server rejects the change.
  */
-function DemoLoginAdminRow() {
+function _DemoLoginAdminRow() {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
   const addToast = useToastStore((s) => s.addToast);
@@ -1531,7 +1530,6 @@ export function SettingsPage() {
   // Remounts the cards a work mode changes, so they show its values.
   const [modeKey, setModeKey] = useState(0);
   const { t, i18n } = useTranslation();
-  const navigate = useNavigate();
   const logout = useAuthStore((s) => s.logout);
   const setTokens = useAuthStore((s) => s.setTokens);
   const queryClient = useQueryClient();
@@ -1626,7 +1624,7 @@ export function SettingsPage() {
       addToast({ type: 'success', title: t('settings.password_changed', { defaultValue: 'Password changed successfully' }) });
     },
     onError: (error: Error) => {
-      addToast({ type: 'error', title: t('toasts.error', { defaultValue: 'Error' }), message: error.message });
+      addToast({ type: "error", title: "Erro ao alterar senha", message: passwordErrorMessage(error) });
     },
   });
 
@@ -1663,7 +1661,7 @@ export function SettingsPage() {
     () =>
       TABS.filter(
         (tab) =>
-          !["einvoice", "converters", "developer", "modules", "market", "packages"].includes(tab.id) &&
+          !["einvoice", "converters", "developer", "modules", "market", "packages", "ai", "integrations", "identity", "advanced", "datafeeds"].includes(tab.id) &&
           (tab.id !== 'audit' || canViewAudit) &&
           (tab.id !== 'einvoice' || canEditEInvoice) &&
           (tab.id !== 'identity' || userRole === 'admin'),
@@ -1727,37 +1725,10 @@ export function SettingsPage() {
         className="animate-card-in"
         srTitle={t('nav.settings', 'Settings')}
         subtitle={t('settings.subtitle', { defaultValue: 'Manage your account and preferences' })}
-        actions={<ModuleGuideButton content={settingsGuide} />}
       />
 
       {/* Canonical module intro — pain-named, copy from MODULE_INTRO_COPY. */}
-      <DismissibleInfo
-        storageKey="settings"
-        title={t('settings.intro_title', {
-          defaultValue: 'Set the platform up once for your team',
-        })}
-        more={
-          t('settings.intro_more', { defaultValue: '' })
-            ? <IntroRichText text={t('settings.intro_more')} />
-            : undefined
-        }
-        links={[
-          {
-            label: t('nav.setup_databases', { defaultValue: 'Databases & Resources' }),
-            onClick: () => navigate('/setup/databases'),
-          },
-          {
-            label: t('nav.integrations', { defaultValue: 'Integrations' }),
-            onClick: () => navigate('/integrations'),
-          },
-          { label: t('nav.modules', { defaultValue: 'Modules' }), onClick: () => navigate('/modules') },
-        ]}
-      >
-        {t('settings.intro_body', {
-          defaultValue:
-            'Connect an AI provider key, choose language, timezone and number formats, manage DDC converter versions, and wire integrations like Slack, Teams, Telegram and webhooks from one place. The Advanced tab holds backup, restore and the database setup wizard, so the choices made here flow into every module for this workspace.',
-        })}
-      </DismissibleInfo>
+      <p className="text-sm text-content-secondary">Ajuste sua conta, preferências e os dados da equipe.</p>
 
       {/* ── Two-column layout: sidebar nav + content ──────────────────── */}
       <div className="grid grid-cols-1 lg:grid-cols-[240px_minmax(0,1fr)] gap-6 lg:gap-8">
@@ -1897,7 +1868,6 @@ export function SettingsPage() {
               <TopBarCard />
 
               <FloatingButtonsCard />
-              <LearningTipsCard />
               <NotificationChannelsCard />
               <ChordShortcutsCard />
             </>
@@ -2059,7 +2029,6 @@ export function SettingsPage() {
 
                   {profile?.role === 'admin' && <DemoLeftoversPanel />}
 
-                  {profile?.role === 'admin' && <DemoLoginAdminRow />}
 
                   <div className="mt-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 rounded-lg border border-semantic-error/20 bg-surface-elevated px-4 py-3">
                     <div className="min-w-0">
