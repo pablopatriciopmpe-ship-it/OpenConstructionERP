@@ -20,9 +20,19 @@ fresh install ahead of any migration.
 from __future__ import annotations
 
 import uuid
+from datetime import date
 from decimal import Decimal
 
-from sqlalchemy import Boolean, ForeignKey, Numeric, String, Text, UniqueConstraint
+from sqlalchemy import (
+    Boolean,
+    Date,
+    ForeignKey,
+    Index,
+    Numeric,
+    String,
+    Text,
+    UniqueConstraint,
+)
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import GUID, Base
@@ -209,3 +219,64 @@ class PriceIndexSeedMarker(Base):
 
     def __repr__(self) -> str:
         return f"<PriceIndexSeedMarker {self.seed_key}>"
+
+
+class CubRate(Base):
+    """One published CUB/m² value for a competence, UF, standard and tax regime.
+
+    CUB (Custo Unitário Básico de Construção por m²) is published monthly by the
+    Sinduscon of each state under Lei 4.591/1964 and ABNT NBR 12.721:2006. The
+    value is the same for every tenant, so this is platform-wide reference data:
+    reads are authenticated, writes require ``price_index.manage``.
+
+    Rows are stored per ``reference_month`` (``YYYY-MM``) and never fetched from
+    the publishers: an administrator imports a curated CSV or edits a row by
+    hand, and the source attribution travels with the row so every screen and
+    export can credit the Sinduscon/CBIC.
+    """
+
+    __tablename__ = "oe_price_index_cub"
+    __table_args__ = (
+        UniqueConstraint(
+            "reference_month",
+            "uf",
+            "regional_code",
+            "project_standard",
+            "tax_regime",
+            name="uq_price_index_cub_competencia",
+        ),
+        Index(
+            "ix_price_index_cub_lookup",
+            "uf",
+            "project_standard",
+            "tax_regime",
+            "reference_month",
+        ),
+    )
+
+    reference_month: Mapped[str] = mapped_column(String(7), nullable=False, index=True)
+    uf: Mapped[str] = mapped_column(String(2), nullable=False)
+    regional_code: Mapped[str] = mapped_column(String(64), nullable=False, default="", server_default="")
+    sinduscon_code: Mapped[str] = mapped_column(String(64), nullable=False, default="", server_default="")
+    sinduscon_name: Mapped[str] = mapped_column(String(255), nullable=False, default="", server_default="")
+    project_standard: Mapped[str] = mapped_column(String(16), nullable=False)
+    tax_regime: Mapped[str] = mapped_column(String(24), nullable=False, default="nao_desonerado", server_default="nao_desonerado")
+    material: Mapped[Decimal] = mapped_column(Numeric(18, 2), nullable=False, default=Decimal("0"), server_default="0")
+    labor: Mapped[Decimal] = mapped_column(Numeric(18, 2), nullable=False, default=Decimal("0"), server_default="0")
+    administrative: Mapped[Decimal] = mapped_column(Numeric(18, 2), nullable=False, default=Decimal("0"), server_default="0")
+    equipment: Mapped[Decimal] = mapped_column(Numeric(18, 2), nullable=False, default=Decimal("0"), server_default="0")
+    total_sqm: Mapped[Decimal] = mapped_column(Numeric(18, 2), nullable=False)
+    currency: Mapped[str] = mapped_column(String(3), nullable=False, default="BRL", server_default="BRL")
+    source_name: Mapped[str] = mapped_column(String(255), nullable=False, default="", server_default="")
+    source_url: Mapped[str] = mapped_column(String(500), nullable=False, default="", server_default="")
+    published_at: Mapped[date | None] = mapped_column(Date, nullable=True)
+    imported_by: Mapped[str] = mapped_column(String(36), nullable=False, default="", server_default="")
+    source_hash: Mapped[str] = mapped_column(String(64), nullable=False, default="", server_default="")
+    verified: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False, server_default="false")
+    notes: Mapped[str] = mapped_column(Text, nullable=False, default="", server_default="")
+
+    def __repr__(self) -> str:
+        return (
+            f"<CubRate {self.uf} {self.reference_month} {self.project_standard} "
+            f"{self.tax_regime} R$/m2={self.total_sqm}>"
+        )

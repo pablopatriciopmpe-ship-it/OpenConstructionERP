@@ -394,15 +394,38 @@ export function BOQEditorPage() {
     return vs as import('./api').BOQVariable[];
   }, [boq]);
 
-  // Gross floor area from the BOQ $GFA variable - drives the cost-per-m2
-  // benchmark strip. Null (no numeric $GFA set) hides the strip entirely, so
-  // it never shows a figure divided by an unknown area.
+  // Gross floor area: prioritize the project's actual built area from metadata,
+  // description or BOQ $GFA variable, so benchmarks use the real building scale.
   const grossFloorArea = useMemo<number | null>(() => {
+    // 1. Project metadata fields (e.g. gfa_m2, built_area_m2, area_m2)
+    const pMeta = (project as unknown as Record<string, unknown>)?.metadata;
+    if (pMeta && typeof pMeta === 'object') {
+      const val =
+        (pMeta as Record<string, unknown>).gfa_m2 ??
+        (pMeta as Record<string, unknown>).built_area_m2 ??
+        (pMeta as Record<string, unknown>).area_m2;
+      const n = typeof val === 'number' ? val : parseFloat(String(val));
+      if (Number.isFinite(n) && n > 0) return n;
+    }
+    // 2. Project description regex extraction (e.g. "área construída total (ABC) ~10.800 m2")
+    if (project?.description) {
+      const match = project.description.match(
+        /(?:área construída|área total|ABC)[^0-9]*([0-9]+(?:[.,][0-9]+)?)\s*m/i,
+      );
+      if (match && match[1]) {
+        const cleaned = match[1].replace(/\./g, '').replace(',', '.');
+        const n = parseFloat(cleaned);
+        if (Number.isFinite(n) && n > 0) return n;
+      }
+    }
+    // 3. Fallback to BOQ $GFA variable
     const v = boqVariables.find((x) => x.name.trim().toUpperCase() === 'GFA');
-    if (!v) return null;
-    const n = typeof v.value === 'number' ? v.value : parseFloat(String(v.value));
-    return Number.isFinite(n) && n > 0 ? n : null;
-  }, [boqVariables]);
+    if (v) {
+      const n = typeof v.value === 'number' ? v.value : parseFloat(String(v.value));
+      if (Number.isFinite(n) && n > 0) return n;
+    }
+    return null;
+  }, [project, boqVariables]);
   const fmt = useMemo(
     () => createFormatter(locale),
     [locale],
@@ -6003,7 +6026,7 @@ export function BOQEditorPage() {
           />
         </div>
       )}
-      {boqId && <BdiPanel boqId={boqId} readOnly={Boolean(boq?.is_locked)} />}
+      {boqId && <BdiPanel boqId={boqId} directCost={directCost} readOnly={Boolean(boq?.is_locked)} />}
 
       {/* ── Cost per m2 benchmark strip ──────────────────────────────────
           Self-hides when the BOQ has no $GFA variable to divide by. */}
@@ -6013,6 +6036,7 @@ export function BOQEditorPage() {
           currencyCode={currencyCode}
           grossFloorArea={grossFloorArea}
           locale={locale}
+          project={project}
         />
       )}
 

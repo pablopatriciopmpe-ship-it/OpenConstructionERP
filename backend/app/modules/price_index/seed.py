@@ -23,6 +23,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.modules.price_index.models import (
     CostIndexPoint,
     CostIndexSeries,
+    CubRate,
     LocationFactor,
     PriceIndexSeedMarker,
     ResourceIndexValue,
@@ -194,3 +195,70 @@ async def seed_resource_index_samples(session: AsyncSession) -> dict[str, int]:
     session.add(PriceIndexSeedMarker(seed_key=RESOURCE_INDEX_SEED_KEY))
     await session.flush()
     return {"resource_indices": indices_added, "overhead_norms": norms_added}
+
+
+# A single clearly-labelled sample row so the CUB panel is not empty on a fresh
+# install. It is NOT an official figure: it stays unverified and every surface
+# shows "Draft" until an administrator imports the real bulletin. The values
+# mirror the shape of the data contract (components add up to the total).
+_DEMO_CUB: tuple[str, str, str, str, str, str, str, str] = (
+    "2026-10",
+    "SP",
+    "R8-N",
+    "nao_desonerado",
+    "1285.40",
+    "845.20",
+    "78.50",
+    "36.58",
+)
+
+
+async def seed_cub_demo(session: AsyncSession) -> int:
+    """Insert one unverified sample CUB row once per install.
+
+    The seed marker keeps a deliberate deletion from resurrecting the sample:
+    if an administrator removed it, they meant to.
+    """
+    marker = await session.execute(
+        select(PriceIndexSeedMarker).where(PriceIndexSeedMarker.seed_key == "cub_demo_v1")
+    )
+    if marker.scalar_one_or_none() is not None:
+        return 0
+
+    month, uf, standard, regime, material, labor, admin, equipment = _DEMO_CUB
+    components = [Decimal(material), Decimal(labor), Decimal(admin), Decimal(equipment)]
+    total = sum(components, Decimal("0"))
+    exists = await session.execute(
+        select(CubRate).where(
+            CubRate.reference_month == month,
+            CubRate.uf == uf,
+            CubRate.project_standard == standard,
+            CubRate.tax_regime == regime,
+        )
+    )
+    inserted = 0
+    if exists.scalar_one_or_none() is None:
+        session.add(
+            CubRate(
+                reference_month=month,
+                uf=uf,
+                regional_code="",
+                sinduscon_code="SINDUSCON_SP",
+                sinduscon_name="SindusCon-SP / FGV (amostra)",
+                project_standard=standard,
+                tax_regime=regime,
+                material=components[0],
+                labor=components[1],
+                administrative=components[2],
+                equipment=components[3],
+                total_sqm=total,
+                currency="BRL",
+                source_name="SindusCon-SP / FGV",
+                source_url="https://sindusconsp.com.br",
+                notes="Amostra de demonstração. Substitua pela publicação oficial da competência.",
+                verified=False,
+            )
+        )
+        inserted = 1
+    session.add(PriceIndexSeedMarker(seed_key="cub_demo_v1"))
+    return inserted
