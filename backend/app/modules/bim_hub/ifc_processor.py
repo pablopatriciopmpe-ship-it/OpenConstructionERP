@@ -447,6 +447,11 @@ def _try_cad2data(ifc_path: Path, output_dir: Path, *, conversion_depth: str = "
     1. DDC Community Converter (RvtExporter.exe / IfcExporter.exe) → Excel → elements
     2. cad2data binary on PATH → CSV + DAE
     """
+    from app.core.ddc_policy import ddc_enabled
+
+    if not ddc_enabled():
+        return None
+
     ext = ifc_path.suffix.lower().lstrip(".")
 
     # --- Method 1: DDC converter (release 2026.10; same pipeline as Data Explorer) ---

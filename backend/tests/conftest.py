@@ -480,6 +480,10 @@ _bound_idle_transactions()
 # runs flake with 429s long before the relevant assertion fires. Tests
 # don't measure rate-limiter behaviour itself (those tests stand up their
 # own ``RateLimiter(...)`` instance), so we lift the bucket here.
+# The product ships with the DDC converters OFF (no commercial licence); the
+# suite that exercises the DDC code paths mocks the binaries, so it switches the
+# policy on here. The default-off behaviour is tested explicitly with delenv.
+os.environ.setdefault("OE_DDC_CONVERTERS", "on")
 os.environ.setdefault("LOGIN_RATE_LIMIT", "10000")
 os.environ.setdefault("API_RATE_LIMIT", "100000")
 os.environ.setdefault("AI_RATE_LIMIT", "10000")

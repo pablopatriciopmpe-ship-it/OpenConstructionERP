@@ -50,6 +50,7 @@ from pydantic import BaseModel, Field
 from sqlalchemy import delete, select
 
 from app.core.content_disposition import attachment_disposition
+from app.core.ddc_policy import ddc_enabled as _ddc_enabled
 from app.core.converter_package import (
     ConverterPackageMissingError,
     PackageError,
@@ -327,8 +328,14 @@ async def list_converters(verify: bool = False, user: OptionalUserPayload = None
             **meta,
             **_host_meta(meta["id"]),
             "installed": installed,
+            "disabled": not _ddc_enabled(),
         }
-        if not installed:
+        if entry["disabled"]:
+            entry["installed"] = False
+            entry["health"] = "disabled"
+            entry["health_message"] = ""
+            entry["suggested_actions"] = []
+        elif not installed:
             entry["health"] = "not_installed"
             entry["health_message"] = ""
             entry["suggested_actions"] = ["install_converter"]
@@ -806,6 +813,9 @@ def _download_converter_package(converter_id: str, *, clean: bool = False, platf
     import urllib.error
     import uuid
 
+    if not _ddc_enabled():
+        raise RuntimeError("DDC converters are disabled (OE_DDC_CONVERTERS=off): refusing to download")
+
     key = platform_key or host_platform_key()
     if key is None:
         raise RuntimeError("The DDC converter release has no build for this operating system or processor.")
@@ -998,7 +1008,15 @@ async def install_converter(
     """
     import asyncio
 
+    from app.core.ddc_policy import DISABLED_MESSAGE, ddc_enabled
     from app.modules.boq.cad_import import find_converter, missing_companion_files
+
+    if not ddc_enabled():
+        # Sem licenca DDC: nunca baixar nem instalar (o frontend le ``disabled`` na listagem).
+        raise HTTPException(
+            status_code=403,
+            detail={"code": "converter_disabled", "message": DISABLED_MESSAGE, "converter_id": converter_id},
+        )
 
     meta = _META_BY_ID.get(converter_id)
     if not meta:
