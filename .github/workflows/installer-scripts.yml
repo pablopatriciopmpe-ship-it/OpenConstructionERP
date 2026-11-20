@@ -32,17 +32,9 @@
 
 name: Installer scripts
 
+# Evolux: gatilhos automáticos (push/pull_request/schedule/release) desligados neste fork para não
+# estourar o uso de Actions; este workflow só roda sob demanda (workflow_dispatch).
 on:
-  push:
-    branches: [main]
-    paths:
-      # install.sh was deliberately absent while it had no harness, because
-      # listing it would have started a run that proved nothing about the
-      # file that changed. It has one now, so it is listed here.
-      - "scripts/install.ps1"
-      - "scripts/install.sh"
-      - "scripts/tests/**"
-      - ".github/workflows/installer-scripts.yml"
   # Push to main is the trigger that matters, because that is how this project
   # works: straight to main, no pull request. There is no pull_request trigger
   # on purpose. We never take external pull requests, and a fork opening one

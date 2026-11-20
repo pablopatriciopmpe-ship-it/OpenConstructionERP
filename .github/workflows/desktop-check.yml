@@ -21,14 +21,9 @@
 
 name: Desktop Compile Check
 
+# Evolux: gatilhos automáticos (push/pull_request/schedule/release) desligados neste fork para não
+# estourar o uso de Actions; este workflow só roda sob demanda (workflow_dispatch).
 on:
-  push:
-    branches: [main]
-    paths:
-      - "desktop/**"
-      - "backend/app/core/embedded_pg.py"
-      - ".github/workflows/desktop-check.yml"
-      - ".github/workflows/desktop-release.yml"
   # So the lane can be pointed at a branch. That is how it gets tested: put a
   # deliberate error behind a platform gate on a throwaway branch, dispatch this
   # against it, and read which jobs go red. A lane that has only ever been green

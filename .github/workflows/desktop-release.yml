@@ -11,10 +11,9 @@
 name: Desktop Release
 run-name: ${{ inputs.build_only_windows && format('Windows diagnostic {0}', github.sha) || format('Desktop Release {0}', inputs.tag || github.ref_name) }}
 
+# Evolux: gatilhos automáticos (push/pull_request/schedule/release) desligados neste fork para não
+# estourar o uso de Actions; este workflow só roda sob demanda (workflow_dispatch).
 on:
-  push:
-    tags:
-      - 'v*'
   workflow_dispatch:
     inputs:
       build_only_windows:

@@ -13,6 +13,8 @@ name: Module captures (showcase video/GIF)
 # Manual-only (workflow_dispatch). Artifacts (both .webm and .gif) are uploaded
 # as "module-captures"; nothing is committed.
 
+# Evolux: gatilhos automáticos (push/pull_request/schedule/release) desligados neste fork para não
+# estourar o uso de Actions; este workflow só roda sob demanda (workflow_dispatch).
 on:
   workflow_dispatch:
     inputs:

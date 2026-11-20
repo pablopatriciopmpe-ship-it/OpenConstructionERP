@@ -11,6 +11,8 @@ name: Smoke every route
 # question is "does the page open", not "does it render the same everywhere".
 # Manual-only (workflow_dispatch), runnable on any branch.
 
+# Evolux: gatilhos automáticos (push/pull_request/schedule/release) desligados neste fork para não
+# estourar o uso de Actions; este workflow só roda sob demanda (workflow_dispatch).
 on:
   workflow_dispatch:
 

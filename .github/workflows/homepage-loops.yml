@@ -14,6 +14,8 @@ name: Homepage loops (marketing showcase GIFs)
 # as "homepage-loops"; nothing is committed. Output filenames match the existing
 # assets/loops/<name>.gif so they can be dropped into the site in place.
 
+# Evolux: gatilhos automáticos (push/pull_request/schedule/release) desligados neste fork para não
+# estourar o uso de Actions; este workflow só roda sob demanda (workflow_dispatch).
 on:
   workflow_dispatch:
     inputs:

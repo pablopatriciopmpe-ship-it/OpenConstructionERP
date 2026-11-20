@@ -7,21 +7,9 @@ name: Eval — element-to-CWICR match quality
 # Quick mode (PRs): rule-based judge only, zero cost.
 # Nightly mode: real LLM judge, hard-capped USD spend.
 
+# Evolux: gatilhos automáticos (push/pull_request/schedule/release) desligados neste fork para não
+# estourar o uso de Actions; este workflow só roda sob demanda (workflow_dispatch).
 on:
-  pull_request:
-    paths:
-      - "backend/app/core/match_service/**"
-      - "backend/app/modules/costs/vector_adapter.py"
-      - "backend/tests/eval/**"
-  push:
-    branches: [main]
-    paths:
-      - "backend/app/core/match_service/**"
-      - "backend/app/modules/costs/vector_adapter.py"
-      - "backend/tests/eval/**"
-  schedule:
-    # Nightly at 03:17 UTC — odd minute to avoid GH cron stampede.
-    - cron: "17 3 * * *"
   workflow_dispatch:
     inputs:
       use_llm_judge:

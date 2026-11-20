@@ -73,9 +73,10 @@
 # build time.
 name: Repo hygiene
 
+# Evolux: gatilhos automáticos (push/pull_request/schedule/release) desligados neste fork para não
+# estourar o uso de Actions; este workflow só roda sob demanda (workflow_dispatch).
 on:
-  push:
-  pull_request:
+  workflow_dispatch:
 
 # Allow supersession within the same PR merge ref. Push runs (including
 # main, feature branches and release tags) keep a unique group and never cancel.

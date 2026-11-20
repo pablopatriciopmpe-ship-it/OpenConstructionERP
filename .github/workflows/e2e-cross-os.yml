@@ -17,6 +17,8 @@ name: E2E (cross-OS, real browser)
 # Linux+Chromium PR gate can be added later by copying the job with a pinned
 # matrix and an `on: pull_request` trigger.
 
+# Evolux: gatilhos automáticos (push/pull_request/schedule/release) desligados neste fork para não
+# estourar o uso de Actions; este workflow só roda sob demanda (workflow_dispatch).
 on:
   workflow_dispatch:
     inputs:
@@ -24,8 +26,6 @@ on:
         description: "Comma-separated engines (chromium,firefox,webkit)"
         default: "chromium,firefox,webkit"
         required: false
-  schedule:
-    - cron: "0 3 * * *" # 03:00 UTC nightly
 
 concurrency:
   group: e2e-cross-os-${{ github.ref }}

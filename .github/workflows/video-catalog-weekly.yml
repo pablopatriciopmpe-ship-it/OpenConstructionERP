@@ -7,9 +7,9 @@
 # and scripts/fetch_academy_items.py, classify the new items, rebuild.
 name: Video catalog weekly
 
+# Evolux: gatilhos automáticos (push/pull_request/schedule/release) desligados neste fork para não
+# estourar o uso de Actions; este workflow só roda sob demanda (workflow_dispatch).
 on:
-  schedule:
-    - cron: "17 5 * * 1"
   workflow_dispatch:
 
 permissions:

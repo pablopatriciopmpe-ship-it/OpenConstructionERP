@@ -45,11 +45,9 @@ name: CI (PostgreSQL)
 # step of upgrade-from-previous-release is a link in one chain rather than an
 # independent check; the reason is written out on that job.
 
+# Evolux: gatilhos automáticos (push/pull_request/schedule/release) desligados neste fork para não
+# estourar o uso de Actions; este workflow só roda sob demanda (workflow_dispatch).
 on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
   # Same reason as ci.yml: a release candidate branch can be gated by hand.
   workflow_dispatch:
 
