@@ -13,7 +13,7 @@ import { useAuthStore } from '@/stores/useAuthStore';
 import { useUploadQueueStore } from '@/stores/useUploadQueueStore';
 import { useProjectContextStore } from '@/stores/useProjectContextStore';
 import { useThemeStore } from '@/stores/useThemeStore';
-import { AcademyMark, ActivePackChip, CountryFlag, ModuleInfoButton, PartnerLogoBadge } from '@/shared/ui';
+import { AcademyMark, CountryFlag, ModuleInfoButton, PartnerLogoBadge } from '@/shared/ui';
 import { usePartnerPack } from '@/shared/hooks/usePartnerPack';
 import { NotificationBell } from '@/shared/ui/NotificationBell';
 import { UserAvatar } from '@/shared/ui/UserAvatar';
@@ -543,7 +543,6 @@ export function Header({ title, onMenuClick }: HeaderProps) {
             project picker instead of truncating its name. The column keeps
             room for the globe, so the readout shrinks to its icon and tooltip
             rather than vanishing, which is the one thing it must not do. */}
-        {!bar.pack && <ActivePackChip className="min-w-0" />}
         {!bar.pack && showCoBrand && <PartnerLogoBadge variant="nav" />}
       </div>
 

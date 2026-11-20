@@ -57,7 +57,6 @@ import { useAuthStore } from '@/stores/useAuthStore';
 import { useModuleStore } from '@/stores/useModuleStore';
 import { useToastStore } from '@/stores/useToastStore';
 import { apiGet } from '@/shared/lib/api';
-import { UpdateBadge, UpdateNotification } from '@/shared/ui/UpdateChecker';
 import { AcademyMark } from '@/shared/ui/Logo';
 import { useViewModeStore } from '@/stores/useViewModeStore';
 import { useNavPendingStore } from '@/shared/lib/navigationProgress';
@@ -2150,13 +2149,6 @@ export function Sidebar({ onClose }: { onClose?: () => void }) {
             too wide, so the same notice shows as one icon with a dot that
             opens About. `mt-3` breathes it away from the admin grid buttons
             above. */}
-        {iconified ? (
-          <UpdateBadge />
-        ) : (
-          <div className="mt-3">
-            <UpdateNotification />
-          </div>
-        )}
 
         {/* Version + AGPL + GitHub link
             Layout: GitHub icon (left) · version · AGPL link.
