@@ -321,6 +321,15 @@ async def reject_revoked_session(
         )
 
 
+async def _tenant_claim(user_id: Any) -> str | None:
+    """The caller's SaaS company id from the DB (None when SaaS is absent / no membership)."""
+    try:
+        from app.modules.saas.service import tenant_claim_for_user
+    except ImportError:
+        return None
+    return await tenant_claim_for_user(user_id)
+
+
 async def get_current_user_payload(
     credentials: Annotated[HTTPAuthorizationCredentials | None, Depends(bearer_scheme)],
     settings: SettingsDep,
@@ -369,6 +378,12 @@ async def get_current_user_payload(
                 # Overwrite self-asserted claims with canonical DB state.
                 payload["role"] = user.role
                 payload["permissions"] = permission_registry.get_role_permissions(user.role)
+                # The tenant is DERIVED from the DB membership on every request and any
+                # self-asserted ``tenant_id`` claim is discarded (never trusted from input).
+                payload.pop("tenant_id", None)
+                _tenant = await _tenant_claim(user.id)
+                if _tenant:
+                    payload["tenant_id"] = _tenant
 
                 reject_token_issued_before_password_change(iat, user.password_changed_at)
                 await reject_revoked_session(session, payload.get("sid"), user.id)
@@ -499,6 +514,10 @@ async def get_optional_user_payload(
             issued_at=payload.get("iat"),
             session_id=payload.get("sid"),
         )
+        payload.pop("tenant_id", None)  # never trust the claim; derive from membership
+        _tenant = await _tenant_claim(payload["sub"])
+        if _tenant:
+            payload["tenant_id"] = _tenant
         return payload
     except HTTPException:
         return None
@@ -897,6 +916,21 @@ async def check_ai_rate_limit(
 # ── Project access guard ──────────────────────────────────────────────────
 
 
+async def _enforce_tenant_match(session: AsyncSession, project: Any, user_id: str) -> None:
+    """404 if the project belongs to another company than the caller (fail-closed)."""
+    try:
+        from app.modules.saas.access import project_in_callers_tenant
+    except ImportError:  # SaaS module not shipped in this build: single-tenant behaviour
+        return
+    try:
+        ok = await project_in_callers_tenant(session, getattr(project, "tenant_id", None), user_id)
+    except Exception:  # noqa: BLE001 - cannot prove same tenant -> deny
+        logger.exception("Tenant match lookup failed during project access check")
+        ok = False
+    if not ok:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Project not found")
+
+
 async def verify_project_access(
     project_id: _uuid.UUID,
     user_id: str,
@@ -930,6 +964,10 @@ async def verify_project_access(
             return
     except Exception:
         logger.exception("Admin-role lookup failed during project access check")
+
+    # SaaS tenant isolation: project and caller must be in the SAME company. Runs
+    # before the owner/team checks so neither ownership nor a team row can cross it.
+    await _enforce_tenant_match(session, project, user_id)
 
     # Owner has full access.
     if str(getattr(project, "owner_id", "")) == str(user_id):
@@ -1008,6 +1046,17 @@ async def accessible_project_ids(
         logger.exception("Admin-role lookup failed during accessible-projects scan")
 
     stmt = select(Project.id).where((Project.owner_id == uid) | (Project.id.in_(member_project_ids_subquery(uid))))
+    # SaaS tenant isolation (same rule as verify_project_access): only the caller's company.
+    try:
+        from app.modules.saas.access import caller_tenant
+
+        mine = await caller_tenant(session, uid)
+        stmt = stmt.where(Project.tenant_id == mine if mine else Project.tenant_id.is_(None))
+    except ImportError:
+        pass
+    except Exception:  # noqa: BLE001 - cannot prove the caller's tenant -> nothing is accessible
+        logger.exception("Tenant lookup failed during accessible-projects scan")
+        return set()
     if live_only:
         stmt = stmt.where(Project.status != "archived")
     rows = (await session.execute(stmt)).scalars().all()

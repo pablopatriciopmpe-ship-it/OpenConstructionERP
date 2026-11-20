@@ -41,6 +41,7 @@ from app.modules.ai_estimator.repository import (
     AiEstimatorRunRepository,
 )
 from app.modules.ai_estimator.service import AiEstimatorService
+from app.modules.saas.guards import COST_ESTIMATE_RUN, ai_credit_guard
 
 logger = logging.getLogger(__name__)
 
@@ -367,7 +368,11 @@ async def add_sources(
 @router.post(
     "/runs/{run_id}/analyze",
     response_model=schemas.RunRead,
-    dependencies=[Depends(RequirePermission("ai_estimator.run"))],
+    dependencies=[
+        Depends(RequirePermission("ai_estimator.run")),
+        # SaaS: 10 créditos de IA por orçamento/EAP gerado (402 se a cota da empresa acabou).
+        Depends(ai_credit_guard(COST_ESTIMATE_RUN, "ai_estimator.analyze")),
+    ],
 )
 async def analyze_run(
     run_id: uuid.UUID,

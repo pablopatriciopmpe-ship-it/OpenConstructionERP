@@ -17,7 +17,7 @@ async def webhook(provider: str, request: Request, svc: BillingService = Depends
     if provider not in svc.providers:
         raise HTTPException(404)
     try:
-        result = svc.handle_webhook(provider, request.headers, await request.body())
+        result = await svc.handle_webhook(provider, request.headers, await request.body())
     except WebhookAuthError:
         raise HTTPException(401, "webhook não autenticado") from None
     return {"result": result}  # sempre 200 p/ duplicado/ignorado: evita retry em loop

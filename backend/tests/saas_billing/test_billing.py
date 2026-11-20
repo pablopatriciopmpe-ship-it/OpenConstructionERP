@@ -1,3 +1,4 @@
+import asyncio
 import json
 
 import pytest
@@ -30,7 +31,7 @@ def _post(c, ev, eid, token=TOKEN):
 
 def test_ativa_e_cancela_via_webhook(env):
     svc, store, c = env
-    sub = svc.register_subscription("asaas", "tenant-A", "pro", "sub_1")
+    sub = asyncio.run(svc.register_subscription("asaas", "tenant-A", "pro", "sub_1"))
     assert svc.entitlement(sub) is None  # pendente: sem acesso
     assert _post(c, "PAYMENT_CONFIRMED", "evt_1").json()["result"] == "processed"
     assert sub.status == "active" and svc.entitlement(sub).code == "pro"
@@ -40,7 +41,7 @@ def test_ativa_e_cancela_via_webhook(env):
 
 def test_idempotente_e_cancelado_e_final(env):
     svc, _, c = env
-    sub = svc.register_subscription("asaas", "tenant-A", "start", "sub_1")
+    sub = asyncio.run(svc.register_subscription("asaas", "tenant-A", "start", "sub_1"))
     assert _post(c, "PAYMENT_CONFIRMED", "evt_1").json()["result"] == "processed"
     assert _post(c, "PAYMENT_CONFIRMED", "evt_1").json()["result"] == "duplicate"
     _post(c, "SUBSCRIPTION_INACTIVATED", "evt_2")
@@ -50,7 +51,7 @@ def test_idempotente_e_cancelado_e_final(env):
 
 def test_token_invalido_401_sem_efeito(env):
     svc, _, c = env
-    sub = svc.register_subscription("asaas", "tenant-A", "pro", "sub_1")
+    sub = asyncio.run(svc.register_subscription("asaas", "tenant-A", "pro", "sub_1"))
     assert _post(c, "PAYMENT_CONFIRMED", "evt_1", token="errado").status_code == 401
     assert sub.status == "pending"
 
@@ -63,7 +64,7 @@ def test_evento_ignorado_e_assinatura_desconhecida(env):
 
 def test_atraso_mantem_acesso_em_carencia(env):
     svc, _, c = env
-    sub = svc.register_subscription("asaas", "tenant-A", "pro", "sub_1")
+    sub = asyncio.run(svc.register_subscription("asaas", "tenant-A", "pro", "sub_1"))
     _post(c, "PAYMENT_OVERDUE", "evt_1")
     assert sub.status == "past_due" and svc.entitlement(sub) is not None
 

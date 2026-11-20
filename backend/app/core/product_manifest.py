@@ -61,6 +61,8 @@ PRODUCT_MODULES = frozenset(
         "oe_drawing_compare",
         "oe_ai_estimator",
         "oe_quote_capture",
+        # SaaS core (F5): empresas, planos com limites, assinatura e painel master.
+        "oe_saas",
         # Hard dependencies.  Keep loaded, but never expose them as product
         # navigation or plan entitlements.
         "oe_ai",
