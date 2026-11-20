@@ -16,6 +16,7 @@ import { Card } from '@/shared/ui';
 import { fmtCompact, fmtNumber, getIntlLocale } from '@/shared/lib/formatters';
 import { toNum } from '@/shared/lib/money';
 import { getDateFnsLocale } from '@/shared/lib/dateFnsLocale';
+import { projectRegionLabel } from '@/shared/lib/projectRegionLabel';
 
 export interface CompactProjectCardProps {
   id: string;
@@ -176,7 +177,7 @@ export function CompactProjectCard({
           {region && (
             <span className="inline-flex items-center gap-1 rounded-full border border-border-light bg-surface-secondary px-1.5 py-0.5 text-2xs font-medium text-content-secondary">
               <Globe2 size={10} strokeWidth={2.25} />
-              {region}
+              {projectRegionLabel(region)}
             </span>
           )}
         </div>
