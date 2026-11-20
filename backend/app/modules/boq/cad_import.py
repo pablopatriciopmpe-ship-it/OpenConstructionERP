@@ -206,6 +206,10 @@ def find_converter(extension: str) -> Path | None:
     Returns:
         Path to the converter executable, or ``None``.
     """
+    from app.core.ddc_policy import ddc_enabled
+
+    if not ddc_enabled():
+        return None  # DDC desligado (sem licenca): nem binario ja baixado e usado
     exe_rel = CONVERTERS.get(extension)
     if not exe_rel:
         return None
@@ -504,6 +508,10 @@ def ensure_converter(fmt: str) -> Path:
             be provisioned (unsupported platform, unknown format, or the
             download failed). The message is user-actionable.
     """
+    from app.core.ddc_policy import DISABLED_MESSAGE, ddc_enabled
+
+    if not ddc_enabled():
+        raise ConverterUnavailableError(DISABLED_MESSAGE, code="converter_disabled", params={"format": fmt.upper()})
     fmt = fmt.lower().lstrip(".")
     # Normalise format aliases to the converter that actually handles them:
     # the RVT converter reads .rfa families, the DWG converter .dxf. This mirrors

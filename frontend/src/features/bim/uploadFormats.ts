@@ -44,10 +44,10 @@ export interface UploadFormat {
 }
 
 /** Native BIM models, converted server-side. Mirrors ``CAD_EXTENSIONS``. */
-export const BIM_MODEL_EXTENSIONS = ['.rvt', '.ifc'] as const;
+export const BIM_MODEL_EXTENSIONS = ['.ifc'] as const;
 
 /** Drawings the picker takes and hands to DWG Takeoff. Mirrors ``DWG_EXTENSIONS``. */
-export const HANDOFF_EXTENSIONS = ['.dwg', '.dxf'] as const;
+export const HANDOFF_EXTENSIONS = ['.dxf'] as const;
 
 /** Tabular element data, accepted only by the advanced mode's own input. */
 export const DATA_EXTENSIONS = ['.csv', '.xlsx', '.xls'] as const;

@@ -308,6 +308,10 @@ export function BIMConverterStatusBanner({
       queryClient.invalidateQueries({ queryKey: ['bim-converters-version-check'] });
     },
     onError: (err, vars) => {
+      const isDis =
+        (err as { status?: number })?.status === 403 ||
+        /converter_disabled/i.test((err as { message?: string })?.message ?? '');
+      if (isDis) return;
       const converterId = vars.converterId;
       const conv = data?.converters.find((c) => c.id === converterId);
       addToast({
@@ -477,6 +481,8 @@ export function BIMConverterStatusBanner({
     data.converters.find((c) => c.id === id),
   ).filter((c): c is BIMConverterInfo => Boolean(c));
   if (relevant.length === 0) return null;
+  const allDisabled = relevant.every((c) => c.disabled || c.health === 'disabled');
+  if (allDisabled) return null;
 
   const computedHealth = (c: BIMConverterInfo): BIMConverterHealth => {
     if (c.health) return c.health;
@@ -524,6 +530,7 @@ export function BIMConverterStatusBanner({
   const uncheckedOk = uncheckedAllInstalled && !anyOutdated;
 
   const handleInstall = (converter: BIMConverterInfo): void => {
+    if (converter.disabled || converter.health === 'disabled') return;
     setInstallingId(converter.id);
     installMutation.mutate({ converterId: converter.id });
   };
@@ -533,6 +540,7 @@ export function BIMConverterStatusBanner({
    *  per-row "Update" button surfaced when the version-check banner
    *  reports an outdated SHA. */
   const handleUpdate = (converter: BIMConverterInfo): void => {
+    if (converter.disabled || converter.health === 'disabled') return;
     setInstallingId(converter.id);
     installMutation.mutate({ converterId: converter.id, force: true });
   };
@@ -1286,19 +1294,21 @@ function ConverterRow({
             </p>
           )}
           <div className="flex flex-wrap items-center gap-1.5">
-            {(actions.length === 0
-              ? health === 'not_installed'
-                ? (['install_converter'] as BIMConverterAction[])
-                : (['reinstall_converter'] as BIMConverterAction[])
-              : actions
-            ).map((action) => (
-              <ActionButton
-                key={action}
-                action={action}
-                installing={installing}
-                onInstall={onInstall}
-              />
-            ))}
+            {!(conv.disabled || conv.health === 'disabled') && (
+              (actions.length === 0
+                ? health === 'not_installed'
+                  ? (['install_converter'] as BIMConverterAction[])
+                  : (['reinstall_converter'] as BIMConverterAction[])
+                : actions
+              ).map((action) => (
+                <ActionButton
+                  key={action}
+                  action={action}
+                  installing={installing}
+                  onInstall={onInstall}
+                />
+              ))
+            )}
             {health === 'failed' && (
               <button
                 type="button"

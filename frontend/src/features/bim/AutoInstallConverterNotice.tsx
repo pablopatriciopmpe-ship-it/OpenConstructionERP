@@ -20,8 +20,10 @@
  */
 
 import { useTranslation } from 'react-i18next';
+import { useQuery } from '@tanstack/react-query';
 import { AlertCircle, Download, ExternalLink, Loader2, RefreshCw } from 'lucide-react';
 
+import { fetchBIMConverters, type BIMConvertersResponse } from './api';
 import { ConverterInstallProgressBar } from './ConverterInstallProgressBar';
 import type { AutoInstallConverterState } from './useAutoInstallConverter';
 
@@ -46,6 +48,14 @@ export function AutoInstallConverterNotice({
 }: AutoInstallConverterNoticeProps): JSX.Element | null {
   const { t } = useTranslation();
   const { installing, converterId, sizeMb, errored, hasFallback, retry } = state;
+
+  const { data: convData } = useQuery<BIMConvertersResponse>({
+    queryKey: ['bim-converters'],
+    queryFn: () => fetchBIMConverters(),
+    staleTime: 30_000,
+  });
+  const conv = converterId ? convData?.converters.find((c) => c.id === converterId) : undefined;
+  if (conv?.disabled || conv?.health === 'disabled') return null;
 
   if (!converterId) return null;
   // Nothing to show once a converter is installed and there was no error:
@@ -74,7 +84,7 @@ export function AutoInstallConverterNotice({
           <p className="opacity-90">
             {t('bim.auto_install_failed_body', {
               defaultValue:
-                'You can retry the automatic install, or install it manually from GitHub.',
+                'O conversor não está disponível neste ambiente. Utilize formatos suportados como IFC.',
             })}
           </p>
           <div className="flex flex-wrap items-center gap-2 pt-0.5">
@@ -86,17 +96,6 @@ export function AutoInstallConverterNotice({
               <RefreshCw size={12} />
               {t('bim.auto_install_retry', { defaultValue: 'Retry install' })}
             </button>
-            <a
-              href={DDC_REPO_URL}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-2xs font-semibold border border-semantic-warning/30 text-semantic-warning hover:bg-semantic-warning-bg transition-colors"
-            >
-              <ExternalLink size={12} />
-              {t('bim.auto_install_manual_link', {
-                defaultValue: 'Install manually on GitHub',
-              })}
-            </a>
           </div>
         </div>
       </div>

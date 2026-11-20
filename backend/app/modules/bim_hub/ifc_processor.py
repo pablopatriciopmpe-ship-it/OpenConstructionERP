@@ -1,11 +1,13 @@
 # DDC-CWICR-OE: DataDrivenConstruction · OpenConstructionERP
 # Copyright (c) 2026 Artem Boiko / DataDrivenConstruction
-"""IFC/RVT file processor - uses DDC cad2data when available, text parser as fallback.
+"""IFC/RVT file processor - DDC cad2data, then IfcOpenShell, then a text parser.
 
 Processing pipeline:
 1. Try DDC cad2data (external tool) → full DataFrame + COLLADA geometry
-2. Fallback: text-based IFC STEP parser → extracts entities, properties, quantities
-3. Generates simplified COLLADA boxes for 3D preview
+2. Try IfcOpenShell (optional, LGPL-3.0; see ``ifc_geometry``) → real per-element
+   geometry (COLLADA + GLB) and Qto/Pset data
+3. Fallback: text-based IFC STEP parser → extracts entities, properties, quantities
+4. Generates simplified COLLADA boxes for 3D preview (text parser only)
 
 For full geometry: install DDC cad2data or use Advanced Mode to upload CSV + DAE.
 
@@ -445,6 +447,11 @@ def _try_cad2data(ifc_path: Path, output_dir: Path, *, conversion_depth: str = "
     1. DDC Community Converter (RvtExporter.exe / IfcExporter.exe) → Excel → elements
     2. cad2data binary on PATH → CSV + DAE
     """
+    from app.core.ddc_policy import ddc_enabled
+
+    if not ddc_enabled():
+        return None
+
     ext = ifc_path.suffix.lower().lstrip(".")
 
     # --- Method 1: DDC converter (release 2026.10; same pipeline as Data Explorer) ---
@@ -2129,7 +2136,8 @@ def process_ifc_file(
 
     Pipeline:
     1. Try DDC cad2data (full conversion with geometry)
-    2. Fallback: text-based IFC parser (elements only, box geometry)
+    2. Try IfcOpenShell (optional dependency; real geometry)
+    3. Fallback: text-based IFC parser (elements only, box geometry)
 
     Args:
         conversion_depth: 'standard' (~15 key columns, faster) or
@@ -2163,6 +2171,16 @@ def process_ifc_file(
             result["empty_reason"] = cad_empty_reason
             result["raw_row_count"] = cad_raw_row_count
         return result
+
+    # Step 2: IfcOpenShell (optional dependency, LGPL-3.0). Real per-element
+    # geometry with the same identity (GlobalId == mesh_ref) as the text parser.
+    # Returns None when the package is missing, the file is over the size/time
+    # ceilings, or anything fails: then the text parser below runs as before.
+    from app.modules.bim_hub.ifc_geometry import process_ifc_with_ifcopenshell
+
+    ifcos_result = process_ifc_with_ifcopenshell(ifc_path, output_dir)
+    if ifcos_result and ifcos_result["element_count"] > 0:
+        return ifcos_result
 
     try:
         content = ifc_path.read_text(encoding="utf-8", errors="replace")

@@ -491,7 +491,21 @@ function ConverterVersionBadge({
   metadata?: Record<string, unknown> | null;
 }) {
   const { t } = useTranslation();
+  const { data: convertersData } = useQuery({
+    queryKey: ['bim-converters'],
+    queryFn: () => fetchBIMConverters(),
+    staleTime: 60_000,
+  });
   if (!metadata) return null;
+  const allDisabled = convertersData?.converters.every((c) => c.disabled || c.health === 'disabled');
+  if (allDisabled) return null;
+  if (
+    metadata.geometry_engine === 'ifcopenshell' ||
+    metadata.converter_disabled ||
+    metadata.converter_source === 'disabled'
+  ) {
+    return null;
+  }
   const version = metadata.converter_version;
   if (typeof version !== 'string' || !version) return null;
   const source = typeof metadata.converter_source === 'string' ? metadata.converter_source : null;
@@ -608,6 +622,22 @@ function UploadPanel({
 
   const handleFileSelect = useCallback((f: File) => {
     const ext = getFileExtension(f.name);
+    if (ext === '.rvt') {
+      setUploadError(
+        t('bim.upload_rvt_note', {
+          defaultValue: 'Arquivos RVT não são suportados diretamente. Exporte para IFC no Revit para visualizar e extrair quantidades.',
+        }),
+      );
+      return;
+    }
+    if (ext === '.dwg') {
+      setUploadError(
+        t('bim.upload_dwg_note', {
+          defaultValue: 'Arquivos DWG não são suportados diretamente no BIM. Converta para DXF ou PDF e envie no DWG Takeoff.',
+        }),
+      );
+      return;
+    }
     if (DWG_EXTENSIONS.has(ext)) {
       // DWG/DXF are 2D takeoff drawings, not 3D BIM models. Hand the picked
       // file straight to the DWG Takeoff module so the user does not have to
@@ -643,9 +673,9 @@ function UploadPanel({
     // Simple picker accepts native 3D BIM only (RVT/IFC). Tabular data
     // (CSV/XLSX) lives behind the explicit "Advanced" toggle, which uses its
     // own file input, so anything else dropped here is rejected up front.
-    if (!CAD_EXTENSIONS.has(ext)) { setUploadError(t('bim.upload_unsupported_format', { defaultValue: 'Unsupported file format. Please upload RVT, IFC or DWG files.' })); return; }
+    if (!CAD_EXTENSIONS.has(ext)) { setUploadError(t('bim.upload_unsupported_format', { defaultValue: 'Formato de arquivo não suportado. Envie arquivos IFC, DXF ou dados com malhas 3D.' })); return; }
     setFile(f);
-    setUploadError(ext === '.rvt' ? t('bim.upload_rvt_note') : null);
+    setUploadError(null);
     if (!modelName) setModelName(f.name.replace(/\.[^.]+$/, ''));
   }, [modelName, t, addToast, navigate, projectId, discipline]);
 
@@ -764,7 +794,7 @@ function UploadPanel({
               const conv = status.converters.find(
                 (c) => c.id === needsConverterMatch,
               );
-              if (conv && !conv.installed) {
+              if (conv && !conv.installed && !conv.disabled && conv.health !== 'disabled') {
                 setUploading(false);
                 setUploadProgress(0);
                 setUploadStage('');
@@ -1018,7 +1048,7 @@ function UploadPanel({
                 <p className="text-2xs text-content-quaternary leading-relaxed max-w-[17rem]">
                   {t('bim.upload_format_note', {
                     defaultValue:
-                      'IFC and RVT import with full properties, quantities and classifications. Mesh formats (glTF, OBJ, STL, DAE, FBX, PLY, 3DS) are geometry only - view and measure, no BIM data.',
+                      'Modelos IFC (IFC2x3, IFC4, IFC4.3) importam com propriedades e quantitativos completos. Malhas 3D (glTF, OBJ, STL, DAE) e desenhos DXF são visualizados no navegador. Para arquivos RVT, exporte para IFC no Revit.',
                   })}
                 </p>
               </>
@@ -1442,7 +1472,7 @@ function NonReadyOverlay({ model, onUploadConverted, onDelete, onRetry, onInstal
     && (errorCode === 'ddc_not_found' || !!backendMessage)
       ? t('bim.overlay_converter_unavailable_calm', {
           defaultValue:
-            "We couldn't convert this {{format}} file. The CAD converter ({{brandName}} Converters 2.0) isn't available in this environment - it's an optional, separate install. Add it, then retry the conversion.",
+            'Não foi possível converter este arquivo {{format}}. Utilize modelos IFC ou desenhos DXF para visualização e quantitativos.',
           format: fmt || 'CAD',
         })
       : null;
@@ -1457,8 +1487,17 @@ function NonReadyOverlay({ model, onUploadConverted, onDelete, onRetry, onInstal
   const technicalDetails =
     !isProcessing && errorCode !== 'no_products' && backendMessage ? backendMessage : null;
 
+  const { data: convData } = useQuery({
+    queryKey: ['bim-converters'],
+    queryFn: () => fetchBIMConverters(),
+    staleTime: 60_000,
+  });
+  const currentConv = convData?.converters.find((conv) => conv.id === converterId);
+  const isConverterDisabled = currentConv?.disabled || currentConv?.health === 'disabled';
+
   const showInstallButton =
     !isProcessing
+    && !isConverterDisabled
     && (errorCode === 'ddc_not_found' || isOutdatedConverter)
     && !!converterId;
   const showRetryButton = !isProcessing && !showInstallButton;
@@ -1767,6 +1806,22 @@ function LandingPage({ projectId, onUploadComplete: _onUploadComplete, breadcrum
                     const f = e.dataTransfer.files?.[0];
                     if (f) {
                       const ext = getFileExtension(f.name);
+                      if (ext === '.rvt') {
+                        addToast({
+                          type: 'warning',
+                          title: t('bim.upload_rvt_note_title', { defaultValue: 'RVT não suportado diretamente' }),
+                          message: t('bim.upload_rvt_note', { defaultValue: 'Exporte para IFC no Revit para visualizar e extrair quantidades.' }),
+                        });
+                        return;
+                      }
+                      if (ext === '.dwg') {
+                        addToast({
+                          type: 'warning',
+                          title: t('bim.upload_dwg_note_title', { defaultValue: 'DWG não suportado diretamente no BIM' }),
+                          message: t('bim.upload_dwg_note', { defaultValue: 'Converta para DXF ou PDF e envie no DWG Takeoff.' }),
+                        });
+                        return;
+                      }
                       if (DWG_EXTENSIONS.has(ext)) { handleLandingDwg(f); return; }
                       if (isMeshImportFile(f.name)) {
                         setMeshImportFile(f);
@@ -1774,7 +1829,7 @@ function LandingPage({ projectId, onUploadComplete: _onUploadComplete, breadcrum
                         return;
                       }
                       if (!CAD_EXTENSIONS.has(ext)) {
-                        addToast({ type: 'error', title: t('bim.upload_unsupported_format', { defaultValue: 'Unsupported file format. Please upload RVT, IFC or DWG files.' }) });
+                        addToast({ type: 'error', title: t('bim.upload_unsupported_format', { defaultValue: 'Formato de arquivo não suportado. Envie arquivos IFC, DXF ou dados com malhas 3D.' }) });
                         return;
                       }
                       setFile(f);
@@ -1838,12 +1893,46 @@ function LandingPage({ projectId, onUploadComplete: _onUploadComplete, breadcrum
                       <p className="text-2xs text-content-quaternary leading-relaxed max-w-[20rem] text-center">
                         {t('bim.upload_format_note', {
                           defaultValue:
-                            'IFC and RVT import with full properties, quantities and classifications. Mesh formats (glTF, OBJ, STL, DAE, FBX, PLY, 3DS) are geometry only - view and measure, no BIM data.',
+                            'Modelos IFC (IFC2x3, IFC4, IFC4.3) importam com propriedades e quantitativos completos. Malhas 3D (glTF, OBJ, STL, DAE) e desenhos DXF são visualizados no navegador. Para arquivos RVT, exporte para IFC no Revit.',
                         })}
                       </p>
                     </>
                   )}
-                  <input ref={fileInputRef} type="file" accept={UPLOAD_ACCEPT} className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (!f) return; if (DWG_EXTENSIONS.has(getFileExtension(f.name))) { handleLandingDwg(f); return; } if (isMeshImportFile(f.name)) { setMeshImportFile(f); if (!modelName) setModelName(f.name.replace(/\.[^.]+$/, '')); return; } setFile(f); if (!modelName) setModelName(f.name.replace(/\.[^.]+$/, '')); }} />
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept={UPLOAD_ACCEPT}
+                    className="hidden"
+                    onChange={(e) => {
+                      const f = e.target.files?.[0];
+                      if (!f) return;
+                      const ext = getFileExtension(f.name);
+                      if (ext === '.rvt') {
+                        addToast({
+                          type: 'warning',
+                          title: t('bim.upload_rvt_note_title', { defaultValue: 'RVT não suportado diretamente' }),
+                          message: t('bim.upload_rvt_note', { defaultValue: 'Exporte para IFC no Revit para visualizar e extrair quantidades.' }),
+                        });
+                        return;
+                      }
+                      if (ext === '.dwg') {
+                        addToast({
+                          type: 'warning',
+                          title: t('bim.upload_dwg_note_title', { defaultValue: 'DWG não suportado diretamente no BIM' }),
+                          message: t('bim.upload_dwg_note', { defaultValue: 'Converta para DXF ou PDF e envie no DWG Takeoff.' }),
+                        });
+                        return;
+                      }
+                      if (DWG_EXTENSIONS.has(ext)) { handleLandingDwg(f); return; }
+                      if (isMeshImportFile(f.name)) {
+                        setMeshImportFile(f);
+                        if (!modelName) setModelName(f.name.replace(/\.[^.]+$/, ''));
+                        return;
+                      }
+                      setFile(f);
+                      if (!modelName) setModelName(f.name.replace(/\.[^.]+$/, ''));
+                    }}
+                  />
                 </label>
                 {file && (
                   <div className="mt-4 space-y-3">
@@ -1942,23 +2031,18 @@ function LandingPage({ projectId, onUploadComplete: _onUploadComplete, breadcrum
                       middle dots and arrows means there is nothing left to
                       double. Version ranges are shown on the same screen,
                       read from the converter list. */}
-                  {t('bim.landing_formats_detailed', { defaultValue: 'RVT and IFC models, 3D mesh formats, and element data as CSV or Excel. DWG and DXF drawings are routed to DWG Levantamento de quantitativos.' })}
+                  {t('bim.landing_formats_detailed', { defaultValue: 'Modelos IFC (IFC2x3, IFC4, IFC4.3), dados pré-convertidos em CSV ou Excel com malhas 3D (DAE/GLB), desenhos DXF e documentos PDF. Para arquivos RVT, exporte para IFC no Revit.' })}
                 </p>
                 <div className="mt-4 flex items-center justify-start">
                   <div className="inline-flex flex-wrap items-center gap-2 px-4 py-2 rounded-full bg-semantic-success/10 border border-semantic-success/20">
                     <ShieldCheck size={14} className="text-semantic-success shrink-0" />
                     <span className="text-xs text-semantic-success font-medium">
-                      {t('common.local_processing', { defaultValue: '100% Local Processing \u00B7 Your files never leave your computer' })}
+                      {t('common.local_processing', { defaultValue: 'Seus arquivos são processados no servidor do Evolux Obras' })}
                     </span>
                     <span className="text-2xs text-semantic-success">|</span>
-                    <a
-                      href="https://github.com/datadrivenconstruction/cad2data-Revit-IFC-DWG-DGN-pipeline-with-conversion-validation-qto"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-2xs text-semantic-success hover:text-semantic-success hover:underline whitespace-nowrap"
-                    >
-                      {t('common.powered_by_cad2data', { defaultValue: 'Powered by {{brandName}} Converters 2.0' })}
-                    </a>
+                    <span className="text-2xs text-semantic-success whitespace-nowrap">
+                      {t('common.powered_by_cad2data', { defaultValue: 'Leitura de IFC: IfcOpenShell (LGPL-3.0)' })}
+                    </span>
                   </div>
                 </div>
               </div>

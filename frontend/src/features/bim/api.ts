@@ -227,6 +227,8 @@ export interface BIMConverterInfo {
   produces_geometry: boolean;
   size_mb: number;
   installed: boolean;
+  /** True when the converter is disabled by policy (e.g. no DDC commercial license). */
+  disabled?: boolean;
   /** Smoke-test result. Always present from v2.6.23+ (older servers omit
    *  the field — frontend treats missing as `'unknown'`). */
   health?: BIMConverterHealth;
@@ -267,6 +269,7 @@ export interface BIMConverterVerifyResult {
 export interface BIMConverterInstallResult {
   converter_id: string;
   installed: boolean;
+  disabled?: boolean;
   path?: string;
   already_installed?: boolean;
   size_bytes?: number;
@@ -468,6 +471,19 @@ export async function installBIMConverter(
       signal ? { signal } : undefined,
     );
   } catch (err) {
+    const errObj = err as { isTimeout?: boolean; name?: string; message?: string; status?: number; body?: unknown };
+    if (
+      errObj?.status === 403 ||
+      (errObj?.body as { detail?: { code?: string } } | undefined)?.detail?.code === 'converter_disabled' ||
+      /converter_disabled/i.test(errObj?.message ?? '')
+    ) {
+      return {
+        converter_id: converterId,
+        installed: false,
+        disabled: true,
+        message: 'Converter disabled by policy',
+      };
+    }
     // The install POST is meant to return at once, but on a busy single-worker
     // backend (e.g. the desktop build mid-BIM-load) it can still exceed the
     // signal, and a flaky link can drop it ("Failed to fetch"). In BOTH cases

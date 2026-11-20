@@ -35,6 +35,7 @@ import clsx from 'clsx';
 import {
   fetchBIMConverterInstallProgress,
   type BIMConverterInstallProgress,
+  type BIMConvertersResponse,
 } from './api';
 import { fmtFixed } from '@/shared/lib/formatters';
 
@@ -66,6 +67,12 @@ export function ConverterInstallProgressBar({
 }: ConverterInstallProgressBarProps): JSX.Element | null {
   const { t } = useTranslation();
 
+  const { data: convData } = useQuery<BIMConvertersResponse>({
+    queryKey: ['bim-converters'],
+    staleTime: 30_000,
+  });
+  const conv = converterId ? convData?.converters.find((c) => c.id === converterId) : undefined;
+
   const progressQuery = useQuery<BIMConverterInstallProgress>({
     queryKey: ['bim-converter-install-progress', converterId],
     queryFn: () => fetchBIMConverterInstallProgress(converterId),
@@ -82,7 +89,7 @@ export function ConverterInstallProgressBar({
     gcTime: 0,
   });
 
-  if (!installing) return null;
+  if (!installing || conv?.disabled || conv?.health === 'disabled') return null;
 
   // While the very first poll is in flight the backend may not yet have
   // recorded the started_at row — fall back to an indeterminate bar so

@@ -1591,7 +1591,17 @@ async def _process_cad_in_background(
             failure_code: str | None = None
             suggested_actions: list[str] = []
 
-            if _fc(converter_id) is None:
+            from app.core.ddc_policy import DISABLED_MESSAGE as _DDC_OFF_MSG
+            from app.core.ddc_policy import ddc_enabled as _ddc_on
+
+            if not _ddc_on():
+                failure_code = "ddc_disabled"
+                failure_reason = (
+                    "Arquivos RVT nao sao lidos diretamente neste produto. Exporte o modelo para IFC "
+                    "no Revit e envie o arquivo .ifc. " + _DDC_OFF_MSG
+                )
+                suggested_actions = []
+            elif _fc(converter_id) is None:
                 failure_code = "ddc_not_found"
                 failure_reason = (
                     "The RVT converter is not installed on this "
@@ -1651,7 +1661,9 @@ async def _process_cad_in_background(
     # silently degrading to the text parser. This is
     # best-effort: a genuine failure (offline / locked-down host) just falls
     # through to the text fallback, so the import still completes.
-    if ext.lower() == ".ifc":
+    from app.core.ddc_policy import ddc_enabled as _ddc_enabled_pre
+
+    if ext.lower() == ".ifc" and _ddc_enabled_pre():
         try:
             from app.modules.boq.cad_import import (
                 ensure_converter as _ensure,
@@ -1854,6 +1866,14 @@ async def _process_cad_in_background(
                         "geometry_quality",
                         result.get("geometry_type", "unknown"),
                     ),
+                    # Real-geometry engine (IfcOpenShell) and how many of the
+                    # imported elements got a real mesh (the rest are data-only
+                    # elements: IFC gives them no Representation).
+                    **{
+                        k: result[k]
+                        for k in ("geometry_engine", "geometry_engine_version", "elements_with_geometry", "triangle_count")
+                        if result.get(k) is not None
+                    },
                     # DDC converter version stamp - drives the "Processed
                     # with DDC v{X}" badge on the BIM model card and the
                     # /about page. Both keys are optional: missing values
