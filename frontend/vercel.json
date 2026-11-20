@@ -1,0 +1,20 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "installCommand": "echo prebuilt",
+  "buildCommand": "echo prebuilt",
+  "outputDirectory": "dist",
+  "routes": [
+    {
+      "src": "^/api/(.*)$",
+      "dest": "https://erp-teste.evolux-erp.workers.dev/api/$1"
+    },
+    {
+      "handle": "filesystem"
+    },
+    {
+      "src": "^/(?!api/|assets/|cesium/|pwa/|brand/|favicon|manifest|sw\\.js|workbox-)(.*)$",
+      "dest": "/index.html"
+    }
+  ]
+}

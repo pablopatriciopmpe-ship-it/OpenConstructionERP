@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Evolux Obras</title>
+    <link rel="icon" type="image/svg+xml" href="/brand/evolux-symbol.svg" sizes="any" />
+    <meta name="description" content="Orçamento, acompanhamento e gestão de obras para construtoras brasileiras." />
+    <meta name="application-name" content="Evolux Obras" />
+    <meta name="theme-color" content="#163953" />
+    <meta name="twitter:title" content="Evolux Obras" />
+    <meta name="twitter:description" content="Orçamento, acompanhamento e gestão de obras para construtoras brasileiras." />
+    <meta property="og:site_name" content="Evolux Obras" />
+    <meta property="og:title" content="Evolux Obras" />
+    <meta property="og:description" content="Orçamento, acompanhamento e gestão de obras para construtoras brasileiras." />
+    <meta property="og:locale" content="pt_BR" />
+
+    <!-- DDC origin markers · removing these does not disable the app,
+         but their absence is evidence the distribution is not an authorised
+         DataDrivenConstruction build. See docs at datadrivenconstruction.io. -->
+    <meta name="ddc:origin" content="DataDrivenConstruction/OpenConstructionERP/CWICR" />
+    <meta name="ddc:signature" content="DDC-CWICR-OE-2026" />
+    <meta name="ddc:author" content="DataDrivenConstruction · info@datadrivenconstruction.io" />
+    <!-- ddc:build:​‌‍⁠​‌‍⁠ -->
+    <!-- DDC-CWICR-OE / DataDrivenConstruction / OpenConstructionERP / Artem Boiko 2026 -->
+
+
+    <!-- Fonts, served from our own origin. No preconnect, no third party.
+         Provenance, licences and the reason the cyrillic-ext face is declared
+         over one codepoint are in assets/vendor/fonts/README.txt. -->
+    <link rel="stylesheet" href="/assets/vendor/fonts/fonts.css" />
+
+    <!-- Served under /demo/ the host hands root-absolute icon, font and manifest
+         links to another site. Prefix them the same way main.tsx prefixes the
+         router; at the root (desktop, localhost, pip) nothing changes. -->
+    <script>
+      (function () {
+        var p = location.pathname;
+        if (p !== '/demo' && p.indexOf('/demo/') !== 0) return;
+        var ls = document.querySelectorAll(
+          'link[href^="/favicon"],link[href^="/apple-touch"],link[href^="/brand/"],link[href^="/assets/vendor/"],link[rel="manifest"][href^="/"]'
+        );
+        for (var i = 0; i < ls.length; i++) ls[i].setAttribute('href', '/demo' + ls[i].getAttribute('href'));
+      })();
+    </script>
+
+    <!-- Appearance boot: puts the saved style (accent, font, density, radius),
+         the menu look and the dark class on <html> before first paint, so a reload never
+         flashes the default look. Mirrors src/shared/lib/appearance.ts; the
+         test src/shared/lib/__tests__/appearanceBoot.test.ts runs this script. -->
+    <script id="oe-appearance-boot">
+      (function () {
+        var allowed = {
+          accent: ['blue', 'teal', 'violet', 'emerald', 'amber', 'graphite', 'crimson'],
+          font: ['system', 'inter', 'ibm-plex-sans', 'source-sans-3'],
+          density: ['comfortable', 'normal', 'compact'],
+          radius: ['standard', 'sharp', 'round'],
+          look: ['standard', 'classic'],
+          text: ['small', 'default', 'large', 'larger', 'largest']
+        };
+        var value = { accent: 'blue', font: 'inter', density: 'comfortable', radius: 'standard', look: 'standard', text: 'default' };
+        var customAccent = false;
+        function layer(key) {
+          try {
+            var raw = JSON.parse(localStorage.getItem(key) || 'null');
+            if (!raw || typeof raw !== 'object') return;
+            for (var axis in allowed) {
+              if (allowed[axis].indexOf(raw[axis]) !== -1) value[axis] = raw[axis];
+            }
+            if (raw.accent || raw.accentHex) customAccent = /^#[0-9a-f]{6}$/i.test(raw.accentHex || '');
+          } catch (e) { /* unreadable storage: keep what we have */ }
+        }
+        layer('oe_workspace_appearance_v1');
+        layer('oe_appearance_v1');
+        var root = document.documentElement;
+        for (var k in value) root.setAttribute('data-' + k, value[k]);
+        // A company colour: its stylesheet is cached by src/shared/lib/customAccent.ts.
+        try {
+          var accentCss = customAccent && localStorage.getItem('oe_custom_accent_css_v1');
+          if (accentCss) {
+            var accentStyle = document.createElement('style');
+            accentStyle.id = 'oe-custom-accent';
+            accentStyle.textContent = accentCss;
+            document.head.appendChild(accentStyle);
+            root.setAttribute('data-accent', 'custom');
+          }
+        } catch (e) { /* unreadable storage: keep the preset accent */ }
+        if (value.font !== 'system') {
+          var link = document.createElement('link');
+          link.rel = 'stylesheet';
+          link.href = '/assets/vendor/fonts/' + value.font + '.css';
+          link.setAttribute('data-oe-font', value.font);
+          document.head.appendChild(link);
+        }
+        // Menu look: same layering, painted as data-menu-* (shared/lib/menuAppearance.ts).
+        var menuAllowed = {
+          view: ['classic', 'compact', 'comfortable', 'rail', 'floating'],
+          active: ['bar', 'pill', 'tint'],
+          headers: ['caps', 'divider', 'none'],
+          stroke: ['light', 'regular', 'bold'],
+          container: ['none', 'tile', 'circle'],
+          color: ['mono', 'accent', 'sections'],
+          icons: ['shown', 'hidden']
+        };
+        var menu = {
+          view: 'classic', active: 'bar', headers: 'caps', stroke: 'regular',
+          container: 'none', color: 'mono', icons: 'shown'
+        };
+        function menuLayer(key) {
+          try {
+            var raw = JSON.parse(localStorage.getItem(key) || 'null');
+            if (!raw || typeof raw !== 'object') return;
+            for (var axis in menuAllowed) {
+              if (menuAllowed[axis].indexOf(raw[axis]) !== -1) menu[axis] = raw[axis];
+            }
+          } catch (e) { /* unreadable storage: keep what we have */ }
+        }
+        menuLayer('oe_workspace_menu_v1');
+        menuLayer('oe_menu_v1');
+        for (var m in menu) root.setAttribute('data-menu-' + m, menu[m]);
+        try {
+          var theme = localStorage.getItem('oe_theme');
+          var dark;
+          if (theme === 'schedule') {
+            // Dark by time of day; same window rule as shared/lib/theme.ts isDarkHour.
+            var sch = JSON.parse(localStorage.getItem('oe_theme_schedule') || 'null') || {};
+            var from = typeof sch.darkFrom === 'number' ? sch.darkFrom : 19;
+            var to = typeof sch.darkTo === 'number' ? sch.darkTo : 7;
+            var h = new Date().getHours();
+            dark = from === to ? false : from < to ? h >= from && h < to : h >= from || h < to;
+          } else {
+            dark = theme === 'dark' || (theme !== 'light' && window.matchMedia &&
+              window.matchMedia('(prefers-color-scheme: dark)').matches);
+          }
+          if (dark) root.classList.add('dark');
+        } catch (e) { /* the theme store applies it after mount */ }
+      })();
+    </script>
+    <script type="module" crossorigin src="/assets/index-CyDMlcSY.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/vendor-react-Ds644eE6.js">
+    <link rel="modulepreload" crossorigin href="/assets/vendor-query-wpw2X9UX.js">
+    <link rel="modulepreload" crossorigin href="/assets/vendor-i18n-DFJuOPeM.js">
+    <link rel="modulepreload" crossorigin href="/assets/vendor-preload-ckwbz45p.js">
+    <link rel="modulepreload" crossorigin href="/assets/vendor-recharts-C58zgzh2.js">
+    <link rel="modulepreload" crossorigin href="/assets/i18n-en-GeGxRQLs.js">
+    <link rel="modulepreload" crossorigin href="/assets/vendor-dompurify-ChJSIbGG.js">
+    <link rel="modulepreload" crossorigin href="/assets/vendor-dnd-1FmqKfd0.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-BbzdTya_.css">
+  <link rel="manifest" href="/manifest.webmanifest"><script id="vite-plugin-pwa:register-sw" src="/registerSW.js"></script></head>
+  <body class="bg-white text-neutral-900 dark:bg-surface-secondary dark:text-content-primary antialiased">
+    <div id="root"></div>
+  </body>
+</html>

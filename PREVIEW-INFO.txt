@@ -1,0 +1,3 @@
+source_ref=preview/cub
+source_sha=22e6eeba1713185fae041e3d2e3d46b473627007
+backend=https://erp-teste.evolux-erp.workers.dev
