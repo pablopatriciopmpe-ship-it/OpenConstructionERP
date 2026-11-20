@@ -67,7 +67,6 @@ export function CostPerAreaBenchmark({
 
   const [customArea, setCustomArea] = useState<number | null>(null);
   const [tempArea, setTempArea] = useState('');
-  const [isEditingArea, setIsEditingArea] = useState(false);
 
   const effectiveArea = customArea ?? grossFloorArea;
   const hasArea = typeof effectiveArea === 'number' && effectiveArea > 0 && directCost > 0;
