@@ -1174,20 +1174,6 @@ function HelpMenu() {
           role="menu"
           className="absolute right-0 top-full mt-1.5 w-60 rounded-xl border border-border-light bg-surface-elevated shadow-lg animate-scale-in py-1 z-dropdown"
         >
-          {/* In-app guided explanation of every module - the "How it works"
-              hub. Lives first so it is the most discoverable help action. */}
-          <button
-            type="button"
-            role="menuitem"
-            onClick={() => {
-              setOpen(false);
-              navigate('/how-it-works');
-            }}
-            className="flex w-full items-center gap-2 px-3 py-2 text-sm text-content-primary hover:bg-surface-secondary transition-colors"
-          >
-            <GraduationCap size={14} className="text-oe-blue shrink-0" />
-            <span className="flex-1 text-left">{t('howto.menu_item', { defaultValue: 'How it works' })}</span>
-          </button>
           <button
             type="button"
             role="menuitem"
