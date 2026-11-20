@@ -1,6 +1,7 @@
 // DDC-CWICR-OE: DataDrivenConstruction · OpenConstructionERP​‌‍⁠​‌‍⁠​‌‍⁠​‌‍⁠
 // Copyright (c) 2026 Artem Boiko / DataDrivenConstruction
 import { ProjectOffersWidget } from '@/features/offers/ProjectOffersWidget';
+import { estimateDisplayName } from '@/shared/lib/estimateDisplayName';
 import React, { Component, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { ErrorInfo, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -3309,7 +3310,7 @@ export function ProjectDetailPage() {
                         className="min-w-0 flex-1 text-left"
                       >
                         <div className="text-sm font-medium text-content-primary truncate">
-                          {boq.name}
+                          {estimateDisplayName(boq.name)}
                         </div>
                         <div className="mt-0.5 flex items-center gap-3 text-xs text-content-tertiary">
                           <span>{posCount} {t('projects.positions').toLowerCase()}</span>

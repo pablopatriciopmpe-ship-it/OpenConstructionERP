@@ -2,6 +2,7 @@
 // Copyright (c) 2026 Artem Boiko / DataDrivenConstruction
 import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import { estimateDisplayName } from '@/shared/lib/estimateDisplayName';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate, useLocation, useParams, useSearchParams } from 'react-router-dom';
 import {
@@ -1294,7 +1295,7 @@ export function BOQListPage() {
                 {/* Name (mobile: full width with status badge) */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium text-content-primary truncate">{boq.name}</span>
+                    <span className="text-sm font-medium text-content-primary truncate">{estimateDisplayName(boq.name)}</span>
                     <Badge variant={statusVariant(boq.status)} size="sm" dot className="sm:hidden shrink-0">{statusLabel(boq.status)}</Badge>
                   </div>
                   {/* Mobile-only: project + positions on second line */}
@@ -1410,9 +1411,9 @@ export function BOQListPage() {
                 <div>
                   <h3
                     className="oe-card-title line-clamp-2"
-                    title={boq.name}
+                    title={estimateDisplayName(boq.name)}
                   >
-                    {boq.name}
+                    {estimateDisplayName(boq.name)}
                   </h3>
                   <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-content-tertiary">
                     <span className="max-w-[55%] truncate">{boq.projectName}</span>

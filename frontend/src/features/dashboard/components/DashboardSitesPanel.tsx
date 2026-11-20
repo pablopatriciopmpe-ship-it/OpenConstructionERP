@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { CloudSun, MapPin } from 'lucide-react';
 import { ProjectWeather } from '@/shared/ui/ProjectWeather/ProjectWeather';
 import { useWidgetSettingsStore } from '@/stores/useWidgetSettingsStore';
+import { projectRegionLabel } from '@/shared/lib/projectRegionLabel';
 import { resolveProjectCoords, type ProjectPin } from './DashboardProjectsMap';
 
 interface DashboardSitesPanelProps {
@@ -115,7 +116,7 @@ export function DashboardSitesPanel({ projects }: DashboardSitesPanelProps) {
                 <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-oe-blue/10 text-oe-blue">
                   <MapPin size={12} />
                 </span>
-                <span className="truncate text-xs font-semibold text-content-primary">{city}</span>
+                <span className="truncate text-xs font-semibold text-content-primary">{projectRegionLabel(city)}</span>
                 {rows.length > 1 && (
                   <span className="shrink-0 text-2xs tabular-nums text-content-tertiary">
                     {rows.length}

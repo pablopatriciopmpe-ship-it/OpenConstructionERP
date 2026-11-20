@@ -3351,6 +3351,11 @@ _SEED_TEXT: dict[str, dict[str, str]] = {
 
 def _seed_text(template: DemoTemplate, key: str, **values: object) -> str:
     """The wording ``key`` in the template's language (English when the language has no table), filled in."""
+    if key == "budget_suffix":
+        from app.core.product_defaults import active_profile
+
+        if active_profile() is not None:
+            return "- Orçamento-base"
     table = _SEED_TEXT.get((template.locale or "en").lower()[:2], _SEED_TEXT["en"])
     return table.get(key, _SEED_TEXT["en"][key]).format(**values)
 

@@ -1330,7 +1330,7 @@ function LanguageSwitcher({
         onClick={() => setOpen(!open)}
         aria-expanded={open}
         aria-haspopup="true"
-        aria-label={`Language: ${currentLang.name}`}
+        aria-label={`Idioma: ${currentLang.name}`}
         title={currentLang.name}
         className={clsx(
           'flex h-8 items-center gap-1.5 rounded-lg px-2',

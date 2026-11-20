@@ -49,6 +49,7 @@ const regionColorMap: Record<string, string> = {
 // outside the legacy trio showed its raw identifier on the card. The fallback
 // below keeps that from being blank, which is why nobody noticed.
 const standardLabels: Record<string, string> = {
+  custom: 'Personalizado',
   din276: 'DIN 276',
   nrm: 'NRM',
   masterformat: 'MasterFormat',

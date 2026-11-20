@@ -7,6 +7,7 @@
  */
 
 import { useEffect, useRef, useState } from 'react';
+import { estimateDisplayName } from '@/shared/lib/estimateDisplayName';
 import { useTranslation } from 'react-i18next';
 import { Pencil } from 'lucide-react';
 
@@ -78,7 +79,7 @@ export function BOQRenameTitle({ boqId, name, locked }: BOQRenameTitleProps) {
   return (
     <>
       <h1 className="text-lg font-semibold text-content-primary truncate" onDoubleClick={start}>
-        {name}
+        {estimateDisplayName(name)}
       </h1>
       {!locked && (
         <button

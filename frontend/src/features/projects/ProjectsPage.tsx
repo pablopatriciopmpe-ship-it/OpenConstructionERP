@@ -1,6 +1,7 @@
 // DDC-CWICR-OE: DataDrivenConstruction · OpenConstructionERP​‌‍⁠​‌‍⁠​‌‍⁠​‌‍⁠
 // Copyright (c) 2026 Artem Boiko / DataDrivenConstruction
 import { ProjectColorDot } from './ProjectColorField';
+import { projectRegionLabel } from '@/shared/lib/projectRegionLabel';
 import { projectColor } from '@/shared/lib/projectColor';
 import React, { useState, useMemo, useEffect } from 'react';
 import { createPortal } from 'react-dom';
@@ -1320,6 +1321,7 @@ export function ProjectCard({
   // every standard the picker on CreateProjectPage can write, or the project
   // list prints a raw identifier where the card next to it prints a name.
   const standardLabels: Record<string, string> = {
+    custom: 'Personalizado',
     din276: 'DIN 276',
     nrm: 'NRM',
     masterformat: 'MasterFormat',
@@ -1659,7 +1661,7 @@ export function ProjectCard({
           {project.region && (
             <span className="inline-flex items-center gap-1 rounded-full border border-border-light bg-surface-secondary px-2 py-0.5 text-2xs font-medium text-content-secondary">
               <Globe2 size={12} strokeWidth={2.25} />
-              {project.region}
+              {projectRegionLabel(project.region)}
             </span>
           )}
           {project.address?.city && (
