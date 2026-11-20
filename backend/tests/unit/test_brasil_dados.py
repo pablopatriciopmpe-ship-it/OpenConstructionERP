@@ -223,7 +223,7 @@ async def test_import_is_idempotent_and_keeps_regimes_apart(session, tmp_path: P
 
 
 @pytest.mark.asyncio
-async def test_sinapi_is_shared_so_a_plain_user_can_read_it(session, tmp_path: Path):
+async def test_sinapi_system_catalogue_is_readable_by_a_plain_user_but_private_ones_are_not(session, tmp_path: Path):
     """Regressao: o SINAPI ficava em catalogo sem dono e so admin o enxergava."""
     import uuid
 
@@ -232,33 +232,46 @@ async def test_sinapi_is_shared_so_a_plain_user_can_read_it(session, tmp_path: P
 
     f = tmp_path / "s.xlsx"
     _make_xlsx(f, {})
-    des = parse_sinapi(f, "SP", "desonerado")
     region = region_for("SP", "desonerado")
-    await import_sinapi(session, des)
+    await import_sinapi(session, parse_sinapi(f, "SP", "desonerado"))  # catalogo de sistema (sem created_by)
 
-    rows = (await session.execute(select(CostItem).where(CostItem.region == region))).scalars().all()
-    assert len(rows) == 3 and all(r.catalog_id is None for r in rows)
-
-    plain_user = uuid.uuid4()  # nao e admin, nao criou catalogo algum
-    with cost_scope.caller_scope(plain_user):
-        seen = (await session.execute(select(CostItem.code).where(CostItem.region == region))).scalars().all()
-    assert sorted(seen) == ["1001", "1002", "9001"]
-
-    # Dado antigo: linha presa a um catalogo sem dono. Reimportar a devolve ao compartilhado.
+    owner, stranger = uuid.uuid4(), uuid.uuid4()  # nenhum dos dois e admin
     with cost_scope.system_scope():
-        cat = CostCatalog(name="SINAPI SP legado", currency="BRL", source="import")
-        session.add(cat)
+        private = CostCatalog(name="Meu catalogo", currency="BRL", source="manual", created_by=owner)
+        session.add(private)
         await session.flush()
-        rows[0].catalog_id = cat.id
+        session.add(CostItem(code="P1", description="privado", unit="un", rate="1", currency="BRL", source="manual",
+                             region="PRIVADO", catalog_id=private.id))
         await session.flush()
-    with cost_scope.caller_scope(plain_user):
-        hidden = (await session.execute(select(CostItem.code).where(CostItem.region == region))).scalars().all()
-    assert len(hidden) == 2  # a linha em catalogo alheio sumiu para o usuario comum
-    again = await import_sinapi(session, des)
-    assert again["updated"] == 1 and again["inserted"] == 0
-    with cost_scope.caller_scope(plain_user):
-        back = (await session.execute(select(CostItem.code).where(CostItem.region == region))).scalars().all()
-    assert len(back) == 3
+
+    async def codes(user, reg):
+        with cost_scope.caller_scope(user):
+            return sorted((await session.execute(select(CostItem.code).where(CostItem.region == reg))).scalars().all())
+
+    # usuario comum, anonimo e leitura compartilhada (cache de regioes) veem o SINAPI de sistema
+    assert await codes(stranger, region) == ["1001", "1002", "9001"]
+    assert await codes(None, region) == ["1001", "1002", "9001"]
+    with cost_scope.shared_scope():
+        assert len((await session.execute(select(CostItem.code).where(CostItem.region == region))).scalars().all()) == 3
+    # catalogo privado de outro usuario continua invisivel; so o dono o ve
+    assert await codes(stranger, "PRIVADO") == []
+    assert await codes(None, "PRIVADO") == []
+    assert await codes(owner, "PRIVADO") == ["P1"]
+    # vetor / leitura por id e permissao de catalogo seguem a mesma regra
+    sinapi_cat = (await session.execute(select(CostCatalog).where(CostCatalog.name.like("SINAPI SP%")))).scalars().first()
+    with cost_scope.caller_scope(stranger):
+        assert await cost_scope.may_read_catalogue(session, sinapi_cat.id) is True
+        assert await cost_scope.may_read_catalogue(session, private.id) is False
+    with cost_scope.caller_scope(stranger):
+        kept = await cost_scope.visible_hits(session, [{"id": str(i)} for i in await _all_ids(session)])
+    assert len(kept) == 3  # 4 ids pedidos: o do catalogo privado alheio cai
+
+
+async def _all_ids(session):
+    from app.core import cost_scope
+
+    with cost_scope.system_scope():
+        return (await session.execute(select(CostItem.id).where(CostItem.region.in_([region_for("SP", "desonerado"), "PRIVADO"])))).scalars().all()
 
 
 # ── Padroes Brasil em projetos novos ───────────────────────────────────────

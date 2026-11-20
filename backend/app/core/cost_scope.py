@@ -157,16 +157,21 @@ def current_caller() -> uuid.UUID | None:
 def visible_cost_items(user_id: uuid.UUID | None) -> ColumnElement[bool]:
     """The rule: the ``CostItem`` rows ``user_id`` may read.
 
-    Shared rows, rows in a catalogue the user created, and every row for an
-    admin. The admin test reads the user's stored role when the query runs, so
-    it cannot be claimed by a token and follows a role change at once.
+    Shared rows (no catalogue, or a system catalogue with no creator), rows in
+    a catalogue the user created, and every row for an admin. The admin test
+    reads the user's stored role when the query runs, so it cannot be claimed by
+    a token and follows a role change at once.
     """
     from sqlalchemy import exists, or_, select  # noqa: PLC0415
 
     from app.modules.costs.models import CostCatalog, CostItem  # noqa: PLC0415
     from app.modules.users.models import User  # noqa: PLC0415
 
-    shared = CostItem.catalog_id.is_(None)
+    # System catalogues (``created_by IS NULL``: an import nobody owns, such as
+    # SINAPI) are part of the shared cost base. Anonymous and shared-scope reads
+    # include them too, so the caches built under ``shared_scope`` list them.
+    system_catalogues = CostItem.catalog_id.in_(select(CostCatalog.id).where(CostCatalog.created_by.is_(None)))
+    shared = or_(CostItem.catalog_id.is_(None), system_catalogues)
     if user_id is None:
         return shared
     own = CostItem.catalog_id.in_(select(CostCatalog.id).where(CostCatalog.created_by == user_id))
@@ -231,7 +236,8 @@ async def visible_ids(session: AsyncSession, ids: Iterable[Any]) -> set[str]:
 async def may_read_catalogue(session: AsyncSession, catalog_id: Any) -> bool:
     """Whether the current caller may read the user-owned catalogue ``catalog_id``.
 
-    The same rule as for its rows: the catalogue's creator and admins. A
+    The same rule as for its rows: the catalogue's creator, admins, and everyone
+    for a system catalogue (no creator). A
     catalogue that does not exist reads as one the caller may not see, so the
     two cannot be told apart.
     """
@@ -249,7 +255,7 @@ async def may_read_catalogue(session: AsyncSession, catalog_id: Any) -> bool:
         return False
     if caller is not _SYSTEM:
         admin = exists(select(User.id).where(User.id == caller, User.role == "admin"))
-        stmt = stmt.where(or_(CostCatalog.created_by == caller, admin))
+        stmt = stmt.where(or_(CostCatalog.created_by == caller, CostCatalog.created_by.is_(None), admin))
     return (await session.execute(stmt)).first() is not None
 
 

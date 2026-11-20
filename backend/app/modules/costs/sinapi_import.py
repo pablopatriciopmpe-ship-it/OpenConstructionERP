@@ -378,17 +378,23 @@ async def import_sinapi(session: Any, bundle: SinapiBundle, *, batch: int = 500)
     from sqlalchemy import select
 
     from app.core import cost_scope
-    from app.modules.costs.models import CostItem
+    from app.modules.costs.models import CostCatalog, CostItem
 
     region = region_for(bundle.uf, bundle.regime)
+    name = f"SINAPI {bundle.uf} {bundle.regime.replace('_', ' ')}"
     with cost_scope.system_scope():
-        # SINAPI e tabela publica da CAIXA: as linhas sao COMPARTILHADAS
-        # (``catalog_id`` nulo), como a base de custos da instalacao. Uma linha
-        # dentro de um catalogo so e visivel ao criador desse catalogo e a admin
-        # (``cost_scope.visible_cost_items``); um catalogo sem ``created_by``
-        # escondia o SINAPI de todo usuario comum. A regiao
-        # (``SINAPI-<UF>-<REGIME>``) ja separa UF e regime.
-        catalog_id = None
+        catalog = (await session.execute(select(CostCatalog).where(CostCatalog.name == name))).scalars().first()
+        if catalog is None:
+            catalog = CostCatalog(
+                name=name,
+                description=f"SINAPI/CAIXA, UF {bundle.uf}, {bundle.regime}. Fonte: {SOURCE_URL}",
+                currency=CURRENCY,
+                source="import",
+            )
+            session.add(catalog)
+            await session.flush()
+
+        catalog_id = catalog.id
         stats = {"inserted": 0, "updated": 0, "unchanged": 0}
         rows = bundle.insumos + bundle.composicoes
         for i in range(0, len(rows), batch):
@@ -415,8 +421,8 @@ async def import_sinapi(session: Any, bundle: SinapiBundle, *, batch: int = 500)
                     if getattr(cur, key) != val:
                         setattr(cur, key, val)
                         changed = True
-                if cur.catalog_id is not None:  # reimportar devolve ao compartilhado
-                    cur.catalog_id, changed = None, True
+                if cur.catalog_id != catalog_id:
+                    cur.catalog_id, changed = catalog_id, True
                 if not cur.is_active:
                     cur.is_active, changed = True, True
                 stats["updated" if changed else "unchanged"] += 1
@@ -426,7 +432,7 @@ async def import_sinapi(session: Any, bundle: SinapiBundle, *, batch: int = 500)
         "regime": bundle.regime,
         "reference_month": bundle.reference_month,
         "region": region,
-        "catalog_id": None,
+        "catalog_id": str(catalog_id),
         "insumos": len(bundle.insumos),
         "composicoes": len(bundle.composicoes),
         **stats,
