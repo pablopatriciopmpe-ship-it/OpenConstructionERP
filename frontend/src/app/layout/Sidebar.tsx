@@ -1922,7 +1922,7 @@ export function Sidebar({ onClose }: { onClose?: () => void }) {
              offers in total. Updates automatically as modules are enabled /
              disabled or hidden / shown. Iconified mode shows a compact
              "shown/total" so the number is never lost. */}
-        <div className={clsx('pt-2 pb-0.5', iconified ? 'px-1' : 'px-3')}>
+        <div className="hidden" aria-hidden="true">
           <div
             className={clsx(
               'flex items-center justify-center rounded-lg bg-surface-secondary/40 text-content-secondary',

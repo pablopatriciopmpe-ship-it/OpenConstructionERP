@@ -41,7 +41,6 @@ import {
   ArrowUpRight,
   UserPlus,
   Mail,
-  Lock,
   Info,
 } from 'lucide-react';
 import { Card, CardHeader, CardContent, Badge, Button, Skeleton } from '@/shared/ui';
@@ -51,8 +50,7 @@ import { fetchUsers, type User, type UserRole } from '@/features/users/api';
 
 // Commercial license request page on the marketing site. The product is
 // AGPL-3.0; this is the honest upgrade path (no in-app payment flow).
-const LICENSE_REQUEST_URL = 'https://openconstructionerp.com/license-request.html';
-const AGPL_URL = 'https://www.gnu.org/licenses/agpl-3.0.html';
+const SOURCE_URL = 'https://github.com/pablopatriciopmpe-ship-it/OpenConstructionERP';
 
 // ── Role display config (icon + badge variant). The human labels are read
 // from the SAME i18n keys the User Management page uses (users.roles.*), so
@@ -377,9 +375,7 @@ export function SettingsTeamPanel() {
       <Card>
         <CardHeader
           title={t('settings.license_title', { defaultValue: 'License & plan' })}
-          subtitle={t('settings.license_subtitle', {
-            defaultValue: 'Your edition, version and commercial licensing options',
-          })}
+          subtitle="Versão instalada e código-fonte disponível aos usuários"
           action={<BadgeCheck size={20} className="text-oe-blue" aria-hidden="true" />}
         />
         <CardContent>
@@ -388,26 +384,23 @@ export function SettingsTeamPanel() {
             <div className="min-w-0">
               <div className="flex items-center gap-2">
                 <span className="text-sm font-semibold text-content-primary">
-                  {t('settings.license_edition_community', { defaultValue: 'Community Edition' })}
+                  Licença AGPL-3.0
                 </span>
                 <Badge variant="blue" size="sm">
                   AGPL-3.0
                 </Badge>
               </div>
               <p className="mt-1 max-w-prose text-xs leading-relaxed text-content-secondary">
-                {t('settings.license_community_desc', {
-                  defaultValue:
-                    'This is the free, open-source build. You can use it for any purpose, including commercial, self-host it on your own hardware, and modify it. In return, network users must be able to get the source under the same AGPL-3.0 license.',
-                })}
+                O código-fonte desta versão está disponível conforme a licença AGPL-3.0.
               </p>
             </div>
             <a
-              href={AGPL_URL}
+              href={SOURCE_URL}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex shrink-0 items-center gap-1 text-xs font-medium text-oe-blue hover:underline"
             >
-              {t('settings.license_read_agpl', { defaultValue: 'Read the AGPL-3.0 license' })}
+              Código-fonte (AGPL)
               <ExternalLink size={12} />
             </a>
           </div>
@@ -440,32 +433,6 @@ export function SettingsTeamPanel() {
             </div>
           </dl>
 
-          {/* Commercial upgrade path - honest, no in-app payment flow */}
-          <div className="mt-4 rounded-lg border border-oe-blue/20 bg-oe-blue/[0.04] px-4 py-3.5">
-            <div className="flex items-start gap-3">
-              <Lock size={16} className="mt-0.5 shrink-0 text-oe-blue" />
-              <div className="min-w-0 flex-1">
-                <p className="text-sm font-semibold text-content-primary">
-                  {t('settings.license_commercial_title', { defaultValue: 'Need a commercial license?' })}
-                </p>
-                <p className="mt-0.5 text-xs leading-relaxed text-content-secondary">
-                  {t('settings.license_commercial_desc', {
-                    defaultValue:
-                      'If you cannot meet the AGPL source-sharing obligations, or you want an enterprise agreement with support and an SLA, request a commercial license. This opens a form on our website - there is no payment or subscription inside the app.',
-                  })}
-                </p>
-                <a
-                  href={LICENSE_REQUEST_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-2.5 inline-flex items-center gap-1.5 rounded-full border border-oe-blue/30 bg-surface-elevated px-4 py-2 text-sm font-medium text-oe-blue transition-colors hover:bg-oe-blue/10"
-                >
-                  {t('settings.license_request_cta', { defaultValue: 'Request a commercial license' })}
-                  <ExternalLink size={14} />
-                </a>
-              </div>
-            </div>
-          </div>
         </CardContent>
       </Card>
     </div>
