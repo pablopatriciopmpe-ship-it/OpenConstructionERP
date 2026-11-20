@@ -79,22 +79,15 @@ const QK = {
 
 export function PriceIndexPage() {
   const { t } = useTranslation();
-  const navigate = useNavigate();
 
   return (
     <div className="space-y-5">
       <PageHeader
-        srTitle={t('price_index.title', { defaultValue: 'Price Index' })}
+        title={t('price_index.title', { defaultValue: 'Índices de Preços e Custos' })}
         subtitle={t('price_index.subtitle', {
           defaultValue:
-            'Bring an old rate library or a foreign benchmark to current-period money and your region using cost index series and regional factors.',
+            'Acompanhamento e aplicação do INCC-M (reajuste contratual) e CUB/m² (custo unitário básico da construção civil por estado, NBR 12.721).',
         })}
-        actions={
-          <Button variant="secondary" size="sm" onClick={() => navigate('/price-index/resource-index')}>
-            <Calculator className="mr-1 h-4 w-4" aria-hidden />
-            {t('price_index.ri.open', { defaultValue: 'Resource-index Orçamento (Russia)' })}
-          </Button>
-        }
       />
       <InccPanel />
       <CubPanel />

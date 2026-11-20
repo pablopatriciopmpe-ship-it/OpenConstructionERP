@@ -308,7 +308,23 @@ export function CubPanel() {
   const rows = listQuery.data?.items ?? [];
   const total = listQuery.data?.total ?? 0;
   const catalog = catalogQuery.data;
-  const attribution = rows[0]?.attribution || CUB_FALLBACK_ATTRIBUTION;
+
+  const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
+
+  const activeRow = useMemo(() => {
+    if (selectedRowId) {
+      const match = rows.find((r) => r.id === selectedRowId);
+      if (match) return match;
+    }
+    if (filters.uf) {
+      const match = rows.find((r) => r.uf === filters.uf);
+      if (match) return match;
+    }
+    // Default to SP (primary showcase UF) or first available row
+    return rows.find((r) => r.uf === 'SP') || rows[0] || null;
+  }, [selectedRowId, filters.uf, rows]);
+
+  const attribution = activeRow?.attribution || CUB_FALLBACK_ATTRIBUTION;
 
   const monthOptions = useMemo(() => {
     const set = new Set<string>(catalog?.months ?? []);
@@ -420,7 +436,14 @@ export function CubPanel() {
       {/* Attribution leads, before any number: the credit is a condition of
           using a published CUB, not a footnote. */}
       <div className="mt-3 rounded-lg border border-border-light bg-surface-secondary/40 px-3 py-2">
-        <p className="text-xs text-content-secondary">{attribution}</p>
+        <div className="flex items-center justify-between gap-2">
+          <p className="text-xs text-content-secondary font-medium">{attribution}</p>
+          {activeRow && (
+            <span className="shrink-0 rounded bg-oe-blue/10 px-2 py-0.5 text-2xs font-semibold text-oe-blue">
+              {activeRow.uf} · {activeRow.project_standard} · {activeRow.reference_month}
+            </span>
+          )}
+        </div>
         <p className="mt-1 text-2xs text-content-tertiary">{CUB_EXCLUSIONS}</p>
       </div>
 
@@ -945,54 +968,77 @@ export function CubPanel() {
                   </tr>
                 </thead>
                 <tbody>
-                  {rows.map((row) => (
-                    <tr key={row.id}>
-                      <td className="tabular-nums">{row.reference_month}</td>
-                      <td>
-                        <span className="font-medium text-content-primary">{row.uf}</span>
-                        {row.regional_code && (
-                          <span className="ml-1 text-2xs text-content-quaternary">{row.regional_code}</span>
-                        )}
-                      </td>
-                      <td>{row.project_standard}</td>
-                      <td className="text-2xs">
-                        {row.tax_regime === 'desonerado'
-                          ? t('price_index.cub_regime_des', { defaultValue: 'Exempt (desonerado)' })
-                          : t('price_index.cub_regime_nao', { defaultValue: 'Not exempt (oneração)' })}
-                      </td>
-                      <td className="text-right font-medium tabular-nums">
-                        {money(locale, row.total_sqm)}
-                      </td>
-                      <td className="max-w-[220px] truncate text-2xs" title={row.attribution}>
-                        {row.source_url ? (
-                          <a
-                            href={row.source_url}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="underline"
-                          >
-                            {row.sinduscon_name || row.source_name || 'Sinduscon/CBIC'}
-                          </a>
-                        ) : (
-                          row.sinduscon_name || row.source_name || 'Sinduscon/CBIC'
-                        )}
-                      </td>
-                      <td className="text-2xs tabular-nums">{row.published_at ?? '—'}</td>
-                      <td className="text-center">
-                        {row.verified ? (
-                          <Badge variant="success" size="sm">
-                            <BadgeCheck size={11} className="mr-0.5" aria-hidden />
-                            {t('price_index.cub_verified', { defaultValue: 'Checked' })}
-                          </Badge>
-                        ) : (
-                          <Badge variant="warning" size="sm">
-                            {t('price_index.cub_unverified', { defaultValue: 'Draft' })}
-                          </Badge>
-                        )}
-                      </td>
-                      {canManage && (
-                        <td className="text-right">
-                          <div className="inline-flex items-center gap-1">
+                  {rows.map((row) => {
+                    const isSelected = row.id === activeRow?.id;
+                    const isExample = Boolean(
+                      row.notes &&
+                        (row.notes.toUpperCase().includes('EXEMPLO') ||
+                          row.notes.toUpperCase().includes('DEMO')),
+                    );
+                    return (
+                      <tr
+                        key={row.id}
+                        onClick={() => setSelectedRowId(row.id)}
+                        className={`cursor-pointer transition-colors ${
+                          isSelected
+                            ? 'bg-oe-blue/10 font-medium'
+                            : 'hover:bg-surface-secondary/50'
+                        }`}
+                      >
+                        <td className="tabular-nums">{row.reference_month}</td>
+                        <td>
+                          <span className="font-medium text-content-primary">{row.uf}</span>
+                          {row.regional_code && (
+                            <span className="ml-1 text-2xs text-content-quaternary">
+                              {row.regional_code}
+                            </span>
+                          )}
+                          {isExample && (
+                            <span className="ml-1.5 inline-block rounded bg-surface-secondary px-1.5 py-0.2 text-2xs font-semibold uppercase tracking-wider text-content-tertiary">
+                              Exemplo
+                            </span>
+                          )}
+                        </td>
+                        <td>{row.project_standard}</td>
+                        <td className="text-2xs">
+                          {row.tax_regime === 'desonerado'
+                            ? t('price_index.cub_regime_des', { defaultValue: 'Exempt (desonerado)' })
+                            : t('price_index.cub_regime_nao', { defaultValue: 'Not exempt (oneração)' })}
+                        </td>
+                        <td className="text-right font-medium tabular-nums">
+                          {money(locale, row.total_sqm)}
+                        </td>
+                        <td className="max-w-[220px] truncate text-2xs" title={row.attribution}>
+                          {row.source_url ? (
+                            <a
+                              href={row.source_url}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="underline"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              {row.sinduscon_name || row.source_name || 'Sinduscon/CBIC'}
+                            </a>
+                          ) : (
+                            row.sinduscon_name || row.source_name || 'Sinduscon/CBIC'
+                          )}
+                        </td>
+                        <td className="text-2xs tabular-nums">{row.published_at ?? '—'}</td>
+                        <td className="text-center">
+                          {row.verified ? (
+                            <Badge variant="success" size="sm">
+                              <BadgeCheck size={11} className="mr-0.5" aria-hidden />
+                              {t('price_index.cub_verified', { defaultValue: 'Checked' })}
+                            </Badge>
+                          ) : (
+                            <Badge variant="warning" size="sm">
+                              {t('price_index.cub_unverified', { defaultValue: 'Draft' })}
+                            </Badge>
+                          )}
+                        </td>
+                        {canManage && (
+                          <td className="text-right" onClick={(e) => e.stopPropagation()}>
+                            <div className="inline-flex items-center gap-1">
                             <button
                               type="button"
                               className="rounded p-1 text-content-tertiary hover:bg-surface-secondary hover:text-content-primary"

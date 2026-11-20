@@ -65,8 +65,13 @@ export function CostPerAreaBenchmark({
 }: CostPerAreaBenchmarkProps) {
   const { t } = useTranslation();
 
-  const hasArea = typeof grossFloorArea === 'number' && grossFloorArea > 0 && directCost > 0;
-  const costPerM2 = hasArea ? directCost / (grossFloorArea as number) : 0;
+  const [customArea, setCustomArea] = useState<number | null>(null);
+  const [tempArea, setTempArea] = useState('');
+  const [isEditingArea, setIsEditingArea] = useState(false);
+
+  const effectiveArea = customArea ?? grossFloorArea;
+  const hasArea = typeof effectiveArea === 'number' && effectiveArea > 0 && directCost > 0;
+  const costPerM2 = hasArea ? directCost / (effectiveArea as number) : 0;
 
   const { data } = useQuery({
     // Round the key so tiny recomputations do not refetch on every keystroke.
@@ -102,17 +107,57 @@ export function CostPerAreaBenchmark({
     [locale],
   );
 
-  if (!hasArea) return null;
+  const helpText = t('boq.cost_per_area_help', {
+    defaultValue:
+      'Cost per m2 is the Orçamento direct cost divided by the gross floor area, taken from the project area or $GFA variable. The comparison positions that figure against your own past projects that recorded both a cost and an area.',
+  });
+
+  if (!hasArea) {
+    return (
+      <div
+        className="mt-3 rounded-xl border border-dashed border-border-light bg-surface-primary/60 px-4 py-3"
+        data-testid="boq-cost-per-area-strip"
+      >
+        <div className="flex flex-wrap items-center justify-between gap-3 text-xs">
+          <div className="flex items-center gap-2 text-content-secondary">
+            <Ruler size={16} className="text-oe-blue" />
+            <span>
+              {t('boq.no_area_prompt', {
+                defaultValue:
+                  'Área construída não informada para este projeto. Informe a área (m²) para calcular o custo direto/m² e comparar com o CUB da sua região:',
+              })}
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <input
+              type="number"
+              min="1"
+              placeholder="Ex: 10800"
+              value={tempArea}
+              onChange={(e) => setTempArea(e.target.value)}
+              className="w-28 rounded-md border border-border bg-surface-primary px-2 py-1 text-xs tabular-nums text-content-primary"
+            />
+            <button
+              type="button"
+              disabled={!Number(tempArea) || Number(tempArea) <= 0}
+              onClick={() => {
+                const n = Number(tempArea);
+                if (n > 0) setCustomArea(n);
+              }}
+              className="rounded-md bg-oe-blue px-3 py-1 text-xs font-medium text-white hover:bg-oe-blue-hover disabled:opacity-50"
+            >
+              {t('common.apply', { defaultValue: 'Aplicar' })}
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const portfolio = data?.own_portfolio ?? null;
   const median = portfolio ? Number(portfolio.median) : null;
   const percentile =
     typeof data?.percentile_vs_own === 'number' ? Math.round(data.percentile_vs_own) : null;
-
-  const helpText = t('boq.cost_per_area_help', {
-    defaultValue:
-      'Cost per m2 is the Orçamento direct cost divided by the gross floor area, taken from the $GFA variable. The comparison positions that figure against your own past projects that recorded both a cost and an area. The percentile is how many of those projects came in below this Orçamento, so a lower percentile means a cheaper Orçamento than most of your work.',
-  });
 
   return (
     <div
@@ -126,15 +171,20 @@ export function CostPerAreaBenchmark({
           </span>
           <div>
             <p className="text-2xs uppercase tracking-wide text-content-tertiary">
-              {t('boq.cost_per_area_label', { defaultValue: 'Cost per m2' })}
+              {isBrazil
+                ? t('boq.direct_cost_per_area_label', { defaultValue: 'Custo direto por m² (sem BDI)' })
+                : t('boq.cost_per_area_label', { defaultValue: 'Cost per m2' })}
             </p>
             <p className="text-lg font-semibold text-content-primary tabular-nums">
               {fmtWithCurrency(costPerM2, locale || 'de-DE', currencyCode)}
               <span className="ml-1 text-xs font-normal text-content-tertiary">
                 {t('boq.cost_per_area_over', {
-                  defaultValue: 'over {{area}} m2',
-                  area: areaFmt.format(grossFloorArea as number),
+                  defaultValue: 'sobre {{area}} m²',
+                  area: areaFmt.format(effectiveArea as number),
                 })}
+                <span className="ml-1 text-2xs text-content-quaternary">
+                  ({customArea ? 'área informada' : 'área do projeto'})
+                </span>
               </span>
             </p>
           </div>
@@ -191,6 +241,15 @@ export function CostPerAreaBenchmark({
               <span className="text-2xs text-content-tertiary">
                 ({cubData.reference_month})
               </span>
+              {Boolean(
+                cubData.notes &&
+                  (cubData.notes.toUpperCase().includes('EXEMPLO') ||
+                    cubData.notes.toUpperCase().includes('DEMO')),
+              ) && (
+                <span className="rounded bg-surface-secondary px-1 py-0.2 text-2xs font-semibold uppercase tracking-wider text-content-quaternary">
+                  Exemplo
+                </span>
+              )}
             </div>
             <div className="flex items-center gap-2">
               <p className="text-sm font-semibold text-content-primary tabular-nums">
@@ -206,7 +265,7 @@ export function CostPerAreaBenchmark({
                         ? 'bg-semantic-warning/15 text-semantic-warning'
                         : 'bg-oe-blue/15 text-oe-blue'
                   }`}
-                  title={`Diferença de ${cubDelta >= 0 ? '+' : ''}${cubDelta.toFixed(1)}% em relação ao CUB ${cubData.uf}`}
+                  title={`Diferença de ${cubDelta >= 0 ? '+' : ''}${cubDelta.toFixed(1)}% em relação ao CUB ${cubData.uf} (R$ ${cubSqm.toFixed(2)}/m²)`}
                 >
                   Δ {cubDelta >= 0 ? `+${cubDelta.toFixed(1)}%` : `${cubDelta.toFixed(1)}%`}{' '}
                   {cubDelta >= 0
@@ -217,7 +276,7 @@ export function CostPerAreaBenchmark({
               <InfoHint
                 text={`${cubData.attribution}\n\n${t('boq.cub_disclaimer', {
                   defaultValue:
-                    'O CUB não inclui fundações, elevadores, instalações especiais, projetos e BDI. Comparação direta com o custo direto de execução.',
+                    'O CUB não inclui fundações, elevadores, instalações especiais, projetos e BDI. Comparação direta com o custo direto de execução da obra.',
                 })}`}
               />
             </div>
