@@ -30,7 +30,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import clsx from 'clsx';
 import { ArrowRight, ChevronDown, ChevronUp } from 'lucide-react';
-import { Card, CardContent, CardHeader, ErrorState, InfoHint, Skeleton } from '@/shared/ui';
+import { Card, CardContent, CardHeader, ErrorState, Skeleton } from '@/shared/ui';
 import { fmtDate } from '@/shared/lib/formatters';
 import { useProjectContextStore } from '@/stores/useProjectContextStore';
 import { getNumberLocale } from '@/stores/usePreferencesStore';
@@ -399,13 +399,6 @@ export function ValidationPortfolioCard() {
       />
       <CardContent>
         {body}
-        <InfoHint
-          className="mt-3"
-          text={t('dashboard.validation_portfolio.help', {
-            defaultValue:
-              'Each estimate shows the verdict of its stored validation reports; nothing is re-run here. A narrower check, such as the one-click estimate audit, does not clear findings from rule sets it did not run again, so those stay until a run of the same scope clears them. Checks from the BOQ editor are stored when you may create validation reports. A project takes the state of its worst estimate, so one unchecked estimate keeps a project at "Not validated" even if the others passed. This card covers every project you can open, not only the one selected at the top.',
-          })}
-        />
       </CardContent>
     </Card>
   );
