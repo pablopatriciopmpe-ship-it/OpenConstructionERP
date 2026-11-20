@@ -46271,7 +46271,7 @@ const resource = {
     "jobs.flow_step_4_desc": "Narrow the list by status or job kind, and search across the current page. Server-side pagination keeps the view responsive even with thousands of runs.",
     "jobs.flow_title": "How background jobs work",
     "jobs.mod_schedule": "Cronograma",
-    "jobs.mod_settings": "Settings",
+    "jobs.mod_settings": "Configurações",
     "jobs.mod_timeline": "Timeline",
     "rfq_bidding.page_title": "RFQ Bidding",
     "rfq_bidding.tab_rfqs": "RFQs",
