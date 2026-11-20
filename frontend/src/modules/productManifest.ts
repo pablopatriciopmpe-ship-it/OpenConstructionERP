@@ -23,6 +23,9 @@ export const PRODUCT_MODULE_IDS = new Set([
 /** Modules loaded for infrastructure but intentionally hidden from product navigation. */
 export const PRODUCT_INFRA_MODULE_IDS = new Set(['tendering']);
 
+/** The SaaS product does not mount the removed anonymous client-error sink. */
+export const PRODUCT_DISABLE_ERROR_REPORTING = true;
+
 /** Module ids exposed in the product module menu and sidebar. */
 export const PRODUCT_NAV_MODULE_IDS = new Set(
   [...PRODUCT_MODULE_IDS].filter((id) => !PRODUCT_INFRA_MODULE_IDS.has(id)),
