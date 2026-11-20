@@ -14651,7 +14651,7 @@ const resource = {
     "bim.landing_feat_compare_title": "Comparação de modelos",
     "bim.landing_feat_extract_desc": "Paredes, lajes, pilares, vigas, MEP, com propriedades, áreas, volumes e classificação.",
     "bim.landing_feat_extract_title": "Extração de elementos",
-    "bim.landing_feat_format_desc": "IFC e RVT são lidos pelos conversores {{brandName}}. CSV ou Excel para dados já convertidos.",
+    "bim.landing_feat_format_desc": "IFC (IFC2x3, IFC4, IFC4.3) é lido com geometria 3D real. CSV ou Excel para dados já convertidos. RVT: exporte para IFC.",
     "bim.landing_feat_format_title": "Agnóstico de formato",
     "bim.landing_feat_qty_desc": "Defina regras para extrair área, volume e comprimento, aplique em todo o modelo de uma só vez.",
     "bim.landing_feat_qty_title": "Mapas de quantitativos",

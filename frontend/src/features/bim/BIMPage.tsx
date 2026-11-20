@@ -1718,7 +1718,7 @@ function LandingPage({ projectId, onUploadComplete: _onUploadComplete, breadcrum
     { icon: Link2, color: 'bg-violet-50 dark:bg-violet-950/20 border-violet-100 dark:border-violet-800', ic: 'text-violet-500', title: t('bim.landing_feat_boq_title'), desc: t('bim.landing_feat_boq_desc') },
     { icon: Ruler, color: 'bg-orange-50 dark:bg-orange-950/20 border-orange-100 dark:border-orange-800', ic: 'text-orange-500', title: t('bim.landing_feat_qty_title'), desc: t('bim.landing_feat_qty_desc') },
     { icon: Building2, color: 'bg-pink-50 dark:bg-pink-950/20 border-pink-100 dark:border-pink-800', ic: 'text-pink-500', title: t('bim.landing_feat_compare_title'), desc: t('bim.landing_feat_compare_desc') },
-    { icon: Globe2, color: 'bg-cyan-50 dark:bg-cyan-950/20 border-cyan-100 dark:border-cyan-800', ic: 'text-cyan-500', title: t('bim.landing_feat_format_title'), desc: t('bim.landing_feat_format_desc') },
+    { icon: Globe2, color: 'bg-cyan-50 dark:bg-cyan-950/20 border-cyan-100 dark:border-cyan-800', ic: 'text-cyan-500', title: t('bim.landing_feat_format_title', { defaultValue: 'Formatos suportados' }), desc: t('bim.landing_feat_format_desc', { defaultValue: 'IFC (IFC2x3, IFC4, IFC4.3) é lido com geometria 3D real. CSV ou Excel para dados já convertidos. RVT: exporte para IFC.' }) },
   ];
 
   return (
