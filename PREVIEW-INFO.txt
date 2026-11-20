@@ -1,0 +1,3 @@
+source_ref=preview/ifc-geometria
+source_sha=b6e2dd47df2b401e8c40c283c0f076829d33352f
+backend=https://erp-teste.evolux-erp.workers.dev
