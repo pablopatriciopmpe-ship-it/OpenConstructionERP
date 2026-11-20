@@ -54,6 +54,9 @@ vi.mock('@/features/projects/useProjectProfile', () => ({
 }));
 
 import { Sidebar } from './Sidebar';
+import { useMenuLayoutStore } from './useMenuLayoutStore';
+import { DEFAULT_MENU_LAYOUT, MENU_MODE_IDS } from './menuLayout';
+import { navGroups } from './navCatalog';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { useModuleStore } from '@/stores/useModuleStore';
 import { useViewModeStore } from '@/stores/useViewModeStore';
@@ -105,6 +108,14 @@ beforeEach(() => {
 afterEach(() => cleanup());
 
 describe('the sidebar footer', () => {
+  it.each(MENU_MODE_IDS)('keeps approved modules reachable in %s mode', (mode) => {
+    useMenuLayoutStore.setState({ layout: { ...DEFAULT_MENU_LAYOUT, activeMode: mode } });
+    hidden.list = ['/schedule', '/measurement-book'];
+    const { container } = renderSidebar();
+    const destinations = new Set(Array.from(container.querySelectorAll('a[href]'), (a) => a.getAttribute('href')));
+    for (const item of navGroups.flatMap((group) => group.items)) expect(destinations.has(item.to), item.to).toBe(true);
+    for (const removed of ['/inbox', '/timeline', '/site-sensors', '/finance', '/tendering']) expect(destinations.has(removed)).toBe(false);
+  });
   it('shows product setup tiles without extension links', () => {
     renderSidebar();
     expect(button('Settings')).not.toBeNull();

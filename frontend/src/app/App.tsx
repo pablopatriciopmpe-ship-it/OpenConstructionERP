@@ -1,6 +1,7 @@
 // DDC-CWICR-OE: DataDrivenConstruction · OpenConstructionERP
 // Copyright (c) 2026 Artem Boiko / DataDrivenConstruction
 import { landingPath } from '@/shared/lib/workPrefs';
+import { OffersPage } from '@/features/offers/OffersPage';
 import { Suspense, lazy, useState, useCallback, useEffect, useLayoutEffect, useContext, createContext } from 'react';
 import { Routes, Route, Navigate, Outlet, useLocation, useMatch, useParams } from 'react-router-dom';
 import { AppLayout } from './layout';
@@ -1483,6 +1484,9 @@ export default function App() {
         <Route path="/boq" element={<P title="Bill of Quantities"><BOQListPage /></P>} />
         <Route path="/boq/:boqId" element={<P title="BOQ Editor"><BOQEditorPage /></P>} />
         <Route path="/boq/:boqId/offer" element={<P title="Customer offer"><OfferPage /></P>} />
+        <Route path="/offers" element={<P title="Propostas"><OffersPage /></P>} />
+        <Route path="/eac" element={<P title="Previsão de custo final"><CostControlPage /></P>} />
+        <Route path="/price-breakdown" element={<P title="Composição do preço"><MarkupsPage /></P>} />
         <Route path="/boq/:boqId/owner-schedule" element={<P title="Owner bid schedule"><OwnerSchedulePage /></P>} />
         <Route path="/templates" element={<P title="BOQ Templates"><TemplatesPage /></P>} />
         <Route path="/templates/:templateId" element={<P title="BOQ Template"><TemplateEditorPage /></P>} />

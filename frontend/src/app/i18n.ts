@@ -535,8 +535,7 @@ export function resolveInitialLanguage(): string {
   //    Portugal's Portuguese and every Mexican one in Spain's Spanish, with
   //    the regional file sitting right there unused. "de-CH" still resolves
   //    to "de", because we ship no de-CH.
-  const browserMatch = matchSupportedLanguage(navigator.language);
-  if (browserMatch) return browserMatch;
+  // This edition defaults to Brazil, irrespective of the browser language.
 
   // 4. Final fallback.
   return 'pt-BR';

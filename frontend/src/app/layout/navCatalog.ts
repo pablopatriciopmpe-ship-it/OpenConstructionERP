@@ -1067,7 +1067,7 @@ const PRODUCT_NAV_GROUPS = ALL_NAV_GROUPS
  * source catalogue remains grouped for route ownership and can be restored;
  * only the product-facing projection is flattened here. */
 const PRODUCT_AREA_DEFINITIONS = [
-  { id: 'area_overview', label: 'Visão geral', routes: new Set(['/']) },
+  { id: 'area_overview', label: 'Visão geral', routes: new Set(['/', '/reports', '/reporting']) },
   {
     id: 'area_projects', label: 'Projetos e quantitativos', routes: new Set([
       '/projects', '/files', '/takeoff?tab=measurements', '/dwg-takeoff', '/bim',
@@ -1083,17 +1083,24 @@ const PRODUCT_AREA_DEFINITIONS = [
   },
   {
     id: 'area_tracking', label: 'Acompanhamento', routes: new Set([
-      '/schedule', '/tasks', '/progress', '/measurement-book', '/changeorders', '/variations',
-      '/full-evm', '/cost-control', '/5d', '/cvr', '/postcalc', '/reports', '/reporting',
+      '/schedule', '/progress', '/measurement-book', '/changeorders', '/variations',
+      '/full-evm', '/cost-control', '/5d', '/cvr', '/postcalc', '/eac',
     ]),
   },
   {
     id: 'area_field', label: 'Campo', routes: new Set([
       '/daily-diary', '/field-reports', '/photos', '/punchlist', '/inspections', '/rfi',
-      '/meetings',
+      '/meetings', '/tasks',
     ]),
   },
 ] as const;
+
+const PRODUCT_ROUTE_LABELS: Record<string, string> = {
+  '/offers': 'Propostas', '/eac': 'Previsão de custo final', '/price-breakdown': 'Composição do preço',
+  '/reports': 'Relatórios', '/reporting': 'Indicadores físico-financeiros', '/preliminaries': 'Preliminares',
+  '/allowances': 'Provisões', '/price-index': 'Índices e reajuste', '/waste-factors': 'Perdas',
+  '/estimate-checks': 'Verificações do orçamento', '/labor-rates': 'Mão de obra', '/markups': 'BDI e acréscimos',
+};
 
 export const navGroups: NavGroup[] = PRODUCT_AREA_DEFINITIONS
   .map((area) => ({
@@ -1101,8 +1108,13 @@ export const navGroups: NavGroup[] = PRODUCT_AREA_DEFINITIONS
     labelKey: `product.${area.id}`,
     defaultLabel: area.label,
     defaultOpen: true,
-    items: PRODUCT_NAV_GROUPS.flatMap((group) => group.items)
-      .filter((item) => area.routes.has(item.to)),
+    items: [...area.routes].map((route) => {
+      const existing = PRODUCT_NAV_GROUPS.flatMap((group) => group.items).find((item) => item.to === route);
+      return existing
+        ? { ...existing, advancedOnly: false }
+        : { to: route, labelKey: `product.route.${route}`, defaultLabel: PRODUCT_ROUTE_LABELS[route] ?? route, icon: FileText,
+          moduleKey: route === '/estimate-checks' ? 'estimate-checks' : undefined };
+    }),
   }))
   .filter((group) => group.items.length > 0);
 

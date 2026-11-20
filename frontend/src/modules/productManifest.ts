@@ -42,7 +42,7 @@ export const PRODUCT_NAV_ROUTES = new Set([
   '/meetings', '/offers', '/preliminaries', '/allowances', '/price-index',
   '/waste-factors', '/estimate-checks', '/reports', '/reporting',
   '/drawing-compare', '/markups', '/quantities', '/resources', '/labor-rates',
-  '/validation', '/notifications', '/teams', '/users', '/settings',
+  '/validation', '/notifications', '/teams', '/users', '/settings', '/eac', '/price-breakdown',
 ]);
 
 /** Static nav keys used by catalogue rows whose manifest id differs from its feature id. */

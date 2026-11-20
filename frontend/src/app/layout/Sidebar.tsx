@@ -655,7 +655,7 @@ export function Sidebar({ onClose }: { onClose?: () => void }) {
   );
   // Under "More modules" the groups show what Advanced mode shows: the point
   // of the workspace is that the rest is one click away, not behind a switch.
-  const showAdvancedRows = isAdvanced || workspaceActive;
+  const showAdvancedRows = true;
   const [moreOpen, setMoreOpen] = useState<boolean>(() => readMoreOpen());
   useEffect(() => {
     try {
@@ -1240,6 +1240,12 @@ export function Sidebar({ onClose }: { onClose?: () => void }) {
   // is off screen. Under "More modules" the workspace's own rows are left out,
   // so no screen is listed twice.
   const visibleGroupItems = (group: NavGroup): NavItem[] => {
+    // Product areas are complete in every work mode; profile/demo preferences
+    // from the upstream edition cannot hide the approved product catalogue.
+    if (group.id.startsWith('area_')) {
+      return applyOrder(groupItems(group), menuLayout.order[group.id], (item) => item.to)
+        .filter((item) => !item.adminOnly || userRole === 'admin');
+    }
     // Hide entire group in simple mode if flagged
     if (group.hideInSimple && !showAdvancedRows) return [];
     // Menu-editor: a section the user has hidden drops out completely
@@ -1825,7 +1831,7 @@ export function Sidebar({ onClose }: { onClose?: () => void }) {
             reordering. Each row is only annotated: needed → sequence
             number; not needed → smaller + greyed; unconstrained → as
             default. Focus OFF / no profile → every row is default. */}
-        {(!(workspaceActive || modeActive) || moreExpanded) && loopGroups.map((group) => {
+        {loopGroups.map((group) => {
           const visibleItems = visibleGroupItems(group);
 
           // Skip group if no visible items. In normal mode this means
