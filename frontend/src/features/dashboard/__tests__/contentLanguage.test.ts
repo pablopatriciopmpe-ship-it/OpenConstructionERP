@@ -126,8 +126,8 @@ describe('validationSummary', () => {
 });
 
 describe('dashboard layout of the pack and the market cases', () => {
-  it('stacks both cards at full width so neither is stretched beside the other', () => {
-    expect(DASHBOARD_WIDGET_BY_ID.regional_pack?.defaultSpan).toBe(6);
-    expect(DASHBOARD_WIDGET_BY_ID.cases_market?.defaultSpan).toBe(6);
+  it('keeps both cards out of the product dashboard', () => {
+    expect(DASHBOARD_WIDGET_BY_ID.regional_pack).toBeUndefined();
+    expect(DASHBOARD_WIDGET_BY_ID.cases_market).toBeUndefined();
   });
 });
