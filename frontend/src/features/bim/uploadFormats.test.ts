@@ -95,7 +95,7 @@ describe('the shown list and the routing predicate cannot disagree', () => {
    * badge row made exactly that claim about .dwg.
    */
   it('files drawings as a handoff rather than as a BIM import', () => {
-    expect(extensionsInTier('handoff')).toEqual(expect.arrayContaining(['.dwg', '.dxf']));
+    expect(extensionsInTier('handoff')).toEqual(['.dxf']);
     expect(extensionsInTier('bim')).not.toContain('.dwg');
     expect(extensionsInTier('bim')).not.toContain('.dxf');
   });
@@ -116,11 +116,11 @@ describe('each tier holds exactly the formats that route to it', () => {
    * the assertion and the fact it is about.
    */
   it('routes native BIM models, and only those, to the bim tier', () => {
-    expect(extensionsInTier('bim')).toEqual(['.rvt', '.ifc']);
+    expect(extensionsInTier('bim')).toEqual(['.ifc']);
   });
 
   it('routes drawings to the handoff tier, so they leave for DWG Takeoff', () => {
-    expect(extensionsInTier('handoff')).toEqual(['.dwg', '.dxf']);
+    expect(extensionsInTier('handoff')).toEqual(['.dxf']);
   });
 });
 

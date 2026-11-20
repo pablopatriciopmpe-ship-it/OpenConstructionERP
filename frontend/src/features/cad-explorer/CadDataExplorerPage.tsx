@@ -4047,17 +4047,12 @@ export function CadDataExplorerPage() {
                     <div className="inline-flex flex-wrap items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/20">
                       <ShieldCheck size={14} className="text-emerald-500 dark:text-emerald-400 shrink-0" />
                       <span className="text-xs text-emerald-700 dark:text-emerald-300/90 font-medium">
-                        {t('common.local_processing', { defaultValue: '100% Local Processing \u00B7 Your files never leave your computer' })}
+                        {t('common.local_processing', { defaultValue: 'Seus arquivos são processados no servidor do Evolux Obras' })}
                       </span>
                       <span className="text-2xs text-emerald-500/40">|</span>
-                      <a
-                        href="https://github.com/datadrivenconstruction/cad2data-Revit-IFC-DWG-DGN-pipeline-with-conversion-validation-qto"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-2xs text-emerald-600/80 dark:text-emerald-400/70 hover:text-emerald-700 dark:hover:text-emerald-300 hover:underline whitespace-nowrap"
-                      >
-                        {t('common.powered_by_cad2data', { defaultValue: 'Powered by {{brandName}} Converters 2.0' })}
-                      </a>
+                      <span className="text-2xs text-emerald-600/80 dark:text-emerald-400/70 whitespace-nowrap">
+                        {t('common.powered_by_cad2data', { defaultValue: 'Leitura de IFC: IfcOpenShell (LGPL-3.0)' })}
+                      </span>
                     </div>
                   </div>
                 </div>

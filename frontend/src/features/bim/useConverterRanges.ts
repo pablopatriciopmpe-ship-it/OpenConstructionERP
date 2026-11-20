@@ -14,7 +14,11 @@ export function useConverterRanges(ids: readonly string[]): string {
     queryFn: () => fetchBIMConverters(),
     staleTime: 60_000,
   });
-  const byId = new Map((data?.converters ?? []).map((c) => [c.id, c.format_range]));
+  const byId = new Map(
+    (data?.converters ?? [])
+      .filter((c) => !c.disabled && c.health !== 'disabled')
+      .map((c) => [c.id, c.format_range]),
+  );
   return ids
     .map((id) => byId.get(id))
     .filter((range): range is string => Boolean(range))
