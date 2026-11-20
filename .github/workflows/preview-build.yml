@@ -1,20 +1,12 @@
 name: Preview build (frontend)
 
-# Compila o frontend de verdade (Vite, sem o dist pronto do PyPI) num runner de
-# 16 GB e publica o resultado numa branch `dist/<branch>` que a Vercel serve como
-# estático. Não usa segredos: só o GITHUB_TOKEN do próprio workflow.
-#
-# Como usar: dê push numa branch `preview/<nome>`. O destino do proxy /api vem de
-# deploy/preview-backend-url.txt (ou do input backend_url no disparo manual).
-# Para trocar o backend: edite esse arquivo e dê push de novo.
-
 on:
   push:
     branches: ['preview/**']
   workflow_dispatch:
     inputs:
       backend_url:
-        description: 'URL https do backend para o proxy /api (vazio = deploy/preview-backend-url.txt)'
+        description: 'URL HTTPS do backend de teste'
         required: false
         default: ''
 
@@ -31,40 +23,32 @@ jobs:
     timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
           cache: npm
           cache-dependency-path: frontend/package-lock.json
-
       - name: Resolver URL do backend
-        id: be
+        id: backend
         env:
           INPUT_URL: ${{ github.event.inputs.backend_url }}
         run: |
           url="${INPUT_URL:-}"
-          if [ -z "$url" ] && [ -f deploy/preview-backend-url.txt ]; then
-            url="$(tr -d ' \r\n' < deploy/preview-backend-url.txt)"
-          fi
+          if [ -z "$url" ] && [ -f deploy/preview-backend-url.txt ]; then url="$(tr -d ' \r\n' < deploy/preview-backend-url.txt)"; fi
           url="${url%/}"
-          if ! printf '%s' "$url" | grep -Eq '^https://[A-Za-z0-9.-]+(:[0-9]+)?$'; then
-            echo "::error::URL do backend ausente ou inválida (esperado https://host): '$url'"
-            exit 1
-          fi
+          printf '%s' "$url" | grep -Eq '^https://[A-Za-z0-9.-]+(:[0-9]+)?$' || { echo "URL de backend inválida"; exit 1; }
           echo "url=$url" >> "$GITHUB_OUTPUT"
-
       - name: Instalar dependências
         working-directory: frontend
         run: npm ci --no-audit --no-fund --legacy-peer-deps
-
-      - name: Build do Vite (sem typecheck, heap 12 GB)
+      - name: Build do Vite
         working-directory: frontend
-        run: node --max-old-space-size=12288 ./node_modules/vite/bin/vite.js build
-
-      - name: Montar branch de publicação
+        run: |
+          /usr/bin/time -v -o /tmp/f6-vite-time.txt node --max-old-space-size=12288 ./node_modules/vite/bin/vite.js build
+          cat /tmp/f6-vite-time.txt
+      - name: Publicar preview
         env:
-          BACKEND_URL: ${{ steps.be.outputs.url }}
+          BACKEND_URL: ${{ steps.backend.outputs.url }}
           SRC_REF: ${{ github.ref_name }}
           SRC_SHA: ${{ github.sha }}
         run: |
@@ -72,29 +56,10 @@ jobs:
           out="$RUNNER_TEMP/publish"
           mkdir -p "$out/frontend"
           cp -r frontend/dist "$out/frontend/dist"
-          python3 - "$out/frontend/vercel.json" <<'PY'
-          import json, os, sys
-          cfg = {
-              "$schema": "https://openapi.vercel.sh/vercel.json",
-              "framework": None,
-              "installCommand": "echo prebuilt",
-              "buildCommand": "echo prebuilt",
-              "outputDirectory": "dist",
-              "routes": [
-                  {"src": "^/api/(.*)$", "dest": os.environ["BACKEND_URL"] + "/api/$1"},
-                  {"handle": "filesystem"},
-                  {"src": "^/(?!api/|assets/|cesium/|pwa/|brand/|favicon|manifest|sw\\.js|workbox-)(.*)$", "dest": "/index.html"},
-              ],
-          }
-          json.dump(cfg, open(sys.argv[1], "w"), indent=2)
-          PY
           printf 'source_ref=%s\nsource_sha=%s\nbackend=%s\n' "$SRC_REF" "$SRC_SHA" "$BACKEND_URL" > "$out/PREVIEW-INFO.txt"
-          branch="dist/${SRC_REF//\//-}"
           cd "$out"
-          git init -q -b "$branch"
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A
-          git commit -q -m "preview dist de ${SRC_REF} @ ${SRC_SHA}"
-          git push -q --force "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" "$branch"
-          echo "Publicado em ${branch} (backend ${BACKEND_URL})" >> "$GITHUB_STEP_SUMMARY"
+          git init -q -b "dist/${SRC_REF//\//-}"
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add -A && git commit -q -m "preview dist de ${SRC_REF} @ ${SRC_SHA}"
+          git push -q --force "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" "dist/${SRC_REF//\//-}"

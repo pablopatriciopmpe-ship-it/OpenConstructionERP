@@ -98,6 +98,7 @@ import { changeKindLabel } from '@/features/variations/VariationSourcePicker';
 import { SensitivityChart } from './SensitivityChart';
 import { CostRiskPanel } from './CostRiskPanel';
 import { MarkupPanel } from './MarkupPanel';
+import { BdiPanel } from './BdiPanel';
 import { levyAdjusted } from './markupLevy';
 import BOQGrid from './BOQGrid';
 import type { BOQGridHandle } from './BOQGrid';
@@ -5998,6 +5999,7 @@ export function BOQEditorPage() {
           />
         </div>
       )}
+      {boqId && <BdiPanel boqId={boqId} readOnly={Boolean(boq?.is_locked)} />}
 
       {/* ── Cost per m2 benchmark strip ──────────────────────────────────
           Self-hides when the BOQ has no $GFA variable to divide by. */}

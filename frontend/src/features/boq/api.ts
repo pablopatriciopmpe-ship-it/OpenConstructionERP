@@ -55,6 +55,25 @@ export interface BOQ {
   updated_at: string;
 }
 
+export interface BdiComponentValues {
+  ac: string;
+  s: string;
+  r: string;
+  g: string;
+  df: string;
+  l: string;
+  taxes: Array<{ name: string; rate: string }>;
+}
+
+export interface BdiResponse extends BdiComponentValues {
+  bdi_percent: string;
+  effective_percent: string;
+  direct_cost: string;
+  bdi_amount: string;
+  total_with_bdi: string;
+  sinapi_reference?: { uf?: string; regime?: string; month?: string } | null;
+}
+
 /** One bill as the bill register lists it, with its money and line count. */
 export interface BOQListRow {
   id: string;
@@ -2056,6 +2075,9 @@ export const boqApi = {
   /** Rename an estimate or change its description. */
   update: (boqId: string, data: { name?: string; description?: string; metadata?: Record<string, unknown> }) =>
     apiPatch<BOQ>(`/v1/boq/boqs/${boqId}`, data),
+  getBdi: (boqId: string) => apiGet<BdiResponse>(`/v1/boq/boqs/${boqId}/bdi/`),
+  updateBdi: (boqId: string, data: BdiComponentValues) =>
+    apiPut<BdiResponse>(`/v1/boq/boqs/${boqId}/bdi/`, data),
   /** Client, site, payment terms and hidden columns of the project's estimate PDF. */
   getPdfDetails: (projectId: string) => apiGet<PdfDetails>(`/v1/boq/projects/${projectId}/pdf-details/`),
   putPdfDetails: (projectId: string, body: PdfDetails) =>

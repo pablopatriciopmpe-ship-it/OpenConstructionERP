@@ -72,6 +72,7 @@ import { compareNames } from '@/shared/lib/collator';
 import { SemanticSearchOffHint, useSemanticSearchOff } from '@/features/settings/SemanticSearchOffHint';
 import { ModuleProcessesNotice } from '@/features/processes';
 import { SEMANTIC_PROCESS_IDS } from '@/features/processes/api';
+import { SinapiImportPanel } from './SinapiImportPanel';
 
 /* ── Types ─────────────────────────────────────────────────────────────── */
 
@@ -1287,6 +1288,8 @@ export function CostsPage() {
           </>
         }
       />
+
+      <SinapiImportPanel />
 
       <DismissibleInfo
         storageKey="costs"
