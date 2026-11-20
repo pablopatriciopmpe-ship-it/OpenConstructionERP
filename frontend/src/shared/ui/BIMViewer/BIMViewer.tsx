@@ -1030,21 +1030,61 @@ export function BIMViewer({
     },
     [placeholderDismissKey],
   );
-  const isPlaceholderGeometry = useMemo(() => {
-    // Model-level signal lights the banner instantly on first paint —
-    // metadata.geometry_type is set by the text-IFC fallback path.
-    const geomType = modelMetadata?.['geometry_type'];
-    if (typeof geomType === 'string' && geomType === 'placeholder') return true;
-    if (!elements || elements.length === 0) return false;
-    // Element-level fallback — covers older uploads where the metadata
-    // bag wasn't populated yet but element flags were.
-    for (const el of elements) {
-      if (el.is_placeholder === true) return true;
-      const flag = (el.properties as Record<string, unknown> | undefined)?.is_placeholder;
-      if (flag === true || flag === 'true' || flag === 1) return true;
+
+  /** Informative line for real geometry (IfcOpenShell mesh generation) */
+  const realGeometryDismissKey = modelId
+    ? `oe_bim_real_geometry_banner_dismissed:${modelId}`
+    : null;
+  const [realGeometryDismissed, setRealGeometryDismissedState] = useState<boolean>(() => {
+    if (!realGeometryDismissKey) return false;
+    try {
+      return localStorage.getItem(realGeometryDismissKey) === '1';
+    } catch {
+      return false;
     }
-    return false;
-  }, [elements, modelMetadata]);
+  });
+  useEffect(() => {
+    if (!realGeometryDismissKey) {
+      setRealGeometryDismissedState(false);
+      return;
+    }
+    try {
+      setRealGeometryDismissedState(
+        localStorage.getItem(realGeometryDismissKey) === '1',
+      );
+    } catch {
+      setRealGeometryDismissedState(false);
+    }
+  }, [realGeometryDismissKey]);
+  const setRealGeometryDismissed = useCallback(
+    (val: boolean) => {
+      setRealGeometryDismissedState(val);
+      if (!realGeometryDismissKey) return;
+      try {
+        if (val) localStorage.setItem(realGeometryDismissKey, '1');
+        else localStorage.removeItem(realGeometryDismissKey);
+      } catch {
+        /* storage unavailable */
+      }
+    },
+    [realGeometryDismissKey],
+  );
+
+  const isPlaceholderGeometry = useMemo(() => {
+    return modelMetadata?.['geometry_quality'] === 'placeholder';
+  }, [modelMetadata]);
+
+  const isRealGeometry = useMemo(() => {
+    return modelMetadata?.['geometry_quality'] === 'real';
+  }, [modelMetadata]);
+
+  const elementsWithGeometry = typeof modelMetadata?.['elements_with_geometry'] === 'number'
+    ? (modelMetadata['elements_with_geometry'] as number)
+    : (elements?.filter((e) => e.mesh_url || (e.properties as Record<string, unknown> | undefined)?.has_mesh).length ?? 0);
+
+  const totalModelElements = typeof modelMetadata?.['element_count'] === 'number'
+    ? (modelMetadata['element_count'] as number)
+    : (elementCount || elements?.length || 0);
 
   /** "Generated geometry" caption dismissal, same per-model persistence as the
    *  placeholder banner above but a separate decision (and a separate key) so
@@ -3480,24 +3520,16 @@ export function BIMViewer({
             <div className="text-xs leading-relaxed">
               <span className="font-semibold">
                 {t('bim.placeholder_banner.title', {
-                  defaultValue: 'Placeholder geometry',
+                  defaultValue: 'Geometria de espaço reservado',
                 })}
               </span>
               <span>{' - '}</span>
               <span>
                 {t('bim.placeholder_banner.body', {
                   defaultValue:
-                    'install DDC IFC Converter for accurate meshes.',
+                    'Este modelo foi processado sem malhas 3D detalhadas; caixas representativas são exibidas no visualizador.',
                 })}
-              </span>{' '}
-              <a
-                href="https://github.com/datadrivenconstruction/cad2data-Revit-IFC-DWG"
-                target="_blank"
-                rel="noreferrer"
-                className="font-medium underline underline-offset-2 hover:text-amber-700 dark:hover:text-amber-200"
-              >
-                {t('bim.placeholder_banner.learn_more', { defaultValue: 'Learn more →' })}
-              </a>
+              </span>
             </div>
             <button
               type="button"
@@ -3507,6 +3539,38 @@ export function BIMViewer({
               className="ml-1 rounded p-0.5 text-amber-700/80 hover:bg-amber-200/60 hover:text-amber-900 dark:text-amber-300/80 dark:hover:bg-amber-900/40 dark:hover:text-amber-100"
             >
               <X size={14} />
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Informative line for real geometry */}
+      {isRealGeometry && !realGeometryDismissed && (
+        <div
+          data-testid="bim-real-geometry-banner"
+          className="absolute top-3 left-1/2 -translate-x-1/2 z-20 pointer-events-none flex justify-center px-2 max-w-[90%]"
+        >
+          <div
+            className="pointer-events-auto flex items-center gap-2 rounded-lg border border-slate-300/80 bg-slate-50/95 px-3 py-1.5 text-slate-800 shadow-md backdrop-blur-sm text-2xs dark:border-slate-600/60 dark:bg-slate-900/90 dark:text-slate-100"
+            role="status"
+            aria-live="polite"
+          >
+            <Box size={14} className="text-emerald-600 dark:text-emerald-400 shrink-0" />
+            <span>
+              {t('bim.real_geometry_info', {
+                defaultValue: '{{com_malha}} de {{total}} elementos com 3D; os demais são dados sem forma no IFC',
+                com_malha: elementsWithGeometry,
+                total: totalModelElements,
+              })}
+            </span>
+            <button
+              type="button"
+              onClick={() => setRealGeometryDismissed(true)}
+              aria-label={t('common.dismiss', { defaultValue: 'Dismiss' })}
+              data-testid="bim-real-geometry-banner-dismiss"
+              className="ml-1 rounded p-0.5 text-slate-500 hover:bg-slate-200/60 hover:text-slate-800 dark:text-slate-400 dark:hover:bg-slate-800/40 dark:hover:text-slate-200"
+            >
+              <X size={12} />
             </button>
           </div>
         </div>
