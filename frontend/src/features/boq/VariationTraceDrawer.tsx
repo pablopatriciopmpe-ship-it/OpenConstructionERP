@@ -196,7 +196,7 @@ export function VariationTraceDrawer({
     }
     const source = trace.contract_line_id
       ? t('boq.variation_trace_to_contract_line', { defaultValue: 'a contract line' })
-      : t('boq.variation_trace_to_position', { defaultValue: 'an estimate position' });
+      : t('boq.variation_trace_to_position', { defaultValue: 'an Orçamento position' });
     return t('boq.variation_trace_current_summary', {
       defaultValue: 'Traced to {{source}} as {{kind}}.',
       source,
@@ -217,7 +217,7 @@ export function VariationTraceDrawer({
         <p className="text-xs text-content-secondary">
           {t('boq.variation_trace_intro', {
             defaultValue:
-              'Name the contract line or estimate position this line comes from, and say what the variation does to it. The kind is your statement: the bill checks it against the numbers and tells you where they disagree.',
+              'Name the contract line or Orçamento position this line comes from, and say what the variation does to it. The kind is your statement: the bill checks it against the numbers and tells you where they disagree.',
           })}
         </p>
 

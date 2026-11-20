@@ -929,7 +929,7 @@ export function DocumentsPage() {
   if (!projectId) {
     return (
       <div className="w-full px-5 py-4 space-y-4 animate-fade-in">
-        <Breadcrumb items={[{ label: t('nav.dashboard', 'Dashboard'), to: '/' }, { label: t('nav.documents', 'Documents') }]} />
+        <Breadcrumb items={[{ label: t('nav.dashboard', 'Painel'), to: '/' }, { label: t('nav.documents', 'Documents') }]} />
         <RequiresProject
           emptyHint={t('documents.select_project_hint', { defaultValue: 'Use the project switcher in the header to select a project first.' })}
         >{null}</RequiresProject>
@@ -945,7 +945,7 @@ export function DocumentsPage() {
       onDrop={handleDrop}
     >
       <Breadcrumb items={[
-        { label: t('nav.dashboard', 'Dashboard'), to: '/' },
+        { label: t('nav.dashboard', 'Painel'), to: '/' },
         { label: t('nav.documents', 'Documents') },
         ...(activeProjectName ? [{ label: activeProjectName }] : []),
       ]} />
@@ -1488,7 +1488,7 @@ export function DocumentsPage() {
                                 className="flex w-full items-center gap-2 px-3 py-2 text-xs text-content-primary hover:bg-surface-secondary transition-colors"
                               >
                                 <Ruler size={14} className="text-oe-blue" />
-                                {t('documents.open_in_takeoff', { defaultValue: 'Measure & Takeoff' })}
+                                {t('documents.open_in_takeoff', { defaultValue: 'Measure & Levantamento de quantitativos' })}
                               </button>
                             )}
                             {(doc.name.toLowerCase().endsWith('.dwg') || doc.name.toLowerCase().endsWith('.dxf')) && (
@@ -1498,7 +1498,7 @@ export function DocumentsPage() {
                                 className="flex w-full items-center gap-2 px-3 py-2 text-xs text-content-primary hover:bg-surface-secondary transition-colors"
                               >
                                 <Ruler size={14} className="text-oe-blue" />
-                                {t('documents.open_in_dwg_takeoff', { defaultValue: 'Open in DWG Takeoff' })}
+                                {t('documents.open_in_dwg_takeoff', { defaultValue: 'Open in DWG Levantamento de quantitativos' })}
                               </button>
                             )}
                             {(doc.name.toLowerCase().endsWith('.rvt') || doc.name.toLowerCase().endsWith('.ifc') || doc.name.toLowerCase().endsWith('.nwd') || doc.name.toLowerCase().endsWith('.nwc')) && (

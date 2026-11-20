@@ -52,7 +52,7 @@ export function QuoteCapturePage() {
     onSuccess: (q: { id: string }) => {
       setSelected(q.id);
       setTab('review');
-      addToast({ type: 'success', title: t('quote_capture.captured', 'Quote read, please review it') });
+      addToast({ type: 'success', title: t('quote_capture.captured', 'Cotação read, please review it') });
     },
     onError: (e: unknown) => addToast({ type: 'error', title: getErrorMessage(e) }),
   };
@@ -66,10 +66,10 @@ export function QuoteCapturePage() {
   return (
     <div className="space-y-5 animate-fade-in">
       <PageHeader
-        srTitle={t('quote_capture.title', 'Quote capture and levelling')}
+        srTitle={t('quote_capture.title', 'Cotação capture and levelling')}
         subtitle={t(
           'quote_capture.subtitle',
-          'Read supplier quotes from PDF, scans, Excel or email, check every value against the document, level them and confirm.',
+          'Read supplier Cotações from PDF, scans, Excel or email, check every value against the document, level them and confirm.',
         )}
       />
 
@@ -90,7 +90,7 @@ export function QuoteCapturePage() {
           </select>
         </label>
         <label className="cursor-pointer rounded bg-oe-blue px-3 py-1.5 text-sm text-white">
-          {uploadMut.isPending ? t('quote_capture.reading', 'Reading...') : t('quote_capture.upload', 'Upload quote')}
+          {uploadMut.isPending ? t('quote_capture.reading', 'Reading...') : t('quote_capture.upload', 'Upload Cotação')}
           <input
             type="file"
             accept={ACCEPT}
@@ -120,13 +120,13 @@ export function QuoteCapturePage() {
       </div>
 
       <details className="rounded border p-2 text-sm">
-        <summary className="cursor-pointer">{t('quote_capture.paste', 'Paste a quote from an email')}</summary>
+        <summary className="cursor-pointer">{t('quote_capture.paste', 'Paste a Cotação from an email')}</summary>
         <textarea
           className="oe-textarea mt-2 h-32 font-mono"
           dir="auto"
           value={pasted}
           onChange={(e) => setPasted(e.target.value)}
-          aria-label={t('quote_capture.paste', 'Paste a quote from an email')}
+          aria-label={t('quote_capture.paste', 'Paste a Cotação from an email')}
         />
         <button
           type="button"
@@ -134,7 +134,7 @@ export function QuoteCapturePage() {
           disabled={!pasted.trim() || textMut.isPending}
           onClick={() => textMut.mutate(pasted, { ...onDone, onSuccess: (q) => { setPasted(''); onDone.onSuccess(q); } })}
         >
-          {t('quote_capture.read_text', 'Read quote')}
+          {t('quote_capture.read_text', 'Read Cotação')}
         </button>
       </details>
 
@@ -144,7 +144,7 @@ export function QuoteCapturePage() {
         <div className="grid gap-4 xl:grid-cols-[260px_1fr]">
           <ul className="flex flex-col gap-1" data-testid="quote-list">
             {(quotesQ.data ?? []).length === 0 && (
-              <li className="text-sm text-content-secondary">{t('quote_capture.empty', 'No quotes captured yet.')}</li>
+              <li className="text-sm text-content-secondary">{t('quote_capture.empty', 'No Cotações captured yet.')}</li>
             )}
             {(quotesQ.data ?? []).map((q) => (
               <li key={q.id}>
@@ -166,7 +166,7 @@ export function QuoteCapturePage() {
             {quoteQ.data ? (
               <QuoteReview key={quoteQ.data.id + quoteQ.data.status} quote={quoteQ.data} />
             ) : (
-              <p className="text-sm text-content-secondary">{t('quote_capture.pick', 'Pick a quote or upload one.')}</p>
+              <p className="text-sm text-content-secondary">{t('quote_capture.pick', 'Pick a Cotação or upload one.')}</p>
             )}
           </div>
         </div>

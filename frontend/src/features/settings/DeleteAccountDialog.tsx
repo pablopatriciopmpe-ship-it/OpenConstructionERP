@@ -111,7 +111,7 @@ export function DeleteAccountDialog({
           <p className="mt-2 text-center text-sm leading-relaxed text-content-secondary">
             {t('settings.delete_account_warning', {
               defaultValue:
-                'This permanently removes your personal data and signs you out everywhere. Projects and history you created stay in the workspace but are no longer tied to your name. This cannot be undone.',
+                'This permanently removes your personal data and signs you out everywhere. Projects and history you created stay in the Espaço de trabalho but are no longer tied to your name. This cannot be undone.',
             })}
           </p>
 

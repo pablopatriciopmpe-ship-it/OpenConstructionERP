@@ -361,7 +361,7 @@ function DeleteCatalogDialog({
         message:
           mode === 'keep_items'
             ? t('costs_catalogs.deleted_kept_items', {
-                defaultValue: '{{count}} items kept in the cost database',
+                defaultValue: '{{count}} items kept in the Banco de custos',
                 count: data.items_affected,
               })
             : t('costs_catalogs.deleted_with_items', {
@@ -433,7 +433,7 @@ function DeleteCatalogDialog({
               <span className="block text-xs text-content-tertiary mt-0.5">
                 {t('costs_catalogs.delete_keep_items_hint', {
                   defaultValue:
-                    'Only the catalog is removed. Its {{count}} items stay in the cost database without a catalog.',
+                    'Only the catalog is removed. Its {{count}} items stay in the Banco de custos without a catalog.',
                   count: catalog.item_count,
                 })}
               </span>
@@ -455,7 +455,7 @@ function DeleteCatalogDialog({
               <span className="block text-xs text-content-tertiary mt-0.5">
                 {t('costs_catalogs.delete_delete_items_hint', {
                   defaultValue:
-                    'The catalog and all {{count}} items in it are removed from the cost database.',
+                    'The catalog and all {{count}} items in it are removed from the Banco de custos.',
                   count: catalog.item_count,
                 })}
               </span>

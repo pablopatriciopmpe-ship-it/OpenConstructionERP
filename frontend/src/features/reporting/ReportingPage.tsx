@@ -526,7 +526,7 @@ export function ReportingPage() {
         }),
         message: t('reporting.recalculate_queued_msg', {
           defaultValue:
-            'Snapshots are being recomputed and the dashboard will refresh as they arrive. Projects still showing a dash had no data to snapshot yet.',
+            'Snapshots are being recomputed and the Painel will refresh as they arrive. Projects still showing a dash had no data to snapshot yet.',
         }),
       });
       // Refresh just the KPI map (and the active project's stats) — no need
@@ -598,7 +598,7 @@ export function ReportingPage() {
           ...(activeProjectName
             ? [{ label: activeProjectName, to: `/projects/${activeProjectId}` }]
             : []),
-          { label: t('nav.reporting_dashboards', { defaultValue: 'Reporting Dashboards' }) },
+          { label: t('nav.reporting_dashboards', { defaultValue: 'Reporting Painéis' }) },
         ]}
       />
 
@@ -607,9 +607,9 @@ export function ReportingPage() {
           action, routed through the shared PageHeader so it inherits the
           items-center midline and min-h-9 rules (audit S7). */}
       <PageHeader
-        srTitle={t('nav.reporting_dashboards', { defaultValue: 'Reporting Dashboards' })}
+        srTitle={t('nav.reporting_dashboards', { defaultValue: 'Reporting Painéis' })}
         subtitle={t('reporting.subtitle', {
-          defaultValue: 'Role-based KPI dashboards built from live project data.',
+          defaultValue: 'Role-based KPI Painéis built from live project data.',
         })}
         actions={
           <div className="flex items-center gap-2">
@@ -635,7 +635,7 @@ export function ReportingPage() {
           confused with (audit IA-overlap finding). */}
       <DismissibleInfo
         storageKey="reporting"
-        title={t('reporting.info_title', { defaultValue: 'Role-based project dashboards' })}
+        title={t('reporting.info_title', { defaultValue: 'Role-based project Painéis' })}
         links={[
           {
             label: t('reporting.info_link_analytics', { defaultValue: 'Cross-project analytics' }),
@@ -649,7 +649,7 @@ export function ReportingPage() {
       >
         {t('reporting.info_body', {
           defaultValue:
-            'Live KPI dashboards for one project at a time, organised by role. For figures that span every project use Analytics; for downloadable PDF and Excel documents use Reports.',
+            'Live KPI Painéis for one project at a time, organised by role. For figures that span every project use Analytics; for downloadable PDF and Excel documents use Reports.',
         })}
       </DismissibleInfo>
 
@@ -974,7 +974,7 @@ function ExecutiveDashboard({
           <span>
             {t('reporting.kpi_empty_hint', {
               defaultValue:
-                'CPI, SPI, budget and schedule progress appear once a project has its first cost snapshot. Projects without one show a dash, not a problem.',
+                'CPI, SPI, budget and Cronograma progress appear once a project has its first cost snapshot. Projects without one show a dash, not a problem.',
             })}
           </span>
         </div>
@@ -992,7 +992,7 @@ function ExecutiveDashboard({
                   <th>{t('reporting.col_cpi', { defaultValue: 'CPI' })}</th>
                   <th>{t('reporting.col_spi', { defaultValue: 'SPI' })}</th>
                   <th>{t('reporting.col_budget', { defaultValue: 'Budget %' })}</th>
-                  <th>{t('reporting.col_schedule', { defaultValue: 'Schedule %' })}</th>
+                  <th>{t('reporting.col_schedule', { defaultValue: 'Cronograma %' })}</th>
                   <th>{t('reporting.col_risk', { defaultValue: 'Risk Score' })}</th>
                   <th>{t('reporting.col_open_items', { defaultValue: 'Open Items' })}</th>
                   <th aria-hidden="true" />
@@ -1020,7 +1020,7 @@ function ExecutiveDashboard({
                         }
                       }}
                       aria-label={t('reporting.open_pm_for', {
-                        defaultValue: 'Open Project Manager dashboard for {{name}}',
+                        defaultValue: 'Open Project Manager Painel for {{name}}',
                         name: p.name,
                       })}
                       className="group cursor-pointer border-b border-border-light last:border-0 transition-colors hover:bg-surface-secondary/50 focus-visible:bg-surface-secondary/50 focus-visible:outline-none"
@@ -1154,7 +1154,7 @@ function PMDashboard({
     return (
       <RequiresProject
         message={t('reporting.select_project_prompt', {
-          defaultValue: 'Choose a project to see its PM dashboard.',
+          defaultValue: 'Choose a project to see its PM Painel.',
         })}
         projects={projects}
       />
@@ -1178,7 +1178,7 @@ function PMDashboard({
           icon={Wallet}
         />
         <KPICard
-          label={t('reporting.spi', { defaultValue: 'Schedule SPI' })}
+          label={t('reporting.spi', { defaultValue: 'Cronograma SPI' })}
           value={fmt(kpi?.spi)}
           color={kpiColor(spiVal, [0.9, 1.0])}
           icon={spiVal !== null && spiVal >= 1 ? TrendingUp : TrendingDown}
@@ -1190,7 +1190,7 @@ function PMDashboard({
           icon={cpiVal !== null && cpiVal >= 1 ? TrendingUp : TrendingDown}
         />
         <KPICard
-          label={t('reporting.schedule_progress', { defaultValue: 'Schedule Progress' })}
+          label={t('reporting.schedule_progress', { defaultValue: 'Cronograma Progress' })}
           value={fmt(kpi?.schedule_progress_pct, '%')}
           color={kpiColor(
             kpi?.schedule_progress_pct ? parseFloat(kpi.schedule_progress_pct) : null,
@@ -1203,7 +1203,7 @@ function PMDashboard({
       {/* Open items row */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <KPICard
-          label={t('reporting.open_rfis', { defaultValue: 'Open RFIs' })}
+          label={t('reporting.open_rfis', { defaultValue: 'Open Pedidos de informação' })}
           value={rfiStats ? String(rfiStats.open) : fmtNum(kpi?.open_rfis)}
           color={kpiColor(rfiStats?.open !== undefined ? (rfiStats.open === 0 ? 10 : 10 - rfiStats.open) : null, [0, 5])}
           icon={FileText}
@@ -1233,7 +1233,7 @@ function PMDashboard({
         <Card>
           <CardContent>
             <h3 className="oe-card-title mb-3">
-              {t('reporting.schedule_summary', { defaultValue: 'Schedule Summary' })}
+              {t('reporting.schedule_summary', { defaultValue: 'Cronograma Summary' })}
             </h3>
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-5">
               <StatBlock label={t('reporting.total_activities', { defaultValue: 'Total' })} value={scheduleStats.total_activities} />
@@ -1251,7 +1251,7 @@ function PMDashboard({
         <Card>
           <CardContent>
             <h3 className="oe-card-title mb-3">
-              {t('reporting.rfi_summary', { defaultValue: 'RFI Summary' })}
+              {t('reporting.rfi_summary', { defaultValue: 'Pedido de informação (RFI) Summary' })}
             </h3>
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
               <StatBlock label={t('reporting.total', { defaultValue: 'Total' })} value={rfiStats.total} />
@@ -1338,7 +1338,7 @@ function EstimatorDashboard({
     return (
       <RequiresProject
         message={t('reporting.select_project_prompt_estimator', {
-          defaultValue: 'Choose a project to see its Estimator dashboard.',
+          defaultValue: 'Choose a project to see its Estimator Painel.',
         })}
         projects={projects}
       />
@@ -1362,7 +1362,7 @@ function EstimatorDashboard({
           icon={Wallet}
         />
         <KPICard
-          label={t('reporting.boq_count', { defaultValue: 'BOQs' })}
+          label={t('reporting.boq_count', { defaultValue: 'Planilhas orçamentárias' })}
           value={loadingBoqs ? '…' : String(boqs.length)}
           color="gray"
           icon={Calculator}
@@ -1380,7 +1380,7 @@ function EstimatorDashboard({
           ) : boqsError ? (
             <div role="alert" className="flex items-center gap-2 px-4 py-4 text-sm text-semantic-error">
               <AlertTriangle size={16} className="shrink-0" />
-              <span>{t('reporting.boqs_load_failed', { defaultValue: 'Could not load BOQs for this project.' })}</span>
+              <span>{t('reporting.boqs_load_failed', { defaultValue: 'Could not load Planilhas orçamentárias for this project.' })}</span>
               <button onClick={loadBoqs} className="ml-2 underline">
                 {t('common.retry', { defaultValue: 'Retry' })}
               </button>
@@ -1388,12 +1388,12 @@ function EstimatorDashboard({
           ) : boqs.length === 0 ? (
             <EmptyState
               icon={<Calculator size={24} />}
-              title={t('reporting.no_boqs_title', { defaultValue: 'No BOQs yet' })}
+              title={t('reporting.no_boqs_title', { defaultValue: 'No Planilhas orçamentárias yet' })}
               description={t('reporting.no_boqs_desc', {
                 defaultValue: 'Build a Bill of Quantities for this project to see its totals here.',
               })}
               action={{
-                label: t('reporting.open_boq', { defaultValue: 'Open BOQ editor' }),
+                label: t('reporting.open_boq', { defaultValue: 'Open Planilha orçamentária editor' }),
                 onClick: goToBoq,
               }}
             />
@@ -1402,7 +1402,7 @@ function EstimatorDashboard({
               <table className="oe-table">
                 <thead>
                   <tr className="bg-surface-secondary text-left text-xs font-medium text-content-secondary">
-                    <th>{t('reporting.boq_name', { defaultValue: 'BOQ Name' })}</th>
+                    <th>{t('reporting.boq_name', { defaultValue: 'Planilha orçamentária Name' })}</th>
                     <th>{t('reporting.col_status', { defaultValue: 'Status' })}</th>
                     <th className="text-right">{t('reporting.positions', { defaultValue: 'Positions' })}</th>
                     <th className="text-right">{t('reporting.grand_total', { defaultValue: 'Grand Total' })}</th>
@@ -1466,7 +1466,7 @@ function SiteDashboard({
     return (
       <RequiresProject
         message={t('reporting.select_project_prompt_site', {
-          defaultValue: 'Choose a project to see its Site Engineer dashboard.',
+          defaultValue: 'Choose a project to see its Site Engineer Painel.',
         })}
         projects={projects}
       />
@@ -1582,7 +1582,7 @@ function FinanceDashboardView({
     return (
       <RequiresProject
         message={t('reporting.select_project_prompt_finance', {
-          defaultValue: 'Choose a project to see its Finance dashboard.',
+          defaultValue: 'Choose a project to see its Finance Painel.',
         })}
         projects={projects}
       />
@@ -2011,7 +2011,7 @@ function ReportsTab({ project, projects }: { project?: Project; projects: Projec
         <CardContent>
           <div className="mb-4 flex items-center justify-between">
             <h3 className="oe-card-title">
-              {t('reporting.templates_title', { defaultValue: 'Report templates' })}
+              {t('reporting.templates_title', { defaultValue: 'Report Modelos' })}
             </h3>
           </div>
 
@@ -2024,7 +2024,7 @@ function ReportsTab({ project, projects }: { project?: Project; projects: Projec
           ) : templatesError ? (
             <div role="alert" className="flex items-center gap-2 rounded-lg border border-semantic-error/30 bg-semantic-error-bg px-4 py-3 text-sm text-semantic-error">
               <AlertTriangle size={16} className="shrink-0" />
-              <span>{t('reporting.templates_load_failed', { defaultValue: 'Could not load report templates.' })}</span>
+              <span>{t('reporting.templates_load_failed', { defaultValue: 'Could not load report Modelos.' })}</span>
               <button onClick={fetchTemplates} className="ml-2 underline">
                 {t('common.retry', { defaultValue: 'Retry' })}
               </button>
@@ -2032,8 +2032,8 @@ function ReportsTab({ project, projects }: { project?: Project; projects: Projec
           ) : templates.length === 0 ? (
             <EmptyState
               icon={<FileText size={24} />}
-              title={t('reporting.no_templates_title', { defaultValue: 'No report templates yet' })}
-              description={t('reporting.no_templates_desc', { defaultValue: 'System templates will appear here as the platform seeds them, or your admin can add custom templates.' })}
+              title={t('reporting.no_templates_title', { defaultValue: 'No report Modelos yet' })}
+              description={t('reporting.no_templates_desc', { defaultValue: 'System Modelos will appear here as the platform seeds them, or your admin can add custom Modelos.' })}
             />
           ) : (
             <div className="overflow-x-auto">
@@ -2043,7 +2043,7 @@ function ReportsTab({ project, projects }: { project?: Project; projects: Projec
                     <th>{t('reporting.template_name', { defaultValue: 'Name' })}</th>
                     <th>{t('reporting.template_type', { defaultValue: 'Type' })}</th>
                     <th>{t('reporting.template_scope', { defaultValue: 'Scope' })}</th>
-                    <th>{t('reporting.template_schedule', { defaultValue: 'Schedule' })}</th>
+                    <th>{t('reporting.template_schedule', { defaultValue: 'Cronograma' })}</th>
                     <th className="text-right">{t('reporting.actions', { defaultValue: 'Actions' })}</th>
                   </tr>
                 </thead>
@@ -2111,7 +2111,7 @@ function ReportsTab({ project, projects }: { project?: Project; projects: Projec
             <EmptyState
               icon={<FileText size={24} />}
               title={t('reporting.no_reports_title', { defaultValue: 'No reports yet' })}
-              description={t('reporting.no_reports_desc', { defaultValue: 'Generate your first report from a template above to get started.' })}
+              description={t('reporting.no_reports_desc', { defaultValue: 'Generate your first report from a Modelo above to get started.' })}
             />
           ) : (
             <div className="overflow-x-auto">
@@ -2391,7 +2391,7 @@ function ReportViewerModal({
               <p className="max-w-md text-sm text-content-secondary">
                 {t('reporting.report_not_rendered', {
                   defaultValue:
-                    'This report has been queued but no body has been rendered yet. Re-generate it from the templates list above.',
+                    'This report has been queued but no body has been rendered yet. Re-generate it from the Modelos list above.',
                 })}
               </p>
             </div>

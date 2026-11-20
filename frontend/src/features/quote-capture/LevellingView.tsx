@@ -16,20 +16,20 @@ export function LevellingView({ packageId }: { packageId: string }) {
   const q = useLevelling(packageId);
   if (q.isLoading) return <p className="text-sm text-content-secondary">{t('quote_capture.loading', 'Loading...')}</p>;
   if (!q.data || q.data.quotes.length === 0)
-    return <p className="text-sm text-content-secondary">{t('quote_capture.levelling_empty', 'No quotes on this package yet.')}</p>;
+    return <p className="text-sm text-content-secondary">{t('quote_capture.levelling_empty', 'No Cotações on this package yet.')}</p>;
   const { rows, quotes, currency } = q.data;
   const money = (v: string) => formatCurrency(v, currency);
   const plugLabel: Record<string, string> = {
     price_list: t('quote_capture.plug_price_list', 'plug: price list'),
-    boq: t('quote_capture.plug_boq', 'plug: BOQ rate'),
-    median_of_quotes: t('quote_capture.plug_median', 'plug: median of quotes'),
+    boq: t('quote_capture.plug_boq', 'plug: Planilha orçamentária rate'),
+    median_of_quotes: t('quote_capture.plug_median', 'plug: median of Cotações'),
     none: t('quote_capture.plug_none', 'no plug rate'),
   };
   return (
     <div className="flex flex-col gap-3" data-testid="quote-levelling">
       {q.data.excluded_off_currency.length > 0 && (
         <p className="text-sm text-semantic-warning">
-          {t('quote_capture.off_currency', '{{count}} quote(s) in another currency are left out.', {
+          {t('quote_capture.off_currency', '{{count}} Cotação(s) in another currency are left out.', {
             count: q.data.excluded_off_currency.length,
           })}
         </p>

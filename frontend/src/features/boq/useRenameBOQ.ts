@@ -22,13 +22,13 @@ export function useRenameBOQ(onDone?: () => void) {
     onSuccess: (_data, { boqId }) => {
       queryClient.invalidateQueries({ queryKey: ['boq', boqId] });
       queryClient.invalidateQueries({ queryKey: ['all-boqs'] });
-      addToast({ type: 'success', title: t('boq.rename_saved', { defaultValue: 'Estimate renamed' }) });
+      addToast({ type: 'success', title: t('boq.rename_saved', { defaultValue: 'Orçamento renamed' }) });
       onDone?.();
     },
     onError: (err) => {
       addToast({
         type: 'error',
-        title: t('boq.rename_failed', { defaultValue: 'Could not rename the estimate' }),
+        title: t('boq.rename_failed', { defaultValue: 'Could not rename the Orçamento' }),
         message: editorErrorText(err, t),
       });
     },

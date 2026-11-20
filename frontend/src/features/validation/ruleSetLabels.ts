@@ -26,7 +26,7 @@ export type Translate = (key: string, opts?: Record<string, unknown>) => string;
  */
 export function ruleSetLabel(ruleSet: string, t: Translate): string {
   const map: Record<string, string> = {
-    boq_quality: t('validation.rs_label_boq_quality', { defaultValue: 'BOQ quality' }),
+    boq_quality: t('validation.rs_label_boq_quality', { defaultValue: 'Planilha orçamentária quality' }),
     din276: t('validation.rs_label_din276', { defaultValue: 'DIN 276' }),
     gaeb: t('validation.rs_label_gaeb', { defaultValue: 'GAEB' }),
     nrm: t('validation.rs_label_nrm', { defaultValue: 'NRM' }),

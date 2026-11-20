@@ -69,7 +69,7 @@ export function QuantityRuleOfferBanner({ modelId }: { modelId: string }) {
           <p className="mt-0.5 text-xs text-content-secondary">
             {t('bim.rule_offer_body', {
               defaultValue:
-                'They priced BOQ positions from the earlier version. Review the changed quantities first; nothing changes until you accept.',
+                'They priced Planilha orçamentária positions from the earlier version. Review the changed quantities first; nothing changes until you accept.',
             })}
           </p>
           <div className="mt-2 flex flex-wrap gap-2">

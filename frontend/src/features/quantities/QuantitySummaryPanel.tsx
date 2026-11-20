@@ -107,14 +107,14 @@ function FlowStrip() {
   return (
     <div className="flex flex-wrap items-center gap-2">
       <span className="inline-flex items-center gap-1.5">
-        {node(<Ruler size={14} className="text-blue-500" />, t('quantities.flow_takeoff', { defaultValue: 'Takeoff' }))}
+        {node(<Ruler size={14} className="text-blue-500" />, t('quantities.flow_takeoff', { defaultValue: 'Levantamento de quantitativos' }))}
         {node(<Box size={14} className="text-semantic-success" />, t('quantities.flow_cad', { defaultValue: 'CAD / BIM' }))}
-        {node(<Sparkles size={14} className="text-violet-500" />, t('quantities.flow_ai', { defaultValue: 'AI' }))}
+        {node(<Sparkles size={14} className="text-violet-500" />, t('quantities.flow_ai', { defaultValue: 'IA' }))}
       </span>
       <ArrowRight size={14} className="text-content-quaternary" />
       {node(<Layers3 size={14} className="text-oe-blue" />, t('quantities.flow_measured', { defaultValue: 'Measured quantities' }))}
       <ArrowRight size={14} className="text-content-quaternary" />
-      {node(<Table2 size={14} className="text-content-tertiary" />, t('quantities.flow_boq', { defaultValue: 'BOQ / estimate' }))}
+      {node(<Table2 size={14} className="text-content-tertiary" />, t('quantities.flow_boq', { defaultValue: 'Planilha orçamentária / Orçamento' }))}
     </div>
   );
 }
@@ -288,8 +288,8 @@ export function QuantitySummaryPanel({
   const sourceLabel = useCallback(
     (s: QuantitySource) =>
       s === 'takeoff'
-        ? t('quantities.source_takeoff', { defaultValue: 'Takeoff' })
-        : t('quantities.source_boq', { defaultValue: 'BOQ' }),
+        ? t('quantities.source_takeoff', { defaultValue: 'Levantamento de quantitativos' })
+        : t('quantities.source_boq', { defaultValue: 'Planilha orçamentária' }),
     [t],
   );
 
@@ -384,14 +384,14 @@ export function QuantitySummaryPanel({
                 inline
                 text={t('quantities.summary_info', {
                   defaultValue:
-                    'A live rollup of the quantities already captured for this project - from PDF takeoff and from your BOQ - grouped so you can see totals per unit, trade, type or source. It is read-only: measure on the takeoff canvas or edit the BOQ to change the numbers.',
+                    'A live rollup of the quantities already captured for this project - from PDF Levantamento de quantitativos and from your Planilha orçamentária - grouped so you can see totals per unit, trade, type or source. It is read-only: measure on the Levantamento de quantitativos canvas or edit the Planilha orçamentária to change the numbers.',
                 })}
               />
             </div>
             <p className="mt-0.5 text-sm text-content-tertiary">
               {t('quantities.summary_subtitle', {
                 defaultValue:
-                  'Totals rolled up from takeoff and BOQ for the active project. Same unit only, never mixed.',
+                  'Totals rolled up from Levantamento de quantitativos and Planilha orçamentária for the active project. Same unit only, never mixed.',
               })}
             </p>
           </div>
@@ -422,7 +422,7 @@ export function QuantitySummaryPanel({
           })}
           description={t('quantities.no_project_desc', {
             defaultValue:
-              'Measured quantities are rolled up per project. Pick or create a project, then measure a drawing or add BOQ lines.',
+              'Measured quantities are rolled up per project. Pick or create a project, then measure a drawing or add Planilha orçamentária lines.',
           })}
           action={{
             label: t('quantities.go_to_projects', { defaultValue: 'Go to projects' }),
@@ -434,7 +434,7 @@ export function QuantitySummaryPanel({
           <ErrorState
             title={t('quantities.error_title', { defaultValue: 'Could not load quantities' })}
             hint={t('quantities.error_hint', {
-              defaultValue: 'Check your connection and try again. Takeoff and BOQ data are both unavailable right now.',
+              defaultValue: 'Check your connection and try again. Levantamento de quantitativos and Planilha orçamentária data are both unavailable right now.',
             })}
             onRetry={() => {
               measureQuery.refetch();
@@ -458,7 +458,7 @@ export function QuantitySummaryPanel({
           title={t('quantities.empty_title', { defaultValue: 'No measured quantities yet' })}
           description={t('quantities.empty_desc', {
             defaultValue:
-              'Measure a drawing in PDF takeoff, extract a CAD / BIM model, or add priced lines in the BOQ. Anything you capture shows up here, grouped and totalled.',
+              'Measure a drawing in PDF Levantamento de quantitativos, extract a CAD / BIM model, or add priced lines in the Planilha orçamentária. Anything you capture shows up here, grouped and totalled.',
           })}
           action={
             <div className="flex flex-wrap items-center justify-center gap-2">
@@ -468,7 +468,7 @@ export function QuantitySummaryPanel({
                 icon={<Ruler size={14} />}
                 onClick={() => navigate('/takeoff')}
               >
-                {t('quantities.empty_open_takeoff', { defaultValue: 'Open PDF takeoff' })}
+                {t('quantities.empty_open_takeoff', { defaultValue: 'Open PDF Levantamento de quantitativos' })}
               </Button>
               <Button
                 variant="secondary"
@@ -476,7 +476,7 @@ export function QuantitySummaryPanel({
                 icon={<Table2 size={14} />}
                 onClick={() => navigate('/boq')}
               >
-                {t('quantities.empty_open_boq', { defaultValue: 'Open BOQ editor' })}
+                {t('quantities.empty_open_boq', { defaultValue: 'Open Planilha orçamentária editor' })}
               </Button>
             </div>
           }
@@ -487,10 +487,10 @@ export function QuantitySummaryPanel({
             <p className="mt-4 rounded-lg bg-semantic-warning-bg px-3 py-2 text-xs text-content-secondary">
               {measureQuery.isError
                 ? t('quantities.partial_takeoff', {
-                    defaultValue: 'Takeoff quantities could not be loaded; showing BOQ quantities only.',
+                    defaultValue: 'Levantamento de quantitativos quantities could not be loaded; showing Planilha orçamentária quantities only.',
                   })
                 : t('quantities.partial_boq', {
-                    defaultValue: 'BOQ quantities could not be loaded; showing takeoff quantities only.',
+                    defaultValue: 'Planilha orçamentária quantities could not be loaded; showing Levantamento de quantitativos quantities only.',
                   })}
             </p>
           )}

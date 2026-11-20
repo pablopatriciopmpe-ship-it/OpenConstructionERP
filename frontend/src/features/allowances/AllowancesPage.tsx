@@ -80,7 +80,7 @@ function CurrencySummary({ row }: { row: CurrencyRollup }) {
       value: formatCurrency(row.drawn, row.currency),
     },
     {
-      label: t('allowances.total_remaining', { defaultValue: 'Remaining in estimate' }),
+      label: t('allowances.total_remaining', { defaultValue: 'Remaining in Orçamento' }),
       value: formatCurrency(row.remaining, row.currency),
       emphasis: true,
       bad: remainingNegative,
@@ -490,7 +490,7 @@ export function AllowancesPage() {
         srTitle={t('allowances.title', { defaultValue: 'Allowances & contingency' })}
         subtitle={t('allowances.subtitle', {
           defaultValue:
-            'Track provisional sums, prime-cost sums and contingencies carried in the estimate, and draw them down as scope firms up.',
+            'Track provisional sums, prime-cost sums and contingencies carried in the Orçamento, and draw them down as scope firms up.',
         })}
         actions={
           <>
@@ -555,7 +555,7 @@ export function AllowancesPage() {
             title={t('allowances.empty_title', { defaultValue: 'No allowances yet' })}
             description={t('allowances.empty_desc', {
               defaultValue:
-                'Add a provisional sum, prime-cost sum or contingency to carry it in the estimate before it is measured.',
+                'Add a provisional sum, prime-cost sum or contingency to carry it in the Orçamento before it is measured.',
             })}
           />
         ) : (

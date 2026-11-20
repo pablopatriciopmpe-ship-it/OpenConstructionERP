@@ -444,7 +444,7 @@ export default function BIMGroupsPanel({
                           >
                             <Link2 size={9} className="text-oe-blue shrink-0" />
                             <span className="text-content-secondary truncate">
-                              {t('bim.groups_boq_label', { defaultValue: 'BOQ' })}{' '}
+                              {t('bim.groups_boq_label', { defaultValue: 'Planilha orçamentária' })}{' '}
                               {link.ordinal || link.positionId.slice(0, 8)}
                               {link.description ? ` - ${link.description}` : ''}
                             </span>
@@ -465,7 +465,7 @@ export default function BIMGroupsPanel({
                     ) : (
                       <div className="flex items-center gap-1 px-1 text-2xs text-content-quaternary">
                         <span>
-                          {t('bim.groups_not_linked', { defaultValue: 'Not linked to BOQ' })}
+                          {t('bim.groups_not_linked', { defaultValue: 'Not linked to Planilha orçamentária' })}
                         </span>
                         <button
                           type="button"
@@ -476,7 +476,7 @@ export default function BIMGroupsPanel({
                           className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-2xs font-medium text-oe-blue hover:bg-oe-blue/10 transition-colors"
                         >
                           <Plus size={8} />
-                          {t('bim.groups_link_boq', { defaultValue: 'Link BOQ' })}
+                          {t('bim.groups_link_boq', { defaultValue: 'Link Planilha orçamentária' })}
                         </button>
                       </div>
                     )}
@@ -577,7 +577,7 @@ export default function BIMGroupsPanel({
                     className="w-full flex items-center gap-2 px-3 py-1.5 text-2xs text-content-primary hover:bg-surface-secondary"
                   >
                     <Calculator size={12} />
-                    {t('bim.groups_use_as_quantity', { defaultValue: 'Quantity source for a BOQ position' })}
+                    {t('bim.groups_use_as_quantity', { defaultValue: 'Quantity source for a Planilha orçamentária position' })}
                   </button>
                 )}
                 <div className="my-1 border-t border-border-light" />

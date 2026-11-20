@@ -623,10 +623,10 @@ function UploadPanel({
       }
       addToast({
         type: 'info',
-        title: t('bim.dwg_redirect_title', { defaultValue: 'DWG files are handled in the DWG Takeoff module' }),
+        title: t('bim.dwg_redirect_title', { defaultValue: 'DWG files are handled in the DWG Levantamento de quantitativos module' }),
         message: projectId
-          ? t('bim.dwg_handoff_msg', { defaultValue: 'Sending your drawing to DWG Takeoff...' })
-          : t('bim.dwg_redirect_msg', { defaultValue: 'Opening DWG Takeoff...' }),
+          ? t('bim.dwg_handoff_msg', { defaultValue: 'Sending your drawing to DWG Levantamento de quantitativos...' })
+          : t('bim.dwg_redirect_msg', { defaultValue: 'Opening DWG Levantamento de quantitativos...' }),
       });
       navigate('/dwg-takeoff');
       return;
@@ -1627,10 +1627,10 @@ function LandingPage({ projectId, onUploadComplete: _onUploadComplete, breadcrum
     }
     addToast({
       type: 'info',
-      title: t('bim.dwg_redirect_title', { defaultValue: 'DWG files are handled in the DWG Takeoff module' }),
+      title: t('bim.dwg_redirect_title', { defaultValue: 'DWG files are handled in the DWG Levantamento de quantitativos module' }),
       message: projectId
-        ? t('bim.dwg_handoff_msg', { defaultValue: 'Sending your drawing to DWG Takeoff...' })
-        : t('bim.dwg_redirect_msg', { defaultValue: 'Opening DWG Takeoff...' }),
+        ? t('bim.dwg_handoff_msg', { defaultValue: 'Sending your drawing to DWG Levantamento de quantitativos...' })
+        : t('bim.dwg_redirect_msg', { defaultValue: 'Opening DWG Levantamento de quantitativos...' }),
     });
     navigate('/dwg-takeoff');
   }, [projectId, addToast, t, navigate]);
@@ -1942,7 +1942,7 @@ function LandingPage({ projectId, onUploadComplete: _onUploadComplete, breadcrum
                       middle dots and arrows means there is nothing left to
                       double. Version ranges are shown on the same screen,
                       read from the converter list. */}
-                  {t('bim.landing_formats_detailed', { defaultValue: 'RVT and IFC models, 3D mesh formats, and element data as CSV or Excel. DWG and DXF drawings are routed to DWG Takeoff.' })}
+                  {t('bim.landing_formats_detailed', { defaultValue: 'RVT and IFC models, 3D mesh formats, and element data as CSV or Excel. DWG and DXF drawings are routed to DWG Levantamento de quantitativos.' })}
                 </p>
                 <div className="mt-4 flex items-center justify-start">
                   <div className="inline-flex flex-wrap items-center gap-2 px-4 py-2 rounded-full bg-semantic-success/10 border border-semantic-success/20">
@@ -3172,7 +3172,7 @@ export function BIMPage() {
       const labels: Record<typeof filterId, string> = {
         errors: t('bim.smart_filter_errors', { defaultValue: 'Validation errors' }),
         warnings: t('bim.smart_filter_warnings', { defaultValue: 'Validation warnings' }),
-        unlinked_boq: t('bim.smart_filter_unlinked_boq', { defaultValue: 'Unlinked to BOQ' }),
+        unlinked_boq: t('bim.smart_filter_unlinked_boq', { defaultValue: 'Unlinked to Planilha orçamentária' }),
         has_tasks: t('bim.smart_filter_has_tasks', { defaultValue: 'With tasks' }),
         has_docs: t('bim.smart_filter_has_docs', { defaultValue: 'With documents' }),
       };
@@ -3434,7 +3434,7 @@ export function BIMPage() {
         addToast({
           type: 'success',
           title: t('bim.link_removed_title', { defaultValue: 'Unlinked' }),
-          message: t('bim.link_removed', { defaultValue: 'BIM ↔ BOQ link removed' }),
+          message: t('bim.link_removed', { defaultValue: 'BIM ↔ Planilha orçamentária link removed' }),
         });
         queryClient.invalidateQueries({ queryKey: ['bim-elements', activeModelId] });
       } catch (err) {
@@ -3775,7 +3775,7 @@ export function BIMPage() {
                     {t('bim.color_validation', { defaultValue: 'Validation status' })}
                   </option>
                   <option value="boq_coverage">
-                    {t('bim.color_boq_coverage', { defaultValue: 'BOQ link coverage' })}
+                    {t('bim.color_boq_coverage', { defaultValue: 'Planilha orçamentária link coverage' })}
                   </option>
                   <option value="document_coverage">
                     {t('bim.color_doc_coverage', { defaultValue: 'Document coverage' })}
@@ -3786,7 +3786,7 @@ export function BIMPage() {
                     {t('bim.color_5d_cost', { defaultValue: '5D unit rate' })}
                   </option>
                 </optgroup>
-                <optgroup label={t('bim.color_group_schedule', { defaultValue: 'By schedule' })}>
+                <optgroup label={t('bim.color_group_schedule', { defaultValue: 'By Cronograma' })}>
                   <option value="4d_schedule">
                     {t('bim.color_4d_schedule', { defaultValue: '4D timeline' })}
                   </option>
@@ -3900,7 +3900,7 @@ export function BIMPage() {
                   elements.length > 0
                     ? t('bim.rules_button_hint', {
                         defaultValue:
-                          'Quantity rules pick model elements by category and properties and send their quantities to BOQ positions.',
+                          'Quantity rules pick model elements by category and properties and send their quantities to Planilha orçamentária positions.',
                       })
                     : t('bim.rules_button_no_elements', {
                         defaultValue: 'Quantity rules need model elements. They become available once the model has loaded.',
@@ -3934,8 +3934,8 @@ export function BIMPage() {
                 />
                 <MoreItem
                   icon={<ClipboardList size={16} />}
-                  label={t('bim.linked_boq_button', { defaultValue: 'Linked BOQ' })}
-                  title={t('bim.linked_boq_toggle', { defaultValue: 'Toggle linked BOQ panel' })}
+                  label={t('bim.linked_boq_button', { defaultValue: 'Linked Planilha orçamentária' })}
+                  title={t('bim.linked_boq_toggle', { defaultValue: 'Toggle linked Planilha orçamentária panel' })}
                   active={boqPanelOpen}
                   onClick={() => setBoqPanelOpen(!boqPanelOpen)}
                   testId="bim-tour-linked-boq-button"
@@ -4033,7 +4033,7 @@ export function BIMPage() {
             : undefined
         }
         links={[
-          { label: t('bim.intro_link_boq', { defaultValue: 'Open BOQ' }), onClick: () => navigate('/boq') },
+          { label: t('bim.intro_link_boq', { defaultValue: 'Open Planilha orçamentária' }), onClick: () => navigate('/boq') },
           // #149 - name the destination the way the destination names itself.
           { label: t('nav.cad_bim_explorer', { defaultValue: 'CAD-BIM BI Explorer' }), onClick: () => navigate('/data-explorer') },
           { label: t('bim.intro_link_rules', { defaultValue: 'Quantity rules' }), onClick: () => navigate('/bim/rules') },
@@ -4041,7 +4041,7 @@ export function BIMPage() {
       >
         {t('bim.intro_body', {
           defaultValue:
-            'Open a converted CAD or BIM model in 3D, inspect element properties and quantities, and filter by storey, category or discipline. Link elements to BOQ positions so takeoff, cost and schedule all flow from the canonical model, and jump out to the Data Explorer or the map at any point.',
+            'Open a converted CAD or BIM model in 3D, inspect element properties and quantities, and filter by storey, category or discipline. Link elements to Planilha orçamentária positions so Levantamento de quantitativos, cost and Cronograma all flow from the canonical model, and jump out to the Data Explorer or the map at any point.',
         })}
       </DismissibleInfo>
 

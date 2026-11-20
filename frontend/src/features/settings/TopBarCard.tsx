@@ -37,7 +37,7 @@ export function TopBarCard() {
     { id: 'pack', icon: Globe2, label: t('settings.topbar_pack', { defaultValue: 'Regional pack badge' }) },
     { id: 'journey', icon: Compass, label: t('settings.topbar_journey', { defaultValue: 'Project journey' }) },
     { id: 'search', icon: Search, label: t('settings.topbar_search', { defaultValue: 'Search' }) },
-    { id: 'askAi', icon: Sparkles, label: t('settings.topbar_ask_ai', { defaultValue: 'Ask AI' }) },
+    { id: 'askAi', icon: Sparkles, label: t('settings.topbar_ask_ai', { defaultValue: 'Ask IA' }) },
     { id: 'news', icon: Newspaper, label: t('settings.topbar_news', { defaultValue: "What's new" }) },
     { id: 'moduleBuilder', icon: Puzzle, label: t('settings.topbar_module_builder', { defaultValue: 'Module builder' }) },
     { id: 'supportUs', icon: Heart, label: t('settings.topbar_support', { defaultValue: 'Support the project' }) },

@@ -91,7 +91,7 @@ export function PhaseComparison({ projectId, currency }: PhaseComparisonProps) {
         <p className="text-xs text-content-tertiary">
           {mode === 'pct'
             ? t('cost_control.phases_pct_hint', {
-                defaultValue: 'Each phase against the plan (budget, or the estimate where no budget is set).',
+                defaultValue: 'Each phase against the plan (budget, or the Orçamento where no budget is set).',
               })
             : t('cost_control.phases_hint', {
                 defaultValue: 'Accounts carry the sum of everything below them. Click an account to fold it.',

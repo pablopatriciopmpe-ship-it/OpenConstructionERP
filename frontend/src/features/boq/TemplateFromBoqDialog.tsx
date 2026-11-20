@@ -73,7 +73,7 @@ export function TemplateFromBoqDialog({ boqId, boqName, onClose, onCreated }: Pr
       void queryClient.invalidateQueries({ queryKey: ['boq-templates'] });
       addToast({
         type: 'success',
-        title: t('boq_templates.created', { defaultValue: 'Template created' }),
+        title: t('boq_templates.created', { defaultValue: 'Modelo created' }),
         message: tpl.name,
       });
       onCreated?.(tpl);
@@ -82,7 +82,7 @@ export function TemplateFromBoqDialog({ boqId, boqName, onClose, onCreated }: Pr
     onError: (e: Error) => {
       addToast({
         type: 'error',
-        title: t('boq_templates.create_failed', { defaultValue: 'Could not create the template' }),
+        title: t('boq_templates.create_failed', { defaultValue: 'Could not create the Modelo' }),
         message: e.message,
       });
     },
@@ -111,8 +111,8 @@ export function TemplateFromBoqDialog({ boqId, boqName, onClose, onCreated }: Pr
   );
 
   const title = boqId
-    ? t('boq_templates.save_as_template', { defaultValue: 'Save as template' })
-    : t('boq_templates.from_estimate', { defaultValue: 'From an existing estimate' });
+    ? t('boq_templates.save_as_template', { defaultValue: 'Save as Modelo' })
+    : t('boq_templates.from_estimate', { defaultValue: 'From an existing Orçamento' });
 
   return (
     <div
@@ -163,7 +163,7 @@ export function TemplateFromBoqDialog({ boqId, boqName, onClose, onCreated }: Pr
               </select>
             </label>
             <label className="block text-sm">
-              <span className="oe-overline">{t('boq_templates.estimate', { defaultValue: 'Estimate' })}</span>
+              <span className="oe-overline">{t('boq_templates.estimate', { defaultValue: 'Orçamento' })}</span>
               <select
                 className="oe-input mt-1 w-full"
                 value={pickedBoqId}
@@ -174,7 +174,7 @@ export function TemplateFromBoqDialog({ boqId, boqName, onClose, onCreated }: Pr
                   if (b && !name) setName(b.name);
                 }}
               >
-                <option value="">{t('boq_templates.pick_estimate', { defaultValue: 'Select an estimate' })}</option>
+                <option value="">{t('boq_templates.pick_estimate', { defaultValue: 'Select an Orçamento' })}</option>
                 {(boqs ?? []).map((b) => (
                   <option key={b.id} value={b.id}>
                     {b.name}
@@ -186,7 +186,7 @@ export function TemplateFromBoqDialog({ boqId, boqName, onClose, onCreated }: Pr
         )}
 
         <label className="block text-sm">
-          <span className="oe-overline">{t('boq_templates.template_name', { defaultValue: 'Template name' })}</span>
+          <span className="oe-overline">{t('boq_templates.template_name', { defaultValue: 'Modelo name' })}</span>
           <input
             className="oe-input mt-1 w-full"
             value={name}
@@ -211,7 +211,7 @@ export function TemplateFromBoqDialog({ boqId, boqName, onClose, onCreated }: Pr
         <div className="space-y-2">
           {check('tpl-keep-qty', keepQuantities, setKeepQuantities, t('boq_templates.keep_quantities', { defaultValue: 'Keep quantities as defaults' }), t('boq_templates.keep_quantities_hint', { defaultValue: 'Leave off to start every quantity blank.' }))}
           {check('tpl-keep-rate', keepRates, setKeepRates, t('boq_templates.keep_rates', { defaultValue: 'Keep unit rates' }))}
-          {check('tpl-markups', includeMarkups, setIncludeMarkups, t('boq_templates.include_markups', { defaultValue: 'Include markups' }))}
+          {check('tpl-markups', includeMarkups, setIncludeMarkups, t('boq_templates.include_markups', { defaultValue: 'Include Margens' }))}
           {check('tpl-renumber', renumber, setRenumber, t('boq_templates.renumber', { defaultValue: 'Renumber sections and positions' }))}
         </div>
 
@@ -220,7 +220,7 @@ export function TemplateFromBoqDialog({ boqId, boqName, onClose, onCreated }: Pr
             {t('common.cancel', { defaultValue: 'Cancel' })}
           </Button>
           <Button type="submit" size="sm" disabled={!sourceId} loading={create.isPending}>
-            {t('boq_templates.create_template', { defaultValue: 'Create template' })}
+            {t('boq_templates.create_template', { defaultValue: 'Create Modelo' })}
           </Button>
         </div>
       </form>

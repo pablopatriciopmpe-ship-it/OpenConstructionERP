@@ -69,10 +69,10 @@ export function EstimateResourceCard() {
     <Card className="h-full">
       <CardHeader
         title={t('dashboard.estimate_resources_title', {
-          defaultValue: 'Estimate resources',
+          defaultValue: 'Orçamento resources',
         })}
         subtitle={t('dashboard.estimate_resources_subtitle', {
-          defaultValue: 'Procurement demand aggregated from the estimate',
+          defaultValue: 'Procurement demand aggregated from the Orçamento',
         })}
         action={
           <button
@@ -114,7 +114,7 @@ export function EstimateResourceCard() {
           className="mt-3"
           text={t('dashboard.estimate_resources_help', {
             defaultValue:
-              'Rolled up from every position in the estimate: the total labour hours, the combined cost of all resources (labour, materials, plant and subcontractors) and how many distinct resources are demanded.',
+              'Rolled up from every position in the Orçamento: the total labour hours, the combined cost of all resources (labour, materials, plant and subcontractors) and how many distinct resources are demanded.',
           })}
         />
       </CardContent>

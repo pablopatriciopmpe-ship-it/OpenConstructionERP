@@ -48,7 +48,7 @@ export function SemanticSearchOffHint({
       <span>
         {t('settings.semantic_off_hint', {
           defaultValue:
-            'Semantic search is off, so these are text search results. To search by meaning, turn it on in Settings, AI. It needs about 1 GB of free memory.',
+            'Semantic search is off, so these are text search results. To search by meaning, turn it on in Settings, IA. It needs about 1 GB of free memory.',
         })}{' '}
         <Link to="/settings?tab=ai" className="font-medium text-oe-blue hover:underline">
           {t('settings.semantic_off_hint_link', { defaultValue: 'Open settings' })}

@@ -208,7 +208,7 @@ export function AssemblyEditorPage() {
           metadata: {},
         },
         overhead: {
-          description: t('assemblies.seed_overhead', { defaultValue: 'Overhead / markup' }),
+          description: t('assemblies.seed_overhead', { defaultValue: 'Overhead / BDI' }),
           unit: assembly?.unit || 'lsum',
           metadata: {},
         },
@@ -330,7 +330,7 @@ export function AssemblyEditorPage() {
           })}
         </p>
         <Button variant="secondary" size="sm" onClick={() => navigate('/assemblies')}>
-          {t('assemblies.back_to_list', { defaultValue: 'Back to assemblies' })}
+          {t('assemblies.back_to_list', { defaultValue: 'Back to Composições' })}
         </Button>
       </div>
     );
@@ -356,7 +356,7 @@ export function AssemblyEditorPage() {
       {/* Breadcrumb */}
       <Breadcrumb
         items={[
-          { label: t('nav.assemblies', 'Assemblies'), to: '/assemblies' },
+          { label: t('nav.assemblies', 'Composições'), to: '/assemblies' },
           { label: assembly.name },
         ]}
       />
@@ -365,13 +365,13 @@ export function AssemblyEditorPage() {
         storageKey="assembly-detail"
         title={t('assembly_detail.intro_title', { defaultValue: 'Build the rate component by component' })}
         links={[
-          { label: t('nav.catalog', { defaultValue: 'Resource Catalog' }), onClick: () => navigate('/catalog') },
-          { label: t('nav.assemblies', { defaultValue: 'Assemblies' }), onClick: () => navigate('/assemblies') },
+          { label: t('nav.catalog', { defaultValue: 'Catálogo de insumos' }), onClick: () => navigate('/catalog') },
+          { label: t('nav.assemblies', { defaultValue: 'Composições' }), onClick: () => navigate('/assemblies') },
         ]}
       >
         {t('assembly_detail.intro_body', {
           defaultValue:
-            'Add, reorder and edit the material, labour and equipment lines of an assembly, each with its factor and unit, and watch the composite rate and the material, labour and equipment split recompute. The finished assembly is reusable across every BOQ.',
+            'Add, reorder and edit the material, labour and equipment lines of an assembly, each with its factor and unit, and watch the composite rate and the material, labour and equipment split recompute. The finished assembly is reusable across every Planilha orçamentária.',
         })}
       </DismissibleInfo>
 
@@ -455,7 +455,7 @@ export function AssemblyEditorPage() {
             icon={<Send size={16} />}
             onClick={() => setApplyModalOpen(true)}
           >
-            {t('assemblies.apply_to_boq', { defaultValue: 'Apply to BOQ' })}
+            {t('assemblies.apply_to_boq', { defaultValue: 'Apply to Planilha orçamentária' })}
           </Button>
           <Button
             variant="secondary"
@@ -467,7 +467,7 @@ export function AssemblyEditorPage() {
             title={
               editHint ??
               t('assemblies.from_database_title', {
-                defaultValue: 'Pick a finished rate from the cost database (CWICR / …)',
+                defaultValue: 'Pick a finished rate from the Banco de custos (CWICR / …)',
               })
             }
           >
@@ -722,7 +722,7 @@ export function AssemblyEditorPage() {
               {components.length === 0 && (
                 <tr>
                   <td colSpan={9} className="text-center text-content-tertiary">
-                    {t('assemblies.no_components_hint', { defaultValue: 'No components yet. Use the typed Add buttons (material / labor / equipment / …), pick a row from the cost database, or import a typed resource from the catalog.' })}
+                    {t('assemblies.no_components_hint', { defaultValue: 'No components yet. Use the typed Add buttons (material / labor / equipment / …), pick a row from the Banco de custos, or import a typed resource from the catalog.' })}
                   </td>
                 </tr>
               )}
@@ -833,7 +833,7 @@ export function AssemblyEditorPage() {
           onAdded={() => {
             setCostDbModalOpen(false);
             queryClient.invalidateQueries({ queryKey: ['assembly', assemblyId] });
-            addToast({ type: 'success', title: t('assemblies.components_added_from_db', { defaultValue: 'Components added from cost database' }) });
+            addToast({ type: 'success', title: t('assemblies.components_added_from_db', { defaultValue: 'Components added from Banco de custos' }) });
           }}
         />
       )}
@@ -943,7 +943,7 @@ function CostDbSearchForAssembly({
               <Database size={20} />
             </div>
             <div>
-              <h2 className="oe-section-title">{t('assemblies.add_from_cost_db', { defaultValue: 'Add from Cost Database' })}</h2>
+              <h2 className="oe-section-title">{t('assemblies.add_from_cost_db', { defaultValue: 'Add from Banco de custos' })}</h2>
               <p className="text-xs text-content-tertiary">{t('assemblies.add_from_cost_db_desc', { defaultValue: 'Search and add cost items as assembly components' })}</p>
             </div>
           </div>
@@ -1684,7 +1684,7 @@ function ApplyToBOQModal({
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['boq'] });
       queryClient.invalidateQueries({ queryKey: ['boqs'] });
-      addToast({ type: 'success', title: t('toasts.assembly_applied', { defaultValue: 'Assembly applied to BOQ' }) });
+      addToast({ type: 'success', title: t('toasts.assembly_applied', { defaultValue: 'Assembly applied to Planilha orçamentária' }) });
       onClose();
     },
     onError: (error: Error) => {
@@ -1717,7 +1717,7 @@ function ApplyToBOQModal({
         <Card>
           <div className="flex items-start justify-between mb-5">
             <div>
-              <h2 className="oe-section-title">{t('assemblies.apply_to_boq', { defaultValue: 'Apply to BOQ' })}</h2>
+              <h2 className="oe-section-title">{t('assemblies.apply_to_boq', { defaultValue: 'Apply to Planilha orçamentária' })}</h2>
               <p className="mt-0.5 text-sm text-content-secondary line-clamp-1">
                 {assemblyName}
               </p>
@@ -1769,7 +1769,7 @@ function ApplyToBOQModal({
                 disabled={!projectId}
               >
                 <option value="">
-                  {t('boq.select_boq', { defaultValue: 'Select BOQ...' })}
+                  {t('boq.select_boq', { defaultValue: 'Select Planilha orçamentária...' })}
                 </option>
                 {boqs?.map((b) => (
                   <option key={b.id} value={b.id}>
@@ -1779,7 +1779,7 @@ function ApplyToBOQModal({
               </select>
               {projectId && boqs && boqs.length === 0 && (
                 <p className="mt-1 text-xs text-content-tertiary">
-                  {t('boq.no_boqs_for_project', { defaultValue: 'No BOQs found for this project' })}
+                  {t('boq.no_boqs_for_project', { defaultValue: 'No Planilhas orçamentárias found for this project' })}
                 </p>
               )}
             </div>
@@ -1849,7 +1849,7 @@ function ApplyToBOQModal({
 
             {applyMutation.error && (
               <div className="rounded-lg bg-semantic-error-bg px-3 py-2 text-sm text-semantic-error">
-                {(applyMutation.error as Error).message || t('assemblies.apply_failed', { defaultValue: 'Failed to apply assembly to BOQ' })}
+                {(applyMutation.error as Error).message || t('assemblies.apply_failed', { defaultValue: 'Failed to apply assembly to Planilha orçamentária' })}
               </div>
             )}
 

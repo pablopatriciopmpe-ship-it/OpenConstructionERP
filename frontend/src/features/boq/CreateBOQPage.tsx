@@ -134,7 +134,7 @@ export function CreateBOQModal({ open, onClose, defaultProjectId }: CreateBOQMod
       : undefined;
   const fileError =
     touched && startMode === 'import' && !file
-      ? t('boq.import_needs_file', { defaultValue: 'Choose a file to import, or switch to an empty BOQ.' })
+      ? t('boq.import_needs_file', { defaultValue: 'Choose a file to import, or switch to an empty Planilha orçamentária.' })
       : undefined;
   const dateShapeError = t('boq.date_shape_error', {
     defaultValue: 'Use a day, a month, a quarter or a year: 2026-03-15, 2026-03, 2026-Q1 or 2026',
@@ -289,7 +289,7 @@ export function CreateBOQModal({ open, onClose, defaultProjectId }: CreateBOQMod
   const submitLabel =
     startMode === 'import'
       ? t('boq.create_and_import', { defaultValue: 'Create and import' })
-      : t('boq.create_boq', { defaultValue: 'Create BOQ' });
+      : t('boq.create_boq', { defaultValue: 'Create Planilha orçamentária' });
 
   return (
     <div className="fixed inset-0 z-modal flex items-center justify-center">
@@ -306,7 +306,7 @@ export function CreateBOQModal({ open, onClose, defaultProjectId }: CreateBOQMod
             </div>
             <div>
               <h2 className="oe-section-title">
-                {t('projects.new_boq', { defaultValue: 'New BOQ' })}
+                {t('projects.new_boq', { defaultValue: 'New Planilha orçamentária' })}
               </h2>
               <p className="text-xs text-content-tertiary">
                 {t('boq.create_subtitle', { defaultValue: 'Create a new bill of quantities' })}
@@ -374,7 +374,7 @@ export function CreateBOQModal({ open, onClose, defaultProjectId }: CreateBOQMod
                 aria-pressed={startMode === 'empty'}
               >
                 <FilePlus2 size={16} className={startMode === 'empty' ? 'text-oe-blue' : 'text-content-tertiary'} />
-                {t('boq.start_empty', { defaultValue: 'Empty BOQ' })}
+                {t('boq.start_empty', { defaultValue: 'Empty Planilha orçamentária' })}
               </button>
               <button
                 type="button"
@@ -450,7 +450,7 @@ export function CreateBOQModal({ open, onClose, defaultProjectId }: CreateBOQMod
 
           {/* Name */}
           <Input
-            label={t('boq.name_label', { defaultValue: 'BOQ Name' })}
+            label={t('boq.name_label', { defaultValue: 'Planilha orçamentária Name' })}
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder={t('boq.name_placeholder', {
@@ -470,7 +470,7 @@ export function CreateBOQModal({ open, onClose, defaultProjectId }: CreateBOQMod
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder={t('boq.scope_placeholder', { defaultValue: 'Scope of this BOQ...' })}
+              placeholder={t('boq.scope_placeholder', { defaultValue: 'Scope of this Planilha orçamentária...' })}
               rows={2}
               className="oe-textarea-lg w-full resize-none"
             />

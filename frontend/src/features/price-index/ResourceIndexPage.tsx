@@ -106,10 +106,10 @@ export function ResourceIndexPage() {
   return (
     <div className="space-y-5">
       <PageHeader
-        srTitle={t('price_index.ri.title', { defaultValue: 'Resource-index estimate' })}
+        srTitle={t('price_index.ri.title', { defaultValue: 'Resource-index Orçamento' })}
         subtitle={t('price_index.ri.subtitle', {
           defaultValue:
-            'Price a Russian local estimate by the resource-index method: each resource group at base prices times its own regional quarterly index, then overheads and estimated profit on the wage fund, then VAT. Every multiplication is shown.',
+            'Price a Russian local Orçamento by the resource-index method: each resource group at base prices times its own regional quarterly index, then overheads and estimated profit on the wage fund, then VAT. Every multiplication is shown.',
         })}
       />
       <ResourceIndexContent />
@@ -245,7 +245,7 @@ function ResourceIndexContent() {
       setDirty(false);
       addToast({
         type: 'success',
-        title: t('price_index.ri.saved', { defaultValue: 'Choices saved on the estimate' }),
+        title: t('price_index.ri.saved', { defaultValue: 'Choices saved on the Orçamento' }),
       });
     },
     onError: onRefusalOrError,
@@ -275,10 +275,10 @@ function ResourceIndexContent() {
     <div className="space-y-5">
       <Card>
         <CardHeader
-          title={t('price_index.ri.setup_title', { defaultValue: 'Estimate and indices' })}
+          title={t('price_index.ri.setup_title', { defaultValue: 'Orçamento and indices' })}
           subtitle={t('price_index.ri.setup_subtitle', {
             defaultValue:
-              'Pick the estimate, the region and quarter of the indices, and the date the VAT rate is read for. Resource prices on the estimate must be at base prices.',
+              'Pick the Orçamento, the region and quarter of the indices, and the date the VAT rate is read for. Resource prices on the Orçamento must be at base prices.',
           })}
         />
         <div className="mt-4 space-y-4">
@@ -366,7 +366,7 @@ function ResourceIndexContent() {
               ) : (
                 <Calculator className="mr-1 h-4 w-4" aria-hidden />
               )}
-              {t('price_index.ri.calculate', { defaultValue: 'Calculate estimate' })}
+              {t('price_index.ri.calculate', { defaultValue: 'Calculate Orçamento' })}
             </Button>
             <Button
               variant="secondary"
@@ -405,7 +405,7 @@ function ResourceIndexContent() {
             <span>
               {t('price_index.ri.base_prices_confirm', {
                 defaultValue:
-                  'The resource prices on this estimate are base prices of the 2022 federal base (FSNB-2022). Tick this only if they are: prices in current money, such as a resource split of current rates, would be indexed a second time. Without it only lines marked as priced from the norm base are indexed.',
+                  'The resource prices on this Orçamento are base prices of the 2022 federal base (FSNB-2022). Tick this only if they are: prices in current money, such as a resource split of current rates, would be indexed a second time. Without it only lines marked as priced from the norm base are indexed.',
               })}
             </span>
           </label>
@@ -491,7 +491,7 @@ function RefusalBox({ refusal }: { refusal: ResourceIndexRefusal }) {
     case 'missing_index':
       text = t('price_index.ri.err_missing_index', {
         defaultValue:
-          'The estimate needs an index for {{groups}} in {{region}}, {{quarter}}, and none is entered. Enter it from the quarterly letter below; a missing index is never taken as 1.',
+          'The Orçamento needs an index for {{groups}} in {{region}}, {{quarter}}, and none is entered. Enter it from the quarterly letter below; a missing index is never taken as 1.',
         groups: fmtList((refusal.groups ?? []).map(label)),
         region: refusal.region_code ?? '',
         quarter: refusal.quarter ?? '',
@@ -513,7 +513,7 @@ function RefusalBox({ refusal }: { refusal: ResourceIndexRefusal }) {
     case 'vat_unresolved':
       text = t('price_index.ri.err_vat', {
         defaultValue:
-          'The tax tables give no VAT rate for Russia on {{date}}, so the estimate has no VAT line to show. Check the tax settings.',
+          'The tax tables give no VAT rate for Russia on {{date}}, so the Orçamento has no VAT line to show. Check the tax settings.',
         date: refusal.on_date ?? '',
       });
       break;
@@ -522,12 +522,12 @@ function RefusalBox({ refusal }: { refusal: ResourceIndexRefusal }) {
       break;
     case 'invalid_index':
       text = t('price_index.ri.err_invalid_index', {
-        defaultValue: 'An index the estimate needs is zero or negative. Correct it below.',
+        defaultValue: 'An index the Orçamento needs is zero or negative. Correct it below.',
       });
       break;
     case 'invalid_input':
       text = t('price_index.ri.err_invalid_input', {
-        defaultValue: 'The estimate cannot be priced as entered: {{reason}}',
+        defaultValue: 'The Orçamento cannot be priced as entered: {{reason}}',
         reason: refusal.message,
       });
       break;
@@ -606,7 +606,7 @@ export function EstimateBreakdown({
             <span>
               {t('price_index.ri.partial_banner', {
                 defaultValue:
-                  'Partial: {{priced}}, {{excluded}}. The totals below cover only the priced positions and are not the estimate total.',
+                  'Partial: {{priced}}, {{excluded}}. The totals below cover only the priced positions and are not the Orçamento total.',
                 priced: t('price_index.ri.priced_count', {
                   count: result.priced_count,
                   defaultValue: '{{count}} position priced',
@@ -628,7 +628,7 @@ export function EstimateBreakdown({
         <CardHeader
           title={
             result.is_complete
-              ? t('price_index.ri.totals_title', { defaultValue: 'Estimate totals' })
+              ? t('price_index.ri.totals_title', { defaultValue: 'Orçamento totals' })
               : t('price_index.ri.totals_title_partial', { defaultValue: 'Totals of the priced positions' })
           }
           subtitle={t('price_index.ri.totals_subtitle', {
@@ -822,7 +822,7 @@ function ExcludedList({
       case 'base_prices_unconfirmed':
         return t('price_index.ri.reason_base_prices_unconfirmed', {
           defaultValue:
-            'not confirmed as base prices; tick the base-price statement above if the resource prices of this estimate are FSNB-2022 base prices',
+            'not confirmed as base prices; tick the base-price statement above if the resource prices of this Orçamento are FSNB-2022 base prices',
         });
       case 'estimated_resources':
         return t('price_index.ri.reason_estimated_resources', {

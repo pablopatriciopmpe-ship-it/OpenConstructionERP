@@ -723,7 +723,7 @@ export function ResourcesPage() {
             onClick: () => navigate('/portfolio/leveling'),
           },
           {
-            label: t('resources.intro_link_schedule', { defaultValue: '4D Schedule' }),
+            label: t('resources.intro_link_schedule', { defaultValue: 'Cronograma' }),
             onClick: () => navigate('/schedule'),
           },
           {
@@ -738,7 +738,7 @@ export function ResourcesPage() {
       >
         {t('resources.intro_body', {
           defaultValue:
-            'Register people, crews and equipment, then put them to work: a foreman raises a Request, a dispatcher fulfils it by matching an available resource, and the resulting Assignment reserves that resource for a date range with double-booking conflicts flagged automatically. Confirmed assignments are the source of truth for who is on site each day and align with the schedule and tasks.',
+            'Register people, crews and equipment, then put them to work: a foreman raises a Request, a dispatcher fulfils it by matching an available resource, and the resulting Assignment reserves that resource for a date range with double-booking conflicts flagged automatically. Confirmed assignments are the source of truth for who is on site each day and align with the Cronograma and tasks.',
         })}
       </DismissibleInfo>
 
@@ -3419,7 +3419,7 @@ function AssignmentsTab({
                                     );
                                   }}
                                   title={t('resources.open_activity', {
-                                    defaultValue: 'Open in the schedule',
+                                    defaultValue: 'Open in the Cronograma',
                                   })}
                                   data-testid={`assign-activity-${a.id}`}
                                 >

@@ -164,7 +164,7 @@ export default function BIMCoverageCard() {
         <MetricRow
           icon={<Link2 size={12} className="text-oe-blue" />}
           label={t('dashboard.bim_linked_boq', {
-            defaultValue: 'Linked to BOQ',
+            defaultValue: 'Linked to Planilha orçamentária',
           })}
           count={data.elements_linked_to_boq}
           total={totalElements}

@@ -129,10 +129,10 @@ export function buildRFIInsights(
 
   const dataset: InsightDataset = {
     id: 'rfis',
-    label: t('rfi.insights.ds_rfis', { defaultValue: 'RFI register' }),
+    label: t('rfi.insights.ds_rfis', { defaultValue: 'Pedido de informação (RFI) register' }),
     currency: currency || '',
     fields: [
-      { key: 'subject', label: t('rfi.insights.f_subject', { defaultValue: 'RFI' }), kind: 'dimension' },
+      { key: 'subject', label: t('rfi.insights.f_subject', { defaultValue: 'Pedido de informação (RFI)' }), kind: 'dimension' },
       { key: 'status', label: t('rfi.insights.f_status', { defaultValue: 'Status' }), kind: 'dimension' },
       { key: 'priority', label: t('rfi.insights.f_priority', { defaultValue: 'Priority' }), kind: 'dimension' },
       { key: 'discipline', label: t('rfi.insights.f_discipline', { defaultValue: 'Discipline' }), kind: 'dimension' },
@@ -147,14 +147,14 @@ export function buildRFIInsights(
 
   const base = { datasetId: 'rfis', builtin: true } as const;
   const builtins: InsightDef[] = [
-    { ...base, id: 'kpi-rfis', title: t('rfi.insights.k_rfis', { defaultValue: 'RFIs' }), chart: 'kpi', agg: 'count', color: 0 },
+    { ...base, id: 'kpi-rfis', title: t('rfi.insights.k_rfis', { defaultValue: 'Pedidos de informação' }), chart: 'kpi', agg: 'count', color: 0 },
     { ...base, id: 'kpi-open', title: t('rfi.insights.k_open', { defaultValue: 'Open' }), chart: 'kpi', measure: 'open', agg: 'sum', color: 0 },
     { ...base, id: 'kpi-overdue', title: t('rfi.insights.k_overdue', { defaultValue: 'Overdue' }), chart: 'kpi', measure: 'overdue', agg: 'sum', color: 1 },
     { ...base, id: 'kpi-avg-age', title: t('rfi.insights.k_avg_age', { defaultValue: 'Avg days open' }), chart: 'kpi', measure: 'age', agg: 'avg', color: 4 },
-    { ...base, id: 'bar-by-discipline', title: t('rfi.insights.c_by_discipline', { defaultValue: 'RFIs by discipline' }), chart: 'bar', dimension: 'discipline', agg: 'count', color: 0 },
-    { ...base, id: 'donut-by-status', title: t('rfi.insights.c_by_status', { defaultValue: 'RFIs by status' }), chart: 'donut', dimension: 'status', agg: 'count', color: 4 },
+    { ...base, id: 'bar-by-discipline', title: t('rfi.insights.c_by_discipline', { defaultValue: 'Pedidos de informação by discipline' }), chart: 'bar', dimension: 'discipline', agg: 'count', color: 0 },
+    { ...base, id: 'donut-by-status', title: t('rfi.insights.c_by_status', { defaultValue: 'Pedidos de informação by status' }), chart: 'donut', dimension: 'status', agg: 'count', color: 4 },
     { ...base, id: 'bar-by-court', title: t('rfi.insights.c_by_court', { defaultValue: 'Who owes the next move' }), chart: 'bar', dimension: 'court', agg: 'count', color: 1 },
-    { ...base, id: 'area-over-time', title: t('rfi.insights.c_over_time', { defaultValue: 'RFIs raised over time' }), chart: 'area', dimension: 'month', agg: 'count', color: 5 },
+    { ...base, id: 'area-over-time', title: t('rfi.insights.c_over_time', { defaultValue: 'Pedidos de informação raised over time' }), chart: 'area', dimension: 'month', agg: 'count', color: 5 },
   ];
 
   return { datasets: [dataset], builtins };

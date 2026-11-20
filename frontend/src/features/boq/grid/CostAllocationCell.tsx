@@ -110,7 +110,7 @@ export function CostAllocationCellRenderer(params: ICellRendererParams) {
     );
   } else {
     title = t('boq.cost_allocation.none_tip', {
-      defaultValue: 'Not on any cost line, so its money is missing from cost control. Click to allocate it.',
+      defaultValue: 'Not on any cost line, so its money is missing from Controle de custos. Click to allocate it.',
     });
     content = (
       <span className="rounded bg-semantic-warning-bg px-1.5 py-0.5 text-2xs font-medium text-semantic-warning">

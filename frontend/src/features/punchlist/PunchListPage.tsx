@@ -728,7 +728,7 @@ function AddPunchModal({
                 {otherPeople.length > 0 ? (
                   <optgroup
                     label={t('people.group_workspace', {
-                      defaultValue: 'Everyone in this workspace',
+                      defaultValue: 'Everyone in this Espaço de trabalho',
                     })}
                   >
                     {otherPeople.map(assigneeOption)}
@@ -1521,10 +1521,10 @@ export function PunchListPage() {
     async (id: string) => {
       const ok = await confirm({
         title: t('punch.confirm_delete_title', {
-          defaultValue: 'Delete punch list item?',
+          defaultValue: 'Delete Pendências item?',
         }),
         message: t('punchlist.confirm_delete', {
-          defaultValue: 'Delete this punch list item? This cannot be undone.',
+          defaultValue: 'Delete this Pendências item? This cannot be undone.',
         }),
         confirmLabel: t('common.delete', { defaultValue: 'Delete' }),
         variant: 'danger',
@@ -1568,7 +1568,7 @@ export function PunchListPage() {
           ...(breadcrumbProjectName && activeProjectId
             ? [{ label: breadcrumbProjectName, to: `/projects/${activeProjectId}` }]
             : []),
-          { label: t('punch.title', { defaultValue: 'Punch List' }) },
+          { label: t('punch.title', { defaultValue: 'Pendências' }) },
         ]}
       />
 
@@ -1577,7 +1577,7 @@ export function PunchListPage() {
           selection is handled by the global top bar and read here from the
           shared project context. */}
       <PageHeader
-        srTitle={t('punch.title', { defaultValue: 'Punch List' })}
+        srTitle={t('punch.title', { defaultValue: 'Pendências' })}
         subtitle={t('punch.header_subtitle', {
           defaultValue: 'Track snags and deficiencies through to close-out',
         })}
@@ -1655,7 +1655,7 @@ export function PunchListPage() {
 
       <InsightsPanel
         open={insights.open}
-        title={t('punch.insights.title', { defaultValue: 'Punch list insights' })}
+        title={t('punch.insights.title', { defaultValue: 'Pendências insights' })}
         datasets={insightDatasets}
         builtins={insightBuiltins}
         custom={insights.custom}
@@ -1674,13 +1674,13 @@ export function PunchListPage() {
           <IntroRichText
             text={t('punch.intro_more', {
               defaultValue:
-                'Near the end of a job the small stuff piles up: a scuffed door, a missing fire seal, a tile that is not bedded right, a socket that does not work. These are not formal non-conformances, they are snags that just need someone to go and fix them and someone else to confirm they are done. The Punch List is the running register of that outstanding work, so handover is not held up by a hundred half-remembered items on a clipboard.\n\n**You put in:**\n- Punch items with a title, description and a photo or two of the problem\n- A priority (low to critical), a category (structural, MEP, finishing and so on) and a location\n- An assignee and a due date so each item has an owner and a deadline\n- Items raised automatically from a failed inspection, an NCR or a model clash, tagged with their source\n\n**You get out:**\n- A KPI strip showing total, open, in-progress, resolved, overdue and average days to close\n- A Kanban board to manage flow and a list view for bulk triage and close-out\n- A clear status lifecycle for every item, with overdue items flagged in red\n- Bulk close, per-item photos and a map view to see snags by location on site\n\n**How it works day to day:**\n1. Capture the snag during a walkthrough, set its priority and location, and assign it.\n2. The owner moves it Open to In Progress to Resolved as they work it.\n3. A checker verifies the fix and moves it Resolved to Verified to Closed.\n4. If the fix does not hold up on a re-check, reopen it straight back to Open from Resolved, Verified or Closed.\n5. Use the list view to multi-select and bulk close a batch once a zone is signed off.\n\nThe status flow is enforced by the backend, so only legal moves are offered, and reopen always goes back to Open rather than an invalid intermediate state. Items that came from a failed Inspection or an NCR keep a source badge so you can trace them to their origin, which keeps the inspect, defect and close-out loop honest right through to handover.',
+                'Near the end of a job the small stuff piles up: a scuffed door, a missing fire seal, a tile that is not bedded right, a socket that does not work. These are not formal non-conformances, they are snags that just need someone to go and fix them and someone else to confirm they are done. The Pendências is the running register of that outstanding work, so handover is not held up by a hundred half-remembered items on a clipboard.\n\n**You put in:**\n- Punch items with a title, description and a photo or two of the problem\n- A priority (low to critical), a category (structural, MEP, finishing and so on) and a location\n- An assignee and a due date so each item has an owner and a deadline\n- Items raised automatically from a failed inspection, an NCR or a model clash, tagged with their source\n\n**You get out:**\n- A KPI strip showing total, open, in-progress, resolved, overdue and average days to close\n- A Kanban board to manage flow and a list view for bulk triage and close-out\n- A clear status lifecycle for every item, with overdue items flagged in red\n- Bulk close, per-item photos and a map view to see snags by location on site\n\n**How it works day to day:**\n1. Capture the snag during a walkthrough, set its priority and location, and assign it.\n2. The owner moves it Open to In Progress to Resolved as they work it.\n3. A checker verifies the fix and moves it Resolved to Verified to Closed.\n4. If the fix does not hold up on a re-check, reopen it straight back to Open from Resolved, Verified or Closed.\n5. Use the list view to multi-select and bulk close a batch once a zone is signed off.\n\nThe status flow is enforced by the backend, so only legal moves are offered, and reopen always goes back to Open rather than an invalid intermediate state. Items that came from a failed Inspection or an NCR keep a source badge so you can trace them to their origin, which keeps the inspect, defect and close-out loop honest right through to handover.',
             })}
           />
         }
         links={[
           {
-            label: t('punch.intro_link_inspections', { defaultValue: 'Inspections' }),
+            label: t('punch.intro_link_inspections', { defaultValue: 'Inspeções' }),
             onClick: () => navigate('/inspections'),
           },
           {
@@ -1691,7 +1691,7 @@ export function PunchListPage() {
       >
         {t('punch.intro_body', {
           defaultValue:
-            'Punch list items capture outstanding work, snags and minor defects. Move each item Open to In Progress to Resolved to Verified to Closed, and reopen anything back to Open straight from Resolved, Verified or Closed when a fix does not hold up on a re-check. Items raised from a failed inspection or an NCR are tagged with their source so you can trace them back. Use the Kanban view to manage flow, the list view for bulk triage.',
+            'Pendências items capture outstanding work, snags and minor defects. Move each item Open to In Progress to Resolved to Verified to Closed, and reopen anything back to Open straight from Resolved, Verified or Closed when a fix does not hold up on a re-check. Items raised from a failed inspection or an NCR are tagged with their source so you can trace them back. Use the Kanban view to manage flow, the list view for bulk triage.',
         })}
       </SectionIntro>
 
@@ -1949,7 +1949,7 @@ export function PunchListPage() {
           <RequiresProject
             emptyHint={t('punch.no_project_desc', {
               defaultValue:
-                'Select a project from the dropdown above to view and manage punch list items.',
+                'Select a project from the dropdown above to view and manage Pendências items.',
             })}
           >{null}</RequiresProject>
         ) : isLoading ? (
@@ -1986,7 +1986,7 @@ export function PunchListPage() {
             title={
               searchQuery || filterPriority || filterStatus || filterCategory || filterAssignee || filterArea || filterAsset
                 ? t('punch.no_results_title', { defaultValue: 'No matching items' })
-                : t('punch.empty_title', { defaultValue: 'No punch list items' })
+                : t('punch.empty_title', { defaultValue: 'No Pendências items' })
             }
             description={
               searchQuery || filterPriority || filterStatus || filterCategory || filterAssignee || filterArea || filterAsset
@@ -1995,7 +1995,7 @@ export function PunchListPage() {
                   })
                 : t('punch.empty_desc', {
                     defaultValue:
-                      'Create punch list items to track deficiencies, snags, and outstanding work.',
+                      'Create Pendências items to track deficiencies, snags, and outstanding work.',
                   })
             }
             action={

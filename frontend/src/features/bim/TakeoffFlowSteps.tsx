@@ -29,12 +29,12 @@ export function TakeoffFlowSteps() {
   const { t } = useTranslation();
   return (
     <section
-      aria-label={t('bim_rules.flow_title', { defaultValue: 'How automatic takeoff works' })}
+      aria-label={t('bim_rules.flow_title', { defaultValue: 'How automatic Levantamento de quantitativos works' })}
       className="mb-4 rounded-lg border border-border-light bg-surface-secondary/40 px-4 py-3"
       data-testid="bim-rules-flow-steps"
     >
       <h2 className="oe-overline">
-        {t('bim_rules.flow_title', { defaultValue: 'How automatic takeoff works' })}
+        {t('bim_rules.flow_title', { defaultValue: 'How automatic Levantamento de quantitativos works' })}
       </h2>
       <ol className="mt-2 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {TAKEOFF_STEPS.map((step, i) => (

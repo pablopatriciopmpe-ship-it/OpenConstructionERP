@@ -92,7 +92,7 @@ export function SendToTenderDialog({
       setName(
         t('boq.tender_default_name', {
           defaultValue: 'Tender - {{name}}',
-          name: baseName || t('boq.untitled_estimate', { defaultValue: 'Estimate' }),
+          name: baseName || t('boq.untitled_estimate', { defaultValue: 'Orçamento' }),
         }),
       );
       setDeadline('');
@@ -247,7 +247,7 @@ export function SendToTenderDialog({
                 })
               : t('boq.tender_scope_all', {
                   defaultValue:
-                    'All sections of this estimate will be packaged. Select sections first to send only part of it.',
+                    'All sections of this Orçamento will be packaged. Select sections first to send only part of it.',
                 })}
           </div>
           )}

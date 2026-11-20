@@ -224,7 +224,7 @@ export function ImpactSimulator({
           <p className="mb-4 text-xs text-content-tertiary">
             {t('changeorders.impact_intro', {
               defaultValue:
-                'See the budget, finish date and earned-value effect of approving this change order. Nothing is saved.',
+                'See the budget, finish date and earned-value effect of approving this Alteração de contrato. Nothing is saved.',
             })}
           </p>
 
@@ -258,7 +258,7 @@ export function ImpactSimulator({
                 />
                 <div className="mt-1 flex items-center gap-2 text-xs text-content-tertiary">
                   <span>
-                    {t('changeorders.impact_delta', { defaultValue: 'This change order' })}:{' '}
+                    {t('changeorders.impact_delta', { defaultValue: 'This Alteração de contrato' })}:{' '}
                     <span className="font-medium text-content-secondary">
                       {fmtMoney(data.co_cost_base, ccy)}
                     </span>
@@ -280,7 +280,7 @@ export function ImpactSimulator({
               {/* Schedule */}
               <section>
                 <h4 className="oe-overline mb-1 flex items-center gap-1.5">
-                  <CalendarClock size={14} /> {t('changeorders.impact_schedule', { defaultValue: 'Schedule' })}
+                  <CalendarClock size={14} /> {t('changeorders.impact_schedule', { defaultValue: 'Cronograma' })}
                 </h4>
                 {data.schedule.current_end_date ? (
                   <div className="flex items-center justify-between py-1.5 text-sm">
@@ -302,7 +302,7 @@ export function ImpactSimulator({
                           defaultValue: 'Adds {{n}} days (no project end date set).',
                           n: data.schedule.days_added,
                         })
-                      : t('changeorders.impact_no_sched', { defaultValue: 'No schedule change.' })}
+                      : t('changeorders.impact_no_sched', { defaultValue: 'No Cronograma change.' })}
                   </p>
                 )}
                 {data.schedule.finish_moves && data.schedule.current_end_date && (
@@ -318,7 +318,7 @@ export function ImpactSimulator({
               {/* EVM */}
               <section>
                 <h4 className="oe-overline mb-1 flex items-center gap-1.5">
-                  <TrendingUp size={14} /> {t('changeorders.impact_evm', { defaultValue: 'Earned value (EVM)' })}
+                  <TrendingUp size={14} /> {t('changeorders.impact_evm', { defaultValue: 'Valor agregado (Valor agregado)' })}
                 </h4>
                 <DeltaRow
                   label={t('changeorders.impact_bac', { defaultValue: 'Budget at completion (BAC)' })}
@@ -327,7 +327,7 @@ export function ImpactSimulator({
                   currency={ccy}
                 />
                 <DeltaRow
-                  label={t('changeorders.impact_eac', { defaultValue: 'Estimate at completion (EAC)' })}
+                  label={t('changeorders.impact_eac', { defaultValue: 'Orçamento at completion (EAC)' })}
                   before={data.evm.eac_before}
                   after={data.evm.eac_after}
                   currency={ccy}
@@ -369,7 +369,7 @@ export function ImpactSimulator({
                   <span>
                   {data.boq.item_count === 0
                     ? t('changeorders.impact_boq_empty', {
-                        defaultValue: 'No line items yet, so nothing would be written to the BOQ.',
+                        defaultValue: 'No line items yet, so nothing would be written to the Planilha orçamentária.',
                       })
                     : data.boq.target_boq_ambiguous
                     ? t('changeorders.impact_boq_ambiguous_count', {
@@ -438,7 +438,7 @@ export function ImpactSimulator({
                             <span className="flex items-center gap-3 tabular-nums">
                               {snap.co_cost_base !== undefined && (
                                 <span className="text-content-secondary">
-                                  {t('changeorders.impact_delta', { defaultValue: 'This change order' })}:{' '}
+                                  {t('changeorders.impact_delta', { defaultValue: 'This Alteração de contrato' })}:{' '}
                                   <span className="font-medium">{fmtMoney(snap.co_cost_base, ccyS)}</span>
                                 </span>
                               )}

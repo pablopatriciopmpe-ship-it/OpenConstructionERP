@@ -288,7 +288,7 @@ function MeasureForm({
       <p className="text-xs text-content-tertiary">
         {t('full_evm.measure_intro', {
           defaultValue:
-            'Earned value is what the work completed was worth at the planned rate, and actual cost is what it cost. Leave planned value empty to read it off the baseline curve at this date.',
+            'Valor agregado is what the work completed was worth at the planned rate, and actual cost is what it cost. Leave planned value empty to read it off the baseline curve at this date.',
         })}
       </p>
       <div className="grid gap-2 sm:grid-cols-4">
@@ -305,7 +305,7 @@ function MeasureForm({
         </label>
         <label className="block">
           <span className="text-xs text-content-secondary">
-            {t('full_evm.field_ev', { defaultValue: 'Earned value' })}
+            {t('full_evm.field_ev', { defaultValue: 'Valor agregado' })}
           </span>
           <input
             className="mt-1 w-full oe-input tabular-nums"
@@ -843,7 +843,7 @@ export function FullEvmPanel() {
           title={t('full_evm.empty_title', { defaultValue: 'This project has no baseline' })}
           description={t('full_evm.empty_description', {
             defaultValue:
-              'Earned value needs a plan to measure against: a budget, and how it was expected to be spent over time. Nothing here can be read without one.',
+              'Valor agregado needs a plan to measure against: a budget, and how it was expected to be spent over time. Nothing here can be read without one.',
           })}
           action={{
             label: t('full_evm.action_new_baseline', { defaultValue: 'New baseline' }),

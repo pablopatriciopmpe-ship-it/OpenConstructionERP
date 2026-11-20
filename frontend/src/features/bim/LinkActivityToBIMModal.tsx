@@ -181,7 +181,7 @@ export default function LinkActivityToBIMModal({
           <div className="flex items-center gap-2">
             <Calendar size={16} className="text-semantic-success" />
             <h2 className="oe-card-title">
-              {t('bim.link_act_title', { defaultValue: 'Link a schedule activity' })}
+              {t('bim.link_act_title', { defaultValue: 'Link a Cronograma activity' })}
             </h2>
             <span className="text-2xs text-content-tertiary">
               {elements.length === 1
@@ -232,11 +232,11 @@ export default function LinkActivityToBIMModal({
             <div className="text-center py-8 text-2xs text-content-tertiary italic">
               {schedules.length === 0
                 ? t('bim.no_schedules', {
-                    defaultValue: 'No schedules in this project yet - create one in /schedule first',
+                    defaultValue: 'No schedules in this project yet - create one in /Cronograma first',
                   })
                 : activities.length === 0
                   ? t('bim.no_activities', {
-                      defaultValue: 'No activities in any project schedule yet',
+                      defaultValue: 'No activities in any project Cronograma yet',
                     })
                   : t('bim.no_act_match', { defaultValue: 'No activities match your search' })}
             </div>

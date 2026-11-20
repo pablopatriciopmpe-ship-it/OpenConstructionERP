@@ -3484,7 +3484,7 @@ const BOQGrid = forwardRef<BOQGridHandle, BOQGridProps>(function BOQGrid({
                 </>}
                 {onOpenAICopilot && !readOnly && (
                   <CtxItem icon={<Sparkles size={14} className="text-violet-500"/>}
-                    label={t('boq.ai_copilot', { defaultValue: 'AI Copilot' })}
+                    label={t('boq.ai_copilot', { defaultValue: 'IA Copilot' })}
                     onClick={() => { onOpenAICopilot(d.id as string); closeContextMenu(); }}
                   />
                 )}
@@ -3552,7 +3552,7 @@ const BOQGrid = forwardRef<BOQGridHandle, BOQGridProps>(function BOQGrid({
                     <CtxItem icon={<Link2 size={14} className={badge?.traced ? 'text-oe-blue' : undefined}/>}
                       label={badge?.traced
                         ? t('boq.variation_trace_action_traced', { defaultValue: 'Provenance: {{kind}}…', kind: badge.short })
-                        : t('boq.variation_trace_action', { defaultValue: 'Trace to contract or estimate…' })}
+                        : t('boq.variation_trace_action', { defaultValue: 'Trace to contract or Orçamento…' })}
                       onClick={() => { onTraceLine(d.id as string); closeContextMenu(); }}
                     />
                   );
@@ -3638,7 +3638,7 @@ const BOQGrid = forwardRef<BOQGridHandle, BOQGridProps>(function BOQGrid({
                 })()}
                 {costItemId && (
                   <CtxItem icon={<ExternalLink size={14}/>}
-                    label={t('boq.view_in_cost_db', { defaultValue: 'View in Cost Database' })}
+                    label={t('boq.view_in_cost_db', { defaultValue: 'View in Banco de custos' })}
                     onClick={() => { navigate(`/costs?highlight=${costItemId}`); closeContextMenu(); }}
                   />
                 )}

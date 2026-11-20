@@ -182,7 +182,7 @@ export function CPMView({ scheduleId }: CPMViewProps) {
     <div className="space-y-5 animate-fade-in">
       <Breadcrumb
         items={[
-          { label: t('schedule.title', { defaultValue: '4D Schedule' }), to: '/schedule' },
+          { label: t('schedule.title', { defaultValue: 'Cronograma' }), to: '/schedule' },
           { label: t('schedule.cpm.title', { defaultValue: 'Critical Path' }) },
         ]}
       />
@@ -203,12 +203,12 @@ export function CPMView({ scheduleId }: CPMViewProps) {
             : undefined
         }
         links={[
-          { label: t('schedule_cpm.intro_link_schedule', { defaultValue: 'Back to schedule' }), onClick: () => navigate('/schedule') },
+          { label: t('schedule_cpm.intro_link_schedule', { defaultValue: 'Back to Cronograma' }), onClick: () => navigate('/schedule') },
         ]}
       >
         {t('schedule_cpm.intro_body', {
           defaultValue:
-            'Runs the Critical Path Method over one schedule, showing the forward and backward pass, early and late dates and total float for every activity, with the critical path flagged. Use the resource-leveling step to shift non-critical activities and ease over-allocated crews without moving the finish date.',
+            'Runs the Critical Path Method over one Cronograma, showing the forward and backward pass, early and late dates and total float for every activity, with the critical path flagged. Use the resource-leveling step to shift non-critical activities and ease over-allocated crews without moving the finish date.',
         })}
       </DismissibleInfo>
 

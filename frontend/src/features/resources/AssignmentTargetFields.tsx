@@ -104,11 +104,11 @@ export function AssignmentTargetFields({
 
   const activityHint = !projectId
     ? t('resources.activity_needs_project', {
-        defaultValue: 'Pick a project first - activities belong to its schedule.',
+        defaultValue: 'Pick a project first - activities belong to its Cronograma.',
       })
     : !activitiesLoading && activityOptions.length === 0
       ? t('resources.activity_none', {
-          defaultValue: 'This project has no schedule activities yet.',
+          defaultValue: 'This project has no Cronograma activities yet.',
         })
       : undefined;
 
@@ -130,7 +130,7 @@ export function AssignmentTargetFields({
         />
       </WideModalField>
       <WideModalField
-        label={t('resources.activity', { defaultValue: 'Schedule activity' })}
+        label={t('resources.activity', { defaultValue: 'Cronograma activity' })}
         hint={activityHint}
       >
         <SearchableSelect
@@ -145,7 +145,7 @@ export function AssignmentTargetFields({
             projectId
               ? t('resources.pick_activity', { defaultValue: 'Pick an activity' })
               : t('resources.activity_needs_project', {
-                  defaultValue: 'Pick a project first - activities belong to its schedule.',
+                  defaultValue: 'Pick a project first - activities belong to its Cronograma.',
                 })
           }
           searchPlaceholder={t('resources.search_activity', {

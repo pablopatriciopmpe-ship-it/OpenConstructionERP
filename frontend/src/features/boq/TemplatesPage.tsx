@@ -160,14 +160,14 @@ export function TemplatesPage() {
       queryClient.invalidateQueries({ queryKey: ['all-boqs'] });
       addToast({
         type: 'success',
-        title: t('boq.template_created', { defaultValue: 'BOQ created from template' }),
+        title: t('boq.template_created', { defaultValue: 'Planilha orçamentária created from Modelo' }),
       });
       navigate(`/boq/${boq.id}`);
     },
     onError: (e: Error) => {
       addToast({
         type: 'error',
-        title: t('boq.template_error', { defaultValue: 'Failed to create BOQ from template' }),
+        title: t('boq.template_error', { defaultValue: 'Failed to create Planilha orçamentária from Modelo' }),
         message: e.message,
       });
     },
@@ -189,7 +189,7 @@ export function TemplatesPage() {
     onError: (e: Error) =>
       addToast({
         type: 'error',
-        title: t('boq_templates.duplicate_failed', { defaultValue: 'Could not copy the template' }),
+        title: t('boq_templates.duplicate_failed', { defaultValue: 'Could not copy the Modelo' }),
         message: e.message,
       }),
   });
@@ -199,12 +199,12 @@ export function TemplatesPage() {
     onSuccess: () => {
       void invalidateTemplates();
       setSelectedId(null);
-      addToast({ type: 'success', title: t('boq_templates.deleted', { defaultValue: 'Template deleted' }) });
+      addToast({ type: 'success', title: t('boq_templates.deleted', { defaultValue: 'Modelo deleted' }) });
     },
     onError: (e: Error) =>
       addToast({
         type: 'error',
-        title: t('boq_templates.delete_failed', { defaultValue: 'Could not delete the template' }),
+        title: t('boq_templates.delete_failed', { defaultValue: 'Could not delete the Modelo' }),
         message: e.message,
       }),
   });
@@ -267,14 +267,14 @@ export function TemplatesPage() {
 
   return (
     <div className="space-y-5 animate-fade-in pb-12">
-      <Breadcrumb items={[{ label: t('boq.templates', { defaultValue: 'BOQ Templates' }) }]} />
+      <Breadcrumb items={[{ label: t('boq.templates', { defaultValue: 'Planilha orçamentária Modelos' }) }]} />
       {/* Canonical top block - module name + icon come from the global top
           bar; the page renders only its subtitle. */}
       <PageHeader
-        srTitle={t('boq.templates', { defaultValue: 'BOQ Templates' })}
+        srTitle={t('boq.templates', { defaultValue: 'Planilha orçamentária Modelos' })}
         subtitle={t('boq.templates_subtitle', {
           defaultValue:
-            'Start with a professional template for your building type. Select a template, set the area, and generate a complete BOQ instantly.',
+            'Start with a professional Modelo for your building type. Select a Modelo, set the area, and generate a complete Planilha orçamentária instantly.',
         })}
       />
 
@@ -286,21 +286,21 @@ export function TemplatesPage() {
           data-testid="tpl-from-estimate"
           onClick={() => setFromEstimateOpen(true)}
         >
-          {t('boq_templates.from_estimate', { defaultValue: 'From an existing estimate' })}
+          {t('boq_templates.from_estimate', { defaultValue: 'From an existing Orçamento' })}
         </Button>
       </div>
 
       <DismissibleInfo
         storageKey="templates"
-        title={t('boq_templates.intro_title', { defaultValue: 'Skip the blank-page start on an estimate' })}
+        title={t('boq_templates.intro_title', { defaultValue: 'Skip the blank-page start on an Orçamento' })}
         links={[
           { label: t('nav.boq', { defaultValue: 'Bill of Quantities' }), onClick: () => navigate('/boq') },
-          { label: t('nav.costs', { defaultValue: 'Cost Database' }), onClick: () => navigate('/costs') },
+          { label: t('nav.costs', { defaultValue: 'Banco de custos' }), onClick: () => navigate('/costs') },
         ]}
       >
         {t('boq_templates.intro_body', {
           defaultValue:
-            'Pick a building type, set the floor area and generate a complete structured BOQ with sections, positions and benchmark rates per square metre. The result opens in the BOQ editor on your chosen project, ready to refine.',
+            'Pick a building type, set the floor area and generate a complete structured Planilha orçamentária with sections, positions and benchmark rates per square metre. The result opens in the Planilha orçamentária editor on your chosen project, ready to refine.',
         })}
       </DismissibleInfo>
 
@@ -310,14 +310,14 @@ export function TemplatesPage() {
       {templatesPending && (
         <div className="flex items-center gap-2 text-content-tertiary text-sm">
           <Loader2 size={14} className="animate-spin" />
-          {t('boq_templates.loading', { defaultValue: 'Loading templates' })}
+          {t('boq_templates.loading', { defaultValue: 'Loading Modelos' })}
         </div>
       )}
 
       {templatesFailed && (
         <div className="rounded-xl border border-semantic-error/30 bg-semantic-error-bg px-4 py-3 text-sm">
           <p className="font-medium text-semantic-error">
-            {t('boq_templates.load_failed', { defaultValue: 'Could not load the templates' })}
+            {t('boq_templates.load_failed', { defaultValue: 'Could not load the Modelos' })}
           </p>
           <p className="mt-1 text-semantic-error">
             {templatesError instanceof Error
@@ -390,7 +390,7 @@ export function TemplatesPage() {
               {/* Cost indicator - benchmark rate per unit area (reciprocal). */}
               {tpl.builtin === false && (
                 <Badge variant="success" size="sm">
-                  {t('boq_templates.mine', { defaultValue: 'My template' })}
+                  {t('boq_templates.mine', { defaultValue: 'My Modelo' })}
                 </Badge>
               )}
               {tpl.avg_cost_per_m2 > 0 && (
@@ -456,7 +456,7 @@ export function TemplatesPage() {
                     loading={deleteMutation.isPending}
                     data-testid="tpl-delete"
                     onClick={() => {
-                      if (window.confirm(t('boq_templates.delete_confirm', { defaultValue: 'Delete this template? Bills already made from it are not affected.' }))) {
+                      if (window.confirm(t('boq_templates.delete_confirm', { defaultValue: 'Delete this Modelo? Bills already made from it are not affected.' }))) {
                         deleteMutation.mutate(selected.id);
                       }
                     }}
@@ -509,7 +509,7 @@ export function TemplatesPage() {
               {/* BOQ Name */}
               <div>
                 <label className="oe-label">
-                  {t('boq.boq_name', { defaultValue: 'BOQ Name' })}
+                  {t('boq.boq_name', { defaultValue: 'Planilha orçamentária Name' })}
                 </label>
                 <input
                   type="text"
@@ -564,7 +564,7 @@ export function TemplatesPage() {
               >
                 {createMutation.isPending
                   ? t('boq.creating', { defaultValue: 'Creating...' })
-                  : t('boq.create_from_template', { defaultValue: 'Create BOQ from Template' })}
+                  : t('boq.create_from_template', { defaultValue: 'Create Planilha orçamentária from Modelo' })}
               </Button>
             </div>
           </div>

@@ -43,15 +43,15 @@ export function LinkToPositionBanner({
       <span className="min-w-0 text-content-secondary">
         {!canLink
           ? t('bim.link_mode_no_permission', {
-              defaultValue: 'Your role can view the model but cannot link elements to BOQ positions.',
+              defaultValue: 'Your role can view the model but cannot link elements to Planilha orçamentária positions.',
             })
           : target.label
           ? t('bim.link_mode_banner', {
-              defaultValue: 'Linking to BOQ position {{label}}. Select elements in the model, then press Link selection.',
+              defaultValue: 'Linking to Planilha orçamentária position {{label}}. Select elements in the model, then press Link selection.',
               label: target.label,
             })
           : t('bim.link_mode_banner_unnamed', {
-              defaultValue: 'Linking to a BOQ position. Select elements in the model, then press Link selection.',
+              defaultValue: 'Linking to a Planilha orçamentária position. Select elements in the model, then press Link selection.',
             })}
       </span>
       {canLink && (
@@ -71,7 +71,7 @@ export function LinkToPositionBanner({
         className="flex items-center gap-1 rounded-lg border border-border-light px-2.5 py-1 text-2xs font-medium text-content-secondary hover:bg-surface-secondary"
       >
         <ArrowLeft size={12} />
-        {t('bim.link_mode_back', { defaultValue: 'Back to BOQ' })}
+        {t('bim.link_mode_back', { defaultValue: 'Back to Planilha orçamentária' })}
       </button>
       <button
         type="button"

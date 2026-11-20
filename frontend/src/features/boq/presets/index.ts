@@ -179,7 +179,7 @@ const UNIVERSAL_PRESETS: ColumnPreset[] = [
     id: 'schedule',
     region: 'universal',
     name: 'Schedule',
-    description: 'Start, end, duration and WBS code - link BOQ rows to the construction schedule',
+    description: 'Start, end, duration and WBS code - link Planilha orçamentária rows to the construction Cronograma',
     icon: CalendarIcon,
     iconClass: 'text-semantic-info bg-semantic-info/10',
     columns: [
@@ -200,7 +200,7 @@ const REGIONAL_PRESETS: ColumnPreset[] = [
     region: 'germany',
     name: 'GAEB / AVA Style',
     description:
-      'Splits unit rate into Lohn / Material / Geräte / Sonstiges + risk markup. Lohn/Material/Geräte auto-fill from position resources - no manual entry.',
+      'Splits unit rate into Lohn / Material / Geräte / Sonstiges + risk BDI. Lohn/Material/Geräte auto-fill from position resources - no manual entry.',
     icon: FileCheck,
     iconClass: 'text-semantic-error bg-semantic-error/10',
     columns: [
@@ -541,7 +541,7 @@ const REGIONAL_PRESETS: ColumnPreset[] = [
     region: 'integration',
     name: 'BIM Integration',
     description:
-      'IFC GUID, element ID, storey and lifecycle phase - for linking BoQ rows to BIM models',
+      'IFC GUID, element ID, storey and lifecycle phase - for linking Planilha orçamentária rows to BIM models',
     icon: Boxes,
     iconClass: 'text-cyan-600 bg-cyan-500/10',
     columns: [

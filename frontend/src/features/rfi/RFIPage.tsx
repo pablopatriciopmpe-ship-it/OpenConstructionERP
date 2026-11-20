@@ -872,11 +872,11 @@ export function CreateRFIModal({
       title={
         isEdit
           ? t('rfi.edit_rfi', {
-              defaultValue: 'Edit RFI #{{number}}',
+              defaultValue: 'Edit Pedido de informação (RFI) #{{number}}',
               number: editing?.rfi_number ?? '',
             })
           : requestType === DEFAULT_REQUEST_TYPE
-            ? t('rfi.new_rfi', { defaultValue: 'New RFI' })
+            ? t('rfi.new_rfi', { defaultValue: 'New Pedido de informação (RFI)' })
             : t('rfi.new_request_of_type', { defaultValue: 'New {{type}}', type: typeName })
       }
       subtitle={
@@ -904,7 +904,7 @@ export function CreateRFIModal({
               {isEdit
                 ? t('rfi.save_changes', { defaultValue: 'Save Changes' })
                 : requestType === DEFAULT_REQUEST_TYPE
-                  ? t('rfi.create_rfi', { defaultValue: 'Create RFI' })
+                  ? t('rfi.create_rfi', { defaultValue: 'Create Pedido de informação (RFI)' })
                   : t('rfi.create_request', { defaultValue: 'Create request' })}
             </span>
           </Button>
@@ -1085,7 +1085,7 @@ export function CreateRFIModal({
 
       {/* ── Assignment & Schedule ── */}
       <WideModalSection
-        title={t('rfi.section_assignment', { defaultValue: 'Assignment & Schedule' })}
+        title={t('rfi.section_assignment', { defaultValue: 'Assignment & Cronograma' })}
         columns={2}
       >
         <WideModalField
@@ -1201,7 +1201,7 @@ export function CreateRFIModal({
           </button>
         </WideModalField>
 
-        <WideModalField label={t('rfi.schedule_impact', { defaultValue: 'Schedule Impact' })}>
+        <WideModalField label={t('rfi.schedule_impact', { defaultValue: 'Cronograma Impact' })}>
           <button
             type="button"
             onClick={() => set('schedule_impact', !form.schedule_impact)}
@@ -1231,7 +1231,7 @@ export function CreateRFIModal({
                     : 'text-content-secondary',
                 )}
               >
-                {t('rfi.schedule_impact', { defaultValue: 'Schedule Impact' })}
+                {t('rfi.schedule_impact', { defaultValue: 'Cronograma Impact' })}
               </p>
               <p className="text-xs text-content-quaternary">
                 {form.schedule_impact
@@ -1269,12 +1269,12 @@ export function CreateRFIModal({
 
         {(form.schedule_impact || requiredByType.has('schedule_impact_days')) && (
           <WideModalField
-            label={t('rfi.field_schedule_impact_days', { defaultValue: 'Schedule slip (days)' })}
+            label={t('rfi.field_schedule_impact_days', { defaultValue: 'Cronograma slip (days)' })}
             required={requiredByType.has('schedule_impact_days')}
             error={errors.schedule_impact_days}
             htmlFor="rfi-schedule-days"
             hint={t('rfi.schedule_days_hint', {
-              defaultValue: 'Working days the response could delay the schedule',
+              defaultValue: 'Working days the response could delay the Cronograma',
             })}
           >
             <input
@@ -1438,10 +1438,10 @@ function RespondModal({
 
   return (
     <div className="fixed inset-0 z-modal flex items-center justify-center bg-black/70 backdrop-blur-lg animate-fade-in">
-      <div className="w-full max-w-lg bg-surface-elevated rounded-xl shadow-xl border border-border animate-card-in mx-4" role="dialog" aria-modal="true" aria-label={t('rfi.respond_title', { defaultValue: 'Respond to RFI #{{number}}', number: rfi.rfi_number })}>
+      <div className="w-full max-w-lg bg-surface-elevated rounded-xl shadow-xl border border-border animate-card-in mx-4" role="dialog" aria-modal="true" aria-label={t('rfi.respond_title', { defaultValue: 'Respond to Pedido de informação (RFI) #{{number}}', number: rfi.rfi_number })}>
         <div className="flex items-center justify-between px-6 py-4 border-b border-border-light">
           <h2 className="oe-section-title">
-            {t('rfi.respond_title', { defaultValue: 'Respond to RFI #{{number}}', number: rfi.rfi_number })}
+            {t('rfi.respond_title', { defaultValue: 'Respond to Pedido de informação (RFI) #{{number}}', number: rfi.rfi_number })}
           </h2>
           <button
             onClick={onClose}
@@ -1689,7 +1689,7 @@ const RFIRow = React.memo(function RFIRow({
             </span>
           )}
           {rfi.schedule_impact && (
-            <span title={t('rfi.schedule_impact', { defaultValue: 'Schedule Impact' })}>
+            <span title={t('rfi.schedule_impact', { defaultValue: 'Cronograma Impact' })}>
               <Clock size={14} className="text-orange-500" />
             </span>
           )}
@@ -1761,7 +1761,7 @@ const RFIRow = React.memo(function RFIRow({
                 onCreateTask(rfi);
               }}
               icon={<ListTodo size={14} />}
-              title={t('rfi.create_task_hint', { defaultValue: 'Turn this RFI into a task' })}
+              title={t('rfi.create_task_hint', { defaultValue: 'Turn this Pedido de informação (RFI) into a task' })}
             >
               {t('rfi.create_task', { defaultValue: 'Create task' })}
             </Button>
@@ -1807,7 +1807,7 @@ const RFIRow = React.memo(function RFIRow({
                   onClose(rfi.id);
                 }}
               >
-                {t('rfi.action_close', { defaultValue: 'Close RFI' })}
+                {t('rfi.action_close', { defaultValue: 'Close Pedido de informação (RFI)' })}
               </Button>
             )}
             {/* Hide once a variation already exists for this RFI: the backend
@@ -1827,7 +1827,7 @@ const RFIRow = React.memo(function RFIRow({
                   }}
                 >
                   <DollarSign size={14} className="mr-1" />
-                  {t('rfi.create_variation', { defaultValue: 'Create Change Order' })}
+                  {t('rfi.create_variation', { defaultValue: 'Create Alteração de contrato' })}
                 </Button>
               )}
           </div>
@@ -1891,12 +1891,12 @@ function RFIHowItWorks() {
     <CollapsibleSection
       storageKey="rfi.how"
       icon={<Network size={16} className="text-oe-blue" />}
-      title={t('rfi.flow_title', { defaultValue: 'How RFIs work and connect' })}
+      title={t('rfi.flow_title', { defaultValue: 'How Pedidos de informação work and connect' })}
     >
       <p className="text-xs text-content-tertiary">
         {t('rfi.flow_intro', {
           defaultValue:
-            'An RFI turns an open question into a documented answer you can build on. The quickest start is to raise one and set who owns the next move.',
+            'An Pedido de informação (RFI) turns an open question into a documented answer you can build on. The quickest start is to raise one and set who owns the next move.',
         })}
       </p>
 
@@ -2151,13 +2151,13 @@ export function RFIPage() {
       setShowCreateModal(false);
       addToast({
         type: 'success',
-        title: t('rfi.created', { defaultValue: 'RFI created successfully' }),
+        title: t('rfi.created', { defaultValue: 'Pedido de informação (RFI) created successfully' }),
       });
     },
     onError: (e: Error) =>
       addToast({
         type: 'error',
-        title: t('rfi.create_failed', { defaultValue: 'Failed to create RFI' }),
+        title: t('rfi.create_failed', { defaultValue: 'Failed to create Pedido de informação (RFI)' }),
         message: e.message,
       }),
   });
@@ -2172,13 +2172,13 @@ export function RFIPage() {
       setEditingRfi(null);
       addToast({
         type: 'success',
-        title: t('rfi.updated', { defaultValue: 'RFI updated successfully' }),
+        title: t('rfi.updated', { defaultValue: 'Pedido de informação (RFI) updated successfully' }),
       });
     },
     onError: (e: Error) =>
       addToast({
         type: 'error',
-        title: t('rfi.update_failed', { defaultValue: 'Failed to update RFI' }),
+        title: t('rfi.update_failed', { defaultValue: 'Failed to update Pedido de informação (RFI)' }),
         message: e.message,
       }),
   });
@@ -2208,13 +2208,13 @@ export function RFIPage() {
       invalidateAll();
       addToast({
         type: 'success',
-        title: t('rfi.closed', { defaultValue: 'RFI closed successfully' }),
+        title: t('rfi.closed', { defaultValue: 'Pedido de informação (RFI) closed successfully' }),
       });
     },
     onError: (e: Error) =>
       addToast({
         type: 'error',
-        title: t('rfi.close_failed', { defaultValue: 'Failed to close RFI' }),
+        title: t('rfi.close_failed', { defaultValue: 'Failed to close Pedido de informação (RFI)' }),
         message: e.message,
       }),
   });
@@ -2307,9 +2307,9 @@ export function RFIPage() {
   const handleClose = useCallback(
     async (id: string) => {
       const ok = await confirm({
-        title: t('rfi.confirm_close_title', { defaultValue: 'Close RFI?' }),
-        message: t('rfi.confirm_close_msg', { defaultValue: 'This RFI will be closed and no further responses can be added.' }),
-        confirmLabel: t('rfi.action_close', { defaultValue: 'Close RFI' }),
+        title: t('rfi.confirm_close_title', { defaultValue: 'Close Pedido de informação (RFI)?' }),
+        message: t('rfi.confirm_close_msg', { defaultValue: 'This Pedido de informação (RFI) will be closed and no further responses can be added.' }),
+        confirmLabel: t('rfi.action_close', { defaultValue: 'Close Pedido de informação (RFI)' }),
         variant: 'warning',
       });
       if (ok) closeMut.mutate(id);
@@ -2326,10 +2326,10 @@ export function RFIPage() {
       addToast(
         {
           type: 'success',
-          title: t('rfi.variation_created', { defaultValue: 'Change order created' }),
+          title: t('rfi.variation_created', { defaultValue: 'Alteração de contrato created' }),
           message: `${data.code}: ${data.title}`,
           action: {
-            label: t('rfi.view_change_orders', { defaultValue: 'View Change Orders' }),
+            label: t('rfi.view_change_orders', { defaultValue: 'View Alterações de contrato' }),
             onClick: () => {
               window.location.href = '/changeorders';
             },
@@ -2341,7 +2341,7 @@ export function RFIPage() {
     onError: (e: Error) =>
       addToast({
         type: 'error',
-        title: t('rfi.variation_failed', { defaultValue: 'Could not create a change order from the RFI' }),
+        title: t('rfi.variation_failed', { defaultValue: 'Could not create a Alteração de contrato from the Pedido de informação (RFI)' }),
         message: e.message,
       }),
   });
@@ -2361,13 +2361,13 @@ export function RFIPage() {
           ...(selectedProjectId && breadcrumbProjectName
             ? [{ label: breadcrumbProjectName, to: `/projects/${selectedProjectId}` }]
             : []),
-          { label: t('rfi.title', { defaultValue: 'RFIs' }) },
+          { label: t('rfi.title', { defaultValue: 'Pedidos de informação' }) },
         ]}
       />
 
       {/* Header */}
       <PageHeader
-        srTitle={t('rfi.title', { defaultValue: 'RFIs' })}
+        srTitle={t('rfi.title', { defaultValue: 'Pedidos de informação' })}
         subtitle={t('rfi.subtitle', { defaultValue: 'Submit, track, and resolve design and construction queries' })}
         actions={
           <>
@@ -2381,12 +2381,12 @@ export function RFIPage() {
               onCta={() => setShowCreateModal(true)}
             />
             <RegisterExportButton
-              label={t('rfi.export_rfi_log', { defaultValue: 'Export RFI Log' })}
+              label={t('rfi.export_rfi_log', { defaultValue: 'Export Pedido de informação (RFI) Log' })}
               projectId={projectId}
               empty={!registerMayHold && !isLoading && !isError}
               targets={exportTargets}
-              successTitle={t('rfi.export_success', { defaultValue: 'RFI log exported successfully' })}
-              failedTitle={t('rfi.export_failed', { defaultValue: 'Failed to export RFI log' })}
+              successTitle={t('rfi.export_success', { defaultValue: 'Pedido de informação (RFI) log exported successfully' })}
+              failedTitle={t('rfi.export_failed', { defaultValue: 'Failed to export Pedido de informação (RFI) log' })}
               testId="rfi-export"
               guide="rfi-export"
             />
@@ -2409,7 +2409,7 @@ export function RFIPage() {
               icon={<Plus size={14} />}
               data-guide="rfi-new"
             >
-              {t('rfi.new_rfi', { defaultValue: 'New RFI' })}
+              {t('rfi.new_rfi', { defaultValue: 'New Pedido de informação (RFI)' })}
             </Button>
           </>
         }
@@ -2419,7 +2419,7 @@ export function RFIPage() {
           its charts are visible the moment the register opens. */}
       <InsightsPanel
         open={insights.open}
-        title={t('rfi.insights.title', { defaultValue: 'RFI insights' })}
+        title={t('rfi.insights.title', { defaultValue: 'Pedido de informação (RFI) insights' })}
         datasets={insightDatasets}
         builtins={insightBuiltins}
         custom={insights.custom}
@@ -2440,7 +2440,7 @@ export function RFIPage() {
         }
         links={[
           {
-            label: t('nav.change_orders', { defaultValue: 'Change Orders' }),
+            label: t('nav.change_orders', { defaultValue: 'Alterações de contrato' }),
             onClick: () => navigate('/changeorders'),
           },
           {
@@ -2455,7 +2455,7 @@ export function RFIPage() {
       >
         {t('rfi.intro_body', {
           defaultValue:
-            'Raise a question to the design team, set who owns the next move and a response due date, then track it from Open to Answered to Closed with a ball-in-court badge and an overdue counter. Attach the drawings in question from Documents, and when an answer carries cost you can spin it straight into a Variation. Export the full RFI log for the contract file.',
+            'Raise a question to the design team, set who owns the next move and a response due date, then track it from Open to Answered to Closed with a ball-in-court badge and an overdue counter. Attach the drawings in question from Documents, and when an answer carries cost you can spin it straight into a Variation. Export the full Pedido de informação (RFI) log for the contract file.',
         })}
       </DismissibleInfo>
 
@@ -2465,7 +2465,7 @@ export function RFIPage() {
       <>
       {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3" data-guide="rfi-stats">
-        <StatCard label={t('rfi.stat_total', { defaultValue: 'Total RFIs' })} value={stats.total} />
+        <StatCard label={t('rfi.stat_total', { defaultValue: 'Total Pedidos de informação' })} value={stats.total} />
         <StatCard label={t('rfi.stat_open', { defaultValue: 'Open' })} value={stats.open} tone="blue" tintValue />
         <StatCard
           label={t('rfi.stat_overdue', { defaultValue: 'Overdue' })}
@@ -2598,9 +2598,9 @@ export function RFIPage() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={t('rfi.search_placeholder', {
-              defaultValue: 'Search RFIs...',
+              defaultValue: 'Search Pedidos de informação...',
             })}
-            aria-label={t('rfi.search_placeholder', { defaultValue: 'Search RFIs...' })}
+            aria-label={t('rfi.search_placeholder', { defaultValue: 'Search Pedidos de informação...' })}
             className="oe-input pl-9"
           />
         </div>
@@ -2740,31 +2740,31 @@ export function RFIPage() {
                      full register. Only the disjunction above can deny the
                      register, and only when nothing was filtered. */
                   registerMayHold
-                  ? t('rfi.no_results', { defaultValue: 'No matching RFIs' })
-                  : t('rfi.no_rfis', { defaultValue: 'No RFIs yet' })
+                  ? t('rfi.no_results', { defaultValue: 'No matching Pedidos de informação' })
+                  : t('rfi.no_rfis', { defaultValue: 'No Pedidos de informação yet' })
             }
             description={
               quickView !== 'all'
                 ? t('rfi.no_quick_hint', {
-                    defaultValue: 'Clear the quick filter to see all RFIs for this project.',
+                    defaultValue: 'Clear the quick filter to see all Pedidos de informação for this project.',
                   })
                 : registerMayHold
                   ? t('rfi.no_results_hint', {
                       defaultValue: 'Try adjusting your search or filters to find what you are looking for.',
                     })
                   : t('rfi.no_rfis_hint', {
-                      defaultValue: 'Create your first RFI to track design queries, clarifications, and responses between project stakeholders.',
+                      defaultValue: 'Create your first Pedido de informação (RFI) to track design queries, clarifications, and responses between project stakeholders.',
                     })
             }
             action={
               quickView !== 'all'
                 ? {
-                    label: t('rfi.quick_clear', { defaultValue: 'Show all RFIs' }),
+                    label: t('rfi.quick_clear', { defaultValue: 'Show all Pedidos de informação' }),
                     onClick: () => setQuickView('all'),
                   }
                 : !registerMayHold
                   ? {
-                      label: t('rfi.new_rfi', { defaultValue: 'New RFI' }),
+                      label: t('rfi.new_rfi', { defaultValue: 'New Pedido de informação (RFI)' }),
                       onClick: () => setShowCreateModal(true),
                     }
                   : undefined
@@ -2774,7 +2774,7 @@ export function RFIPage() {
           <>
             <p className="mb-3 text-sm text-content-tertiary">
               {t('rfi.showing_count', {
-                defaultValue: '{{count}} RFIs',
+                defaultValue: '{{count}} Pedidos de informação',
                 count: filtered.length,
               })}
             </p>
@@ -2879,7 +2879,7 @@ export function RFIPage() {
                           <span className="flex items-center gap-0.5 text-semantic-warning"><DollarSign size={12} /> {t('rfi.cost_impact_short', { defaultValue: 'Cost' })}</span>
                         )}
                         {rfi.schedule_impact && (
-                          <span className="flex items-center gap-0.5 text-orange-500"><Clock size={12} /> {t('rfi.schedule_impact_short', { defaultValue: 'Schedule' })}</span>
+                          <span className="flex items-center gap-0.5 text-orange-500"><Clock size={12} /> {t('rfi.schedule_impact_short', { defaultValue: 'Cronograma' })}</span>
                         )}
                       </div>
                     </div>
@@ -2953,7 +2953,7 @@ export function RFIPage() {
           sourceLabel={`#${taskSourceRfi.rfi_number}`}
           defaultTitle={taskSourceRfi.subject}
           defaultDescription={t('rfi.task_desc_default', {
-            defaultValue: 'Follow up on RFI #{{number}}: {{subject}}',
+            defaultValue: 'Follow up on Pedido de informação (RFI) #{{number}}: {{subject}}',
             number: taskSourceRfi.rfi_number,
             subject: taskSourceRfi.subject,
           })}

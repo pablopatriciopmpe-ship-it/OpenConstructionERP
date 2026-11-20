@@ -52,7 +52,7 @@ export function ScenarioDialog({ boqId, baseName, isOpen, onClose, onCreated }: 
       setName(
         t('boq.scenario_default_name', {
           defaultValue: '{{name}} - scenario',
-          name: baseName || t('boq.untitled_estimate', { defaultValue: 'Estimate' }),
+          name: baseName || t('boq.untitled_estimate', { defaultValue: 'Orçamento' }),
         }),
       );
       setPct('0');
@@ -149,7 +149,7 @@ export function ScenarioDialog({ boqId, baseName, isOpen, onClose, onCreated }: 
           <p className="text-xs text-content-secondary leading-relaxed">
             {t('boq.scenario_intro', {
               defaultValue:
-                'Clones this estimate into a separate scenario you can adjust freely. The baseline stays untouched, and you can diff the two side by side at any time.',
+                'Clones this Orçamento into a separate scenario you can adjust freely. The baseline stays untouched, and you can diff the two side by side at any time.',
             })}
           </p>
 

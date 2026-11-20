@@ -181,7 +181,7 @@ function CompareModal({ boqIdA, boqIdB, currencyA, currencyB, onClose }: Compare
         setFxB(flattenFxRates(pb?.fx_rates));
       })
       .catch(() => {
-        if (!cancelled) setError(t('boq.compare_load_error', { defaultValue: 'Failed to load BOQ data for comparison' }));
+        if (!cancelled) setError(t('boq.compare_load_error', { defaultValue: 'Failed to load Planilha orçamentária data for comparison' }));
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
@@ -284,7 +284,7 @@ function CompareModal({ boqIdA, boqIdB, currencyA, currencyB, onClose }: Compare
             <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-oe-blue-subtle text-oe-blue-text">
               <GitCompareArrows size={20} />
             </div>
-            <h2 className="oe-section-title">{t('boq.compare_title', { defaultValue: 'BOQ Comparison' })}</h2>
+            <h2 className="oe-section-title">{t('boq.compare_title', { defaultValue: 'Planilha orçamentária Comparison' })}</h2>
           </div>
           <button
             onClick={onClose}
@@ -342,7 +342,7 @@ function CompareModal({ boqIdA, boqIdB, currencyA, currencyB, onClose }: Compare
                   <div className="text-sm font-medium text-semantic-warning">
                     {t('boq.compare_currency_mismatch', {
                       defaultValue:
-                        'These estimates use different currencies ({{currencyA}} vs {{currencyB}}), so totals cannot be subtracted. Compare each side in its own currency above.',
+                        'These Orçamentos use different currencies ({{currencyA}} vs {{currencyB}}), so totals cannot be subtracted. Compare each side in its own currency above.',
                       currencyA,
                       currencyB,
                     })}
@@ -847,7 +847,7 @@ export function BOQListPage() {
     mutationFn: (boqId: string) => boqApi.duplicateBoq(boqId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['all-boqs'] });
-      addToast({ type: 'success', title: t('boq.duplicated', { defaultValue: 'BOQ duplicated' }) });
+      addToast({ type: 'success', title: t('boq.duplicated', { defaultValue: 'Planilha orçamentária duplicated' }) });
     },
     onError: (e: Error) => {
       addToast({ type: 'error', title: t('boq.duplicate_failed', { defaultValue: 'Failed to duplicate' }), message: e.message });
@@ -863,7 +863,7 @@ export function BOQListPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['all-boqs'] });
       setConfirmDeleteId(null);
-      addToast({ type: 'success', title: t('boq.deleted', { defaultValue: 'BOQ deleted' }) });
+      addToast({ type: 'success', title: t('boq.deleted', { defaultValue: 'Planilha orçamentária deleted' }) });
     },
     onError: (e: Error) => {
       setConfirmDeleteId(null);
@@ -946,7 +946,7 @@ export function BOQListPage() {
                 // would be a figure, and a wrong one.
                 undefined
               : t('boq.list_subtitle_count', {
-                  defaultValue: '{{boqCount}} estimates across {{projectCount}} projects',
+                  defaultValue: '{{boqCount}} Orçamentos across {{projectCount}} projects',
                   boqCount: allBoqs?.length ?? 0,
                   projectCount: (scopedProjects?.length ?? 0) - skippedProjects.length,
                 })
@@ -969,7 +969,7 @@ export function BOQListPage() {
               icon={<Plus size={14} />}
               onClick={openCreateModal}
             >
-              {t('boq.new_estimate', { defaultValue: 'New Estimate' })}
+              {t('boq.new_estimate', { defaultValue: 'New Orçamento' })}
             </Button>
           </>
         }
@@ -1021,8 +1021,8 @@ export function BOQListPage() {
           <div className="flex flex-col justify-start rounded-xl border border-border-light bg-surface-primary px-4 py-3">
             <div className="oe-overline">
               {isFiltered
-                ? t('boq.matching_estimates', { defaultValue: 'Matching Estimates' })
-                : t('boq.total_estimates', { defaultValue: 'Total Estimates' })}
+                ? t('boq.matching_estimates', { defaultValue: 'Matching Orçamentos' })
+                : t('boq.total_estimates', { defaultValue: 'Total Orçamentos' })}
             </div>
             <div className="mt-1 text-lg font-semibold text-content-primary tabular-nums">{stats.count}</div>
           </div>
@@ -1089,7 +1089,7 @@ export function BOQListPage() {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder={t('boq.search_placeholder', { defaultValue: 'Search estimates...' })}
+                placeholder={t('boq.search_placeholder', { defaultValue: 'Search Orçamentos...' })}
                 className="oe-input ps-9 pe-3"
               />
             </div>
@@ -1101,7 +1101,7 @@ export function BOQListPage() {
                   value={projectFilter}
                   onChange={(e) => setProjectFilter(e.target.value)}
                   aria-label={t('a11y.boq.project_filter', {
-                    defaultValue: 'Filter estimates by project',
+                    defaultValue: 'Filter Orçamentos by project',
                   })}
                   className="oe-select max-w-full sm:min-w-44 sm:max-w-80"
                 >
@@ -1120,7 +1120,7 @@ export function BOQListPage() {
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
                   aria-label={t('a11y.boq.status_filter', {
-                    defaultValue: 'Filter estimates by status',
+                    defaultValue: 'Filter Orçamentos by status',
                   })}
                   className="oe-select sm:w-36"
                 >
@@ -1194,7 +1194,7 @@ export function BOQListPage() {
         <div className="flex items-center gap-3 rounded-xl border border-oe-blue/30 bg-oe-blue-subtle px-4 py-3">
           <GitCompareArrows size={16} className="text-oe-blue shrink-0" />
           <span className="text-sm text-oe-blue font-medium">
-            {t('boq.compare_select_second', { defaultValue: 'Select a second BOQ to compare' })}
+            {t('boq.compare_select_second', { defaultValue: 'Select a second Planilha orçamentária to compare' })}
           </span>
         </div>
       )}
@@ -1227,16 +1227,16 @@ export function BOQListPage() {
       ) : filtered.length === 0 && (searchQuery || statusFilter || userProjectFilter) ? (
         <EmptyState
           icon={<Search size={28} strokeWidth={1.5} />}
-          title={t('boq.no_results', { defaultValue: 'No matching estimates' })}
+          title={t('boq.no_results', { defaultValue: 'No matching Orçamentos' })}
           description={t('boq.no_results_hint', { defaultValue: 'Try adjusting your search or filters' })}
         />
       ) : !allBoqs || allBoqs.length === 0 ? (
         <EmptyState
           icon={<Table size={28} strokeWidth={1.5} />}
-          title={t('boq.no_boqs', { defaultValue: 'No BOQs yet' })}
-          description={t('boq.no_boqs_hint', { defaultValue: 'A Bill of Quantities is the foundation of your estimate. Start by creating a project, then add sections (trade groups) and positions (work items) with quantities and rates.' })}
+          title={t('boq.no_boqs', { defaultValue: 'No Planilhas orçamentárias yet' })}
+          description={t('boq.no_boqs_hint', { defaultValue: 'A Bill of Quantities is the foundation of your Orçamento. Start by creating a project, then add sections (trade groups) and positions (work items) with quantities and rates.' })}
           action={{
-            label: t('boq.create_boq', { defaultValue: 'Create BOQ' }),
+            label: t('boq.create_boq', { defaultValue: 'Create Planilha orçamentária' }),
             onClick: () => {
               if (emptyStateCreateTarget(projects?.length) === 'project') navigate('/projects/new');
               else openCreateModal();
@@ -1339,16 +1339,16 @@ export function BOQListPage() {
                   <button
                     onClick={() => setRenameTarget({ id: boq.id, name: boq.name })}
                     className="flex h-7 w-7 items-center justify-center rounded-md text-content-tertiary hover:text-oe-blue-text hover:bg-oe-blue-subtle transition-all"
-                    title={t('boq.rename', { defaultValue: 'Rename estimate' })}
-                    aria-label={t('boq.rename', { defaultValue: 'Rename estimate' })}
+                    title={t('boq.rename', { defaultValue: 'Rename Orçamento' })}
+                    aria-label={t('boq.rename', { defaultValue: 'Rename Orçamento' })}
                   >
                     <Pencil size={14} />
                   </button>
                   <button
                     onClick={() => setTemplateTarget({ id: boq.id, name: boq.name })}
                     className="flex h-7 w-7 items-center justify-center rounded-md text-content-tertiary hover:text-oe-blue-text hover:bg-oe-blue-subtle transition-all"
-                    title={t('boq_templates.save_as_template', { defaultValue: 'Save as template' })}
-                    aria-label={t('boq_templates.save_as_template', { defaultValue: 'Save as template' })}
+                    title={t('boq_templates.save_as_template', { defaultValue: 'Save as Modelo' })}
+                    aria-label={t('boq_templates.save_as_template', { defaultValue: 'Save as Modelo' })}
                   >
                     <LayoutTemplate size={14} />
                   </button>
@@ -1496,7 +1496,7 @@ export function BOQListPage() {
                           );
                         }}
                         className="flex h-7 w-7 items-center justify-center rounded-md text-content-tertiary hover:text-oe-blue-text hover:bg-oe-blue-subtle transition-all"
-                        title={t('boq.build_schedule', { defaultValue: 'Build schedule from this BOQ' })}
+                        title={t('boq.build_schedule', { defaultValue: 'Build Cronograma from this Planilha orçamentária' })}
                       >
                         <CalendarDays size={14} />
                       </button>
@@ -1504,16 +1504,16 @@ export function BOQListPage() {
                       <button
                         onClick={(e) => { e.stopPropagation(); setRenameTarget({ id: boq.id, name: boq.name }); }}
                         className="flex h-7 w-7 items-center justify-center rounded-md text-content-tertiary hover:text-oe-blue-text hover:bg-oe-blue-subtle transition-all"
-                        title={t('boq.rename', { defaultValue: 'Rename estimate' })}
-                        aria-label={t('boq.rename', { defaultValue: 'Rename estimate' })}
+                        title={t('boq.rename', { defaultValue: 'Rename Orçamento' })}
+                        aria-label={t('boq.rename', { defaultValue: 'Rename Orçamento' })}
                       >
                         <Pencil size={14} />
                       </button>
                       <button
                         onClick={(e) => { e.stopPropagation(); setTemplateTarget({ id: boq.id, name: boq.name }); }}
                         className="flex h-7 w-7 items-center justify-center rounded-md text-content-tertiary hover:text-oe-blue-text hover:bg-oe-blue-subtle transition-all"
-                        title={t('boq_templates.save_as_template', { defaultValue: 'Save as template' })}
-                        aria-label={t('boq_templates.save_as_template', { defaultValue: 'Save as template' })}
+                        title={t('boq_templates.save_as_template', { defaultValue: 'Save as Modelo' })}
+                        aria-label={t('boq_templates.save_as_template', { defaultValue: 'Save as Modelo' })}
                       >
                         <LayoutTemplate size={14} />
                       </button>
@@ -1617,7 +1617,7 @@ export function BOQListPage() {
 
             {/* Summary footer */}
             <p className="text-sm text-content-tertiary">
-              {t('boq.pagination_range', { defaultValue: '{{from}}–{{to}} of {{total}} estimates', from: (page - 1) * ITEMS_PER_PAGE + 1, to: Math.min(page * ITEMS_PER_PAGE, filtered.length), total: filtered.length })}
+              {t('boq.pagination_range', { defaultValue: '{{from}}–{{to}} of {{total}} Orçamentos', from: (page - 1) * ITEMS_PER_PAGE + 1, to: Math.min(page * ITEMS_PER_PAGE, filtered.length), total: filtered.length })}
               {(searchQuery || statusFilter || userProjectFilter) && filtered.length !== (allBoqs?.length ?? 0)
                 ? ` (${t('boq.filtered_from', { defaultValue: 'filtered from {{total}}', total: allBoqs?.length ?? 0 })})`
                 : ''}

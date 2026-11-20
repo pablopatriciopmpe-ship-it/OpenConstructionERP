@@ -1253,7 +1253,7 @@ export function DwgTakeoffPage() {
       addToast({
         type: 'error',
         title: t('dwg_takeoff.import_doc_failed', {
-          defaultValue: 'Could not open this document in DWG Takeoff',
+          defaultValue: 'Could not open this document in DWG Levantamento de quantitativos',
         }),
         message: err.message || undefined,
       });
@@ -2824,7 +2824,7 @@ export function DwgTakeoffPage() {
           ? t('dwg_takeoff.linked_unit_mismatch', {
               defaultValue: 'Linked \u00b7 unit kept',
             })
-          : t('dwg_takeoff.linked_to_boq', { defaultValue: 'Linked to BOQ' }),
+          : t('dwg_takeoff.linked_to_boq', { defaultValue: 'Linked to Planilha orçamentária' }),
         message,
       });
       setLinkingEntityId(null);
@@ -2846,7 +2846,7 @@ export function DwgTakeoffPage() {
     if (!linkPickerBoqId) {
       addToast({
         type: 'warning',
-        title: t('dwg_takeoff.link_need_boq', { defaultValue: 'Pick a BOQ first' }),
+        title: t('dwg_takeoff.link_need_boq', { defaultValue: 'Pick a Planilha orçamentária first' }),
       });
       return;
     }
@@ -2967,7 +2967,7 @@ export function DwgTakeoffPage() {
         } else {
           const created = await boqApi.create({
             project_id: effectiveProjectId,
-            name: t('dwg_takeoff.default_boq_name', { defaultValue: 'DWG Takeoff' }),
+            name: t('dwg_takeoff.default_boq_name', { defaultValue: 'DWG Levantamento de quantitativos' }),
           });
           boqId = created.id;
         }
@@ -3020,7 +3020,7 @@ export function DwgTakeoffPage() {
       queryClient.invalidateQueries({ queryKey: ['boq', boqId] });
       addToast({
         type: 'success',
-        title: t('dwg_takeoff.group_boq_created', { defaultValue: 'BOQ position created' }),
+        title: t('dwg_takeoff.group_boq_created', { defaultValue: 'Planilha orçamentária position created' }),
         message: `${boqData.name || 'BOQ'} · ${ordinal} - ${roundedQty} ${unit}`,
       });
       setSelectedEntityIds(new Set());
@@ -3028,7 +3028,7 @@ export function DwgTakeoffPage() {
     } catch (err) {
       addToast({
         type: 'error',
-        title: t('dwg_takeoff.group_boq_failed', { defaultValue: 'Could not create BOQ position' }),
+        title: t('dwg_takeoff.group_boq_failed', { defaultValue: 'Could not create Planilha orçamentária position' }),
         message: err instanceof Error ? err.message : String(err),
       });
     } finally {
@@ -3167,7 +3167,7 @@ export function DwgTakeoffPage() {
       queryClient.invalidateQueries({ queryKey: ['boq', position.boq_id] });
       addToast({
         type: 'success',
-        title: t('dwg_takeoff.linked_to_boq', { defaultValue: 'Linked to BOQ' }),
+        title: t('dwg_takeoff.linked_to_boq', { defaultValue: 'Linked to Planilha orçamentária' }),
         message: `${ids.length} \u2192 ${position.ordinal}`,
       });
       setLinkingEntityId(null);
@@ -3316,7 +3316,7 @@ export function DwgTakeoffPage() {
                   </p>
                   <p className="text-sm text-content-tertiary mt-1.5 max-w-xs">
                     {t('dwg_takeoff.opening_document_hint', {
-                      defaultValue: 'Preparing this drawing for takeoff. This can take a few minutes for large DWG files.',
+                      defaultValue: 'Preparing this drawing for Levantamento de quantitativos. This can take a few minutes for large DWG files.',
                     })}
                   </p>
                   {deepLinkDocName && (
@@ -3354,13 +3354,13 @@ export function DwgTakeoffPage() {
                   className="mb-6 !bg-neutral-900/90 [&_.text-content-primary]:!text-gray-100 [&_.text-content-secondary]:!text-gray-300 [&_.text-content-tertiary]:!text-gray-400"
                   title={t('dwg_takeoff.intro_title', { defaultValue: 'Measure straight off the 2D drawing' })}
                   links={[
-                    { label: t('dwg_takeoff.intro_link_boq', { defaultValue: 'Open BOQ' }), onClick: () => navigate('/boq') },
+                    { label: t('dwg_takeoff.intro_link_boq', { defaultValue: 'Open Planilha orçamentária' }), onClick: () => navigate('/boq') },
                     { label: t('dwg_takeoff.intro_link_bim', { defaultValue: 'BIM viewer' }), onClick: () => navigate('/bim') },
                   ]}
                 >
                   {t('dwg_takeoff.intro_body', {
                     defaultValue:
-                      'Upload DWG or DXF drawings to view their entities, toggle layers, and measure areas, lengths and counts directly on the plan. Link measurements to BOQ positions so the quantities flow into your cost estimate alongside BIM and the canonical model.',
+                      'Upload DWG or DXF drawings to view their entities, toggle layers, and measure areas, lengths and counts directly on the plan. Link measurements to Planilha orçamentária positions so the quantities flow into your cost Orçamento alongside BIM and the canonical model.',
                   })}
                 </DismissibleInfo>
                 <div className="grid grid-cols-1 md:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] gap-8 items-stretch">
@@ -3413,7 +3413,7 @@ export function DwgTakeoffPage() {
                     <div>
                       <div className="flex items-center gap-2 flex-wrap">
                         <h1 className="text-lg font-semibold text-white/90 tracking-tight leading-tight">
-                          {t('dwg_takeoff.hero_title', { defaultValue: 'DWG Takeoff' })}
+                          {t('dwg_takeoff.hero_title', { defaultValue: 'DWG Levantamento de quantitativos' })}
                         </h1>
                         <OfflineReadyBadge
                           readiness={offlineReadiness}
@@ -3423,7 +3423,7 @@ export function DwgTakeoffPage() {
                         <ModuleGuideButton content={dwgTakeoffGuide} />
                       </div>
                       <p className="text-sm text-white/65 mt-2 leading-relaxed">
-                        {t('dwg_takeoff.hero_subtitle', { defaultValue: 'Open DWG/DXF drawings, measure areas and lengths, annotate directly on the drawing, and link measurements to your BOQ positions.' })}
+                        {t('dwg_takeoff.hero_subtitle', { defaultValue: 'Open DWG/DXF drawings, measure areas and lengths, annotate directly on the drawing, and link measurements to your Planilha orçamentária positions.' })}
                       </p>
                       {dwgRange && (
                         <p className="text-xs text-content-secondary mt-3 leading-relaxed">
@@ -3434,7 +3434,7 @@ export function DwgTakeoffPage() {
                     <div className="grid grid-cols-2 gap-3 mt-2">
                       {[
                         { icon: Layers, title: t('dwg_takeoff.feat_layers', { defaultValue: 'Layer Control' }), desc: t('dwg_takeoff.feat_layers_desc', { defaultValue: 'Toggle layers on/off, filter by entity type' }) },
-                        { icon: FileUp, title: t('dwg_takeoff.feat_measure', { defaultValue: 'Measurements' }), desc: t('dwg_takeoff.feat_measure_desc', { defaultValue: 'Area, length, perimeter · link to BOQ' }) },
+                        { icon: FileUp, title: t('dwg_takeoff.feat_measure', { defaultValue: 'Measurements' }), desc: t('dwg_takeoff.feat_measure_desc', { defaultValue: 'Area, length, perimeter · link to Planilha orçamentária' }) },
                       ].map((f, i) => (
                         <div key={i} className="flex items-start gap-3 rounded-xl p-4 bg-[#22252b]/80 backdrop-blur-sm border border-[#333842] hover:border-blue-500/30 hover:shadow-[0_0_15px_rgba(59,130,246,0.06)] transition-all">
                           <div className="w-8 h-8 rounded-lg bg-orange-500/10 border border-orange-500/20 flex items-center justify-center shrink-0"><f.icon size={15} className="text-orange-400" /></div>
@@ -4115,7 +4115,7 @@ export function DwgTakeoffPage() {
                         <Link2 size={14} className="text-oe-blue" />
                         {alreadyLinked
                           ? t('dwg_takeoff.relink_title', { defaultValue: 'Linked - pick new' })
-                          : t('dwg_takeoff.link_to_boq_title', { defaultValue: 'Link to BOQ position' })}
+                          : t('dwg_takeoff.link_to_boq_title', { defaultValue: 'Link to Planilha orçamentária position' })}
                       </div>
                       <button
                         onClick={() => setLinkingEntityId(null)}
@@ -4133,7 +4133,7 @@ export function DwgTakeoffPage() {
                         <div className="flex items-center gap-1.5 rounded-sm bg-semantic-success/40 border border-semantic-success/40 px-2 py-1 text-2xs">
                           <Link2 size={12} className="text-semantic-success shrink-0" />
                           <span className="text-semantic-success truncate">
-                            {t('dwg_takeoff.already_linked', { defaultValue: 'Already linked to a BOQ position' })}
+                            {t('dwg_takeoff.already_linked', { defaultValue: 'Already linked to a Planilha orçamentária position' })}
                           </span>
                         </div>
                       )}
@@ -4187,7 +4187,7 @@ export function DwgTakeoffPage() {
                           <option value="">
                             {linkBoqsLoading
                               ? t('common.loading', 'Loading...')
-                              : t('dwg_takeoff.pick_boq', { defaultValue: '- BOQ -' })}
+                              : t('dwg_takeoff.pick_boq', { defaultValue: '- Planilha orçamentária -' })}
                           </option>
                           {linkPickerBoqs.map((b) => (
                             <option key={b.id} value={b.id}>{b.name}</option>
@@ -4228,7 +4228,7 @@ export function DwgTakeoffPage() {
                         !linkPickerBoqId ? (
                           <p className="text-2xs text-content-secondary py-2 text-center">
                             {t('dwg_takeoff.link_need_project_boq', {
-                              defaultValue: 'Pick a project and BOQ above.',
+                              defaultValue: 'Pick a project and Planilha orçamentária above.',
                             })}
                           </p>
                         ) : linkPositionsLoading ? (
@@ -4241,7 +4241,7 @@ export function DwgTakeoffPage() {
                         ) : linkBoqPositions.filter((p) => p.unit).length === 0 ? (
                           <p className="text-2xs text-content-secondary py-2 text-center">
                             {t('dwg_takeoff.link_boq_empty', {
-                              defaultValue: 'BOQ is empty - switch to "Create new".',
+                              defaultValue: 'Planilha orçamentária is empty - switch to "Create new".',
                             })}
                           </p>
                         ) : (
@@ -4467,12 +4467,12 @@ export function DwgTakeoffPage() {
                     className="flex-1 flex items-center justify-center gap-1 rounded-md bg-oe-blue text-white text-2xs font-semibold px-2 py-1 hover:bg-oe-blue-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     data-testid="dwg-group-create-boq"
                     title={t('dwg_takeoff.group_to_boq_title', {
-                      defaultValue: 'Book the group total as one BOQ position',
+                      defaultValue: 'Book the group total as one Planilha orçamentária position',
                     })}
                   >
                     <Link2 size={12} />
                     {t('dwg_takeoff.add_n_to_boq', {
-                      defaultValue: 'Add {{count}} to BOQ',
+                      defaultValue: 'Add {{count}} to Planilha orçamentária',
                       count: selectedEntityIds.size,
                     })}
                   </button>
@@ -4759,7 +4759,7 @@ export function DwgTakeoffPage() {
                           >
                             <Link2 size={12} className="text-oe-blue shrink-0" />
                             <span className="flex-1">
-                              {t('dwg_takeoff.attach_boq', { defaultValue: 'Link to BOQ' })}
+                              {t('dwg_takeoff.attach_boq', { defaultValue: 'Link to Planilha orçamentária' })}
                             </span>
                           </button>
                           <button
@@ -6054,7 +6054,7 @@ function ScaleTab({
           <div className="rounded-md border border-border bg-surface-secondary px-2.5 py-2 text-2xs text-muted-foreground leading-relaxed">
             {t('dwg_takeoff.scale_per_annotation_note', {
               defaultValue:
-                'Tip: switch back to Preset mode once the detail takeoff is done so the default scale applies to the rest of the sheet again.',
+                'Tip: switch back to Preset mode once the detail Levantamento de quantitativos is done so the default scale applies to the rest of the sheet again.',
             })}
           </div>
         </div>
@@ -6530,10 +6530,10 @@ function DwgContextMenu({
       <MenuItem onClick={onLink} icon={<Link2 size={12} />} label={
         selectionSize > 1
           ? t('dwg_takeoff.link_n_to_boq', {
-              defaultValue: 'Link {{count}} to BOQ',
+              defaultValue: 'Link {{count}} to Planilha orçamentária',
               count: selectionSize,
             })
-          : t('dwg_takeoff.link_to_boq', { defaultValue: 'Link to BOQ' })
+          : t('dwg_takeoff.link_to_boq', { defaultValue: 'Link to Planilha orçamentária' })
       } />
       {selectionSize > 1 && (
         <MenuItem onClick={onSaveAsGroup} icon={<FolderPlus size={12} />} label={
@@ -6545,7 +6545,7 @@ function DwgContextMenu({
         t('dwg_takeoff.create_task', { defaultValue: 'Create task' })
       } />
       <MenuItem onClick={onLinkSchedule} icon={<CalendarDays size={12} />} label={
-        t('dwg_takeoff.link_schedule', { defaultValue: 'Link to schedule' })
+        t('dwg_takeoff.link_schedule', { defaultValue: 'Link to Cronograma' })
       } />
       <MenuItem onClick={onLinkDocument} icon={<FileText size={12} />} label={
         t('dwg_takeoff.link_document', { defaultValue: 'Link to document' })
@@ -7017,7 +7017,7 @@ function ConversionEmptyCard({
               {message ||
                 t('dwg_takeoff.conv_empty_default', {
                   defaultValue:
-                    'This DWG/DXF parsed successfully but contains no drawable entities. The file may contain only metadata or be a template.',
+                    'This DWG/DXF parsed successfully but contains no drawable entities. The file may contain only metadata or be a Modelo.',
                 })}
             </p>
             {(onUploadAnother || onDelete) && (

@@ -302,7 +302,7 @@ function DropZone({
       <div
         role="button"
         tabIndex={0}
-        aria-label={t('takeoff.upload_aria', { defaultValue: 'Upload PDF takeoff file' })}
+        aria-label={t('takeoff.upload_aria', { defaultValue: 'Upload PDF Levantamento de quantitativos file' })}
         onClick={handleClick}
         onKeyDown={(e) => {
           if (e.key === 'Enter' || e.key === ' ') handleClick();
@@ -351,7 +351,7 @@ function DropZone({
       </div>
       <p className="text-2xs text-content-tertiary mt-3">
         {t('takeoff.formats_detailed', {
-          defaultValue: 'PDF construction drawings \u2014 vector floor plans, sections and scans. AI will extract walls, slabs, doors, and other elements with quantities.',
+          defaultValue: 'PDF construction drawings \u2014 vector floor plans, sections and scans. IA will extract walls, slabs, doors, and other elements with quantities.',
         })}
       </p>
     </div>
@@ -499,7 +499,7 @@ function DocumentCard({
         >
           {doc.analyzing
             ? t('takeoff.analyzing', 'Analyzing...')
-            : t('takeoff.analyze_with_ai', 'Analyze with AI')}
+            : t('takeoff.analyze_with_ai', 'Analyze with IA')}
         </Button>
         <Button
           variant="secondary"
@@ -540,13 +540,13 @@ function DocumentCard({
         <p className="mt-2.5 flex flex-wrap items-center gap-1 text-xs text-content-tertiary">
           <BrainCircuit size={14} className="shrink-0 text-oe-blue" />
           {t('takeoff.ai_not_connected_hint', {
-            defaultValue: 'Analyze with AI needs an AI provider connected.',
+            defaultValue: 'Analyze with IA needs an IA provider connected.',
           })}
           <Link
             to="/settings?tab=ai"
             className="font-semibold text-oe-blue hover:underline"
           >
-            {t('takeoff.ai_setup.connect_cta', { defaultValue: 'Connect an AI provider' })}
+            {t('takeoff.ai_setup.connect_cta', { defaultValue: 'Connect an IA provider' })}
           </Link>
         </p>
       )}
@@ -563,7 +563,7 @@ function DocumentCard({
             </span>
             <CheckCircle2 size={16} className="text-semantic-success" />
             <span className="text-sm font-medium text-content-primary">
-              {t('takeoff.ai_analysis_results', 'AI Analysis Results')}
+              {t('takeoff.ai_analysis_results', 'IA Analysis Results')}
             </span>
             <Badge variant="blue" size="sm">
               {t('takeoff.found_elements', '{{count}} elements found').replace(
@@ -634,7 +634,7 @@ function DocumentCard({
                     disabled={selectedCount === 0}
                     onClick={() => onAddToBOQ(doc.id)}
                   >
-                    {t('takeoff.add_selected_to_boq', 'Add {{count}} to BOQ').replace(
+                    {t('takeoff.add_selected_to_boq', 'Add {{count}} to Planilha orçamentária').replace(
                       '{{count}}',
                       String(selectedCount),
                     )}
@@ -644,7 +644,7 @@ function DocumentCard({
                   <div className="flex items-center gap-2 rounded-lg bg-semantic-warning-bg border border-semantic-warning/30 px-3 py-2">
                     <AlertTriangle size={14} className="text-semantic-warning shrink-0" />
                     <span className="text-xs text-semantic-warning font-medium">
-                      {t('takeoff.select_boq_warning', 'Select a project & BOQ above to add items')}
+                      {t('takeoff.select_boq_warning', 'Select a project & Planilha orçamentária above to add items')}
                     </span>
                   </div>
                 )}
@@ -669,7 +669,7 @@ function DocumentCard({
                     className="flex items-center gap-1.5 rounded-lg border border-border-light px-3 py-1.5 text-xs text-content-secondary transition-colors hover:bg-oe-blue-subtle hover:text-oe-blue-text hover:border-oe-blue/30"
                   >
                     <Link2 size={14} />
-                    {t('takeoff.link_to_boq', 'Link to BOQ')}
+                    {t('takeoff.link_to_boq', 'Link to Planilha orçamentária')}
                     <ArrowRight size={12} className="text-content-quaternary" />
                   </a>
                 </div>
@@ -685,7 +685,7 @@ function DocumentCard({
           <div className="flex items-center gap-2">
             <Loader2 size={16} className="animate-spin text-oe-blue" />
             <span className="text-sm text-content-secondary">
-              {t('takeoff.analyzing_document', 'Analyzing document with AI...')}
+              {t('takeoff.analyzing_document', 'Analyzing document with IA...')}
             </span>
           </div>
           <div className="space-y-2">
@@ -785,7 +785,7 @@ function QuickMeasurementForm({
           disabled={disabled || !description.trim() || !value.trim()}
           onClick={handleSubmit}
         >
-          {t('takeoff.add_to_boq', 'Add to BOQ')}
+          {t('takeoff.add_to_boq', 'Add to Planilha orçamentária')}
         </Button>
       </div>
     </div>
@@ -1097,13 +1097,13 @@ function AiTakeoffNotice({ connected }: { connected: boolean }) {
 
   const steps = [
     t('takeoff.ai_setup.step_connect', {
-      defaultValue: 'Connect an AI provider in settings (use any supported provider and your own API key).',
+      defaultValue: 'Connect an IA provider in settings (use any supported provider and your own API key).',
     }),
     t('takeoff.ai_setup.step_upload', {
       defaultValue: 'Upload a PDF drawing below.',
     }),
     t('takeoff.ai_setup.step_review', {
-      defaultValue: 'Review the AI suggestions, confirm the ones you want, and send them to your BOQ.',
+      defaultValue: 'Review the IA suggestions, confirm the ones you want, and send them to your Planilha orçamentária.',
     }),
   ];
 
@@ -1131,18 +1131,18 @@ function AiTakeoffNotice({ connected }: { connected: boolean }) {
         <div className="min-w-0 flex-1">
           <h3 className="oe-card-title">
             {connected
-              ? t('takeoff.ai_setup.ready_title', { defaultValue: 'AI provider connected' })
-              : t('takeoff.ai_setup.title', { defaultValue: 'Connect an AI provider to use AI takeoff' })}
+              ? t('takeoff.ai_setup.ready_title', { defaultValue: 'IA provider connected' })
+              : t('takeoff.ai_setup.title', { defaultValue: 'Connect an IA provider to use IA Levantamento de quantitativos' })}
           </h3>
           <p className="mt-0.5 text-xs text-content-tertiary">
             {connected
               ? t('takeoff.ai_setup.ready_body', {
                   defaultValue:
-                    'Upload a PDF below and AI will extract elements with quantities for you to review.',
+                    'Upload a PDF below and IA will extract elements with quantities for you to review.',
                 })
               : t('takeoff.ai_setup.body', {
                   defaultValue:
-                    'AI takeoff reads your drawings and suggests elements with quantities. It needs an AI provider connected first. You can still measure by hand and use Quick Measurements without it.',
+                    'IA Levantamento de quantitativos reads your drawings and suggests elements with quantities. It needs an IA provider connected first. You can still measure by hand and use Quick Measurements without it.',
                 })}
           </p>
 
@@ -1171,7 +1171,7 @@ function AiTakeoffNotice({ connected }: { connected: boolean }) {
               data-testid="takeoff-connect-ai"
               className="mt-3.5 inline-flex items-center gap-1.5 rounded-lg bg-oe-blue px-3.5 py-2 text-xs font-semibold text-content-inverse transition-colors hover:bg-oe-blue/90"
             >
-              {t('takeoff.ai_setup.connect_cta', { defaultValue: 'Connect an AI provider' })}
+              {t('takeoff.ai_setup.connect_cta', { defaultValue: 'Connect an IA provider' })}
               <ArrowRight size={14} />
             </Link>
           )}
@@ -1429,7 +1429,7 @@ export function TakeoffPage() {
           title: t('takeoff.open_failed_title', { defaultValue: 'Could not open file' }),
           message: t('takeoff.open_failed_msg', {
             defaultValue:
-              'This file could not be opened in the takeoff viewer. It may have been moved, or you may not have access to it.',
+              'This file could not be opened in the Levantamento de quantitativos viewer. It may have been moved, or you may not have access to it.',
           }),
         });
       }
@@ -1630,21 +1630,21 @@ export function TakeoffPage() {
       }[],
     ) => {
       if (!selectedBoqId) {
-        throw new Error(t('takeoff.no_boq_selected', 'Please select a project and BOQ first'));
+        throw new Error(t('takeoff.no_boq_selected', 'Please select a project and Planilha orçamentária first'));
       }
       return apiPost(`/v1/boq/boqs/${selectedBoqId}/positions/bulk/`, { items });
     },
     onSuccess: (_data, variables) => {
-      const msg = t('takeoff.added_to_boq_success_count', '{{count}} items added to BOQ successfully').replace(
+      const msg = t('takeoff.added_to_boq_success_count', '{{count}} items added to Planilha orçamentária successfully').replace(
         '{{count}}',
         String(variables.length),
       );
       setAddToBOQSuccess(msg);
-      useToastStore.getState().addToast({ type: 'success', title: t('takeoff.added_title', 'Added to BOQ'), message: msg });
+      useToastStore.getState().addToast({ type: 'success', title: t('takeoff.added_title', 'Added to Planilha orçamentária'), message: msg });
       setTimeout(() => setAddToBOQSuccess(null), 5000);
     },
     onError: (err: Error) => {
-      const msg = err.message || t('takeoff.add_to_boq_failed', 'Failed to add items to BOQ');
+      const msg = err.message || t('takeoff.add_to_boq_failed', 'Failed to add items to Planilha orçamentária');
       setUploadErrorToast(msg);
       useToastStore.getState().addToast({ type: 'error', title: t('takeoff.error_title', 'Error'), message: msg });
       setTimeout(() => setUploadErrorToast(null), 5000);
@@ -1923,7 +1923,7 @@ export function TakeoffPage() {
   const handleAddToBOQ = useCallback(
     (docId: string) => {
       if (!selectedBoqId) {
-        setUploadErrorToast(t('takeoff.no_boq_selected', 'Please select a project and BOQ first'));
+        setUploadErrorToast(t('takeoff.no_boq_selected', 'Please select a project and Planilha orçamentária first'));
         setTimeout(() => setUploadErrorToast(null), 5000);
         return;
       }
@@ -1954,7 +1954,7 @@ export function TakeoffPage() {
   const handleQuickMeasurement = useCallback(
     (measurement: QuickMeasurement) => {
       if (!selectedBoqId) {
-        setUploadErrorToast(t('takeoff.no_boq_selected', 'Please select a project and BOQ first'));
+        setUploadErrorToast(t('takeoff.no_boq_selected', 'Please select a project and Planilha orçamentária first'));
         setTimeout(() => setUploadErrorToast(null), 5000);
         return;
       }
@@ -2179,12 +2179,12 @@ export function TakeoffPage() {
         }
         links={[
           { label: t('nav.boq', { defaultValue: 'Bill of Quantities' }), onClick: () => navigate('/boq') },
-          { label: t('nav.quantities', { defaultValue: 'Quantity Takeoff' }), onClick: () => navigate('/quantities') },
+          { label: t('nav.quantities', { defaultValue: 'Quantity Levantamento de quantitativos' }), onClick: () => navigate('/quantities') },
         ]}
       >
         {t('takeoff.intro_body', {
           defaultValue:
-            'Upload PDF drawings to measure areas, lengths and counts by hand, or let AI extract elements with quantities. Selected measurements flow straight into your BOQ and stay linked to the project cost and schedule.',
+            'Upload PDF drawings to measure areas, lengths and counts by hand, or let IA extract elements with quantities. Selected measurements flow straight into your Planilha orçamentária and stay linked to the project cost and Cronograma.',
         })}
       </DismissibleInfo>
 
@@ -2196,7 +2196,7 @@ export function TakeoffPage() {
       <div
         className="flex flex-1 gap-1 rounded-md border border-border-light/80 bg-surface-secondary/40 p-1"
         role="tablist"
-        aria-label={t('takeoff.tabs_aria', { defaultValue: 'Takeoff sections' })}
+        aria-label={t('takeoff.tabs_aria', { defaultValue: 'Levantamento de quantitativos sections' })}
       >
         <button
           id="takeoff-tab-measurements"
@@ -2244,7 +2244,7 @@ export function TakeoffPage() {
           )}
         >
           <Sparkles size={16} strokeWidth={2.1} aria-hidden />
-          {t('takeoff.tab_documents', 'Documents & AI')}
+          {t('takeoff.tab_documents', 'Documents & IA')}
           {documents.length > 0 && (
             <Badge variant={activeTab === 'documents' ? 'blue' : 'neutral'} size="sm">
               {documents.length}
@@ -2258,7 +2258,7 @@ export function TakeoffPage() {
         disabled={(serverDocuments?.length ?? 0) < 2}
         data-testid="takeoff-compare-button"
         title={t('takeoff_compare.compare_revisions', {
-          defaultValue: 'Compare two takeoff PDFs with cost delta',
+          defaultValue: 'Compare two Levantamento de quantitativos PDFs with cost delta',
         })}
         className={clsx(
           'inline-flex items-center gap-1.5 rounded-md border border-border-light/80 px-3 text-sm font-semibold transition-colors',
@@ -2293,9 +2293,9 @@ export function TakeoffPage() {
           <div className="mb-6 grid grid-cols-1 sm:grid-cols-4 gap-3">
             {[
               { num: '1', label: t('takeoff.step_upload', 'Upload PDF'), icon: Upload, done: documents.length > 0 },
-              { num: '2', label: t('takeoff.step_analyze', 'AI Analysis'), icon: Sparkles, done: documents.some(d => d.analysis) },
+              { num: '2', label: t('takeoff.step_analyze', 'IA Analysis'), icon: Sparkles, done: documents.some(d => d.analysis) },
               { num: '3', label: t('takeoff.step_review', 'Review & Select'), icon: CheckCircle2, done: documents.some(d => d.analysis?.elements.some(e => e.selected)) },
-              { num: '4', label: t('takeoff.step_add', 'Add to BOQ'), icon: Plus, done: !!addToBOQSuccess },
+              { num: '4', label: t('takeoff.step_add', 'Add to Planilha orçamentária'), icon: Plus, done: !!addToBOQSuccess },
             ].map((step) => (
               <div key={step.num} className={clsx(
                 'flex items-center gap-2 rounded-xl px-4 py-2.5 border transition-colors',
@@ -2341,7 +2341,7 @@ export function TakeoffPage() {
                     options={boqOptions}
                     placeholder={
                       selectedProjectId
-                        ? t('takeoff.select_boq_placeholder', 'Choose a BOQ...')
+                        ? t('takeoff.select_boq_placeholder', 'Choose a Planilha orçamentária...')
                         : t('takeoff.select_project_first', 'Select a project first')
                     }
                   />
@@ -2349,7 +2349,7 @@ export function TakeoffPage() {
               </div>
               {!hasBoqSelected && (
                 <p className="text-2xs text-content-quaternary sm:pb-1.5">
-                  {t('takeoff.boq_hint', 'Select to add items to BOQ')}
+                  {t('takeoff.boq_hint', 'Select to add items to Planilha orçamentária')}
                 </p>
               )}
             </div>
@@ -2448,7 +2448,7 @@ export function TakeoffPage() {
                 {t('takeoff.no_documents', 'No documents uploaded')}
               </h3>
               <p className="text-xs text-content-tertiary max-w-md mx-auto">
-                {t('takeoff.no_documents_description', 'Upload PDF construction drawings above. AI will extract walls, slabs, doors, and other elements with quantities.')}
+                {t('takeoff.no_documents_description', 'Upload PDF construction drawings above. IA will extract walls, slabs, doors, and other elements with quantities.')}
               </p>
             </div>
           )}
@@ -2474,7 +2474,7 @@ export function TakeoffPage() {
                 <AlertTriangle size={12} />
                 {t(
                   'takeoff.select_boq_to_add',
-                  'Select a project and BOQ above to add measurements.',
+                  'Select a project and Planilha orçamentária above to add measurements.',
                 )}
               </p>
             )}
@@ -2508,7 +2508,7 @@ export function TakeoffPage() {
                 <p className="text-xs text-content-tertiary mb-4">
                   {t('takeoff.deeplink_not_found_desc', {
                     defaultValue:
-                      "The annotation references a document that isn't in this project's takeoff library. It may have been deleted or belong to a different project.",
+                      "The annotation references a document that isn't in this project's Levantamento de quantitativos library. It may have been deleted or belong to a different project.",
                   })}
                 </p>
                 <a
@@ -2516,7 +2516,7 @@ export function TakeoffPage() {
                   className="inline-flex items-center gap-1.5 rounded-lg border border-border-light bg-surface-primary px-3 py-1.5 text-xs font-medium text-oe-blue-text hover:bg-oe-blue-subtle transition-colors"
                 >
                   <ArrowRight size={12} className="rotate-180" />
-                  {t('takeoff.back_to_markups', { defaultValue: 'Back to Markups' })}
+                  {t('takeoff.back_to_markups', { defaultValue: 'Back to Margens' })}
                 </a>
               </div>
             ) : (

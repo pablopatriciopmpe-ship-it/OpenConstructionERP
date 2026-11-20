@@ -79,7 +79,7 @@ export function TemplateEditorPage() {
     onError: (e: Error) =>
       addToast({
         type: 'error',
-        title: t('boq_templates.duplicate_failed', { defaultValue: 'Could not copy the template' }),
+        title: t('boq_templates.duplicate_failed', { defaultValue: 'Could not copy the Modelo' }),
         message: e.message,
       }),
   });
@@ -90,12 +90,12 @@ export function TemplateEditorPage() {
       void queryClient.invalidateQueries({ queryKey: ['boq-templates'] });
       queryClient.setQueryData(['boq-template', templateId], saved);
       setIssues(saved.warnings);
-      addToast({ type: 'success', title: t('boq_templates.saved', { defaultValue: 'Template saved' }) });
+      addToast({ type: 'success', title: t('boq_templates.saved', { defaultValue: 'Modelo saved' }) });
     },
     onError: (e: Error) =>
       addToast({
         type: 'error',
-        title: t('boq_templates.save_failed', { defaultValue: 'Could not save the template' }),
+        title: t('boq_templates.save_failed', { defaultValue: 'Could not save the Modelo' }),
         message: e.message,
       }),
   });
@@ -109,18 +109,18 @@ export function TemplateEditorPage() {
     onError: (e: Error) =>
       addToast({
         type: 'error',
-        title: t('boq_templates.check_failed', { defaultValue: 'Could not check the template' }),
+        title: t('boq_templates.check_failed', { defaultValue: 'Could not check the Modelo' }),
         message: e.message,
       }),
   });
 
   if (isPending) {
-    return <p className="text-sm text-content-tertiary">{t('boq_templates.loading', { defaultValue: 'Loading templates' })}</p>;
+    return <p className="text-sm text-content-tertiary">{t('boq_templates.loading', { defaultValue: 'Loading Modelos' })}</p>;
   }
   if (isError || !draft) {
     return (
       <p className="text-sm text-semantic-error">
-        {error instanceof Error ? error.message : t('boq_templates.load_failed', { defaultValue: 'Could not load the templates' })}
+        {error instanceof Error ? error.message : t('boq_templates.load_failed', { defaultValue: 'Could not load the Modelos' })}
       </p>
     );
   }
@@ -155,8 +155,8 @@ export function TemplateEditorPage() {
     <div className="space-y-5 animate-fade-in pb-12">
       <Breadcrumb
         items={[
-          { label: t('boq.templates', { defaultValue: 'BOQ Templates' }), to: '/templates' },
-          { label: draft.name || t('boq_templates.untitled', { defaultValue: 'Untitled template' }) },
+          { label: t('boq.templates', { defaultValue: 'Planilha orçamentária Modelos' }), to: '/templates' },
+          { label: draft.name || t('boq_templates.untitled', { defaultValue: 'Untitled Modelo' }) },
         ]}
       />
 
@@ -167,7 +167,7 @@ export function TemplateEditorPage() {
         >
           <span>
             {t('boq_templates.builtin_notice', {
-              defaultValue: 'This is a built-in template and cannot be changed. Make your own copy to edit it.',
+              defaultValue: 'This is a built-in Modelo and cannot be changed. Make your own copy to edit it.',
             })}
           </span>
           <Button size="sm" icon={<Copy size={14} />} loading={duplicate.isPending} onClick={() => duplicate.mutate()}>
@@ -178,7 +178,7 @@ export function TemplateEditorPage() {
 
       <div className="grid gap-3 sm:grid-cols-2">
         <label className="block text-sm">
-          <span className="oe-overline">{t('boq_templates.template_name', { defaultValue: 'Template name' })}</span>
+          <span className="oe-overline">{t('boq_templates.template_name', { defaultValue: 'Modelo name' })}</span>
           <input
             className="oe-input mt-1 w-full"
             value={draft.name}

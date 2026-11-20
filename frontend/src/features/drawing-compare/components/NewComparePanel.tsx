@@ -247,7 +247,7 @@ export function NewComparePanel({ projectId, initialOld, initialNew, onSaved }: 
           </div>
           {docsQuery.isSuccess && docs.length < 2 && (
             <p className="text-sm text-content-secondary">
-              {t('drawing_compare.need_two_docs', { defaultValue: 'Upload both revisions in Takeoff first; they appear here as drawings to compare.' })}
+              {t('drawing_compare.need_two_docs', { defaultValue: 'Upload both revisions in Levantamento de quantitativos first; they appear here as drawings to compare.' })}
             </p>
           )}
 

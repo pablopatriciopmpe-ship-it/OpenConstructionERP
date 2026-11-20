@@ -121,7 +121,7 @@ export function AIChatPanel({
       setMessages((prev) => prev.filter((m) => m.id !== 'loading'));
 
       let errorText = t('boq.ai_chat_error', {
-        defaultValue: 'AI request failed. Please try again.',
+        defaultValue: 'IA request failed. Please try again.',
       });
 
       if (error instanceof ApiError) {
@@ -235,7 +235,7 @@ export function AIChatPanel({
         <div className="flex items-center gap-2">
           <Sparkles size={16} className="text-oe-blue" />
           <h2 className="oe-card-title">
-            {t('boq.ai_assistant', { defaultValue: 'AI Assistant' })}
+            {t('boq.ai_assistant', { defaultValue: 'IA Assistant' })}
           </h2>
         </div>
         <button
@@ -258,7 +258,7 @@ export function AIChatPanel({
             <p className="text-sm text-content-secondary max-w-[260px]">
               {t('boq.ai_welcome', {
                 defaultValue:
-                  'Ask me anything about construction, methods, materials or pricing - or ask me to generate BOQ positions, e.g. "Add MEP items for a 5-story office building".',
+                  'Ask me anything about construction, methods, materials or pricing - or ask me to generate Planilha orçamentária positions, e.g. "Add MEP items for a 5-story office building".',
               })}
             </p>
           </div>
@@ -394,7 +394,7 @@ export function AIChatPanel({
                         size="sm"
                         onClick={() => handleAddItems(msg.id, msg.items!, true)}
                       >
-                        {t('boq.add_all_to_boq', { defaultValue: 'Add all to BOQ' })}
+                        {t('boq.add_all_to_boq', { defaultValue: 'Add all to Planilha orçamentária' })}
                       </Button>
                       <Button
                         variant="ghost"

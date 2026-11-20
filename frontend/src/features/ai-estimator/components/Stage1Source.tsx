@@ -140,7 +140,7 @@ export function Stage1Intake(props: Stage1IntakeProps) {
         <p className="text-sm text-content-secondary">
           {t('aiest.intake.help', {
             defaultValue:
-              'Bring any source. The agent detects the format, reads it into elements, groups quantities and finds exact catalogue rates. Rates always come from the cost database, never invented.',
+              'Bring any source. The agent detects the format, reads it into elements, groups quantities and finds exact catalogue rates. Rates always come from the Banco de custos, never invented.',
           })}
         </p>
       )}
@@ -314,7 +314,7 @@ export function Stage1Intake(props: Stage1IntakeProps) {
           disabled={!canStart}
           onClick={onStart}
         >
-          {t('aiest.intake.start', { defaultValue: 'Start AI estimate' })}
+          {t('aiest.intake.start', { defaultValue: 'Start IA Orçamento' })}
         </Button>
       )}
     </div>

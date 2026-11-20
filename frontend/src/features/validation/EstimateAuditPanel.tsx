@@ -127,12 +127,12 @@ export function EstimateAuditPanel({
             </span>
             <div>
               <h3 className="oe-card-title">
-                {t('validation.audit_title', { defaultValue: 'One-click estimate audit' })}
+                {t('validation.audit_title', { defaultValue: 'One-click Orçamento audit' })}
               </h3>
               <p className="mt-0.5 text-xs text-content-secondary">
                 {t('validation.audit_subtitle', {
                   defaultValue:
-                    'Run the finished estimate through the quality checks, fix each finding in one click, and watch the score improve.',
+                    'Run the finished Orçamento through the quality checks, fix each finding in one click, and watch the score improve.',
                 })}
               </p>
             </div>
@@ -141,7 +141,7 @@ export function EstimateAuditPanel({
             <span
               title={
                 !boqId
-                  ? t('validation.select_boq_first', { defaultValue: 'Select a BOQ first' })
+                  ? t('validation.select_boq_first', { defaultValue: 'Select a Planilha orçamentária first' })
                   : undefined
               }
             >
@@ -155,7 +155,7 @@ export function EstimateAuditPanel({
               >
                 {report
                   ? t('validation.audit_rerun', { defaultValue: 'Re-run audit' })
-                  : t('validation.audit_run', { defaultValue: 'Audit this estimate' })}
+                  : t('validation.audit_run', { defaultValue: 'Audit this Orçamento' })}
               </Button>
             </span>
           </div>
@@ -203,7 +203,7 @@ export function EstimateAuditPanel({
                 <CheckCircle2 size={20} className="shrink-0 text-semantic-success" />
                 <p className="text-sm font-medium text-semantic-success">
                   {t('validation.audit_all_clear', {
-                    defaultValue: 'No issues found - this estimate passed every audit check.',
+                    defaultValue: 'No issues found - this Orçamento passed every audit check.',
                   })}
                 </p>
               </div>

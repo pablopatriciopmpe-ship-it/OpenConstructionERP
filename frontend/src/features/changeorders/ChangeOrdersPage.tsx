@@ -360,7 +360,7 @@ function CreateDialog({
       onClose();
       addToast({
         type: 'success',
-        title: t('changeorders.created', { defaultValue: 'Change order created' }),
+        title: t('changeorders.created', { defaultValue: 'Alteração de contrato created' }),
       });
     },
     onError: (err: Error) => {
@@ -376,7 +376,7 @@ function CreateDialog({
       addToast({
         type: 'success',
         title: t('changeorders.preflight_linked', {
-          defaultValue: 'Change order created and linked to {{code}}',
+          defaultValue: 'Alteração de contrato created and linked to {{code}}',
           code: vo.code,
         }),
       });
@@ -412,7 +412,7 @@ function CreateDialog({
       <WideModal
         open
         onClose={onClose}
-        title={t('changeorders.preflight_title', { defaultValue: 'Check before saving a standalone change order' })}
+        title={t('changeorders.preflight_title', { defaultValue: 'Check before saving a standalone Alteração de contrato' })}
         size="lg"
         busy={busy}
         footer={
@@ -429,7 +429,7 @@ function CreateDialog({
         <p className="text-sm text-content-secondary">
           {t('changeorders.preflight_intro', {
             defaultValue:
-              'This project has active variation orders. This is only a check and nothing is blocked. If your change order covers the same scope, link it to one of them. Otherwise continue as standalone.',
+              'This project has active variation orders. This is only a check and nothing is blocked. If your Alteração de contrato covers the same scope, link it to one of them. Otherwise continue as standalone.',
           })}
         </p>
         <ul className="mt-3 space-y-2">
@@ -455,7 +455,7 @@ function CreateDialog({
               ) : (
                 <span className="text-xs text-content-tertiary">
                   {t('changeorders.preflight_link_unavailable', {
-                    defaultValue: 'Already has a live change order',
+                    defaultValue: 'Already has a live Alteração de contrato',
                   })}
                 </span>
               )}
@@ -475,7 +475,7 @@ function CreateDialog({
     <WideModal
       open
       onClose={onClose}
-      title={t('changeorders.new', { defaultValue: 'New Change Order' })}
+      title={t('changeorders.new', { defaultValue: 'New Alteração de contrato' })}
       size="lg"
       busy={busy}
       footer={
@@ -541,7 +541,7 @@ function CreateDialog({
           </select>
         </WideModalField>
         <WideModalField
-          label={t('changeorders.schedule_days', { defaultValue: 'Schedule Impact (days)' })}
+          label={t('changeorders.schedule_days', { defaultValue: 'Cronograma Impact (days)' })}
           htmlFor="co-schedule-days"
         >
           <input
@@ -739,7 +739,7 @@ function AddItemDialog({
                 type="button"
                 onClick={clearBoqSource}
                 className="shrink-0 text-content-tertiary hover:text-semantic-error"
-                aria-label={t('changeorders.boq_source_clear', { defaultValue: 'Clear BOQ link' })}
+                aria-label={t('changeorders.boq_source_clear', { defaultValue: 'Clear Planilha orçamentária link' })}
               >
                 <XCircle size={14} />
               </button>
@@ -752,7 +752,7 @@ function AddItemDialog({
               onClick={() => setShowBoqPicker(true)}
             >
               <FileText size={14} className="mr-1.5" />
-              {t('changeorders.pick_from_boq', { defaultValue: 'Pick from BOQ' })}
+              {t('changeorders.pick_from_boq', { defaultValue: 'Pick from Planilha orçamentária' })}
             </Button>
           )}
         </div>
@@ -994,7 +994,7 @@ function BoqPositionPickerDialog({
     <WideModal
       open
       onClose={onClose}
-      title={t('changeorders.boq_picker_title', { defaultValue: 'Pick from BOQ' })}
+      title={t('changeorders.boq_picker_title', { defaultValue: 'Pick from Planilha orçamentária' })}
       size="lg"
       footer={
         <Button variant="ghost" onClick={onClose}>
@@ -1004,7 +1004,7 @@ function BoqPositionPickerDialog({
     >
       <WideModalSection columns={1}>
         <WideModalField
-          label={t('changeorders.boq_picker_boq', { defaultValue: 'BOQ' })}
+          label={t('changeorders.boq_picker_boq', { defaultValue: 'Planilha orçamentária' })}
           htmlFor="boq-picker-boq"
           span={1}
         >
@@ -1019,8 +1019,8 @@ function BoqPositionPickerDialog({
               {boqsLoading
                 ? t('common.loading', { defaultValue: 'Loading...' })
                 : boqs.length > 0
-                  ? t('common.select_boq', { defaultValue: 'Select BOQ...' })
-                  : t('boq.no_boqs', { defaultValue: 'No BOQs found' })}
+                  ? t('common.select_boq', { defaultValue: 'Select Planilha orçamentária...' })
+                  : t('boq.no_boqs', { defaultValue: 'No Planilhas orçamentárias found' })}
             </option>
             {boqs.map((b) => (
               <option key={b.id} value={b.id}>
@@ -1055,7 +1055,7 @@ function BoqPositionPickerDialog({
           ) : positions.length === 0 ? (
             <p className="rounded-lg border border-dashed border-border px-3 py-6 text-center text-xs text-content-tertiary">
               {t('changeorders.boq_picker_empty', {
-                defaultValue: 'No positions match. Pick another BOQ or clear the filter.',
+                defaultValue: 'No positions match. Pick another Planilha orçamentária or clear the filter.',
               })}
             </p>
           ) : (
@@ -1252,7 +1252,7 @@ function ApprovalChainBuilderDialog({
         <p className="text-xs text-content-tertiary">
           {t('changeorders.approver_user_ids_hint', {
             defaultValue:
-              'Steps run sequentially: step 1 acts first, then step 2, etc. Each approver only sees the change order when their step becomes active.',
+              'Steps run sequentially: step 1 acts first, then step 2, etc. Each approver only sees the Alteração de contrato when their step becomes active.',
           })}
         </p>
 
@@ -1479,7 +1479,7 @@ function DetailView({
   const { t } = useTranslation();
   const orderLayout = useLayoutCustomizer(
     'changeorders.change_order',
-    t('changeorders.document_title', { defaultValue: 'Change order' }),
+    t('changeorders.document_title', { defaultValue: 'Alteração de contrato' }),
   );
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -1513,7 +1513,7 @@ function DetailView({
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['changeorder', orderId] });
       queryClient.invalidateQueries({ queryKey: ['changeorders'] });
-      addToast({ type: 'success', title: t('changeorders.submitted', { defaultValue: 'Change order submitted' }) });
+      addToast({ type: 'success', title: t('changeorders.submitted', { defaultValue: 'Alteração de contrato submitted' }) });
     },
     onError: (err: Error) => addToast({ type: 'error', title: t('common.error', { defaultValue: 'Error' }), message: err.message }),
   });
@@ -1533,7 +1533,7 @@ function DetailView({
       // Approval may revise a linked contract's total via the backend
       // subscriber - refresh contract views so the bumped value shows.
       queryClient.invalidateQueries({ queryKey: ['contracts'] });
-      addToast({ type: 'success', title: t('changeorders.approved', { defaultValue: 'Change order approved' }) });
+      addToast({ type: 'success', title: t('changeorders.approved', { defaultValue: 'Alteração de contrato approved' }) });
     },
     onError: (err: Error) => {
       // Any of the four refusals says the same thing about this screen: the
@@ -1553,7 +1553,7 @@ function DetailView({
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['changeorder', orderId] });
       queryClient.invalidateQueries({ queryKey: ['changeorders'] });
-      addToast({ type: 'success', title: t('changeorders.rejected', { defaultValue: 'Change order rejected' }) });
+      addToast({ type: 'success', title: t('changeorders.rejected', { defaultValue: 'Alteração de contrato rejected' }) });
     },
     onError: (err: Error) => addToast({ type: 'error', title: t('common.error', { defaultValue: 'Error' }), message: err.message }),
   });
@@ -1567,7 +1567,7 @@ function DetailView({
       queryClient.invalidateQueries({ queryKey: ['changeorder', orderId] });
       queryClient.invalidateQueries({ queryKey: ['changeorders'] });
       queryClient.invalidateQueries({ queryKey: ['changeorders-summary'] });
-      addToast({ type: 'success', title: t('changeorders.executed', { defaultValue: 'Change order marked as executed' }) });
+      addToast({ type: 'success', title: t('changeorders.executed', { defaultValue: 'Alteração de contrato marked as executed' }) });
     },
     onError: (err: Error) => addToast({ type: 'error', title: t('common.error', { defaultValue: 'Error' }), message: err.message }),
   });
@@ -1690,7 +1690,7 @@ function DetailView({
                 defaultValue: 'Step approved',
               })
             : t('changeorders.approval_step_rejected', {
-                defaultValue: 'Change order rejected',
+                defaultValue: 'Alteração de contrato rejected',
               }),
       });
     },
@@ -1717,7 +1717,7 @@ function DetailView({
       <div>
         <button
           onClick={onBack}
-          aria-label={t('changeorders.back_to_list', { defaultValue: 'Back to change orders list' })}
+          aria-label={t('changeorders.back_to_list', { defaultValue: 'Back to Alterações de contrato list' })}
           className="inline-flex items-center gap-1.5 text-sm text-content-secondary hover:text-content-primary mb-3"
         >
           <ArrowLeft size={14} />
@@ -1727,7 +1727,7 @@ function DetailView({
           <EmptyState
             icon={<AlertTriangle size={28} strokeWidth={1.5} />}
             title={t('common.error', { defaultValue: 'Error' })}
-            description={t('changeorders.load_error', { defaultValue: 'Failed to load change order. Please try again.' })}
+            description={t('changeorders.load_error', { defaultValue: 'Failed to load Alteração de contrato. Please try again.' })}
           />
         </Card>
       </div>
@@ -1744,10 +1744,10 @@ function DetailView({
         <nav className="flex items-center gap-1.5 text-sm mb-4" aria-label={t('common.breadcrumb', { defaultValue: 'Breadcrumb' })}>
           <button
             onClick={onBack}
-            aria-label={t('changeorders.back_to_list', { defaultValue: 'Back to change orders list' })}
+            aria-label={t('changeorders.back_to_list', { defaultValue: 'Back to Alterações de contrato list' })}
             className="text-content-secondary hover:text-oe-blue transition-colors"
           >
-            {t('nav.change_orders', { defaultValue: 'Change Orders' })}
+            {t('nav.change_orders', { defaultValue: 'Alterações de contrato' })}
           </button>
           <ChevronRight size={12} className="text-content-tertiary" />
           <span className="text-content-primary font-medium">{order.code}</span>
@@ -1835,7 +1835,7 @@ function DetailView({
           const label =
             src.number ||
             (src.kind === 'rfi'
-              ? t('changeorders.source_kind_rfi', { defaultValue: 'RFI' })
+              ? t('changeorders.source_kind_rfi', { defaultValue: 'Pedido de informação (RFI)' })
               : t('changeorders.source_kind_ncr', { defaultValue: 'NCR' }));
           return (
             <div
@@ -1923,8 +1923,8 @@ function DetailView({
             {order.status === 'draft' && (
               <Button variant="primary" size="sm" onClick={async () => {
                 const ok = await confirm({
-                  title: t('changeorders.submit_confirm_title', { defaultValue: 'Submit change order?' }),
-                  message: t('changeorders.submit_confirm', { defaultValue: 'Submit this change order for review? This cannot be undone.' }),
+                  title: t('changeorders.submit_confirm_title', { defaultValue: 'Submit Alteração de contrato?' }),
+                  message: t('changeorders.submit_confirm', { defaultValue: 'Submit this Alteração de contrato for review? This cannot be undone.' }),
                   confirmLabel: t('changeorders.submit', { defaultValue: 'Submit' }),
                   variant: 'warning',
                 });
@@ -1951,7 +1951,7 @@ function DetailView({
                 })}
                 className="oe-select"
               >
-                <option value="">{t('common.select_boq', { defaultValue: 'Select BOQ...' })}</option>
+                <option value="">{t('common.select_boq', { defaultValue: 'Select Planilha orçamentária...' })}</option>
                 {targetBoqs.map((b) => (
                   <option key={b.id} value={b.id}>
                     {b.name}
@@ -1971,8 +1971,8 @@ function DetailView({
                 <>
                   <Button variant="primary" size="sm" onClick={async () => {
                     const ok = await confirm({
-                      title: t('changeorders.approve_confirm_title', { defaultValue: 'Approve change order?' }),
-                      message: t('changeorders.approve_confirm', { defaultValue: 'Approve this change order? Cost impact will be applied to the project budget.' }),
+                      title: t('changeorders.approve_confirm_title', { defaultValue: 'Approve Alteração de contrato?' }),
+                      message: t('changeorders.approve_confirm', { defaultValue: 'Approve this Alteração de contrato? Cost impact will be applied to the project budget.' }),
                       confirmLabel: t('changeorders.approve', { defaultValue: 'Approve' }),
                       variant: 'warning',
                     });
@@ -1983,8 +1983,8 @@ function DetailView({
                   </Button>
                   <Button variant="ghost" size="sm" onClick={async () => {
                     const ok = await confirm({
-                      title: t('changeorders.reject_confirm_title', { defaultValue: 'Reject change order?' }),
-                      message: t('changeorders.reject_confirm', { defaultValue: 'Reject this change order?' }),
+                      title: t('changeorders.reject_confirm_title', { defaultValue: 'Reject Alteração de contrato?' }),
+                      message: t('changeorders.reject_confirm', { defaultValue: 'Reject this Alteração de contrato?' }),
                       confirmLabel: t('changeorders.reject', { defaultValue: 'Reject' }),
                       variant: 'warning',
                     });
@@ -2019,7 +2019,7 @@ function DetailView({
               <Button variant="secondary" size="sm" onClick={async () => {
                 const ok = await confirm({
                   title: t('changeorders.execute_confirm_title', { defaultValue: 'Mark as executed?' }),
-                  message: t('changeorders.execute_confirm', { defaultValue: 'Mark this change order as executed? This records that the scope change has been carried out on site. It cannot be undone.' }),
+                  message: t('changeorders.execute_confirm', { defaultValue: 'Mark this Alteração de contrato as executed? This records that the scope change has been carried out on site. It cannot be undone.' }),
                   confirmLabel: t('changeorders.mark_executed', { defaultValue: 'Mark as executed' }),
                   variant: 'warning',
                 });
@@ -2080,7 +2080,7 @@ function DetailView({
         </Card>
         <Card className="p-4">
           <p className="text-xs text-content-tertiary uppercase tracking-wide">
-            {t('changeorders.schedule_impact', { defaultValue: 'Schedule Impact' })}
+            {t('changeorders.schedule_impact', { defaultValue: 'Cronograma Impact' })}
           </p>
           <p className="mt-1 text-sm font-medium text-content-primary">
             {order.schedule_impact_days} {t('common.days', { defaultValue: 'days' })}
@@ -2219,7 +2219,7 @@ function DetailView({
                   className={chipCls}
                   onClick={() => navigate(variationLink)}
                   title={t('changeorders.from_variation_hint', {
-                    defaultValue: 'Open the variation order this change order was created from',
+                    defaultValue: 'Open the variation order this Alteração de contrato was created from',
                   })}
                 >
                   <GitBranch size={12} />
@@ -2234,17 +2234,17 @@ function DetailView({
                   title={
                     sourcePill.kind === 'rfi'
                       ? t('changeorders.source_hint_rfi', {
-                          defaultValue: 'Open the RFI this change order was raised from',
+                          defaultValue: 'Open the Pedido de informação (RFI) this Alteração de contrato was raised from',
                         })
                       : t('changeorders.source_hint_ncr', {
-                          defaultValue: 'Open the NCR this change order was raised from',
+                          defaultValue: 'Open the NCR this Alteração de contrato was raised from',
                         })
                   }
                 >
                   {sourcePill.kind === 'rfi' ? <HelpCircle size={12} /> : <AlertTriangle size={12} />}
                   {sourcePill.number ||
                     (sourcePill.kind === 'rfi'
-                      ? t('changeorders.source_kind_rfi', { defaultValue: 'RFI' })
+                      ? t('changeorders.source_kind_rfi', { defaultValue: 'Pedido de informação (RFI)' })
                       : t('changeorders.source_kind_ncr', { defaultValue: 'NCR' }))}
                 </button>
               )}
@@ -2265,11 +2265,11 @@ function DetailView({
                   className={chipCls}
                   onClick={() => navigate(boqDeepLink(writeback.boqId as string, writeback.boqSectionId))}
                   title={t('changeorders.written_into_boq_hint', {
-                    defaultValue: 'Open the bill of quantities on the section this change order added',
+                    defaultValue: 'Open the bill of quantities on the section this Alteração de contrato added',
                   })}
                 >
                   <Table2 size={12} />
-                  {t('changeorders.written_into_boq', { defaultValue: 'BOQ section' })}
+                  {t('changeorders.written_into_boq', { defaultValue: 'Planilha orçamentária section' })}
                 </button>
               )}
               {landedInBudget && (
@@ -2278,7 +2278,7 @@ function DetailView({
                   className={chipCls}
                   onClick={() => navigate(FINANCE_BUDGETS_LINK)}
                   title={t('changeorders.revised_budget_hint', {
-                    defaultValue: 'Open the budget lines, where this change order is recorded as a revised-budget row',
+                    defaultValue: 'Open the budget lines, where this Alteração de contrato is recorded as a revised-budget row',
                   })}
                 >
                   <Wallet size={12} />
@@ -2310,7 +2310,7 @@ function DetailView({
                 >
                   <HelpCircle size={12} />
                   {t('changeorders.linked_rfi', {
-                    defaultValue: 'RFI {{n}}',
+                    defaultValue: 'Pedido de informação (RFI) {{n}}',
                     n: i + 1,
                   })}
                 </button>
@@ -2354,11 +2354,11 @@ function DetailView({
               approvals.length === 0
                 ? t('changeorders.approval_chain_help_start', {
                     defaultValue:
-                      'Optional: route this submitted change order through named approvers in sequence. Starting a chain replaces the single Approve/Reject buttons above - each approver then signs off step by step in the timeline below.',
+                      'Optional: route this submitted Alteração de contrato through named approvers in sequence. Starting a chain replaces the single Approve/Reject buttons above - each approver then signs off step by step in the timeline below.',
                   })
                 : t('changeorders.approval_chain_help_active', {
                     defaultValue:
-                      'This change order is on a step-by-step approval chain. The single Approve/Reject buttons are disabled - the assigned approver records each decision in the timeline below, and a rejection at any step stops the chain.',
+                      'This Alteração de contrato is on a step-by-step approval chain. The single Approve/Reject buttons are disabled - the assigned approver records each decision in the timeline below, and a rejection at any step stops the chain.',
                   })
             }
           />
@@ -2421,7 +2421,7 @@ function DetailView({
       ) : (
         <Card className="overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="oe-table w-full" aria-label={t('changeorders.items_table_aria', { defaultValue: 'Change order line items' })}>
+            <table className="oe-table w-full" aria-label={t('changeorders.items_table_aria', { defaultValue: 'Alteração de contrato line items' })}>
               <thead>
                 <tr>
                   <th>
@@ -2606,7 +2606,7 @@ export function ChangeOrdersPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['changeorders'] });
       queryClient.invalidateQueries({ queryKey: ['changeorders-summary'] });
-      addToast({ type: 'success', title: t('changeorders.deleted', { defaultValue: 'Change order deleted' }) });
+      addToast({ type: 'success', title: t('changeorders.deleted', { defaultValue: 'Alteração de contrato deleted' }) });
     },
     onError: (err: Error) => addToast({ type: 'error', title: t('common.error', { defaultValue: 'Error' }), message: err.message }),
   });
@@ -2629,7 +2629,7 @@ export function ChangeOrdersPage() {
         t('common.status', { defaultValue: 'Status' }),
         t('changeorders.reason', { defaultValue: 'Reason' }),
         t('changeorders.cost_impact', { defaultValue: 'Cost Impact' }),
-        t('changeorders.schedule_days', { defaultValue: 'Schedule Days' }),
+        t('changeorders.schedule_days', { defaultValue: 'Cronograma Days' }),
         t('changeorders.items', { defaultValue: 'Line Items' }),
         t('common.created', { defaultValue: 'Created' }),
       ];
@@ -2707,7 +2707,7 @@ export function ChangeOrdersPage() {
     <div className="space-y-5 animate-fade-in">
       <Breadcrumb items={[
         ...(project ? [{ label: project.name, to: `/projects/${project.id}` }] : []),
-        { label: t('nav.change_orders', { defaultValue: 'Change Orders' }) },
+        { label: t('nav.change_orders', { defaultValue: 'Alterações de contrato' }) },
       ]} />
 
       {/* Header — project selection lives in the global top bar; the page
@@ -2715,8 +2715,8 @@ export function ChangeOrdersPage() {
           project, so no in-page project picker is rendered here. srTitle
           gives the page its single semantic <h1> (sr-only) for a11y. */}
       <PageHeader
-        srTitle={t('nav.change_orders', { defaultValue: 'Change Orders' })}
-        subtitle={t('changeorders.subtitle', { defaultValue: 'Track scope changes with cost and schedule impact' })}
+        srTitle={t('nav.change_orders', { defaultValue: 'Alterações de contrato' })}
+        subtitle={t('changeorders.subtitle', { defaultValue: 'Track scope changes with cost and Cronograma impact' })}
         actions={
           <>
             <InsightsToggleButton open={insights.open} onClick={insights.toggle} />
@@ -2732,12 +2732,12 @@ export function ChangeOrdersPage() {
             />
             <Button variant="secondary" onClick={() => setShowAIDraft(true)} disabled={!projectId}>
               <Sparkles size={16} className="mr-1.5" />
-              {t('changeorders.ai_draft', { defaultValue: 'AI Draft' })}
+              {t('changeorders.ai_draft', { defaultValue: 'IA Draft' })}
             </Button>
             <VideoHint topic="change-order" className="self-center" />
             <Button variant="primary" onClick={() => setShowCreate(true)} disabled={!projectId}>
               <Plus size={16} className="mr-1.5" />
-              {t('changeorders.new', { defaultValue: 'New Change Order' })}
+              {t('changeorders.new', { defaultValue: 'New Alteração de contrato' })}
             </Button>
           </>
         }
@@ -2745,7 +2745,7 @@ export function ChangeOrdersPage() {
 
       <InsightsPanel
         open={insights.open}
-        title={t('changeorders.insights.title', { defaultValue: 'Change order insights' })}
+        title={t('changeorders.insights.title', { defaultValue: 'Alteração de contrato insights' })}
         datasets={insightDatasets}
         builtins={insightBuiltins}
         custom={insights.custom}
@@ -2786,7 +2786,7 @@ export function ChangeOrdersPage() {
       >
         {t('changeorders.intro_body', {
           defaultValue:
-            'Capture each scope change with its line items, original versus new quantities and rates, and the system computes the cost delta and schedule impact for you. Route it through Draft, Submitted, Approved and Executed, optionally via a named approval chain, and an approved order is applied to the project budget as a revised commitment.',
+            'Capture each scope change with its line items, original versus new quantities and rates, and the system computes the cost delta and Cronograma impact for you. Route it through Draft, Submitted, Approved and Executed, optionally via a named approval chain, and an approved order is applied to the project budget as a revised commitment.',
         })}
       </DismissibleInfo>
 
@@ -2849,7 +2849,7 @@ export function ChangeOrdersPage() {
               </div>
               <div>
                 <p className="text-2xs text-content-tertiary uppercase tracking-wide">
-                  {t('changeorders.schedule_total', { defaultValue: 'Schedule Days' })}
+                  {t('changeorders.schedule_total', { defaultValue: 'Cronograma Days' })}
                 </p>
                 <p className="text-lg font-semibold text-content-primary">
                   {summary.total_schedule_impact_days} {t('common.days', { defaultValue: 'days' })}
@@ -2898,7 +2898,7 @@ export function ChangeOrdersPage() {
       <div>
         {!projectId ? (
           <RequiresProject
-            emptyHint={t('changeorders.no_project_desc', { defaultValue: 'Open a project first to view and manage change orders.' })}
+            emptyHint={t('changeorders.no_project_desc', { defaultValue: 'Open a project first to view and manage Alterações de contrato.' })}
           >{null}</RequiresProject>
         ) : isLoading ? (
           <SkeletonTable rows={6} columns={5} />
@@ -2910,12 +2910,12 @@ export function ChangeOrdersPage() {
           <Card>
             <EmptyState
               icon={<FileEdit size={28} strokeWidth={1.5} />}
-              title={t('changeorders.empty', { defaultValue: 'No change orders' })}
+              title={t('changeorders.empty', { defaultValue: 'No Alterações de contrato' })}
               description={t('changeorders.empty_desc', {
-                defaultValue: 'Create a change order to track scope changes with cost and schedule impact',
+                defaultValue: 'Create a Alteração de contrato to track scope changes with cost and Cronograma impact',
               })}
               action={{
-                label: t('changeorders.new', { defaultValue: 'New Change Order' }),
+                label: t('changeorders.new', { defaultValue: 'New Alteração de contrato' }),
                 onClick: () => setShowCreate(true),
               }}
             />
@@ -2923,7 +2923,7 @@ export function ChangeOrdersPage() {
         ) : (
           <Card className="overflow-hidden">
             <div className="overflow-x-auto">
-              <table className="oe-table w-full" aria-label={t('changeorders.table_aria', { defaultValue: 'Change orders list' })}>
+              <table className="oe-table w-full" aria-label={t('changeorders.table_aria', { defaultValue: 'Alterações de contrato list' })}>
                 <thead>
                   <tr>
                     <th>
@@ -2942,7 +2942,7 @@ export function ChangeOrdersPage() {
                       {t('changeorders.cost_impact', { defaultValue: 'Cost Impact' })}
                     </th>
                     <th className="text-right">
-                      {t('changeorders.schedule', { defaultValue: 'Schedule' })}
+                      {t('changeorders.schedule', { defaultValue: 'Cronograma' })}
                     </th>
                     <th>
                       {t('common.date', { defaultValue: 'Date' })}
@@ -2995,9 +2995,9 @@ export function ChangeOrdersPage() {
                               onClick={async (e) => {
                                 e.stopPropagation();
                                 const ok = await confirmList({
-                                  title: t('changeorders.delete_confirm_title', { defaultValue: 'Delete change order?' }),
+                                  title: t('changeorders.delete_confirm_title', { defaultValue: 'Delete Alteração de contrato?' }),
                                   message: t('changeorders.delete_confirm', {
-                                    defaultValue: 'Delete change order {{code}}? This cannot be undone.',
+                                    defaultValue: 'Delete Alteração de contrato {{code}}? This cannot be undone.',
                                     code: order.code,
                                   }),
                                 });
@@ -3006,7 +3006,7 @@ export function ChangeOrdersPage() {
                               className="text-content-tertiary hover:text-semantic-error transition-colors p-1"
                               title={t('common.delete', { defaultValue: 'Delete' })}
                               aria-label={t('changeorders.delete_order_aria', {
-                                defaultValue: 'Delete change order {{code}}',
+                                defaultValue: 'Delete Alteração de contrato {{code}}',
                                 code: order.code,
                               })}
                             >

@@ -131,7 +131,7 @@ export function OfferPage() {
         <PageHeader srTitle={t('offers.page_title', { defaultValue: 'Customer offer' })} />
         <EmptyState
           icon={<FileText size={40} />}
-          title={t('offers.no_project', { defaultValue: 'Open the offer from an estimate.' })}
+          title={t('offers.no_project', { defaultValue: 'Open the offer from an Orçamento.' })}
           action={
             boqId ? (
               <Button variant="primary" onClick={() => navigate(`/boq/${boqId}`)}>
@@ -203,7 +203,7 @@ export function OfferPage() {
       {offer.status !== 'draft' && (
         <div className={`rounded-lg border border-border-light px-3 py-2 text-sm ${offer.stale ? 'bg-semantic-warning-bg text-semantic-warning' : 'bg-surface-secondary text-content-secondary'}`}>
           {offer.stale
-            ? t('offers.stale_banner', { rev: offer.revision, defaultValue: 'The estimate changed after revision {{rev}} was sent.' })
+            ? t('offers.stale_banner', { rev: offer.revision, defaultValue: 'The Orçamento changed after revision {{rev}} was sent.' })
             : t('offers.sent_banner', { date: offer.sent_at?.slice(0, 10) ?? '', rev: nextRevision(offer.revision), defaultValue: 'Sent on {{date}}. Changes create revision {{rev}}.' })}
           <div className="mt-2 flex flex-wrap gap-2">
             <Button size="sm" variant="secondary" onClick={() => run(revise, 'revise', (r) => setOfferId((r as Offer).id))}>
@@ -281,7 +281,7 @@ export function OfferPage() {
               })}
             </p>
             <fieldset className="mt-3" disabled={readOnly}>
-              <legend className="text-xs text-content-tertiary">{t('offers.markups_label', { defaultValue: 'How markups appear' })}</legend>
+              <legend className="text-xs text-content-tertiary">{t('offers.markups_label', { defaultValue: 'How Margens appear' })}</legend>
               {(['spread', 'lines', 'section'] as const).map((m) => (
                 <label key={m} className="mr-4 inline-flex items-center gap-1 text-sm">
                   <input type="radio" name="markup" checked={offer.markup_presentation === m} onChange={() => save({ markup_presentation: m })} />
@@ -290,11 +290,11 @@ export function OfferPage() {
               ))}
             </fieldset>
             <Link className="mt-3 inline-block text-sm underline" to={`/boq/${boqId}`}>
-              {t('offers.edit_in_estimate', { defaultValue: 'Edit in estimate' })}
+              {t('offers.edit_in_estimate', { defaultValue: 'Edit in Orçamento' })}
             </Link>
           </SectionCard>
 
-          <SectionCard id="schedule" title={t('offers.section.schedule', { defaultValue: 'Payment schedule' })} findings={bySection('schedule')}>
+          <SectionCard id="schedule" title={t('offers.section.schedule', { defaultValue: 'Payment Cronograma' })} findings={bySection('schedule')}>
             <OfferScheduleEditor
               rows={offer.instalments}
               net={offer.totals.net}

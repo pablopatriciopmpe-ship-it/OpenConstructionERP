@@ -101,7 +101,7 @@ export function AIDraftModal({
       queryClient.invalidateQueries({ queryKey: ['changeorders-summary'] });
       addToast({
         type: 'success',
-        title: t('changeorders.ai_created', { defaultValue: 'Change order created from draft' }),
+        title: t('changeorders.ai_created', { defaultValue: 'Alteração de contrato created from draft' }),
       });
       onCreated(order.id);
     },
@@ -116,7 +116,7 @@ export function AIDraftModal({
     <WideModal
       open
       onClose={onClose}
-      title={t('changeorders.ai_draft_title', { defaultValue: 'Draft a change order from notes' })}
+      title={t('changeorders.ai_draft_title', { defaultValue: 'Draft a Alteração de contrato from notes' })}
       size="lg"
       busy={draftMut.isPending || createMut.isPending}
       footer={
@@ -132,7 +132,7 @@ export function AIDraftModal({
             >
               {createMut.isPending
                 ? t('common.creating', { defaultValue: 'Creating...' })
-                : t('changeorders.ai_create', { defaultValue: 'Create change order' })}
+                : t('changeorders.ai_create', { defaultValue: 'Create Alteração de contrato' })}
             </Button>
           ) : (
             <Button
@@ -154,7 +154,7 @@ export function AIDraftModal({
           <p className="text-sm text-content-secondary">
             {t('changeorders.ai_intro', {
               defaultValue:
-                'Paste the site notes, an RFI thread or a daily-diary entry. We will read the obvious scope, cost and schedule signals into a draft you can review and edit before anything is saved.',
+                'Paste the site notes, an Pedido de informação (RFI) thread or a daily-diary entry. We will read the obvious scope, cost and Cronograma signals into a draft you can review and edit before anything is saved.',
             })}
           </p>
           <div>
@@ -168,8 +168,8 @@ export function AIDraftModal({
               className={`oe-select-lg ${fieldCls}`}
             >
               <option value="free_text">{t('changeorders.ai_src_free', { defaultValue: 'Free text / site notes' })}</option>
-              <option value="daily_log">{t('changeorders.ai_src_log', { defaultValue: 'Daily diary entry' })}</option>
-              <option value="rfi">{t('changeorders.ai_src_rfi', { defaultValue: 'RFI thread' })}</option>
+              <option value="daily_log">{t('changeorders.ai_src_log', { defaultValue: 'Diário de obra entry' })}</option>
+              <option value="rfi">{t('changeorders.ai_src_rfi', { defaultValue: 'Pedido de informação (RFI) thread' })}</option>
             </select>
           </div>
           <div>
@@ -195,7 +195,7 @@ export function AIDraftModal({
             <Badge variant={draft.ai_used ? 'blue' : 'neutral'} size="sm">
               <Sparkles size={12} className="mr-1" />
               {draft.ai_used
-                ? t('changeorders.ai_by', { defaultValue: 'Drafted by AI ({{p}})', p: draft.provider })
+                ? t('changeorders.ai_by', { defaultValue: 'Drafted by IA ({{p}})', p: draft.provider })
                 : t('changeorders.ai_heuristic', { defaultValue: 'Offline heuristic draft' })}
             </Badge>
             <span className="flex items-center gap-1.5 text-xs text-content-tertiary">
@@ -228,7 +228,7 @@ export function AIDraftModal({
             >
               <input id="ai-cost" type="number" value={cost} onChange={(e) => setCost(e.target.value)} className={`oe-input-lg ${fieldCls}`} />
             </WideModalField>
-            <WideModalField label={t('changeorders.schedule_days', { defaultValue: 'Schedule days' })} htmlFor="ai-days">
+            <WideModalField label={t('changeorders.schedule_days', { defaultValue: 'Cronograma days' })} htmlFor="ai-days">
               <input id="ai-days" type="number" value={days} onChange={(e) => setDays(e.target.value)} className={`oe-input-lg ${fieldCls}`} />
             </WideModalField>
           </WideModalSection>

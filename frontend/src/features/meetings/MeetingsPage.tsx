@@ -1142,7 +1142,7 @@ function ImportSummaryModal({
     try {
       // Short delay to show the "Parsing" stage visually
       await new Promise((r) => setTimeout(r, 300));
-      setProcessingStage(t('meetings.stage_extracting', { defaultValue: 'Extracting with AI...' }));
+      setProcessingStage(t('meetings.stage_extracting', { defaultValue: 'Extracting with IA...' }));
       const data = await importMeetingSummaryPreview(projectId, selectedFile);
       setPreviewData(data);
       setEditTitle(data.title);
@@ -1233,7 +1233,7 @@ function ImportSummaryModal({
               <p className="text-sm text-content-secondary">
                 {t('meetings.import_description', {
                   defaultValue:
-                    'Upload a meeting transcript from Microsoft Teams, Google Meet, Zoom, or any other source. AI will extract attendees, agenda, action items, and decisions.',
+                    'Upload a meeting transcript from Microsoft Teams, Google Meet, Zoom, or any other source. IA will extract attendees, agenda, action items, and decisions.',
                 })}
               </p>
 
@@ -1347,7 +1347,7 @@ function ImportSummaryModal({
             <div className="flex items-center gap-2 mt-2">
               {[
                 t('meetings.stage_parsing', { defaultValue: 'Parsing' }),
-                t('meetings.stage_ai', { defaultValue: 'AI Extract' }),
+                t('meetings.stage_ai', { defaultValue: 'IA Extract' }),
                 t('meetings.stage_done', { defaultValue: 'Done' }),
               ].map((label, idx) => {
                 const currentIdx = processingStage.toLowerCase().includes('parsing')
@@ -1385,7 +1385,7 @@ function ImportSummaryModal({
                 <div className="flex items-center gap-2 rounded-lg bg-purple-50 dark:bg-purple-950/20 border border-purple-200 dark:border-purple-800 px-3 py-2">
                   <Sparkles size={14} className="text-purple-600 dark:text-purple-400" />
                   <span className="text-xs font-medium text-purple-700 dark:text-purple-300">
-                    {t('meetings.ai_enhanced', { defaultValue: 'AI-enhanced extraction' })}
+                    {t('meetings.ai_enhanced', { defaultValue: 'IA-enhanced extraction' })}
                   </span>
                 </div>
               )}
@@ -1930,7 +1930,7 @@ const MeetingRow = React.memo(function MeetingRow({
                 }}
               >
                 <CalendarClock size={14} className="mr-1.5" />
-                {t('meetings.action_schedule', { defaultValue: 'Schedule Meeting' })}
+                {t('meetings.action_schedule', { defaultValue: 'Cronograma Meeting' })}
               </Button>
             )}
             {(meeting.status === 'scheduled' || meeting.status === 'in_progress') && (
@@ -2148,7 +2148,7 @@ export function MeetingsPage() {
       addToast({
         type: 'success',
         title: t('meetings.series_created', {
-          defaultValue: 'Recurring series created - {{count}} meetings',
+          defaultValue: 'Recurring series created - {{count}} Reuniões',
           count,
         }),
       });
@@ -2200,7 +2200,7 @@ export function MeetingsPage() {
     onError: (e: Error) =>
       addToast({
         type: 'error',
-        title: t('meetings.schedule_failed', { defaultValue: 'Failed to schedule meeting' }),
+        title: t('meetings.schedule_failed', { defaultValue: 'Failed to Cronograma meeting' }),
         message: e.message,
       }),
   });
@@ -2390,14 +2390,14 @@ export function MeetingsPage() {
           ...(selectedProjectId && breadcrumbProjectName
             ? [{ label: breadcrumbProjectName, to: `/projects/${selectedProjectId}` }]
             : []),
-          { label: t('meetings.title', { defaultValue: 'Meetings' }) },
+          { label: t('meetings.title', { defaultValue: 'Reuniões' }) },
         ]}
       />
 
       {/* Header */}
       <PageHeader
-        srTitle={t('meetings.title', { defaultValue: 'Meetings' })}
-        subtitle={t('meetings.subtitle', { defaultValue: 'Schedule, track, and document project meetings with action items' })}
+        srTitle={t('meetings.title', { defaultValue: 'Reuniões' })}
+        subtitle={t('meetings.subtitle', { defaultValue: 'Cronograma, track, and document project Reuniões with action items' })}
         actions={
           <>
             <InsightsToggleButton open={insights.open} onClick={insights.toggle} />
@@ -2469,7 +2469,7 @@ export function MeetingsPage() {
       >
         {t('meetings.intro_body', {
           defaultValue:
-            'Schedule project meetings, capture minutes and turn discussion into tracked action items with an owner and a due date. Set up a recurring series for standing site or coordination meetings, or import a summary from an existing write-up, so every decision and follow-up stays attached to the project record.',
+            'Cronograma project Reuniões, capture minutes and turn discussion into tracked action items with an owner and a due date. Set up a recurring series for standing site or coordination Reuniões, or import a summary from an existing write-up, so every decision and follow-up stays attached to the project record.',
         })}
       </DismissibleInfo>
 
@@ -2479,7 +2479,7 @@ export function MeetingsPage() {
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <div className="rounded-xl border border-border-light bg-surface-elevated/90 p-4 shadow-xs transition-shadow duration-normal ease-oe hover:shadow-sm animate-card-in">
           <p className="text-2xs font-medium text-content-tertiary uppercase tracking-wide">
-            {t('meetings.stat_total', { defaultValue: 'Total Meetings' })}
+            {t('meetings.stat_total', { defaultValue: 'Total Reuniões' })}
           </p>
           <p className="text-lg font-semibold mt-1 tabular-nums text-content-primary">{stats.total}</p>
         </div>
@@ -2517,9 +2517,9 @@ export function MeetingsPage() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={t('meetings.search_placeholder', {
-              defaultValue: 'Search meetings...',
+              defaultValue: 'Search Reuniões...',
             })}
-            aria-label={t('meetings.search_placeholder', { defaultValue: 'Search meetings' })}
+            aria-label={t('meetings.search_placeholder', { defaultValue: 'Search Reuniões' })}
             className={inputCls + ' pl-9'}
           />
         </div>
@@ -2584,8 +2584,8 @@ export function MeetingsPage() {
             icon={<CalendarDays size={28} strokeWidth={1.5} />}
             title={
               searchQuery || typeFilter || statusFilter
-                ? t('meetings.no_results', { defaultValue: 'No matching meetings' })
-                : t('meetings.no_meetings', { defaultValue: 'No meetings yet' })
+                ? t('meetings.no_results', { defaultValue: 'No matching Reuniões' })
+                : t('meetings.no_meetings', { defaultValue: 'No Reuniões yet' })
             }
             description={
               searchQuery || typeFilter || statusFilter
@@ -2593,7 +2593,7 @@ export function MeetingsPage() {
                     defaultValue: 'Try adjusting your search or filters to find what you are looking for.',
                   })
                 : t('meetings.no_meetings_hint', {
-                    defaultValue: 'Schedule your first meeting to track attendance, decisions, and action items across your project.',
+                    defaultValue: 'Cronograma your first meeting to track attendance, decisions, and action items across your project.',
                   })
             }
             action={
@@ -2609,7 +2609,7 @@ export function MeetingsPage() {
           <>
             <p className="mb-3 text-sm text-content-tertiary">
               {t('meetings.showing_count', {
-                defaultValue: '{{count}} meetings',
+                defaultValue: '{{count}} Reuniões',
                 count: filtered.length,
               })}
             </p>

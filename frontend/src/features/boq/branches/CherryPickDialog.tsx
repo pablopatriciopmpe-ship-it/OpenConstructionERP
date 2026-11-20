@@ -109,7 +109,7 @@ export function CherryPickDialog({ mode, nodes, currentBoqId, isOpen, onClose, o
       addToast({
         type: 'success',
         title: isMerge
-          ? t('boq.branch.merged_toast', { defaultValue: 'Branch merged into the main estimate' })
+          ? t('boq.branch.merged_toast', { defaultValue: 'Branch merged into the main Orçamento' })
           : t('boq.branch.applied_toast', { defaultValue: 'Changes applied' }),
         message: t('boq.branch.applied_counts', {
           defaultValue: '{{added}} added, {{updated}} updated, {{removed}} removed. A snapshot was saved before.',
@@ -173,8 +173,8 @@ export function CherryPickDialog({ mode, nodes, currentBoqId, isOpen, onClose, o
         aria-modal="true"
         aria-label={
           isMerge
-            ? t('boq.branch.merge_title', { defaultValue: 'Merge into the main estimate' })
-            : t('boq.branch.pick_title', { defaultValue: 'Carry changes into this estimate' })
+            ? t('boq.branch.merge_title', { defaultValue: 'Merge into the main Orçamento' })
+            : t('boq.branch.pick_title', { defaultValue: 'Carry changes into this Orçamento' })
         }
         className="relative z-10 flex max-h-[88vh] w-full max-w-3xl mx-4 flex-col rounded-2xl border border-border-light bg-surface-elevated shadow-xl animate-scale-in"
       >
@@ -185,8 +185,8 @@ export function CherryPickDialog({ mode, nodes, currentBoqId, isOpen, onClose, o
             </span>
             <h2 className="oe-section-title">
               {isMerge
-                ? t('boq.branch.merge_title', { defaultValue: 'Merge into the main estimate' })
-                : t('boq.branch.pick_title', { defaultValue: 'Carry changes into this estimate' })}
+                ? t('boq.branch.merge_title', { defaultValue: 'Merge into the main Orçamento' })
+                : t('boq.branch.pick_title', { defaultValue: 'Carry changes into this Orçamento' })}
             </h2>
           </div>
           <button
@@ -204,7 +204,7 @@ export function CherryPickDialog({ mode, nodes, currentBoqId, isOpen, onClose, o
             <p className="text-xs text-content-secondary">
               {t('boq.branch.merge_intro', {
                 defaultValue:
-                  'Every change of "{{source}}" is written into "{{target}}". A snapshot of the main estimate is saved first, and the branch is locked afterwards.',
+                  'Every change of "{{source}}" is written into "{{target}}". A snapshot of the main Orçamento is saved first, and the branch is locked afterwards.',
                 source: sourceName,
                 target: targetName,
               })}
@@ -390,7 +390,7 @@ export function CherryPickDialog({ mode, nodes, currentBoqId, isOpen, onClose, o
                   onChange={(e) => setIncludeMarkups(e.target.checked)}
                   className="accent-oe-blue"
                 />
-                {t('boq.branch.include_markups', { defaultValue: "Also replace the main estimate's markups with the branch's" })}
+                {t('boq.branch.include_markups', { defaultValue: "Also replace the main Orçamento's Margens with the branch's" })}
               </label>
               <label className="flex items-center gap-2 text-xs font-medium text-content-primary">
                 <input
@@ -400,7 +400,7 @@ export function CherryPickDialog({ mode, nodes, currentBoqId, isOpen, onClose, o
                   className="accent-oe-blue"
                 />
                 {t('boq.branch.merge_confirm', {
-                  defaultValue: 'I understand this rewrites the main estimate "{{target}}".',
+                  defaultValue: 'I understand this rewrites the main Orçamento "{{target}}".',
                   target: targetName,
                 })}
               </label>

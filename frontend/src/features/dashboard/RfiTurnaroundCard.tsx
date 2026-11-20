@@ -62,7 +62,7 @@ export function RfiTurnaroundCard() {
   return (
     <Card className="h-full">
       <CardHeader
-        title={t('dashboard.rfi_title', { defaultValue: 'RFI turnaround' })}
+        title={t('dashboard.rfi_title', { defaultValue: 'Pedido de informação (RFI) turnaround' })}
         subtitle={t('dashboard.rfi_subtitle', {
           defaultValue: 'How quickly requests for information get answered',
         })}
@@ -72,7 +72,7 @@ export function RfiTurnaroundCard() {
             onClick={() => navigate('/rfi')}
             className="text-xs text-oe-blue hover:underline"
           >
-            {t('dashboard.rfi_open', { defaultValue: 'Open RFIs' })}
+            {t('dashboard.rfi_open', { defaultValue: 'Open Pedidos de informação' })}
           </button>
         }
       />
@@ -99,7 +99,7 @@ export function RfiTurnaroundCard() {
           className="mt-3"
           text={t('dashboard.rfi_help', {
             defaultValue:
-              'Open counts RFIs that are still waiting for an answer. Overdue are the open ones already past their response date, and turn amber the moment one appears. The average is the response time across RFIs that have been answered, measured in days.',
+              'Open counts Pedidos de informação that are still waiting for an answer. Overdue are the open ones already past their response date, and turn amber the moment one appears. The average is the response time across Pedidos de informação that have been answered, measured in days.',
           })}
         />
       </CardContent>

@@ -31,20 +31,20 @@ export function FullEvmPage() {
   return (
     <div className="space-y-5 animate-fade-in">
       <PageHeader
-        srTitle={t('nav.full_evm', { defaultValue: 'Earned Value' })}
+        srTitle={t('nav.full_evm', { defaultValue: 'Valor agregado' })}
         subtitle={t('howto.full_evm.summary', { defaultValue: 'See whether the job is ahead or behind on cost and time, with SPI, CPI and a forecast final cost.' })}
       />
       <CollapsibleSection
         storageKey="full_evm.how"
         icon={<LineChart size={16} className="text-oe-blue" />}
         title={t('full_evm.flow_title', {
-          defaultValue: 'How earned value answers "are we actually on track"',
+          defaultValue: 'How Valor agregado answers "are we actually on track"',
         })}
       >
         <p className="text-xs text-content-tertiary">
           {t('full_evm.flow_intro', {
             defaultValue:
-              'Spending forty percent of a budget tells you nothing on its own. It is either half the story or all of it, depending on how much work that money bought. Earned value puts the three figures side by side: what was planned by now, what the completed work was worth, and what it cost.',
+              'Spending forty percent of a budget tells you nothing on its own. It is either half the story or all of it, depending on how much work that money bought. Valor agregado puts the three figures side by side: what was planned by now, what the completed work was worth, and what it cost.',
           })}
         </p>
         <ol className="mt-2 list-decimal space-y-1 pl-5 text-xs text-content-tertiary">

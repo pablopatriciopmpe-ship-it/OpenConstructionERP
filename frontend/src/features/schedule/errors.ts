@@ -41,42 +41,42 @@ export function scheduleErrorMessage(err: unknown, t: TFunction): string {
       return t('schedule.restore_previous_first');
     case 'schedule_has_activities':
       return t('schedule.error_schedule_has_activities', {
-        defaultValue: 'This schedule already has {{count}} activities.',
+        defaultValue: 'This Cronograma already has {{count}} activities.',
         count: Number(detail.activity_count ?? 0),
       });
     case 'schedule_not_draft':
       return t('schedule.error_schedule_not_draft', {
-        defaultValue: 'Only a draft schedule can be cleared. Once it is active, delete single activities instead.',
+        defaultValue: 'Only a draft Cronograma can be cleared. Once it is active, delete single activities instead.',
       });
     case 'boq_not_found':
       return t('schedule.error_boq_not_found', {
-        defaultValue: 'This BOQ was not found in this project. It may have been deleted; pick another one.',
+        defaultValue: 'This Planilha orçamentária was not found in this project. It may have been deleted; pick another one.',
       });
     case 'boq_has_no_positions':
       return t('schedule.error_boq_has_no_positions', {
         defaultValue:
-          'This BOQ has no positions with work in them yet, so there is nothing to schedule. Add positions to its sections first.',
+          'This Planilha orçamentária has no positions with work in them yet, so there is nothing to Cronograma. Add positions to its sections first.',
       });
     case 'schedule_generation_failed':
       return t('schedule.error_generation_failed', {
         defaultValue:
-          'The schedule could not be generated from this BOQ. Please try again; if it keeps failing, contact support and quote reference {{reference}}.',
+          'The Cronograma could not be generated from this Planilha orçamentária. Please try again; if it keeps failing, contact support and Cotação reference {{reference}}.',
         reference: String(detail.reference ?? ''),
       });
     case 'schedule_dependency_self':
       return t('schedule.error_dependency_self', { defaultValue: 'An activity cannot depend on itself.' });
     case 'schedule_dependency_cycle':
       return t('schedule.error_dependency_cycle', {
-        defaultValue: 'This link would make the schedule loop back on itself, so it was not added.',
+        defaultValue: 'This link would make the Cronograma loop back on itself, so it was not added.',
       });
     case 'schedule_activity_not_in_schedule':
       return t('schedule.error_activity_not_in_schedule', {
-        defaultValue: 'Both activities must belong to this schedule.',
+        defaultValue: 'Both activities must belong to this Cronograma.',
       });
     case 'schedule_has_baselines':
       return t('schedule.error_schedule_has_baselines', {
         defaultValue:
-          'This schedule has {{count}} baselines. Deleting the schedule deletes them too, and only an administrator can delete baselines. Ask an administrator to delete the schedule, or to delete its baselines first; then you can delete it.',
+          'This Cronograma has {{count}} baselines. Deleting the Cronograma deletes them too, and only an administrator can delete baselines. Ask an administrator to delete the Cronograma, or to delete its baselines first; then you can delete it.',
         count: Number(detail.baseline_count ?? 0),
       });
     case 'relationship_not_found':

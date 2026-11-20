@@ -156,7 +156,7 @@ export function ScheduleComparePanel({
           title={t('schedule.compare.no_baselines', { defaultValue: 'No baselines to compare' })}
           description={t('schedule.compare.no_baselines_desc', {
             defaultValue:
-              'Capture a baseline of this schedule first. A baseline freezes the activity set and logic so you can compare it against the live schedule or a later baseline and see exactly what changed.',
+              'Capture a baseline of this Cronograma first. A baseline freezes the activity set and logic so you can compare it against the live Cronograma or a later baseline and see exactly what changed.',
           })}
         />
       </Card>
@@ -209,7 +209,7 @@ export function ScheduleComparePanel({
               className={selectCls}
             >
               <option value={LIVE}>
-                {t('schedule.compare.live', { defaultValue: 'Live schedule (current)' })}
+                {t('schedule.compare.live', { defaultValue: 'Live Cronograma (current)' })}
               </option>
               {targetBaselines.map((b) => (
                 <option key={b.id} value={b.id}>

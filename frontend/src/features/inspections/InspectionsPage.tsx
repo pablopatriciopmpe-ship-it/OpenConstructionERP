@@ -401,7 +401,7 @@ function CreateInspectionModal({
           <div className="flex items-center gap-2 pt-2 pb-1">
             <Calendar size={14} className="text-content-tertiary" />
             <span className="text-xs font-semibold uppercase tracking-wider text-content-tertiary">
-              {t('inspections.section_schedule', { defaultValue: 'Schedule & Assignment' })}
+              {t('inspections.section_schedule', { defaultValue: 'Cronograma & Assignment' })}
             </span>
             <div className="flex-1 h-px bg-border-light" />
           </div>
@@ -481,7 +481,7 @@ function CreateInspectionModal({
           <p className="-mt-2 text-xs text-content-tertiary">
             {t('inspections.checklist_help', {
               defaultValue:
-                'Add the items to verify on site. When you complete the inspection you mark each item pass/fail; failed items pre-fill any Punch List item or NCR you raise.',
+                'Add the items to verify on site. When you complete the inspection you mark each item pass/fail; failed items pre-fill any Pendências item or NCR you raise.',
             })}
           </p>
           <div className="space-y-2">
@@ -635,7 +635,7 @@ function CompleteInspectionDialog({
       defaultValue: 'Mostly compliant with minor issues to resolve.',
     }),
     fail: t('inspections.result_fail_desc', {
-      defaultValue: 'Did not meet acceptance criteria. Raise a Punch List item or NCR.',
+      defaultValue: 'Did not meet acceptance criteria. Raise a Pendências item or NCR.',
     }),
   };
 
@@ -669,7 +669,7 @@ function CompleteInspectionDialog({
       <div className="space-y-2">
           <p className="text-sm text-content-secondary mb-2">
             {t('inspections.record_result_prompt', {
-              defaultValue: 'Choose the outcome. A fail or partial result lets you raise a Punch List item or NCR.',
+              defaultValue: 'Choose the outcome. A fail or partial result lets you raise a Pendências item or NCR.',
             })}
           </p>
           {RESULT_OPTIONS.map((opt) => {
@@ -948,7 +948,7 @@ const InspectionRow = React.memo(function InspectionRow({
                   }}
                 >
                   <XCircle size={14} className="mr-1.5" />
-                  {t('inspections.create_defect', { defaultValue: 'Create Punchlist Item' })}
+                  {t('inspections.create_defect', { defaultValue: 'Create Pendências Item' })}
                 </Button>
                 <Button
                   variant="ghost"
@@ -965,12 +965,12 @@ const InspectionRow = React.memo(function InspectionRow({
                   className="inline-flex items-center gap-1 text-2xs text-content-tertiary"
                   title={t('inspections.punch_vs_ncr_help', {
                     defaultValue:
-                      'Punch List: minor defects to fix and re-check. NCR: a formal non-conformance needing root-cause analysis, corrective action and signoff.',
+                      'Pendências: minor defects to fix and re-check. NCR: a formal non-conformance needing root-cause analysis, corrective action and signoff.',
                   })}
                 >
                   <Info size={12} />
                   {t('inspections.punch_vs_ncr_short', {
-                    defaultValue: 'Punch List for minor defects, NCR for formal non-conformances.',
+                    defaultValue: 'Pendências for minor defects, NCR for formal non-conformances.',
                   })}
                 </span>
               </div>
@@ -1005,7 +1005,7 @@ const InspectionRow = React.memo(function InspectionRow({
                 title={
                   editDisabled
                     ? t('inspections.edit_locked', {
-                        defaultValue: 'Completed or failed inspections cannot be edited',
+                        defaultValue: 'Completed or failed Inspeções cannot be edited',
                       })
                     : t('common.edit', { defaultValue: 'Edit' })
                 }
@@ -1083,7 +1083,7 @@ function HowInspectionsWork() {
   const steps: { icon: React.ReactNode; title: string; desc: string }[] = [
     {
       icon: <Calendar size={14} className="text-oe-blue" />,
-      title: t('inspections.how_step1_title', { defaultValue: 'Schedule' }),
+      title: t('inspections.how_step1_title', { defaultValue: 'Cronograma' }),
       desc: t('inspections.how_step1_desc', {
         defaultValue:
           'Book an inspection with a type, date, inspector and a checklist of hold points.',
@@ -1100,7 +1100,7 @@ function HowInspectionsWork() {
       icon: <XCircle size={14} className="text-oe-blue" />,
       title: t('inspections.how_step3_title', { defaultValue: 'Raise a defect' }),
       desc: t('inspections.how_step3_desc', {
-        defaultValue: 'A fail or partial opens a Punch List item or a formal NCR in one click.',
+        defaultValue: 'A fail or partial opens a Pendências item or a formal NCR in one click.',
       }),
     },
     {
@@ -1116,12 +1116,12 @@ function HowInspectionsWork() {
     <CollapsibleSection
       storageKey="inspections.how"
       icon={<Network size={16} className="text-oe-blue" />}
-      title={t('inspections.how_title', { defaultValue: 'How inspections fit together' })}
+      title={t('inspections.how_title', { defaultValue: 'How Inspeções fit together' })}
     >
       <p className="text-xs text-content-tertiary">
         {t('inspections.how_intro', {
           defaultValue:
-            'Schedule quality checks, record pass or fail on site, and turn every failure into a tracked defect. Start by scheduling an inspection for the work you need to verify.',
+            'Cronograma quality checks, record pass or fail on site, and turn every failure into a tracked defect. Start by scheduling an inspection for the work you need to verify.',
         })}
       </p>
 
@@ -1154,7 +1154,7 @@ function HowInspectionsWork() {
           {t('inspections.how_connects', { defaultValue: 'Connects with:' })}
         </span>{' '}
         <ModLink to="/punchlist">
-          {t('inspections.mod_punchlist', { defaultValue: 'Punch List' })}
+          {t('inspections.mod_punchlist', { defaultValue: 'Pendências' })}
         </ModLink>
         {' · '}
         <ModLink to="/ncr">{t('inspections.mod_ncr', { defaultValue: 'NCRs' })}</ModLink>
@@ -1331,11 +1331,11 @@ export function InspectionsPage() {
           type: 'success',
           title: t('inspections.completed', { defaultValue: 'Inspection completed' }),
           message: isFail
-            ? t('inspections.completed_fail_hint', { defaultValue: 'Inspection failed. Create a punchlist item?' })
+            ? t('inspections.completed_fail_hint', { defaultValue: 'Inspection failed. Create a Pendências item?' })
             : undefined,
           action: isFail && data?.id
             ? {
-                label: t('inspections.create_defect', { defaultValue: 'Create Punchlist Item' }),
+                label: t('inspections.create_defect', { defaultValue: 'Create Pendências Item' }),
                 onClick: () => createDefectMut.mutate(data.id),
               }
             : undefined,
@@ -1497,7 +1497,7 @@ export function InspectionsPage() {
       addToast(
         {
           type: 'success',
-          title: t('inspections.defect_created', { defaultValue: 'Punchlist item created' }),
+          title: t('inspections.defect_created', { defaultValue: 'Pendências item created' }),
           message: data.title,
           // Deep-link straight to the new punch item so the user opens it
           // rather than hunting the register.
@@ -1634,15 +1634,15 @@ export function InspectionsPage() {
           ...(selectedProjectId && breadcrumbProjectName
             ? [{ label: breadcrumbProjectName, to: `/projects/${selectedProjectId}` }]
             : []),
-          { label: t('inspections.title', { defaultValue: 'Inspections' }) },
+          { label: t('inspections.title', { defaultValue: 'Inspeções' }) },
         ]}
       />
 
       {/* Header */}
       <PageHeader
-        srTitle={t('inspections.title', { defaultValue: 'Inspections' })}
+        srTitle={t('inspections.title', { defaultValue: 'Inspeções' })}
         subtitle={t('inspections.subtitle', {
-          defaultValue: 'Schedule and record quality inspections, then raise punch items or NCRs',
+          defaultValue: 'Cronograma and record quality Inspeções, then raise punch items or NCRs',
         })}
         actions={
           <>
@@ -1701,13 +1701,13 @@ export function InspectionsPage() {
           <IntroRichText
             text={t('inspections.intro_more', {
               defaultValue:
-                'Quality on site is won or lost at the inspection. A pour is checked before the concrete goes in, a fire-stopping run is verified before it is boarded over, a unit is walked at handover. The problem is what happens after a fail: the note gets lost, the defect is never tracked, and the same issue turns up at the final account. This page makes the inspection the start of a loop, not a dead end, so every fail becomes a tracked defect that someone has to close.\n\n**You put in:**\n- A scheduled inspection with a type (structural, electrical, plumbing, fire safety, concrete, waterproofing, MEP, handover and more)\n- A planned date, an inspector and a location\n- A checklist of items to verify on site, with critical items flagged as hold points\n- The outcome when the work is checked: pass, partial or fail\n\n**You get out:**\n- An inspection register with status from scheduled through in-progress to completed, plus a clear pass/fail/partial result\n- Counts of total, scheduled, passed and failed inspections at the top of the page\n- One-click creation of a Punch List item or a formal NCR from any failed or partial result, pre-filled from the inspection\n- An Excel export of the full inspection log for records and client reporting\n\n**How it works day to day:**\n1. Schedule the inspection, choose its type and add the checklist of things to verify.\n2. Start it when the inspector goes to site, then record the result as pass, partial or fail.\n3. On a fail or partial, raise a Punch List item for a minor snag, or an NCR for a formal non-conformance.\n4. The follow-up record is pre-filled from the inspection, so the defect traces straight back to the check.\n5. Re-inspect once the fix is done and the trail shows the full inspect-defect-close cycle.\n\nFailed inspections feed directly into the Punch List for minor defects and into NCRs for non-conformances needing root-cause analysis, and the same control points can be tied to ITP hold points in the QMS overview. That keeps the inspect, defect and close-out loop fully traceable across the quality cluster rather than scattered across separate tools.',
+                'Quality on site is won or lost at the inspection. A pour is checked before the concrete goes in, a fire-stopping run is verified before it is boarded over, a unit is walked at handover. The problem is what happens after a fail: the note gets lost, the defect is never tracked, and the same issue turns up at the final account. This page makes the inspection the start of a loop, not a dead end, so every fail becomes a tracked defect that someone has to close.\n\n**You put in:**\n- A scheduled inspection with a type (structural, electrical, plumbing, fire safety, concrete, waterproofing, MEP, handover and more)\n- A planned date, an inspector and a location\n- A checklist of items to verify on site, with critical items flagged as hold points\n- The outcome when the work is checked: pass, partial or fail\n\n**You get out:**\n- An inspection register with status from scheduled through in-progress to completed, plus a clear pass/fail/partial result\n- Counts of total, scheduled, passed and failed Inspeções at the top of the page\n- One-click creation of a Pendências item or a formal NCR from any failed or partial result, pre-filled from the inspection\n- An Excel export of the full inspection log for records and client reporting\n\n**How it works day to day:**\n1. Cronograma the inspection, choose its type and add the checklist of things to verify.\n2. Start it when the inspector goes to site, then record the result as pass, partial or fail.\n3. On a fail or partial, raise a Pendências item for a minor snag, or an NCR for a formal non-conformance.\n4. The follow-up record is pre-filled from the inspection, so the defect traces straight back to the check.\n5. Re-inspect once the fix is done and the trail shows the full inspect-defect-close cycle.\n\nFailed Inspeções feed directly into the Pendências for minor defects and into NCRs for non-conformances needing root-cause analysis, and the same control points can be tied to ITP hold points in the QMS overview. That keeps the inspect, defect and close-out loop fully traceable across the quality cluster rather than scattered across separate tools.',
             })}
           />
         }
         links={[
           {
-            label: t('inspections.intro_link_punch', { defaultValue: 'Punch List' }),
+            label: t('inspections.intro_link_punch', { defaultValue: 'Pendências' }),
             onClick: () => navigate('/punchlist'),
           },
           {
@@ -1722,7 +1722,7 @@ export function InspectionsPage() {
       >
         {t('inspections.intro_body', {
           defaultValue:
-            'Schedule and record quality inspections (structural, MEP, concrete, handover and more) against a project. A fail or partial result lets you raise a Punch List item or an NCR in one click, keeping the inspect, defect and close-out loop fully traceable back to the QMS overview.',
+            'Cronograma and record quality Inspeções (structural, MEP, concrete, handover and more) against a project. A fail or partial result lets you raise a Pendências item or an NCR in one click, keeping the inspect, defect and close-out loop fully traceable back to the QMS overview.',
         })}
       </SectionIntro>
 
@@ -1779,9 +1779,9 @@ export function InspectionsPage() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={t('inspections.search_placeholder', {
-              defaultValue: 'Search inspections...',
+              defaultValue: 'Search Inspeções...',
             })}
-            aria-label={t('inspections.search_placeholder', { defaultValue: 'Search inspections...' })}
+            aria-label={t('inspections.search_placeholder', { defaultValue: 'Search Inspeções...' })}
             className={inputCls + ' pl-9'}
           />
         </div>
@@ -1846,8 +1846,8 @@ export function InspectionsPage() {
             icon={<ClipboardCheck size={28} strokeWidth={1.5} />}
             title={
               searchQuery || statusFilter || typeFilter
-                ? t('inspections.no_results', { defaultValue: 'No matching inspections' })
-                : t('inspections.no_inspections', { defaultValue: 'No inspections yet' })
+                ? t('inspections.no_results', { defaultValue: 'No matching Inspeções' })
+                : t('inspections.no_inspections', { defaultValue: 'No Inspeções yet' })
             }
             description={
               searchQuery || statusFilter || typeFilter
@@ -1855,7 +1855,7 @@ export function InspectionsPage() {
                     defaultValue: 'Try adjusting your search or filters',
                   })
                 : t('inspections.no_inspections_hint', {
-                    defaultValue: 'Schedule your first quality inspection',
+                    defaultValue: 'Cronograma your first quality inspection',
                   })
             }
             action={
@@ -1873,7 +1873,7 @@ export function InspectionsPage() {
           <>
             <p className="mb-3 text-sm text-content-tertiary">
               {t('inspections.showing_count', {
-                defaultValue: '{{count}} inspections',
+                defaultValue: '{{count}} Inspeções',
                 count: filtered.length,
               })}
             </p>

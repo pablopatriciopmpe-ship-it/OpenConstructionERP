@@ -77,7 +77,7 @@ export function PunchListQualityCard() {
   return (
     <Card className="h-full">
       <CardHeader
-        title={t('dashboard.punch_title', { defaultValue: 'Punch list quality' })}
+        title={t('dashboard.punch_title', { defaultValue: 'Pendências quality' })}
         subtitle={t('dashboard.punch_subtitle', {
           defaultValue: '{{count}} items tracked in this project',
           count: data.total,
@@ -88,7 +88,7 @@ export function PunchListQualityCard() {
             onClick={() => navigate('/punchlist')}
             className="inline-flex items-center gap-1.5 text-xs text-oe-blue hover:underline"
           >
-            {t('dashboard.punch_open', { defaultValue: 'Open punch list' })}
+            {t('dashboard.punch_open', { defaultValue: 'Open Pendências' })}
             <ArrowRight size={12} />
           </button>
         }

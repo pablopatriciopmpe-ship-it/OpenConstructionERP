@@ -390,7 +390,7 @@ function AddMarkupModal({
     onSuccess: () => {
       addToast({
         type: 'success',
-        title: t('markups.created', { defaultValue: 'Markup created' }),
+        title: t('markups.created', { defaultValue: 'BDI created' }),
       });
       onCreated();
       onClose();
@@ -441,14 +441,14 @@ function AddMarkupModal({
         ref={dialogRef}
         role="dialog"
         aria-modal="true"
-        aria-label={t('markups.add_markup', { defaultValue: 'Add Markup' })}
+        aria-label={t('markups.add_markup', { defaultValue: 'Add BDI' })}
         className="relative z-10 w-full max-w-lg mx-4 rounded-2xl border border-border-light bg-surface-elevated shadow-xl animate-scale-in"
       >
         {/* Modal Header */}
         <div className="flex items-center justify-between px-5 py-3.5 border-b border-border-light">
           <h2 className="oe-card-title flex items-center gap-2">
             <Plus size={16} className="text-oe-blue" />
-            {t('markups.add_markup', { defaultValue: 'Add Markup' })}
+            {t('markups.add_markup', { defaultValue: 'Add BDI' })}
           </h2>
           <button
             onClick={onClose}
@@ -845,7 +845,7 @@ function MarkupDetail({
               type="button"
               onClick={() => onOpenInDocument(markup)}
               title={t('markups.openInDocumentHint', {
-                defaultValue: 'Jump to this markup on the source document',
+                defaultValue: 'Jump to this BDI on the source document',
               })}
               data-testid="markup-open-in-document"
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-oe-blue text-white hover:bg-oe-blue-hover transition-colors shadow-sm"
@@ -863,7 +863,7 @@ function MarkupDetail({
                   type="button"
                   onClick={() => onOpenIssue(punchId)}
                   title={t('markups.openIssueHint', {
-                    defaultValue: 'Open the tracked issue raised from this markup',
+                    defaultValue: 'Open the tracked issue raised from this BDI',
                   })}
                   data-testid="markup-open-issue"
                   className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-semantic-success bg-semantic-success-bg border border-semantic-success/30 hover:bg-semantic-success-bg transition-colors"
@@ -880,7 +880,7 @@ function MarkupDetail({
                   disabled={isConverting}
                   title={t('markups.convertToIssueHint', {
                     defaultValue:
-                      'Raise a tracked punch-list issue from this markup, keeping its drawing location, priority and due date',
+                      'Raise a tracked punch-list issue from this BDI, keeping its drawing location, priority and due date',
                   })}
                   data-testid="markup-convert-to-issue"
                   className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-oe-blue bg-oe-blue-subtle border border-oe-blue/30 hover:bg-oe-blue/10 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
@@ -897,13 +897,13 @@ function MarkupDetail({
               onClick={() => onUseAsQuantity!(markup)}
               title={t('markups.useAsQuantityHint', {
                 defaultValue:
-                  'Send this measurement into PDF Takeoff as a quantity instead of re-keying it',
+                  'Send this measurement into PDF Levantamento de quantitativos as a quantity instead of re-keying it',
               })}
               data-testid="markup-use-as-quantity"
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-oe-blue bg-oe-blue-subtle border border-oe-blue/30 hover:bg-oe-blue/10 transition-colors"
             >
               <Ruler size={14} />
-              {t('markups.useAsQuantity', { defaultValue: 'Use as takeoff quantity' })}
+              {t('markups.useAsQuantity', { defaultValue: 'Use as Levantamento de quantitativos quantity' })}
               <ExternalLink size={12} className="opacity-80" />
             </button>
           )}
@@ -916,7 +916,7 @@ function MarkupDetail({
             onClick={() => prevId && onNavigate?.(prevId)}
             disabled={!prevId}
             data-testid="markup-prev"
-            aria-label={t('markups.previous', { defaultValue: 'Previous markup' })}
+            aria-label={t('markups.previous', { defaultValue: 'Previous BDI' })}
             title={t('markups.previous', { defaultValue: 'Previous' }) + ' (←)'}
             className={clsx(
               'inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-medium transition-colors',
@@ -943,7 +943,7 @@ function MarkupDetail({
             onClick={() => nextId && onNavigate?.(nextId)}
             disabled={!nextId}
             data-testid="markup-next"
-            aria-label={t('markups.next', { defaultValue: 'Next markup' })}
+            aria-label={t('markups.next', { defaultValue: 'Next BDI' })}
             title={t('markups.next', { defaultValue: 'Next' }) + ' (→)'}
             className={clsx(
               'inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-medium transition-colors',
@@ -1000,7 +1000,7 @@ function MarkupDetail({
         </div>
         <div>
           <p className="text-2xs font-medium text-content-tertiary uppercase tracking-wide mb-0.5">
-            {t('markups.linked_boq', { defaultValue: 'Linked BOQ Position' })}
+            {t('markups.linked_boq', { defaultValue: 'Linked Planilha orçamentária Position' })}
           </p>
           {markup.linked_boq_position_id ? (
             <button
@@ -1010,12 +1010,12 @@ function MarkupDetail({
               }
               data-testid="markup-open-boq-position"
               title={t('markups.open_linked_boq_hint', {
-                defaultValue: 'Open the linked BOQ position',
+                defaultValue: 'Open the linked Planilha orçamentária position',
               })}
               className="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg text-xs font-medium text-oe-blue bg-oe-blue-subtle border border-oe-blue/30 hover:bg-oe-blue/10 transition-colors"
             >
               <ExternalLink size={12} />
-              {t('markups.open_linked_boq', { defaultValue: 'Open BOQ position' })}
+              {t('markups.open_linked_boq', { defaultValue: 'Open Planilha orçamentária position' })}
             </button>
           ) : (
             <p className="text-sm text-content-secondary">
@@ -1715,7 +1715,7 @@ export function MarkupsPage() {
       addToast({
         type: 'info',
         title: t('markups.no_document_to_open', {
-          defaultValue: 'This markup has no source document',
+          defaultValue: 'This BDI has no source document',
         }),
       });
       return;
@@ -1806,7 +1806,7 @@ export function MarkupsPage() {
         markup.label?.trim() ||
         markup.text?.trim() ||
         t('markups.issue_default_title', {
-          defaultValue: '{{type}} markup',
+          defaultValue: '{{type}} BDI',
           type: typeLabel,
         })
       ).slice(0, 255);
@@ -1839,7 +1839,7 @@ export function MarkupsPage() {
         {
           type: 'success',
           title: t('markups.issue_created', {
-            defaultValue: 'Issue created from markup',
+            defaultValue: 'Issue created from BDI',
           }),
           message: punch.title,
           action: {
@@ -1878,7 +1878,7 @@ export function MarkupsPage() {
       invalidateAll();
       addToast({
         type: 'success',
-        title: t('markups.status_updated', { defaultValue: 'Markup status updated' }),
+        title: t('markups.status_updated', { defaultValue: 'BDI status updated' }),
       });
     },
     onError: (e: Error) =>
@@ -1896,7 +1896,7 @@ export function MarkupsPage() {
       setDeleteTarget(null);
       addToast({
         type: 'success',
-        title: t('markups.deleted', { defaultValue: 'Markup deleted' }),
+        title: t('markups.deleted', { defaultValue: 'BDI deleted' }),
       });
     },
     onError: (e: Error) => {
@@ -1922,7 +1922,7 @@ export function MarkupsPage() {
       URL.revokeObjectURL(url);
       addToast({
         type: 'success',
-        title: t('markups.exported', { defaultValue: 'Markups exported to CSV' }),
+        title: t('markups.exported', { defaultValue: 'Margens exported to CSV' }),
       });
     } catch (e) {
       addToast({
@@ -1975,13 +1975,13 @@ export function MarkupsPage() {
                 return name ? [{ label: name, to: `/projects/${activeProjectId}` }] : [];
               })()
             : []),
-          { label: t('nav.markups', { defaultValue: 'Markups' }) },
+          { label: t('nav.markups', { defaultValue: 'Margens' }) },
         ]}
       />
 
       {/* ── Header (canonical top block) ─────────────────────────────────── */}
       <PageHeader
-        srTitle={t('nav.markups', { defaultValue: 'Markups' })}
+        srTitle={t('nav.markups', { defaultValue: 'Margens' })}
         subtitle={t('markups.subtitle', {
           defaultValue:
             'Review annotations - clouds, arrows, stamps and measurements placed on project documents.',
@@ -2057,7 +2057,7 @@ export function MarkupsPage() {
               onClick={() => setShowAddModal(true)}
               disabled={!projectId}
               className="shrink-0 whitespace-nowrap"
-              title={t('markups.add_markup', { defaultValue: 'Add Markup' })}
+              title={t('markups.add_markup', { defaultValue: 'Add BDI' })}
             >
               <Plus size={14} />
               <span className="hidden lg:inline ml-1">{t('markups.add_markup', { defaultValue: 'Add' })}</span>
@@ -2089,7 +2089,7 @@ export function MarkupsPage() {
           page opens. */}
       <InsightsPanel
         open={insights.open}
-        title={t('markups.insights.title', { defaultValue: 'Markup insights' })}
+        title={t('markups.insights.title', { defaultValue: 'BDI insights' })}
         datasets={insightDatasets}
         builtins={insightBuiltins}
         custom={insights.custom}
@@ -2105,7 +2105,7 @@ export function MarkupsPage() {
           <RequiresProject
             emptyHint={t('markups.no_project_desc', {
               defaultValue:
-                'Select a project from the dropdown to view markups and annotations. You can create markups on document pages, add measurements, and track review status.',
+                'Select a project from the dropdown to view Margens and annotations. You can create Margens on document pages, add measurements, and track review status.',
             })}
           >{null}</RequiresProject>
         </div>
@@ -2127,7 +2127,7 @@ export function MarkupsPage() {
           >
             {t('markups.intro_body', {
               defaultValue:
-                'Add clouds, arrows, text, stamps and distance, area or count measurements onto project PDFs, assign them to a person and track each one through active, resolved and archived. Open a markup straight on its source drawing in the inline annotator, or push it through an approval route. Export the lot to CSV, and jump to Compare to check two revisions side by side.',
+                'Add clouds, arrows, text, stamps and distance, area or count measurements onto project PDFs, assign them to a person and track each one through active, resolved and archived. Open a BDI straight on its source drawing in the inline annotator, or push it through an approval route. Export the lot to CSV, and jump to Compare to check two revisions side by side.',
             })}
           </DismissibleInfo>
 
@@ -2223,7 +2223,7 @@ export function MarkupsPage() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder={t('markups.search', {
-                  defaultValue: 'Search markups...',
+                  defaultValue: 'Search Margens...',
                 })}
                 className={inputCls + ' w-full pl-8'}
               />
@@ -2356,7 +2356,7 @@ export function MarkupsPage() {
                     : 'border-border bg-surface-primary text-content-secondary hover:bg-surface-secondary',
                 )}
                 title={t('markups.overdueOnlyHint', {
-                  defaultValue: 'Show only markups past their due date',
+                  defaultValue: 'Show only Margens past their due date',
                 })}
               >
                 <AlertTriangle size={14} />
@@ -2405,8 +2405,8 @@ export function MarkupsPage() {
                     icon={<PenTool size={28} strokeWidth={1.5} />}
                     title={
                       narrowed
-                        ? t('markups.no_match_title', { defaultValue: 'No matching markups' })
-                        : t('markups.empty_title', { defaultValue: 'No markups yet' })
+                        ? t('markups.no_match_title', { defaultValue: 'No matching Margens' })
+                        : t('markups.empty_title', { defaultValue: 'No Margens yet' })
                     }
                     description={
                       narrowed
@@ -2415,14 +2415,14 @@ export function MarkupsPage() {
                           })
                         : t('markups.empty_desc', {
                             defaultValue:
-                              'Create your first markup to start annotating documents. Use clouds, arrows, text, and measurement tools to collaborate with your team.',
+                              'Create your first BDI to start annotating documents. Use clouds, arrows, text, and measurement tools to collaborate with your team.',
                           })
                     }
                     action={
                       narrowed
                         ? undefined
                         : {
-                            label: t('markups.add_first', { defaultValue: 'Add First Markup' }),
+                            label: t('markups.add_first', { defaultValue: 'Add First BDI' }),
                             onClick: () => setShowAddModal(true),
                           }
                     }
@@ -2542,7 +2542,7 @@ export function MarkupsPage() {
                 </Button>
                 <span className="text-2xs text-content-tertiary">
                   {t('markups.showing_count', {
-                    defaultValue: 'Showing {{count}} markups',
+                    defaultValue: 'Showing {{count}} Margens',
                     count: markups.length,
                   })}
                 </span>
@@ -2633,7 +2633,7 @@ export function MarkupsPage() {
                 <input
                   value={customStampName}
                   onChange={(e) => setCustomStampName(e.target.value)}
-                  placeholder={t('markups.stamp_text_placeholder', { defaultValue: 'e.g. CHECKED, HOLD, RFI...' })}
+                  placeholder={t('markups.stamp_text_placeholder', { defaultValue: 'e.g. CHECKED, HOLD, Pedido de informação (RFI)...' })}
                   className="oe-input w-full"
                   autoFocus
                 />
@@ -2703,10 +2703,10 @@ export function MarkupsPage() {
         open={deleteTarget !== null}
         onConfirm={() => deleteTarget && delMut.mutate(deleteTarget)}
         onCancel={() => setDeleteTarget(null)}
-        title={t('markups.delete_title', { defaultValue: 'Delete Markup' })}
+        title={t('markups.delete_title', { defaultValue: 'Delete BDI' })}
         message={t('markups.delete_message', {
           defaultValue:
-            'This markup will be permanently removed. This action cannot be undone.',
+            'This BDI will be permanently removed. This action cannot be undone.',
         })}
         confirmLabel={t('common.delete', { defaultValue: 'Delete' })}
         cancelLabel={t('common.cancel', { defaultValue: 'Cancel' })}

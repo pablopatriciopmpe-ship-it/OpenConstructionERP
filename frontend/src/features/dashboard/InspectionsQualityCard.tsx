@@ -98,7 +98,7 @@ export function InspectionsQualityCard() {
           </span>
         }
         subtitle={t('dashboard.inspections_subtitle', {
-          defaultValue: 'How inspections are passing on this project',
+          defaultValue: 'How Inspeções are passing on this project',
         })}
         action={
           <button
@@ -106,7 +106,7 @@ export function InspectionsQualityCard() {
             onClick={() => navigate('/inspections')}
             className="inline-flex items-center gap-1.5 text-xs text-oe-blue hover:underline"
           >
-            {t('dashboard.inspections_open', { defaultValue: 'Open inspections' })}
+            {t('dashboard.inspections_open', { defaultValue: 'Open Inspeções' })}
             <ArrowRight size={12} />
           </button>
         }
@@ -147,7 +147,7 @@ export function InspectionsQualityCard() {
           className="mt-3"
           text={t('dashboard.inspections_help', {
             defaultValue:
-              'Pass rate is passed inspections divided by those that already have a result, passed or failed. Inspections still scheduled or in progress do not affect the rate yet, so until the first result comes in the card shows the open count instead. Failed counts inspections with a failing result.',
+              'Pass rate is passed Inspeções divided by those that already have a result, passed or failed. Inspeções still scheduled or in progress do not affect the rate yet, so until the first result comes in the card shows the open count instead. Failed counts Inspeções with a failing result.',
           })}
         />
       </CardContent>

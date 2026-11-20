@@ -287,7 +287,7 @@ export function QuantityCheckTable({
       <p className="border-t border-border-light px-4 py-2 text-2xs text-content-tertiary">
         {t('postcalc.qc.legend', {
           defaultValue:
-            'Cost effect = difference x contract unit rate, net of bill markups, in the bill currency. Over and under are totalled apart so they do not cancel out unseen.',
+            'Cost effect = difference x contract unit rate, net of bill Margens, in the bill currency. Over and under are totalled apart so they do not cancel out unseen.',
         })}
       </p>
     </Card>

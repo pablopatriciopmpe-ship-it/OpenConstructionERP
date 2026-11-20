@@ -59,7 +59,7 @@ export function auditRowTooltip(
     return entry ? t(entry.key, { defaultValue: entry.def }) : g.replace(/_/g, ' ');
   });
   return t('boq.audit_row_tooltip', {
-    defaultValue: 'Estimate audit: {{count}} issue(s) - {{groups}}',
+    defaultValue: 'Orçamento audit: {{count}} issue(s) - {{groups}}',
     count: audit.count,
     groups: fmtList(labels),
   });

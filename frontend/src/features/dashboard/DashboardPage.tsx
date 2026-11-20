@@ -483,7 +483,7 @@ function ImportDemoModal({
                 {t('demo.modal_title', 'Import Demo Project')}
               </h3>
               <p className="text-xs text-content-tertiary">
-                {t('demo.modal_subtitle', 'Install a complete project with BOQ, schedule, budget, and tendering')}
+                {t('demo.modal_subtitle', 'Install a complete project with Planilha orçamentária, Cronograma, budget, and tendering')}
               </p>
             </div>
           </div>
@@ -655,7 +655,7 @@ function OnboardingSteps({
       titleKey: 'dashboard.step_connect_ai',
       titleDefault: 'Connect AI',
       descKey: 'dashboard.step_connect_ai_desc',
-      descDefault: 'Add your API keys for AI-powered estimation',
+      descDefault: 'Add your API keys for IA-powered Estimativa',
       buttonKey: 'dashboard.add_api_keys',
       buttonDefault: 'Add API Keys',
       done: aiConfigured,
@@ -668,7 +668,7 @@ function OnboardingSteps({
       titleKey: 'dashboard.step_create_project',
       titleDefault: 'Create Project',
       descKey: 'dashboard.step_create_project_desc',
-      descDefault: 'Start your first construction estimation project',
+      descDefault: 'Start your first construction Estimativa project',
       buttonKey: 'dashboard.new_project',
       buttonDefault: 'New Project',
       done: hasProjects,
@@ -681,7 +681,7 @@ function OnboardingSteps({
       titleKey: 'dashboard.step_build_boq',
       titleDefault: 'Build Your BOQ',
       descKey: 'dashboard.step_build_boq_desc',
-      descDefault: 'Create a Bill of Quantities with AI assistance',
+      descDefault: 'Create a Bill of Quantities with IA assistance',
       buttonKey: 'dashboard.create_boq',
       buttonDefault: 'Create BOQ',
       done: hasBoqs,
@@ -694,7 +694,7 @@ function OnboardingSteps({
       titleKey: 'dashboard.step_set_quantities',
       titleDefault: 'Set Quantities',
       descKey: 'dashboard.step_set_quantities_desc',
-      descDefault: 'Add quantities and unit rates to your BOQ positions',
+      descDefault: 'Add quantities and unit rates to your Planilha orçamentária positions',
       buttonKey: 'dashboard.open_boq',
       buttonDefault: 'Open BOQ',
       done: hasQuantities,
@@ -1020,9 +1020,9 @@ function KpiRibbon({
       icon: <FileText size={20} strokeWidth={1.75} />,
       value: loaded ? `${activeEstimates}` : null,
       sublabel: loaded
-        ? t('dashboard.kpi_estimates_unit', { defaultValue: 'estimates' })
+        ? t('dashboard.kpi_estimates_unit', { defaultValue: 'Orçamentos' })
         : '',
-      label: t('dashboard.kpi_active_estimates', { defaultValue: 'Active Estimates' }),
+      label: t('dashboard.kpi_active_estimates', { defaultValue: 'Active Orçamentos' }),
       color: 'text-violet-600 dark:text-violet-400',
       bg: 'bg-violet-500/10',
     },
@@ -1034,7 +1034,7 @@ function KpiRibbon({
           ? t('dashboard.kpi_schedule_active', { defaultValue: 'active' })
           : t('dashboard.kpi_no_schedules', { defaultValue: 'No schedules' })
         : '',
-      label: t('dashboard.kpi_schedule', { defaultValue: 'Schedule Status' }),
+      label: t('dashboard.kpi_schedule', { defaultValue: 'Cronograma Status' }),
       color: 'text-cyan-600 dark:text-cyan-400',
       bg: 'bg-cyan-500/10',
     },
@@ -1329,7 +1329,7 @@ function TodaySnapshot({ cards }: { cards?: ProjectCardMetrics[] }) {
     {
       id: 'rfis',
       value: totals.rfis,
-      label: t('dashboard.today_rfis', { defaultValue: 'Open RFIs' }),
+      label: t('dashboard.today_rfis', { defaultValue: 'Open Pedidos de informação' }),
       sublabel: t('dashboard.today_rfis_sub', { defaultValue: 'awaiting response' }),
       icon: <FileText size={20} strokeWidth={1.75} />,
       tone: tone(totals.rfis, 5, 1),
@@ -1476,8 +1476,8 @@ function NextSteps({
         id: 'create-boq',
         icon: <FileSpreadsheet size={20} strokeWidth={1.75} />,
         title: t('dashboard.next_create_boq', { defaultValue: 'Create your first Bill of Quantities' }),
-        description: t('dashboard.next_create_boq_desc', { defaultValue: 'A BOQ is the foundation of your estimate. Add sections and positions to start building your cost breakdown.' }),
-        actionLabel: t('dashboard.next_create_boq_action', { defaultValue: 'Create BOQ' }),
+        description: t('dashboard.next_create_boq_desc', { defaultValue: 'A Planilha orçamentária is the foundation of your Orçamento. Add sections and positions to start building your cost breakdown.' }),
+        actionLabel: t('dashboard.next_create_boq_action', { defaultValue: 'Create Planilha orçamentária' }),
         url: `/projects/${projects![0]!.id}`,
       });
     }
@@ -1488,9 +1488,9 @@ function NextSteps({
       items.push({
         id: 'add-positions',
         icon: <FileText size={20} strokeWidth={1.75} />,
-        title: t('dashboard.next_add_positions', { defaultValue: 'Add positions to your estimate' }),
-        description: t('dashboard.next_add_positions_desc', { defaultValue: 'Your BOQ is empty. Add trade sections and work item positions with quantities and unit descriptions.' }),
-        actionLabel: t('dashboard.next_add_positions_action', { defaultValue: 'Open BOQ Editor' }),
+        title: t('dashboard.next_add_positions', { defaultValue: 'Add positions to your Orçamento' }),
+        description: t('dashboard.next_add_positions_desc', { defaultValue: 'Your Planilha orçamentária is empty. Add trade sections and work item positions with quantities and unit descriptions.' }),
+        actionLabel: t('dashboard.next_add_positions_action', { defaultValue: 'Open Planilha orçamentária Editor' }),
         url: `/boq/${firstBoq!.id}`,
       });
     }
@@ -1500,8 +1500,8 @@ function NextSteps({
       items.push({
         id: 'import-costs',
         icon: <Database size={20} strokeWidth={1.75} />,
-        title: t('dashboard.next_import_costs', { defaultValue: 'Import cost database to auto-fill rates' }),
-        description: t('dashboard.next_import_costs_desc', { defaultValue: 'Load regional pricing data with 55,000+ items to automatically match unit rates to your BOQ positions.' }),
+        title: t('dashboard.next_import_costs', { defaultValue: 'Import Banco de custos to auto-fill rates' }),
+        description: t('dashboard.next_import_costs_desc', { defaultValue: 'Load regional pricing data with 55,000+ items to automatically match unit rates to your Planilha orçamentária positions.' }),
         actionLabel: t('dashboard.next_import_costs_action', { defaultValue: 'Import Database' }),
         url: '/costs/import',
       });
@@ -1513,7 +1513,7 @@ function NextSteps({
         id: 'run-validation',
         icon: <ShieldCheck size={20} strokeWidth={1.75} />,
         title: t('dashboard.next_validate', { defaultValue: 'Run validation to check quality' }),
-        description: t('dashboard.next_validate_desc', { defaultValue: 'Check your estimate for missing quantities, zero prices, duplicates, and compliance with industry standards.' }),
+        description: t('dashboard.next_validate_desc', { defaultValue: 'Check your Orçamento for missing quantities, zero prices, duplicates, and compliance with industry standards.' }),
         actionLabel: t('dashboard.next_validate_action', { defaultValue: 'Run Validation' }),
         url: '/validation',
       });
@@ -1524,9 +1524,9 @@ function NextSteps({
       items.push({
         id: 'create-schedule',
         icon: <Calendar size={20} strokeWidth={1.75} />,
-        title: t('dashboard.next_create_schedule', { defaultValue: 'Create a project schedule' }),
+        title: t('dashboard.next_create_schedule', { defaultValue: 'Create a project Cronograma' }),
         description: t('dashboard.next_create_schedule_desc', { defaultValue: 'Plan your project timeline with activities, dependencies, and milestones. The Gantt chart updates automatically.' }),
-        actionLabel: t('dashboard.next_create_schedule_action', { defaultValue: 'Go to Schedule' }),
+        actionLabel: t('dashboard.next_create_schedule_action', { defaultValue: 'Go to Cronograma' }),
         url: '/schedule',
       });
     }
@@ -1550,9 +1550,9 @@ function NextSteps({
     items.push({
       id: 'try-ai-estimate',
       icon: <Sparkles size={20} strokeWidth={1.75} />,
-      title: t('dashboard.next_ai_estimate', { defaultValue: 'Try the AI Quick Estimate' }),
-      description: t('dashboard.next_ai_estimate_desc', { defaultValue: 'Describe a project in plain language and get a draft BOQ in seconds - review, adjust, and ship.' }),
-      actionLabel: t('dashboard.next_ai_estimate_action', { defaultValue: 'Open AI Estimate' }),
+      title: t('dashboard.next_ai_estimate', { defaultValue: 'Try the IA Quick Orçamento' }),
+      description: t('dashboard.next_ai_estimate_desc', { defaultValue: 'Describe a project in plain language and get a draft Planilha orçamentária in seconds - review, adjust, and ship.' }),
+      actionLabel: t('dashboard.next_ai_estimate_action', { defaultValue: 'Open IA Orçamento' }),
       url: '/ai-estimate',
     });
 
@@ -1568,7 +1568,7 @@ function NextSteps({
     items.push({
       id: 'explore-costs',
       icon: <Database size={20} strokeWidth={1.75} />,
-      title: t('dashboard.next_explore_costs', { defaultValue: 'Explore the cost database' }),
+      title: t('dashboard.next_explore_costs', { defaultValue: 'Explore the Banco de custos' }),
       description: t('dashboard.next_explore_costs_desc', { defaultValue: 'Browse 55,000+ regional unit rates with semantic search across CWICR / GAEB sources.' }),
       actionLabel: t('dashboard.next_explore_costs_action', { defaultValue: 'Open Costs' }),
       url: '/costs',
@@ -1821,7 +1821,7 @@ function SystemStatusSummary({
     {
       icon: <FileSpreadsheet size={12} strokeWidth={2} />,
       value: boqBadgeCount,
-      label: t('dashboard.ss_boqs', { defaultValue: 'BOQs' }),
+      label: t('dashboard.ss_boqs', { defaultValue: 'Planilhas orçamentárias' }),
       color: 'text-[#7c3aed]',
       bg: 'bg-[#7c3aed]/10',
       to: '/boq',
@@ -2769,7 +2769,7 @@ function DashboardPageInner() {
             }}
             title={t('dashboard.new_estimate_hint', { defaultValue: 'Start a new Bill of Quantities for an existing project' })}
           >
-            {t('dashboard.new_estimate', { defaultValue: 'New Estimate' })}
+            {t('dashboard.new_estimate', { defaultValue: 'New Orçamento' })}
           </Button>
           <Button
             variant="secondary"
@@ -2783,12 +2783,12 @@ function DashboardPageInner() {
             }}
             title={
               lastBoq
-                ? t('dashboard.quick_start_resume_hint', { defaultValue: 'Continue your most recent estimate: {{name}}', name: lastBoq.name })
-                : t('dashboard.quick_start_hint', { defaultValue: 'Jump into an estimate - resumes the latest or starts a new one' })
+                ? t('dashboard.quick_start_resume_hint', { defaultValue: 'Continue your most recent Orçamento: {{name}}', name: lastBoq.name })
+                : t('dashboard.quick_start_hint', { defaultValue: 'Jump into an Orçamento - resumes the latest or starts a new one' })
             }
           >
             {lastBoq
-              ? t('dashboard.quick_resume', { defaultValue: 'Resume last estimate' })
+              ? t('dashboard.quick_resume', { defaultValue: 'Resume last Orçamento' })
               : t('dashboard.quick_start', { defaultValue: 'Quick Start' })}
           </Button>
           <Button
@@ -2798,7 +2798,7 @@ function DashboardPageInner() {
             onClick={() => setCustomizing((v) => !v)}
             aria-pressed={customizing}
             title={t('dashboard.layout.customize_hint', {
-              defaultValue: 'Reorder, show or hide dashboard sections',
+              defaultValue: 'Reorder, show or hide Painel sections',
             })}
             data-testid="dashboard-tour-customize-button"
           >
@@ -2831,7 +2831,7 @@ function DashboardPageInner() {
       {customizing && (
         <Card className="animate-card-in border-oe-blue/30">
           <CardHeader
-            title={t('dashboard.layout.title', { defaultValue: 'Customize dashboard' })}
+            title={t('dashboard.layout.title', { defaultValue: 'Customize Painel' })}
             subtitle={t('dashboard.layout.subtitle', {
               defaultValue:
                 'Reorder, show or hide the sections below. Your layout is saved to this browser.',
@@ -2861,7 +2861,7 @@ function DashboardPageInner() {
             <p className="text-sm text-semantic-warning">
               {t('dashboard.rollup_error', {
                 defaultValue:
-                  'Could not load dashboard metrics. Some widgets below may show no data.',
+                  'Could not load Painel metrics. Some widgets below may show no data.',
               })}
             </p>
           </div>
@@ -2951,7 +2951,7 @@ function ProjectsList({ projects }: { projects?: ProjectSummary[] }) {
             defaultValue: "Welcome - let's start with your first project",
           })}
           description={t('dashboard.empty.desc', {
-            defaultValue: 'Projects organise your BOQs, schedules, and reports.',
+            defaultValue: 'Projects organise your Planilhas orçamentárias, schedules, and reports.',
           })}
           action={
             <div className="flex flex-col items-center gap-3">
@@ -3137,7 +3137,7 @@ function AnalyticsSection({ projects }: { projects: ProjectSummary[] }) {
           </div>
           <div className="rounded-xl border border-border-light bg-surface-elevated/90 p-3 shadow-xs transition-shadow duration-normal ease-oe hover:shadow-sm">
             <div className="oe-overline">
-              {t('dashboard.total_boqs', { defaultValue: 'Total BOQs' })}
+              {t('dashboard.total_boqs', { defaultValue: 'Total Planilhas orçamentárias' })}
             </div>
             <div className="mt-1 text-xl font-semibold tabular-nums text-content-primary">
               {stats.totalBoqs}
@@ -3214,7 +3214,7 @@ function AnalyticsSection({ projects }: { projects: ProjectSummary[] }) {
           })}
           {stats.projectValues.length === 0 && (
             <p className="text-xs text-content-tertiary text-center py-4">
-              {t('dashboard.no_boq_data', 'No BOQ data available')}
+              {t('dashboard.no_boq_data', 'No Planilha orçamentária data available')}
             </p>
           )}
         </div>
@@ -3324,7 +3324,7 @@ function SystemStatus() {
       delay: 520,
     },
     {
-      name: t('dashboard.ai_providers', { defaultValue: 'AI Providers' }),
+      name: t('dashboard.ai_providers', { defaultValue: 'IA Providers' }),
       status: aiConfigured ? 'connected' : 'offline',
       detail:
         fmtList(status?.ai?.providers?.map((p) => p.name) ?? []) ||

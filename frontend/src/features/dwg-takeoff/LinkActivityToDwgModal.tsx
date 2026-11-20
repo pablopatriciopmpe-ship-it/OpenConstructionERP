@@ -175,7 +175,7 @@ export default function LinkActivityToDwgModal({
             <Calendar size={16} className="text-semantic-success" />
             <h2 className="oe-card-title">
               {t('dwg_takeoff.link_act_title', {
-                defaultValue: 'Link a schedule activity',
+                defaultValue: 'Link a Cronograma activity',
               })}
             </h2>
             <span className="text-2xs text-content-tertiary">
@@ -228,11 +228,11 @@ export default function LinkActivityToDwgModal({
               {schedules.length === 0
                 ? t('dwg_takeoff.no_schedules', {
                     defaultValue:
-                      'No schedules in this project yet - create one in /schedule first',
+                      'No schedules in this project yet - create one in /Cronograma first',
                   })
                 : activities.length === 0
                   ? t('dwg_takeoff.no_activities', {
-                      defaultValue: 'No activities in any project schedule yet',
+                      defaultValue: 'No activities in any project Cronograma yet',
                     })
                   : t('dwg_takeoff.no_act_match', {
                       defaultValue: 'No activities match your search',

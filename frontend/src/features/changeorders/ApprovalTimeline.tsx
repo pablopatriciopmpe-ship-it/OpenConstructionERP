@@ -151,7 +151,7 @@ export function ApprovalTimeline({
       <Card className="p-6 text-center">
         <p className="text-sm text-content-tertiary">
           {t('changeorders.approval_chain_empty', {
-            defaultValue: 'No approval chain has been started for this change order yet.',
+            defaultValue: 'No approval chain has been started for this Alteração de contrato yet.',
           })}
         </p>
       </Card>

@@ -79,7 +79,7 @@ export function ScheduleRealtimePanel({
       <p className="-mt-2 text-xs text-content-secondary">
         {t('schedule.realtime.subtitle', {
           defaultValue:
-            'See who is editing this schedule right now, and make a lost-update-safe change to an activity. A guarded edit only applies when no one has changed the activity since you loaded it.',
+            'See who is editing this Cronograma right now, and make a lost-update-safe change to an activity. A guarded edit only applies when no one has changed the activity since you loaded it.',
         })}
       </p>
 
@@ -132,7 +132,7 @@ function PresenceRoster({ scheduleId }: { scheduleId: string }) {
           title={t('schedule.realtime.presence_empty', { defaultValue: 'No one else is here' })}
           description={t('schedule.realtime.presence_empty_desc', {
             defaultValue:
-              'You are the only person on this schedule right now. When teammates open it, they appear here so you can avoid stepping on each other.',
+              'You are the only person on this Cronograma right now. When teammates open it, they appear here so you can avoid stepping on each other.',
           })}
         />
       ) : (
@@ -316,7 +316,7 @@ function GuardedEdit({
           title={t('schedule.realtime.no_activities', { defaultValue: 'No activities yet' })}
           description={t('schedule.realtime.no_activities_desc', {
             defaultValue:
-              'Add activities to this schedule first, then come back to make a lost-update-safe edit.',
+              'Add activities to this Cronograma first, then come back to make a lost-update-safe edit.',
           })}
         />
       ) : (

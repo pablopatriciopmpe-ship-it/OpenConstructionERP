@@ -881,7 +881,7 @@ export function PdfComparePage() {
           aria-label={t('common.back', { defaultValue: 'Back' })}
         >
           <span className="hidden sm:inline">
-            {t('pdf_compare.back_to_markups', { defaultValue: 'Markups' })}
+            {t('pdf_compare.back_to_markups', { defaultValue: 'Margens' })}
           </span>
         </Button>
 

@@ -78,7 +78,7 @@ export function RiskContingencyApply({
       addToast({
         type: 'success',
         title: t('boq.risk_contingency_applied', {
-          defaultValue: 'Contingency at P{{p}} added to the estimate',
+          defaultValue: 'Contingency at P{{p}} added to the Orçamento',
           p: percentile,
         }),
       });
@@ -91,7 +91,7 @@ export function RiskContingencyApply({
         type: 'error',
         title: moved
           ? t('boq.risk_contingency_moved', {
-              defaultValue: 'The estimate changed since the preview. Check the new amount and confirm again.',
+              defaultValue: 'The Orçamento changed since the preview. Check the new amount and confirm again.',
             })
           : getErrorMessage(err),
       });
@@ -109,7 +109,7 @@ export function RiskContingencyApply({
               defaultValue: 'Previous contingency P{{p}} restored',
               p: next.applied.percentile,
             })
-          : t('boq.risk_contingency_removed', { defaultValue: 'Contingency line removed from the estimate' }),
+          : t('boq.risk_contingency_removed', { defaultValue: 'Contingency line removed from the Orçamento' }),
       });
     },
     onError: (err) => addToast({ type: 'error', title: getErrorMessage(err) }),
@@ -128,7 +128,7 @@ export function RiskContingencyApply({
   const sourceLabel = (v: RiskContingencySource) =>
     v === 'register'
       ? t('boq.risk_contingency_source_register', { defaultValue: 'Risk register' })
-      : t('boq.risk_contingency_source_positions', { defaultValue: 'BOQ ranges' });
+      : t('boq.risk_contingency_source_positions', { defaultValue: 'Planilha orçamentária ranges' });
   const modeLabel = (v: RiskContingencyMode) =>
     v === 'percentage'
       ? t('boq.risk_contingency_mode_percentage', { defaultValue: 'Follows quantities' })
@@ -145,7 +145,7 @@ export function RiskContingencyApply({
     <div className="rounded-lg border border-border-light px-4 py-3 space-y-3" data-testid="risk-contingency-apply">
       <div className="flex flex-wrap items-center gap-2">
         <span className="text-xs font-semibold text-content-primary">
-          {t('boq.risk_contingency_title', { defaultValue: 'Apply as contingency in the estimate' })}
+          {t('boq.risk_contingency_title', { defaultValue: 'Apply as contingency in the Orçamento' })}
         </span>
         <div className="flex items-center gap-1 ml-auto" role="group">
           {PRESETS.map((p) => (
@@ -283,7 +283,7 @@ export function RiskContingencyApply({
           {s.below_base && (
             <div className="text-2xs text-content-tertiary">
               {t('boq.risk_contingency_below_base', {
-                defaultValue: 'The base estimate already sits above P{{p}}, so no contingency is needed at this level.',
+                defaultValue: 'The base Orçamento already sits above P{{p}}, so no contingency is needed at this level.',
                 p: s.percentile,
               })}
             </div>
@@ -295,7 +295,7 @@ export function RiskContingencyApply({
         <div className="flex flex-wrap items-center gap-2 rounded bg-surface-secondary px-3 py-2 text-xs">
           <span className="text-content-primary">
             {t('boq.risk_contingency_confirm', {
-              defaultValue: 'Add {{amount}} as a contingency line to the estimate? You can undo it.',
+              defaultValue: 'Add {{amount}} as a contingency line to the Orçamento? You can undo it.',
               amount: money(s?.amount, fmt),
             })}
           </span>
@@ -343,7 +343,7 @@ export function RiskContingencyApply({
             )}
             <span className="font-medium text-content-primary">
               {t('boq.risk_contingency_applied_line', {
-                defaultValue: 'In the estimate: {{name}}, {{amount}}',
+                defaultValue: 'In the Orçamento: {{name}}, {{amount}}',
                 name: applied.name,
                 amount: money(applied.line_amount, fmt),
               })}

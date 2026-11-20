@@ -162,7 +162,7 @@ function ChangeRow({ change, comparison, selected, onSelect, canWrite, onRemeasu
       handlers.onSuccess();
       addToast({
         type: 'success',
-        title: t('drawing_compare.rfi_created', { defaultValue: 'RFI {{number}} raised as a draft', number: res.label }),
+        title: t('drawing_compare.rfi_created', { defaultValue: 'Pedido de informação (RFI) {{number}} raised as a draft', number: res.label }),
       });
     },
   });
@@ -224,7 +224,7 @@ function ChangeRow({ change, comparison, selected, onSelect, canWrite, onRemeasu
           <div className="mt-1 flex flex-wrap gap-1 text-xs">
             {change.rfi_id && (
               <a className="text-oe-blue underline" href={`/rfi/${change.rfi_id}`}>
-                {t('drawing_compare.open_rfi', { defaultValue: 'Open RFI' })}
+                {t('drawing_compare.open_rfi', { defaultValue: 'Open Pedido de informação (RFI)' })}
               </a>
             )}
             {change.markup_id && (
@@ -233,7 +233,7 @@ function ChangeRow({ change, comparison, selected, onSelect, canWrite, onRemeasu
             {change.flagged_at && (
               <span className="text-semantic-warning">
                 {t('drawing_compare.flagged_summary', {
-                  defaultValue: '{{items}} quantities and {{positions}} BOQ positions flagged for re-measure',
+                  defaultValue: '{{items}} quantities and {{positions}} Planilha orçamentária positions flagged for re-measure',
                   items: flaggedCount,
                   positions: change.flagged_position_ids.length,
                 })}
@@ -262,7 +262,7 @@ function ChangeRow({ change, comparison, selected, onSelect, canWrite, onRemeasu
               {t('drawing_compare.mark_not_relevant', { defaultValue: 'Not relevant' })}
             </Button>
             <Button size="sm" variant="ghost" disabled={!!change.rfi_id || rfi.isPending} onClick={() => rfi.mutate()} icon={rfi.isPending ? <Loader2 size={14} className="animate-spin" /> : <FileQuestion size={14} />}>
-              {t('drawing_compare.raise_rfi', { defaultValue: 'RFI' })}
+              {t('drawing_compare.raise_rfi', { defaultValue: 'Pedido de informação (RFI)' })}
             </Button>
             <Button size="sm" variant="ghost" disabled={!!change.markup_id || markup.isPending} onClick={() => markup.mutate()} icon={<Cloud size={14} />}>
               {t('drawing_compare.add_cloud', { defaultValue: 'Cloud' })}
@@ -343,7 +343,7 @@ export function RemeasureDialog({ change, comparisonId, onClose }: RemeasureDial
         <p className="mt-1 text-sm text-content-secondary">
           {t('drawing_compare.remeasure_intro', {
             defaultValue:
-              'These takeoff measurements and markups sit inside the changed area. Confirm to flag them and the BOQ positions they feed.',
+              'These Levantamento de quantitativos measurements and Margens sit inside the changed area. Confirm to flag them and the Planilha orçamentária positions they feed.',
           })}
         </p>
         <div className="mt-3 max-h-72 overflow-y-auto text-sm">
@@ -367,7 +367,7 @@ export function RemeasureDialog({ change, comparisonId, onClose }: RemeasureDial
           {preview && preview.positions.length > 0 && (
             <>
               <h3 className="oe-card-title mt-3">
-                {t('drawing_compare.remeasure_positions', { defaultValue: 'BOQ positions' })}
+                {t('drawing_compare.remeasure_positions', { defaultValue: 'Planilha orçamentária positions' })}
               </h3>
               <ul className="mt-1 space-y-1">
                 {preview.positions.map((p) => (

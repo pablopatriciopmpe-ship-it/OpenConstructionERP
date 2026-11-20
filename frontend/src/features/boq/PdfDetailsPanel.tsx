@@ -80,7 +80,7 @@ export function PdfDetailsPanel({ t, projectId, readOnly = false }: PdfDetailsPa
   return (
     <details className="border-b border-border-light px-3 py-2.5 text-xs" data-testid="pdf-details-panel">
       <summary className="cursor-pointer text-sm text-content-primary">
-        {t('boq.pdf_details_title', { defaultValue: 'Estimate PDF details' })}
+        {t('boq.pdf_details_title', { defaultValue: 'Orçamento PDF details' })}
       </summary>
       <div className="mt-2 space-y-1.5">
         {line('client_name', 'boq.pdf_details_client', 'Client')}
@@ -90,7 +90,7 @@ export function PdfDetailsPanel({ t, projectId, readOnly = false }: PdfDetailsPa
         {block('payment_terms', 'boq.pdf_details_payment_terms', 'Payment terms', 2000)}
         <fieldset className="space-y-0.5">
           <legend className="text-content-secondary">
-            {t('boq.pdf_details_cols_title', { defaultValue: 'Columns on the printed estimate' })}
+            {t('boq.pdf_details_cols_title', { defaultValue: 'Columns on the printed Orçamento' })}
           </legend>
           {(
             [

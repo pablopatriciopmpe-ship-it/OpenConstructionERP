@@ -251,7 +251,7 @@ export function ScheduleSpreadsheetImportDialog({
     !busy &&
     !(showDuplicate && !allowDuplicate);
 
-  const title = t('schedule.tabular_import.title', { defaultValue: 'Import a schedule from Excel or CSV' });
+  const title = t('schedule.tabular_import.title', { defaultValue: 'Import a Cronograma from Excel or CSV' });
 
   // ── Result ──────────────────────────────────────────────────────────────
   if (result) {
@@ -270,7 +270,7 @@ export function ScheduleSpreadsheetImportDialog({
             </Button>
             {onOpenSchedule && (
               <Button variant="primary" onClick={() => onOpenSchedule(result)}>
-                {t('schedule.tabular_import.open_schedule', { defaultValue: 'Open schedule' })}
+                {t('schedule.tabular_import.open_schedule', { defaultValue: 'Open Cronograma' })}
               </Button>
             )}
           </>
@@ -287,7 +287,7 @@ export function ScheduleSpreadsheetImportDialog({
                       name: result.schedule_name,
                     })
                   : t('schedule.tabular_import.done_created', {
-                      defaultValue: 'Schedule "{{name}}" was created',
+                      defaultValue: 'Cronograma "{{name}}" was created',
                       name: result.schedule_name,
                     })}
               </p>
@@ -325,7 +325,7 @@ export function ScheduleSpreadsheetImportDialog({
           </div>
 
           <WideModalSection
-            title={t('schedule.tabular_import.quality_title', { defaultValue: 'Schedule quality check' })}
+            title={t('schedule.tabular_import.quality_title', { defaultValue: 'Cronograma quality check' })}
             columns={1}
           >
             {result.validation.findings.length === 0 ? (
@@ -426,7 +426,7 @@ export function ScheduleSpreadsheetImportDialog({
             />
             <p className="mt-1 text-2xs text-content-tertiary">
               {t('schedule.tabular_import.pdf_hint', {
-                defaultValue: 'A schedule printed to PDF works too, if it keeps its text: the activity table is read for you to check before anything is imported.',
+                defaultValue: 'A Cronograma printed to PDF works too, if it keeps its text: the activity table is read for you to check before anything is imported.',
               })}
             </p>
             {file && (
@@ -441,7 +441,7 @@ export function ScheduleSpreadsheetImportDialog({
               htmlFor="tabular-template-lang"
               className="oe-label"
             >
-              {t('schedule.tabular_import.template_label', { defaultValue: 'Start from a template' })}
+              {t('schedule.tabular_import.template_label', { defaultValue: 'Start from a Modelo' })}
             </label>
             <div className="flex flex-wrap items-center gap-2">
               <DocumentLanguageSelect
@@ -458,7 +458,7 @@ export function ScheduleSpreadsheetImportDialog({
                 disabled={templateBusy !== null}
                 onClick={() => getTemplate('xlsx')}
               >
-                {t('schedule.tabular_import.template_xlsx', { defaultValue: 'Excel template' })}
+                {t('schedule.tabular_import.template_xlsx', { defaultValue: 'Excel Modelo' })}
               </Button>
               <Button
                 size="sm"
@@ -467,7 +467,7 @@ export function ScheduleSpreadsheetImportDialog({
                 disabled={templateBusy !== null}
                 onClick={() => getTemplate('csv')}
               >
-                {t('schedule.tabular_import.template_csv', { defaultValue: 'CSV template' })}
+                {t('schedule.tabular_import.template_csv', { defaultValue: 'CSV Modelo' })}
               </Button>
             </div>
           </div>
@@ -643,13 +643,13 @@ export function ScheduleSpreadsheetImportDialog({
                     className="accent-oe-blue"
                   />
                   <span className="font-medium text-content-primary">
-                    {t('schedule.tabular_import.target_new', { defaultValue: 'A new schedule' })}
+                    {t('schedule.tabular_import.target_new', { defaultValue: 'A new Cronograma' })}
                   </span>
                 </label>
                 {target === 'new' && (
                   <div className="pl-6">
                     <Input
-                      label={t('schedule.tabular_import.name_label', { defaultValue: 'Schedule name' })}
+                      label={t('schedule.tabular_import.name_label', { defaultValue: 'Cronograma name' })}
                       placeholder={parsed?.schedule.name ?? ''}
                       value={name}
                       maxLength={255}
@@ -683,7 +683,7 @@ export function ScheduleSpreadsheetImportDialog({
                                 'Only a draft without a baseline, recorded progress or work orders can be replaced. Its activities and links are deleted.',
                             })
                           : t('schedule.tabular_import.target_replace_not_draft', {
-                              defaultValue: 'Only a draft schedule can be replaced.',
+                              defaultValue: 'Only a draft Cronograma can be replaced.',
                             })}
                       </span>
                     </span>

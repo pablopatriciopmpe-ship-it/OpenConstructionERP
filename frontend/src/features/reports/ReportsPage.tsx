@@ -331,14 +331,14 @@ async function downloadValidationReport(
     boqs = await boqApi.list(projectId);
   } catch {
     throw new Error(
-      t('reports.err_boqs_load', { defaultValue: 'Could not load BOQs for this project.' }),
+      t('reports.err_boqs_load', { defaultValue: 'Could not load Planilhas orçamentárias for this project.' }),
     );
   }
 
   if (boqs.length === 0) {
     throw new Error(
       t('reports.err_no_boq', {
-        defaultValue: 'No BOQs found for this project. Create a BOQ first to run validation.',
+        defaultValue: 'No Planilhas orçamentárias found for this project. Create a Planilha orçamentária first to run validation.',
       }),
     );
   }
@@ -392,7 +392,7 @@ async function downloadValidationReport(
   const csvLines: string[] = [];
   csvLines.push(t('reports.csv_validation_report', { defaultValue: 'Validation Report' }));
   csvLines.push(`${t('reports.csv_project', { defaultValue: 'Project' })},${projectName}`);
-  csvLines.push(`${t('reports.csv_boq', { defaultValue: 'BOQ' })},${report.boq_name || boq.name}`);
+  csvLines.push(`${t('reports.csv_boq', { defaultValue: 'Planilha orçamentária' })},${report.boq_name || boq.name}`);
   csvLines.push(`${t('reports.csv_generated', { defaultValue: 'Generated' })},${new Date().toISOString()}`);
   csvLines.push('');
   csvLines.push(t('reports.csv_summary', { defaultValue: 'Summary' }));
@@ -451,13 +451,13 @@ async function downloadScheduleReport(
   } catch {
     throw new Error(
       t('reports.err_no_schedule', {
-        defaultValue: 'Could not load schedule data for this project. Create a schedule first.',
+        defaultValue: 'Could not load Cronograma data for this project. Create a Cronograma first.',
       }),
     );
   }
 
   const lines: string[] = [
-    `${t('reports.txt_schedule_report', { defaultValue: 'Schedule Report' })} - ${projectName}`,
+    `${t('reports.txt_schedule_report', { defaultValue: 'Cronograma Report' })} - ${projectName}`,
     `${t('reports.txt_generated', { defaultValue: 'Generated' })}: ${new Date().toISOString()}`,
     '='.repeat(60),
     '',
@@ -468,7 +468,7 @@ async function downloadScheduleReport(
   }
 
   for (const schedule of schedules) {
-    lines.push(`${t('reports.txt_schedule', { defaultValue: 'Schedule' })}: ${schedule.name}`);
+    lines.push(`${t('reports.txt_schedule', { defaultValue: 'Cronograma' })}: ${schedule.name}`);
     lines.push(`  ${t('reports.txt_status', { defaultValue: 'Status' })}:     ${schedule.status}`);
     lines.push(`  ${t('reports.txt_start_date', { defaultValue: 'Start date' })}: ${fmtDate(schedule.start_date)}`);
     lines.push(`  ${t('reports.txt_end_date', { defaultValue: 'End date' })}:   ${fmtDate(schedule.end_date)}`);
@@ -506,7 +506,7 @@ async function downloadScheduleReport(
         );
       }
     } catch {
-      lines.push('  ' + t('reports.txt_activities_load_fail', { defaultValue: '(Could not load activities for this schedule)' }));
+      lines.push('  ' + t('reports.txt_activities_load_fail', { defaultValue: '(Could not load activities for this Cronograma)' }));
     }
 
     lines.push('');
@@ -537,7 +537,7 @@ async function download5DReport(
     throw new Error(
       t('reports.err_no_5d', {
         defaultValue:
-          'No 5D cost model data available for this project. Create a cost model with budget and schedule data first.',
+          'No 5D cost model data available for this project. Create a cost model with budget and Cronograma data first.',
       }),
     );
   }
@@ -549,7 +549,7 @@ async function download5DReport(
   csvLines.push(`${t('reports.csv_project', { defaultValue: 'Project' })},${projectName}`);
   csvLines.push(`${t('reports.csv_generated', { defaultValue: 'Generated' })},${new Date().toISOString()}`);
   csvLines.push('');
-  csvLines.push(t('reports.csv_dashboard_summary', { defaultValue: 'Dashboard Summary' }));
+  csvLines.push(t('reports.csv_dashboard_summary', { defaultValue: 'Painel Summary' }));
   csvLines.push(`${t('reports.csv_total_budget', { defaultValue: 'Total Budget' })},${dashboard.total_budget}`);
   csvLines.push(`${t('reports.csv_total_committed', { defaultValue: 'Total Committed' })},${dashboard.total_committed}`);
   csvLines.push(`${t('reports.csv_total_actual', { defaultValue: 'Total Actual' })},${dashboard.total_actual}`);
@@ -689,14 +689,14 @@ async function downloadChangeOrderReport(
   } catch {
     throw new Error(
       t('reports.err_no_change_orders', {
-        defaultValue: 'No change order data available for this project. Create change orders first.',
+        defaultValue: 'No Alteração de contrato data available for this project. Create Alterações de contrato first.',
       }),
     );
   }
 
   const daysLabel = t('reports.csv_days', { defaultValue: 'days' });
   const csvLines: string[] = [];
-  csvLines.push(t('reports.csv_change_order_register', { defaultValue: 'Change Order Register' }));
+  csvLines.push(t('reports.csv_change_order_register', { defaultValue: 'Alteração de contrato Register' }));
   csvLines.push(`${t('reports.csv_project', { defaultValue: 'Project' })},${projectName}`);
   csvLines.push(`${t('reports.csv_generated', { defaultValue: 'Generated' })},${new Date().toISOString()}`);
   csvLines.push('');
@@ -705,7 +705,7 @@ async function downloadChangeOrderReport(
   csvLines.push(`${t('reports.csv_approved', { defaultValue: 'Approved' })},${summary.approved_count}`);
   csvLines.push(`${t('reports.csv_rejected', { defaultValue: 'Rejected' })},${summary.rejected_count}`);
   csvLines.push(`${t('reports.csv_total_cost_impact', { defaultValue: 'Total Cost Impact' })},${summary.total_cost_impact} ${summary.currency}`);
-  csvLines.push(`${t('reports.csv_total_schedule_impact', { defaultValue: 'Total Schedule Impact' })},${summary.total_schedule_impact_days} ${daysLabel}`);
+  csvLines.push(`${t('reports.csv_total_schedule_impact', { defaultValue: 'Total Cronograma Impact' })},${summary.total_schedule_impact_days} ${daysLabel}`);
   csvLines.push('');
   csvLines.push(
     [
@@ -714,7 +714,7 @@ async function downloadChangeOrderReport(
       t('reports.csv_col_reason', { defaultValue: 'Reason' }),
       t('reports.csv_col_status', { defaultValue: 'Status' }),
       t('reports.csv_col_cost_impact', { defaultValue: 'Cost Impact' }),
-      t('reports.csv_col_schedule_days', { defaultValue: 'Schedule Days' }),
+      t('reports.csv_col_schedule_days', { defaultValue: 'Cronograma Days' }),
       t('reports.csv_col_items', { defaultValue: 'Items' }),
       t('reports.csv_col_created', { defaultValue: 'Created' }),
       t('reports.csv_col_submitted', { defaultValue: 'Submitted' }),
@@ -909,7 +909,7 @@ async function downloadProgressReport(
   // EVM section
   try {
     const dashboard = await costModelApi.getDashboard(projectId);
-    htmlParts.push(`<h2>${esc(t('reports.html_evm_performance', { defaultValue: 'Earned Value Performance' }))}</h2>`);
+    htmlParts.push(`<h2>${esc(t('reports.html_evm_performance', { defaultValue: 'Valor agregado Performance' }))}</h2>`);
     htmlParts.push('<div>');
     htmlParts.push(`<div class="metric"><div class="metric-label">${esc(t('reports.html_spi', { defaultValue: 'SPI' }))}</div><div class="metric-value" style="color:${Number(dashboard.spi||0)>=1?'#166534':'#991b1b'}">${fmtFixed(Number(dashboard.spi||0), 2)}</div></div>`);
     htmlParts.push(`<div class="metric"><div class="metric-label">${esc(t('reports.html_cpi', { defaultValue: 'CPI' }))}</div><div class="metric-value" style="color:${Number(dashboard.cpi||0)>=1?'#166534':'#991b1b'}">${fmtFixed(Number(dashboard.cpi||0), 2)}</div></div>`);
@@ -922,7 +922,7 @@ async function downloadProgressReport(
   // Schedule section
   try {
     const { items: schedules } = await scheduleApi.listSchedules(projectId);
-    htmlParts.push(`<h2>${esc(t('reports.html_schedule_status', { defaultValue: 'Schedule Status' }))}</h2>`);
+    htmlParts.push(`<h2>${esc(t('reports.html_schedule_status', { defaultValue: 'Cronograma Status' }))}</h2>`);
     for (const sched of schedules) {
       try {
         const gantt = await scheduleApi.getGantt(sched.id);
@@ -936,7 +936,7 @@ async function downloadProgressReport(
         htmlParts.push(`<div class="metric"><div class="metric-label">${esc(t('reports.html_delayed', { defaultValue: 'Delayed' }))}</div><div class="metric-value" style="color:${gantt.summary.delayed>0?'#991b1b':'#166534'}">${gantt.summary.delayed}</div></div>`);
       } catch { /* skip */ }
     }
-  } catch { htmlParts.push(`<p>${esc(t('reports.html_no_schedule', { defaultValue: 'No schedule data.' }))}</p>`); }
+  } catch { htmlParts.push(`<p>${esc(t('reports.html_no_schedule', { defaultValue: 'No Cronograma data.' }))}</p>`); }
 
   // Risk highlights
   try {
@@ -1120,7 +1120,7 @@ export function ReportsPage() {
       if (!selectedBoqId || !selectedBoq) {
         addToast({
           type: 'warning',
-          title: t('reports.select_boq_first', { defaultValue: 'Please select a project and BOQ first' }),
+          title: t('reports.select_boq_first', { defaultValue: 'Please select a project and Planilha orçamentária first' }),
         });
         return;
       }
@@ -1196,7 +1196,7 @@ export function ReportsPage() {
         }
         links={[
           {
-            label: t('nav.boq', { defaultValue: 'BOQ' }),
+            label: t('nav.boq', { defaultValue: 'Planilha orçamentária' }),
             onClick: () => navigate('/boq'),
           },
           {
@@ -1207,7 +1207,7 @@ export function ReportsPage() {
       >
         {t('reports.intro_body', {
           defaultValue:
-            'Choose a project and BOQ, then generate the deliverable you need: detailed BOQ, cost breakdown by category, GAEB X83 for tender exchange, validation results, schedule summary or 5D budget-vs-actual. Each export downloads in the format your client or authority expects. The numbers come straight from the BOQ and cost data, so what you send matches the screen.',
+            'Choose a project and Planilha orçamentária, then generate the deliverable you need: detailed Planilha orçamentária, cost breakdown by category, GAEB X83 for tender exchange, validation results, Cronograma summary or 5D budget-vs-actual. Each export downloads in the format your client or authority expects. The numbers come straight from the Planilha orçamentária and cost data, so what you send matches the screen.',
         })}
       </DismissibleInfo>
 
@@ -1235,7 +1235,7 @@ export function ReportsPage() {
             htmlFor="report-boq"
             className="oe-label mb-0 whitespace-nowrap"
           >
-            {t('boq.title', { defaultValue: 'BOQ' })}
+            {t('boq.title', { defaultValue: 'Planilha orçamentária' })}
           </label>
           <select
             id="report-boq"
@@ -1251,7 +1251,7 @@ export function ReportsPage() {
             )}
             {!loadingBoqs && boqs.length === 0 && selectedProjectId && (
               <option value="">
-                {t('reports.no_boqs', { defaultValue: 'No BOQs in this project' })}
+                {t('reports.no_boqs', { defaultValue: 'No Planilhas orçamentárias in this project' })}
               </option>
             )}
             {boqs.map((b) => (
@@ -1343,11 +1343,11 @@ export function ReportsPage() {
               addToast({
                 type: 'warning',
                 title: t('reports.boq_detail_skipped_title', {
-                  defaultValue: 'BOQ Detail will be skipped',
+                  defaultValue: 'Planilha orçamentária Detail will be skipped',
                 }),
                 message: t('reports.boq_detail_skipped_msg', {
                   defaultValue:
-                    'No BOQ is selected, so the BOQ Detail section cannot be included. Select a BOQ to add position details.',
+                    'No Planilha orçamentária is selected, so the Planilha orçamentária Detail section cannot be included. Select a Planilha orçamentária to add position details.',
                 }),
               });
             }
@@ -1439,7 +1439,7 @@ export function ReportsPage() {
 
               // EVM Performance
               if (sections.includes('evm')) {
-                htmlParts.push(`<h2>${esc(t('reports.html_evm_title', { defaultValue: 'Earned Value Management (EVM)' }))}</h2>`);
+                htmlParts.push(`<h2>${esc(t('reports.html_evm_title', { defaultValue: 'Valor agregado Management (Valor agregado)' }))}</h2>`);
                 try {
                   const dashboard = await getDashboard();
                   htmlParts.push('<div>');
@@ -1447,15 +1447,15 @@ export function ReportsPage() {
                   htmlParts.push(`<div class="metric"><div class="metric-label">${esc(t('reports.html_cpi', { defaultValue: 'CPI' }))}</div><div class="metric-value">${fmtFixed(Number(dashboard.cpi || 0), 2)}</div></div>`);
                   htmlParts.push(`<div class="metric"><div class="metric-label">${esc(t('reports.html_eac', { defaultValue: 'EAC' }))}</div><div class="metric-value">${Number(dashboard.total_forecast || 0).toLocaleString(lang)}</div></div>`);
                   htmlParts.push('</div>');
-                  htmlParts.push(`<p style="color:#6b7280;font-size:13px">${esc(t('reports.html_evm_hint', { defaultValue: 'SPI > 1.0 = ahead of schedule. CPI > 1.0 = under budget. EAC = Estimate at Completion.' }))}</p>`);
+                  htmlParts.push(`<p style="color:#6b7280;font-size:13px">${esc(t('reports.html_evm_hint', { defaultValue: 'SPI > 1.0 = ahead of Cronograma. CPI > 1.0 = under budget. EAC = Orçamento at Completion.' }))}</p>`);
                 } catch {
-                  htmlParts.push(`<p>${esc(t('reports.html_no_evm', { defaultValue: 'No EVM data available.' }))}</p>`);
+                  htmlParts.push(`<p>${esc(t('reports.html_no_evm', { defaultValue: 'No Valor agregado data available.' }))}</p>`);
                 }
               }
 
               // Schedule Summary
               if (sections.includes('schedule')) {
-                htmlParts.push(`<h2>${esc(t('reports.section_schedule', { defaultValue: 'Schedule Summary' }))}</h2>`);
+                htmlParts.push(`<h2>${esc(t('reports.section_schedule', { defaultValue: 'Cronograma Summary' }))}</h2>`);
                 try {
                   const { items: schedules } =
                     await scheduleApi.listSchedules(selectedProjectId);
@@ -1475,7 +1475,7 @@ export function ReportsPage() {
                     }
                   }
                 } catch {
-                  htmlParts.push(`<p>${esc(t('reports.html_no_schedule', { defaultValue: 'No schedule data.' }))}</p>`);
+                  htmlParts.push(`<p>${esc(t('reports.html_no_schedule', { defaultValue: 'No Cronograma data.' }))}</p>`);
                 }
               }
 
@@ -1544,22 +1544,22 @@ export function ReportsPage() {
 
               // Change Orders Summary
               if (sections.includes('changeorders')) {
-                htmlParts.push(`<h2>${esc(t('reports.section_changeorders', { defaultValue: 'Change Orders Summary' }))}</h2>`);
+                htmlParts.push(`<h2>${esc(t('reports.section_changeorders', { defaultValue: 'Alterações de contrato Summary' }))}</h2>`);
                 try {
                   const summary = await apiGet<{ total_orders: number; draft_count: number; submitted_count: number; approved_count: number; rejected_count: number; total_cost_impact: number; total_schedule_impact_days: number; currency: string }>(`/v1/changeorders/summary/?project_id=${selectedProjectId}`);
                   htmlParts.push(`<div class="metric"><div class="metric-label">${esc(t('reports.html_total_orders', { defaultValue: 'Total Orders' }))}</div><div class="metric-value">${summary.total_orders}</div></div>`);
                   htmlParts.push(`<div class="metric"><div class="metric-label">${esc(t('reports.html_approved', { defaultValue: 'Approved' }))}</div><div class="metric-value">${summary.approved_count}</div></div>`);
                   htmlParts.push(`<div class="metric"><div class="metric-label">${esc(t('reports.html_pending', { defaultValue: 'Pending' }))}</div><div class="metric-value">${summary.draft_count + summary.submitted_count}</div></div>`);
                   htmlParts.push(`<div class="metric"><div class="metric-label">${esc(t('reports.html_cost_impact', { defaultValue: 'Cost Impact' }))}</div><div class="metric-value">${Number(summary.total_cost_impact).toLocaleString(lang)} ${esc(summary.currency)}</div></div>`);
-                  htmlParts.push(`<div class="metric"><div class="metric-label">${esc(t('reports.html_schedule_impact', { defaultValue: 'Schedule Impact' }))}</div><div class="metric-value">${summary.total_schedule_impact_days} ${esc(t('reports.csv_days', { defaultValue: 'days' }))}</div></div>`);
+                  htmlParts.push(`<div class="metric"><div class="metric-label">${esc(t('reports.html_schedule_impact', { defaultValue: 'Cronograma Impact' }))}</div><div class="metric-value">${summary.total_schedule_impact_days} ${esc(t('reports.csv_days', { defaultValue: 'days' }))}</div></div>`);
                 } catch {
-                  htmlParts.push(`<p>${esc(t('reports.html_no_change_orders', { defaultValue: 'No change order data available.' }))}</p>`);
+                  htmlParts.push(`<p>${esc(t('reports.html_no_change_orders', { defaultValue: 'No Alteração de contrato data available.' }))}</p>`);
                 }
               }
 
               // BOQ Detail
               if (sections.includes('boq_detail') && selectedBoqId && selectedBoq) {
-                htmlParts.push(`<h2>${esc(t('reports.section_boq_detail', { defaultValue: 'BOQ Detail' }))}</h2>`);
+                htmlParts.push(`<h2>${esc(t('reports.section_boq_detail', { defaultValue: 'Planilha orçamentária Detail' }))}</h2>`);
                 try {
                   const boqDetail = await apiGet<{ positions?: Array<{ ordinal: string; description: string; unit: string; quantity: number; unit_rate: number; total: number }> }>(`/v1/boq/boqs/${selectedBoqId}`);
                   const positions = boqDetail.positions ?? [];
@@ -1569,9 +1569,9 @@ export function ReportsPage() {
                   // total accurate by summing every position regardless.
                   const truncated = positions.length > BOQ_DETAIL_POSITION_LIMIT;
                   const rows = truncated ? positions.slice(0, BOQ_DETAIL_POSITION_LIMIT) : positions;
-                  htmlParts.push(`<p>${esc(t('reports.html_col_boq', { defaultValue: 'BOQ' }))}: <strong>${esc(selectedBoq.name)}</strong> (${esc(t('reports.html_positions_count', { defaultValue: '{{count}} positions', count: positions.length }))})</p>`);
+                  htmlParts.push(`<p>${esc(t('reports.html_col_boq', { defaultValue: 'Planilha orçamentária' }))}: <strong>${esc(selectedBoq.name)}</strong> (${esc(t('reports.html_positions_count', { defaultValue: '{{count}} positions', count: positions.length }))})</p>`);
                   if (truncated) {
-                    htmlParts.push(`<p style="color:#92400e;font-size:13px">${esc(t('reports.html_boq_truncated', { defaultValue: '(Showing first {{limit}} positions; full BOQ available in BOQ export)', limit: BOQ_DETAIL_POSITION_LIMIT }))}</p>`);
+                    htmlParts.push(`<p style="color:#92400e;font-size:13px">${esc(t('reports.html_boq_truncated', { defaultValue: '(Showing first {{limit}} positions; full Planilha orçamentária available in Planilha orçamentária export)', limit: BOQ_DETAIL_POSITION_LIMIT }))}</p>`);
                   }
                   htmlParts.push(`<table className="oe-table"><thead><tr><th>#</th><th>${esc(t('reports.html_col_description', { defaultValue: 'Description' }))}</th><th>${esc(t('reports.html_col_unit', { defaultValue: 'Unit' }))}</th><th style="text-align:right">${esc(t('reports.html_col_qty', { defaultValue: 'Qty' }))}</th><th style="text-align:right">${esc(t('reports.html_col_rate', { defaultValue: 'Rate' }))}</th><th style="text-align:right">${esc(t('reports.html_col_total', { defaultValue: 'Total' }))}</th></tr></thead><tbody>`);
                   for (const pos of rows) {
@@ -1588,16 +1588,16 @@ export function ReportsPage() {
                   htmlParts.push(`<tr style="font-weight:700;border-top:2px solid #1a1a1a"><td colspan="5">${esc(t('reports.html_grand_total', { defaultValue: 'Grand Total' }))}</td><td style="text-align:right">${grandTotal.toLocaleString(lang, { maximumFractionDigits: 2 })}</td></tr>`);
                   htmlParts.push('</tbody></table>');
                 } catch {
-                  htmlParts.push(`<p>${esc(t('reports.html_boq_load_fail', { defaultValue: 'Could not load BOQ positions.' }))}</p>`);
+                  htmlParts.push(`<p>${esc(t('reports.html_boq_load_fail', { defaultValue: 'Could not load Planilha orçamentária positions.' }))}</p>`);
                 }
               } else if (sections.includes('boq_detail')) {
-                htmlParts.push(`<h2>${esc(t('reports.section_boq_detail', { defaultValue: 'BOQ Detail' }))}</h2><p>${esc(t('reports.html_no_boq_selected', { defaultValue: 'No BOQ selected. Select a BOQ to include position details.' }))}</p>`);
+                htmlParts.push(`<h2>${esc(t('reports.section_boq_detail', { defaultValue: 'Planilha orçamentária Detail' }))}</h2><p>${esc(t('reports.html_no_boq_selected', { defaultValue: 'No Planilha orçamentária selected. Select a Planilha orçamentária to include position details.' }))}</p>`);
               }
 
               // Validation
               if (sections.includes('validation')) {
                 htmlParts.push(`<h2>${esc(t('reports.section_validation', { defaultValue: 'Validation Report' }))}</h2>`);
-                htmlParts.push(`<p>${esc(t('reports.html_validation_hint', { defaultValue: 'Run validation from the Validation Dashboard for detailed compliance results.' }))}</p>`);
+                htmlParts.push(`<p>${esc(t('reports.html_validation_hint', { defaultValue: 'Run validation from the Validation Painel for detailed compliance results.' }))}</p>`);
               }
 
               // Sustainability
@@ -1738,13 +1738,13 @@ const REPORT_SECTIONS = [
   { id: 'summary', labelKey: 'reports.section_summary', labelDefault: 'Executive Summary', icon: FileText, descKey: 'reports.section_summary_desc', descDefault: 'Project overview, key metrics, grand total' },
   { id: 'budget', labelKey: 'reports.section_budget', labelDefault: 'Budget vs Actual', icon: DollarSign, descKey: 'reports.section_budget_desc', descDefault: 'Planned, committed, actual, and variance analysis' },
   { id: 'cost_breakdown', labelKey: 'reports.section_cost_breakdown', labelDefault: 'Cost Breakdown by Category', icon: BarChart3, descKey: 'reports.section_cost_breakdown_desc', descDefault: 'Cost distribution by material, labor, equipment' },
-  { id: 'evm', labelKey: 'reports.section_evm', labelDefault: 'EVM Performance', icon: TrendingUp, descKey: 'reports.section_evm_desc', descDefault: 'SPI, CPI, EAC earned value metrics' },
+  { id: 'evm', labelKey: 'reports.section_evm', labelDefault: 'EVM Performance', icon: TrendingUp, descKey: 'reports.section_evm_desc', descDefault: 'SPI, CPI, EAC Valor agregado metrics' },
   { id: 'schedule', labelKey: 'reports.section_schedule', labelDefault: 'Schedule Summary', icon: CalendarDays, descKey: 'reports.section_schedule_desc', descDefault: 'Total activities, critical path, milestones' },
   { id: 'risk', labelKey: 'reports.section_risk', labelDefault: 'Risk Summary', icon: ShieldAlert, descKey: 'reports.section_risk_desc', descDefault: 'Top 5 risks, total exposure, mitigation status' },
-  { id: 'changeorders', labelKey: 'reports.section_changeorders', labelDefault: 'Change Orders Summary', icon: FileEdit, descKey: 'reports.section_changeorders_desc', descDefault: 'Approved, pending, total cost/schedule impact' },
+  { id: 'changeorders', labelKey: 'reports.section_changeorders', labelDefault: 'Change Orders Summary', icon: FileEdit, descKey: 'reports.section_changeorders_desc', descDefault: 'Approved, pending, total cost/Cronograma impact' },
   { id: 'boq_detail', labelKey: 'reports.section_boq_detail', labelDefault: 'BOQ Detail', icon: Table2, descKey: 'reports.section_boq_detail_desc', descDefault: 'Full position list with quantities and rates' },
   { id: 'validation', labelKey: 'reports.section_validation', labelDefault: 'Validation Report', icon: ShieldCheck, descKey: 'reports.section_validation_desc', descDefault: 'Compliance check results and quality score' },
-  { id: 'sustainability', labelKey: 'reports.section_sustainability', labelDefault: 'Sustainability / CO2', icon: Leaf, descKey: 'reports.section_sustainability_desc', descDefault: 'Embodied carbon estimates and EPD references' },
+  { id: 'sustainability', labelKey: 'reports.section_sustainability', labelDefault: 'Sustainability / CO2', icon: Leaf, descKey: 'reports.section_sustainability_desc', descDefault: 'Embodied carbon Orçamentos and EPD references' },
 ] as const;
 
 function CustomReportBuilder({
@@ -1829,7 +1829,7 @@ function CustomReportBuilder({
           const unavailable = sec.id === 'boq_detail' && !boqAvailable;
           const Icon = sec.icon;
           const unavailableHint = t('reports.section_requires_boq', {
-            defaultValue: 'Select a BOQ above to include this section',
+            defaultValue: 'Select a Planilha orçamentária above to include this section',
           });
           return (
             <button

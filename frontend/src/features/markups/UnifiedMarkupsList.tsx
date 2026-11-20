@@ -51,9 +51,9 @@ const SOURCE_META: Record<
   UnifiedMarkupSource,
   { label: string; badge: 'blue' | 'success' | 'warning' | 'neutral'; icon: React.ElementType }
 > = {
-  markups_hub: { label: 'Markups hub', badge: 'blue', icon: PenTool },
-  pdf_takeoff: { label: 'PDF takeoff', badge: 'warning', icon: FileText },
-  dwg_takeoff: { label: 'DWG takeoff', badge: 'success', icon: FileSpreadsheet },
+  markups_hub: { label: 'Margens hub', badge: 'blue', icon: PenTool },
+  pdf_takeoff: { label: 'PDF Levantamento de quantitativos', badge: 'warning', icon: FileText },
+  dwg_takeoff: { label: 'DWG Levantamento de quantitativos', badge: 'success', icon: FileSpreadsheet },
 };
 
 const TYPE_ICONS: Partial<Record<UnifiedMarkupType, React.ElementType>> = {
@@ -332,7 +332,7 @@ export function UnifiedMarkupsList({ projectId }: UnifiedMarkupsListProps) {
             items.length === 0
               ? t('markups.unified_empty_desc', {
                   defaultValue:
-                    'Markups from the Markups hub, PDF takeoff and DWG takeoff will appear here automatically.',
+                    'Margens from the Margens hub, PDF Levantamento de quantitativos and DWG Levantamento de quantitativos will appear here automatically.',
                 })
               : t('markups.unified_no_match_desc', {
                   defaultValue: 'Try adjusting your search or filter selection.',

@@ -131,7 +131,7 @@ export function MarkupCommentsDrawer({ markupId, onClose }: Props): JSX.Element 
       className="fixed inset-y-0 right-0 z-drawer flex h-full w-96 max-w-full flex-col border-l border-border bg-white shadow-2xl dark:bg-zinc-900"
       role="dialog"
       aria-label={t('takeoff.markup.comments_drawer', {
-        defaultValue: 'Markup comments',
+        defaultValue: 'BDI comments',
       })}
     >
       <header className="flex items-center justify-between border-b border-border px-4 py-3">

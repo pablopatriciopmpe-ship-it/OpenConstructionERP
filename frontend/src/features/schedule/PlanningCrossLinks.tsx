@@ -52,7 +52,7 @@ export function PlanningCrossLinks({ active }: { active: PlanningRouteKey }) {
       key: 'schedule',
       to: '/schedule',
       icon: CalendarDays,
-      label: t('planning.link_schedule', { defaultValue: '4D Schedule' }),
+      label: t('planning.link_schedule', { defaultValue: 'Cronograma' }),
     },
     {
       key: 'schedule-advanced',
@@ -94,7 +94,7 @@ export function PlanningCrossLinks({ active }: { active: PlanningRouteKey }) {
       key: 'meetings',
       to: '/meetings',
       icon: Users,
-      label: t('planning.link_meetings', { defaultValue: 'Meetings' }),
+      label: t('planning.link_meetings', { defaultValue: 'Reuniões' }),
     },
   ];
 

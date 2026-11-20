@@ -92,7 +92,7 @@ export function ScheduleLifecycleActions({ schedule, onChanged, compact = false 
     {canArchive && <Button variant="ghost" size="sm" disabled={busy}
       aria-label={t(archived ? 'schedule.restore_named' : 'schedule.archive_named', { name: schedule.name })}
       title={archived ? t('common.restore') : t('schedule.archive_then_delete_hint', {
-        defaultValue: 'Archive this schedule. Once archived, the project owner can delete it permanently.',
+        defaultValue: 'Archive this Cronograma. Once archived, the project owner can delete it permanently.',
       })}
       icon={archived ? <RotateCcw size={14} /> : <Archive size={14} />}
       onClick={() => void act(archived ? 'restore' : 'archive')}>

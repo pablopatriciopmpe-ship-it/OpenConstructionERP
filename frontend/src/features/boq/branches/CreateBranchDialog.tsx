@@ -114,7 +114,7 @@ export function CreateBranchDialog({ sourceBoqId, sourceName, isOpen, onClose, o
           <p className="text-xs text-content-secondary leading-relaxed">
             {t('boq.branch.create_intro', {
               defaultValue:
-                'A branch is a full copy of "{{name}}" you can change on its own. Compare it later, carry single positions across, or merge it back as the main estimate.',
+                'A branch is a full copy of "{{name}}" you can change on its own. Compare it later, carry single positions across, or merge it back as the main Orçamento.',
               name: sourceName,
             })}
           </p>

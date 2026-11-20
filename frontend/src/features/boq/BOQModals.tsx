@@ -243,7 +243,7 @@ export function AssemblyPickerModal({
       <div
         role="dialog"
         aria-modal="true"
-        aria-label={t('assemblies.apply_assembly_to_boq', { defaultValue: 'Apply Assembly to BOQ' })}
+        aria-label={t('assemblies.apply_assembly_to_boq', { defaultValue: 'Apply Assembly to Planilha orçamentária' })}
         className="bg-surface-elevated rounded-2xl border border-border shadow-2xl w-full max-w-2xl mx-4 max-h-[80vh] flex flex-col overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
@@ -254,7 +254,7 @@ export function AssemblyPickerModal({
               <Layers size={20} />
             </div>
             <div>
-              <h2 className="oe-section-title">{t('assemblies.apply_assembly_to_boq', { defaultValue: 'Apply Assembly to BOQ' })}</h2>
+              <h2 className="oe-section-title">{t('assemblies.apply_assembly_to_boq', { defaultValue: 'Apply Assembly to Planilha orçamentária' })}</h2>
               <p className="text-xs text-content-tertiary">{t('assemblies.select_recipe_desc', { defaultValue: 'Select a pre-built recipe to add as a position' })}</p>
             </div>
           </div>
@@ -274,8 +274,8 @@ export function AssemblyPickerModal({
               autoComplete="off"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder={t('assemblies.search_placeholder', { defaultValue: 'Search assemblies...' })}
-              aria-label={t('assemblies.search_placeholder', { defaultValue: 'Search assemblies...' })}
+              placeholder={t('assemblies.search_placeholder', { defaultValue: 'Search Composições...' })}
+              aria-label={t('assemblies.search_placeholder', { defaultValue: 'Search Composições...' })}
               className="oe-input w-full ps-9 pe-3"
               autoFocus
             />
@@ -286,16 +286,16 @@ export function AssemblyPickerModal({
         <div className="flex-1 overflow-y-auto px-6 py-3">
           {isLoading ? (
             <div className="flex items-center justify-center py-12 text-xs text-content-tertiary">
-              <Loader2 size={16} className="animate-spin mr-2" /> {t('assemblies.loading', { defaultValue: 'Loading assemblies...' })}
+              <Loader2 size={16} className="animate-spin mr-2" /> {t('assemblies.loading', { defaultValue: 'Loading Composições...' })}
             </div>
           ) : !assemblies || assemblies.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-center">
               <Layers size={32} className="text-content-quaternary mb-3" />
               <p className="text-sm font-medium text-content-secondary mb-1">
-                {debouncedSearch ? t('assemblies.no_search_match', { defaultValue: 'No assemblies match your search' }) : t('assemblies.no_assemblies', { defaultValue: 'No assemblies yet' })}
+                {debouncedSearch ? t('assemblies.no_search_match', { defaultValue: 'No Composições match your search' }) : t('assemblies.no_assemblies', { defaultValue: 'No Composições yet' })}
               </p>
               <p className="text-xs text-content-tertiary mb-3">
-                {debouncedSearch ? t('assemblies.try_different_term', { defaultValue: 'Try a different search term' }) : t('assemblies.create_from_catalog', { defaultValue: 'Create assemblies from the Resource Catalog' })}
+                {debouncedSearch ? t('assemblies.try_different_term', { defaultValue: 'Try a different search term' }) : t('assemblies.create_from_catalog', { defaultValue: 'Create Composições from the Catálogo de insumos' })}
               </p>
               {!debouncedSearch && (
                 <Button variant="secondary" size="sm" onClick={() => { onClose(); navigate('/catalog'); }}>
@@ -368,12 +368,12 @@ export function AssemblyPickerModal({
         {/* Footer */}
         <div className="px-6 py-3 border-t border-border-light bg-surface-secondary/30 shrink-0">
           <div className="flex items-center justify-between text-2xs text-content-quaternary">
-            <span>{t('assemblies.footer_hint', { defaultValue: 'Assemblies are reusable recipes built from cost items and resources' })}</span>
+            <span>{t('assemblies.footer_hint', { defaultValue: 'Composições are reusable recipes built from cost items and resources' })}</span>
             <button
               onClick={() => { onClose(); navigate('/assemblies'); }}
               className="text-purple-600 hover:text-purple-700 font-medium"
             >
-              {t('assemblies.manage_assemblies', { defaultValue: 'Manage Assemblies' })} &rarr;
+              {t('assemblies.manage_assemblies', { defaultValue: 'Manage Composições' })} &rarr;
             </button>
           </div>
         </div>
@@ -1430,7 +1430,7 @@ export function CostDatabaseSearchModal({
             }),
             message: t('boq.variant_default_applied_msg', {
               defaultValue:
-                'Click the row in the BOQ to choose a specific variant.',
+                'Click the row in the Planilha orçamentária to choose a specific variant.',
             }),
           });
           defaultToastShown = true;
@@ -1663,7 +1663,7 @@ export function CostDatabaseSearchModal({
         aria-modal="true"
         aria-label={onSelectForResources
           ? t('boq.add_resource_from_database', { defaultValue: 'Add Resources from Database' })
-          : t('boq.add_from_database', { defaultValue: 'Add from Cost Database' })}
+          : t('boq.add_from_database', { defaultValue: 'Add from Banco de custos' })}
         className="bg-surface-elevated rounded-2xl border border-border shadow-2xl w-full max-w-6xl mx-4 max-h-[88vh] overflow-hidden animate-fade-in flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
@@ -1676,12 +1676,12 @@ export function CostDatabaseSearchModal({
             <h2 className="oe-section-title">
               {onSelectForResources
                 ? t('boq.add_resource_from_database', { defaultValue: 'Add Resources from Database' })
-                : t('boq.add_from_database', { defaultValue: 'Add from Cost Database' })}
+                : t('boq.add_from_database', { defaultValue: 'Add from Banco de custos' })}
             </h2>
             <p className="text-xs text-content-tertiary">
               {onSelectForResources
                 ? t('boq.search_and_add_resources', { defaultValue: 'Search cost items to add as resources to position' })
-                : t('boq.search_and_add', { defaultValue: 'Search items and add them to your estimate' })}
+                : t('boq.search_and_add', { defaultValue: 'Search items and add them to your Orçamento' })}
             </p>
           </div>
           {/* Always-visible way out to the import screen, so more regional
@@ -1949,7 +1949,7 @@ export function CostDatabaseSearchModal({
                     </div>
                     <h3 className="oe-card-title mb-1">
                       {t('boq.no_databases_title', {
-                        defaultValue: 'No cost database installed yet',
+                        defaultValue: 'No Banco de custos installed yet',
                       })}
                     </h3>
                     <p className="mx-auto mb-4 max-w-sm text-xs text-content-tertiary">
@@ -2154,7 +2154,7 @@ export function CostDatabaseSearchModal({
                                     className="inline-flex flex-col items-end leading-tight"
                                     title={t('boq.cost_db_buildup_hint', {
                                       defaultValue:
-                                        "The bill line is priced from this item's resources. The catalogue quotes {{rate}} for the item as a whole.",
+                                        "The bill line is priced from this item's resources. The catalogue Cotações {{rate}} for the item as a whole.",
                                       rate: fmtRate(item.rate),
                                     })}
                                     data-testid={`cost-row-rate-${item.id}`}
@@ -2310,7 +2310,7 @@ export function CostDatabaseSearchModal({
                   aria-haspopup="listbox"
                   aria-expanded={sectionMenuOpen}
                   title={t('boq.add_to_section_hint', {
-                    defaultValue: 'Choose where new items land in the BOQ',
+                    defaultValue: 'Choose where new items land in the Planilha orçamentária',
                   })}
                 >
                   <Layers size={12} className="text-content-tertiary" />
@@ -2420,7 +2420,7 @@ export function CostDatabaseSearchModal({
                 ? t('boq.adding', { defaultValue: 'Adding...' })
                 : onSelectForResources
                   ? t('boq.add_as_resources', { defaultValue: 'Add {{count}} as resources', count: selected.size })
-                  : t('boq.add_n_positions', { defaultValue: 'Add {{count}} to BOQ', count: selected.size })}
+                  : t('boq.add_n_positions', { defaultValue: 'Add {{count}} to Planilha orçamentária', count: selected.size })}
             </Button>
           </div>
         </div>

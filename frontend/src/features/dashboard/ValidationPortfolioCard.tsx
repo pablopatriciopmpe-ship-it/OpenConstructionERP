@@ -223,14 +223,14 @@ function ProjectBlock({ project, isActive }: { project: PortfolioProject; isActi
       </div>
       <p className="mt-1 text-xs text-content-tertiary">
         {project.estimate_count === 0
-          ? t('dashboard.validation_portfolio.no_estimates', { defaultValue: 'No estimates yet' })
+          ? t('dashboard.validation_portfolio.no_estimates', { defaultValue: 'No Orçamentos yet' })
           : t('dashboard.validation_portfolio.validated_of', {
               // The plural follows the raw total; the shown numbers are
               // formatted in the reader's locale.
               count: project.estimate_count,
               validated: formatCount(project.validated_count),
               total: formatCount(project.estimate_count),
-              defaultValue: '{{validated}} of {{total}} estimate validated',
+              defaultValue: '{{validated}} of {{total}} Orçamento validated',
               defaultValue_one: '{{validated}} of {{total}} estimate validated',
               defaultValue_other: '{{validated}} of {{total}} estimates validated',
             })}
@@ -248,7 +248,7 @@ function ProjectBlock({ project, isActive }: { project: PortfolioProject; isActi
           to={projectEstimatesHref(project.project_id)}
           className="mt-1.5 inline-flex items-center gap-1 text-xs font-medium text-oe-blue hover:underline"
         >
-          {t('dashboard.validation_portfolio.open_estimates', { defaultValue: 'Open estimates' })}
+          {t('dashboard.validation_portfolio.open_estimates', { defaultValue: 'Open Orçamentos' })}
           <ArrowRight size={12} aria-hidden="true" />
         </Link>
       ) : (
@@ -275,7 +275,7 @@ function ProjectBlock({ project, isActive }: { project: PortfolioProject; isActi
             <>
               {t('dashboard.validation_portfolio.show_all', {
                 count: project.estimates.length,
-                defaultValue: 'Show {{count}} estimate',
+                defaultValue: 'Show {{count}} Orçamento',
                 defaultValue_one: 'Show {{count}} estimate',
                 defaultValue_other: 'Show all {{count}} estimates',
               })}
@@ -331,7 +331,7 @@ export function ValidationPortfolioCard() {
       <p className="rounded-lg border border-dashed border-border-light px-3 py-4 text-center text-sm text-content-secondary">
         {t('dashboard.validation_portfolio.empty', {
           defaultValue:
-            'No projects to show yet. Once a project has an estimate, its validation status appears here.',
+            'No projects to show yet. Once a project has an Orçamento, its validation status appears here.',
         })}
       </p>
     );
@@ -389,7 +389,7 @@ export function ValidationPortfolioCard() {
       <CardHeader
         title={t('dashboard.validation_portfolio.title', { defaultValue: 'Validation across projects' })}
         subtitle={t('dashboard.validation_portfolio.subtitle', {
-          defaultValue: 'Latest check of every estimate in all your projects, worst first',
+          defaultValue: 'Latest check of every Orçamento in all your projects, worst first',
         })}
         action={
           <Link to="/validation" className="text-xs text-oe-blue hover:underline">

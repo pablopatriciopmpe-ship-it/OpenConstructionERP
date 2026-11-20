@@ -47,7 +47,7 @@ export function OfferScheduleEditor({ rows, net, currency, readOnly = false, onC
   if (rows.length === 0) {
     return (
       <div className="rounded-lg border border-dashed border-border-light p-4 text-sm text-content-secondary">
-        <p>{t('offers.schedule.empty', { defaultValue: 'No payment schedule. The customer pays the total on the invoice terms.' })}</p>
+        <p>{t('offers.schedule.empty', { defaultValue: 'No payment Cronograma. The customer pays the total on the invoice terms.' })}</p>
         {!readOnly && (
           <Button variant="secondary" size="sm" className="mt-3" onClick={() => useTemplate('30_40_30')}>
             {t('offers.schedule.use_30_40_30', { defaultValue: 'Use 30 / 40 / 30' })}
@@ -147,10 +147,10 @@ export function OfferScheduleEditor({ rows, net, currency, readOnly = false, onC
             <select
               className={`${inputCls} oe-select w-auto`}
               value=""
-              aria-label={t('offers.schedule.template', { defaultValue: 'Template' })}
+              aria-label={t('offers.schedule.template', { defaultValue: 'Modelo' })}
               onChange={(e) => e.target.value && useTemplate(e.target.value)}
             >
-              <option value="">{t('offers.schedule.template', { defaultValue: 'Template' })}</option>
+              <option value="">{t('offers.schedule.template', { defaultValue: 'Modelo' })}</option>
               <option value="30_40_30">30 / 40 / 30</option>
               <option value="50_50">50 / 50</option>
               <option value="completion">{t('offers.schedule.completion', { defaultValue: '100% on completion' })}</option>

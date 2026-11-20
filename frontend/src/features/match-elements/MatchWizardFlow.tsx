@@ -921,7 +921,7 @@ export function MatchWizardFlow() {
         addToast({
           type: 'success',
           title: t('match.wizard.applied', {
-            defaultValue: '{{n}} BOQ positions written',
+            defaultValue: '{{n}} Planilha orçamentária positions written',
             n: r.positions_created,
           }),
         });
@@ -1233,7 +1233,7 @@ export function MatchWizardFlow() {
       >
         {t('info.match-elements.body', {
           defaultValue:
-            'Price a BIM or CAD model by matching its elements against a regional cost catalogue, then write the result straight into the project as a bill of quantities. The wizard groups elements, ranks cost candidates with semantic search, and lets you confirm matches before they become real BOQ positions with quantities and rates.',
+            'Price a BIM or CAD model by matching its elements against a regional cost catalogue, then write the result straight into the project as a bill of quantities. The wizard groups elements, ranks cost candidates with semantic search, and lets you confirm matches before they become real Planilha orçamentária positions with quantities and rates.',
         })}
       </DismissibleInfo>
 
@@ -1290,7 +1290,7 @@ export function MatchWizardFlow() {
         <summary className="flex cursor-pointer list-none items-center gap-2 px-4 py-3 text-sm font-medium text-content-primary">
           <Wrench className="h-4 w-4 shrink-0 text-oe-blue" />
           {t('match.wizard.setupTools', {
-            defaultValue: 'Setup & tools - language model, catalogues, analytics, templates',
+            defaultValue: 'Setup & tools - language model, catalogues, analytics, Modelos',
           })}
           <ChevronRight className="ml-auto h-4 w-4 text-content-tertiary transition-transform group-open:rotate-90" />
         </summary>
@@ -1310,7 +1310,7 @@ export function MatchWizardFlow() {
           >
             <Library className="h-4 w-4 text-oe-blue" />
             {t('match.wizard.openTemplateLibrary', {
-              defaultValue: 'Open template library',
+              defaultValue: 'Open Modelo library',
             })}
           </button>
         </div>
@@ -1330,7 +1330,7 @@ export function MatchWizardFlow() {
           <p>
             {t('match.wizard.howItWorksIntro', {
               defaultValue:
-                'This wizard turns a BIM/CAD model into a priced bill of quantities. Every model element is grouped, then each group is searched against a regional cost catalogue using multilingual semantic (vector) + keyword + rule-based matching. You review the ranked candidates, confirm them, and the wizard writes a real BOQ with real cost in the project currency.',
+                'This wizard turns a BIM/CAD model into a priced bill of quantities. Every model element is grouped, then each group is searched against a regional cost catalogue using multilingual semantic (vector) + keyword + rule-based matching. You review the ranked candidates, confirm them, and the wizard writes a real Planilha orçamentária with real cost in the project currency.',
             })}
           </p>
           <ol className="grid gap-1.5 sm:grid-cols-2">
@@ -1378,7 +1378,7 @@ export function MatchWizardFlow() {
                   <p className="mb-4 text-sm text-content-secondary">
                     {t('match.wizard.modelHelp', {
                       defaultValue:
-                        'Choose the BIM/CAD model to price. Every element in it becomes part of the estimate.',
+                        'Choose the BIM/CAD model to price. Every element in it becomes part of the Orçamento.',
                     })}
                   </p>
                   <BIMModelPicker
@@ -1734,14 +1734,14 @@ export function MatchWizardFlow() {
                         <div className="flex flex-wrap items-center gap-2">
                           <span className="text-sm font-medium text-content-primary">
                             {t('match.wizard.aiRerankTitle', {
-                              defaultValue: 'Re-rank with your own AI',
+                              defaultValue: 'Re-rank with your own IA',
                             })}
                           </span>
                           {aiConnected ? (
                             <span className="inline-flex items-center gap-1 rounded-full bg-semantic-success/10 px-2 py-0.5 text-2xs font-medium text-semantic-success">
                               <Check className="h-3 w-3" />
                               {t('match.wizard.aiConnected', {
-                                defaultValue: 'AI connected',
+                                defaultValue: 'IA connected',
                               })}
                               {aiSettingsQ.data?.preferred_model
                                 ? ` · ${aiSettingsQ.data.preferred_model}`
@@ -1758,7 +1758,7 @@ export function MatchWizardFlow() {
                         <p className="mt-1 text-xs text-content-tertiary">
                           {t('match.wizard.aiRerankNote', {
                             defaultValue:
-                              'The semantic search picks a shortlist of real catalogue rows, then your AI re-orders it for the best match and sets a confidence. It can only re-order real candidates, never invent a code. Connect your provider key in Settings to turn this on.',
+                              'The semantic search picks a shortlist of real catalogue rows, then your IA re-orders it for the best match and sets a confidence. It can only re-order real candidates, never invent a code. Connect your provider key in Settings to turn this on.',
                           })}
                         </p>
 
@@ -1771,7 +1771,7 @@ export function MatchWizardFlow() {
                               className="h-4 w-4 accent-oe-blue"
                             />
                             {t('match.wizard.aiRerankToggle', {
-                              defaultValue: 'Use my AI to re-rank candidates (more accurate)',
+                              defaultValue: 'Use my IA to re-rank candidates (more accurate)',
                             })}
                           </label>
                         ) : (
@@ -1784,7 +1784,7 @@ export function MatchWizardFlow() {
                             onClick={() => navigate('/settings?tab=ai')}
                           >
                             {t('match.wizard.aiConnectCta', {
-                              defaultValue: 'Connect your AI',
+                              defaultValue: 'Connect your IA',
                             })}
                           </Button>
                         )}
@@ -1976,7 +1976,7 @@ export function MatchWizardFlow() {
                   <p className="text-sm text-content-secondary">
                     {t('match.wizard.applyHelp', {
                       defaultValue:
-                        'Preview the bill of quantities that confirmed matches produce, then write it to the project’s BOQ.',
+                        'Preview the bill of quantities that confirmed matches produce, then write it to the project’s Planilha orçamentária.',
                     })}
                   </p>
 
@@ -1988,7 +1988,7 @@ export function MatchWizardFlow() {
                       onClick={() => applyM.mutate(true)}
                     >
                       {t('match.wizard.preview', {
-                        defaultValue: 'Preview BOQ rollup',
+                        defaultValue: 'Preview Planilha orçamentária rollup',
                       })}
                     </Button>
                   )}
@@ -1998,7 +1998,7 @@ export function MatchWizardFlow() {
                       <div className="grid gap-3 sm:grid-cols-3">
                         <StatTile
                           label={t('match.wizard.positions', {
-                            defaultValue: 'BOQ positions',
+                            defaultValue: 'Planilha orçamentária positions',
                           })}
                           value={applyResult.count}
                           tone="good"
@@ -2142,7 +2142,7 @@ export function MatchWizardFlow() {
                             onClick={() => applyM.mutate(false)}
                           >
                             {t('match.wizard.writeBoq', {
-                              defaultValue: 'Write to project BOQ',
+                              defaultValue: 'Write to project Planilha orçamentária',
                             })}
                           </Button>
                           <Button
@@ -2165,7 +2165,7 @@ export function MatchWizardFlow() {
                             <Link to={`/projects/${projectId}/boq`}>
                               <Button variant="primary" size="sm">
                                 {t('match.wizard.openBoq', {
-                                  defaultValue: 'Open the BOQ',
+                                  defaultValue: 'Open the Planilha orçamentária',
                                 })}
                               </Button>
                             </Link>

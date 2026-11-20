@@ -37,7 +37,7 @@ export function BOQRenameDialog({ boqId, name, onClose }: BOQRenameDialogProps) 
       className="fixed inset-0 z-modal flex items-center justify-center bg-black/40 p-4"
       role="dialog"
       aria-modal="true"
-      aria-label={t('boq.rename', { defaultValue: 'Rename estimate' })}
+      aria-label={t('boq.rename', { defaultValue: 'Rename Orçamento' })}
       onClick={onClose}
     >
       <form
@@ -52,7 +52,7 @@ export function BOQRenameDialog({ boqId, name, onClose }: BOQRenameDialogProps) 
         }}
       >
         <h2 className="oe-section-title mb-3">
-          {t('boq.rename', { defaultValue: 'Rename estimate' })}
+          {t('boq.rename', { defaultValue: 'Rename Orçamento' })}
         </h2>
         <input
           autoFocus

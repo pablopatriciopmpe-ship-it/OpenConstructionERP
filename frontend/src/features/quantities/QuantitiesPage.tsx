@@ -618,7 +618,7 @@ function InstallProgressPanel({
                 {t('quantities.result_ready', { defaultValue: 'Ready' })}
               </div>
               <div className="text-2xs text-content-tertiary">
-                {t('quantities.result_use_cad', { defaultValue: 'Use in AI Estimate → CAD/BIM' })}
+                {t('quantities.result_use_cad', { defaultValue: 'Use in IA Orçamento → CAD/BIM' })}
               </div>
             </div>
           </div>
@@ -953,14 +953,14 @@ export function QuantitiesPage() {
 
   return (
     <div className="space-y-5 animate-fade-in">
-      <Breadcrumb items={[{ label: t('nav.quantities', 'Quantity Takeoff') }]} />
+      <Breadcrumb items={[{ label: t('nav.quantities', 'Quantity Levantamento de quantitativos') }]} />
       {/* Canonical top block — module name + icon come from the global top
           bar; the page renders only its subtitle. */}
       <PageHeader
-        srTitle={t('quantities.title', { defaultValue: 'Quantity Takeoff' })}
+        srTitle={t('quantities.title', { defaultValue: 'Quantity Levantamento de quantitativos' })}
         subtitle={t('quantities.subtitle', {
           defaultValue:
-            'Collect project quantities, from AI text input, PDF drawings, or CAD/BIM models',
+            'Collect project quantities, from IA text input, PDF drawings, or CAD/BIM models',
         })}
         actions={<ModuleGuideButton content={quantitiesGuide} />}
       />
@@ -974,15 +974,15 @@ export function QuantitiesPage() {
             : undefined
         }
         links={[
-          { label: t('nav.ai_estimate', { defaultValue: 'Quick Estimate (AI)' }), onClick: () => navigate('/ai-estimate') },
-          { label: t('nav.takeoff', { defaultValue: 'PDF Takeoff' }), onClick: () => navigate('/takeoff') },
+          { label: t('nav.ai_estimate', { defaultValue: 'Quick Orçamento (IA)' }), onClick: () => navigate('/ai-estimate') },
+          { label: t('nav.takeoff', { defaultValue: 'PDF Levantamento de quantitativos' }), onClick: () => navigate('/takeoff') },
           // #149 - the sidebar's key, so the link and the page it opens agree.
           { label: t('nav.cad_bim_explorer', { defaultValue: 'CAD-BIM BI Explorer' }), onClick: () => navigate('/data-explorer') },
         ]}
       >
         {t('quantities.intro_body', {
           defaultValue:
-            'Choose how to collect quantities, from a written description via AI, from PDF drawings, or from CAD and BIM models, and install the converter modules the file formats need. Each route turns drawings or models into measured quantities that flow into your BOQ.',
+            'Choose how to collect quantities, from a written description via IA, from PDF drawings, or from CAD and BIM models, and install the converter modules the file formats need. Each route turns drawings or models into measured quantities that flow into your Planilha orçamentária.',
         })}
       </DismissibleInfo>
 
@@ -1103,7 +1103,7 @@ export function QuantitiesPage() {
           <p className="mt-3 text-sm text-content-secondary leading-relaxed">
             {t('quantities.converters_desc', {
               defaultValue:
-                'Install converter modules to extract elements, quantities, and geometry from CAD/BIM files. Each module handles a specific file format and transforms it into structured data for AI-powered cost estimation.',
+                'Install converter modules to extract elements, quantities, and geometry from CAD/BIM files. Each module handles a specific file format and transforms it into structured data for IA-powered cost Estimativa.',
             })}
           </p>
           <button
@@ -1111,7 +1111,7 @@ export function QuantitiesPage() {
             className="mt-3 inline-flex items-center gap-1.5 rounded-lg bg-oe-blue/10 px-3 py-1.5 text-xs font-medium text-oe-blue hover:bg-oe-blue/20 transition-colors"
           >
             <Box size={14} />
-            {t('quantities.go_to_cad_takeoff', { defaultValue: 'Go to CAD/BIM Takeoff' })}
+            {t('quantities.go_to_cad_takeoff', { defaultValue: 'Go to CAD/BIM Levantamento de quantitativos' })}
             <ArrowRight size={12} />
           </button>
         </div>
@@ -1213,12 +1213,12 @@ export function QuantitiesPage() {
             </h2>
             <p className="mt-0.5 text-sm text-content-tertiary">
               {t('quantities.manual_desc', {
-                defaultValue: 'Need to add quantities directly? Go to the BOQ Editor.',
+                defaultValue: 'Need to add quantities directly? Go to the Planilha orçamentária Editor.',
               })}
             </p>
           </div>
           <Button onClick={() => navigate('/boq')} icon={<MessageSquareText size={16} />}>
-            {t('quantities.open_boq', { defaultValue: 'Open BOQ Editor' })}
+            {t('quantities.open_boq', { defaultValue: 'Open Planilha orçamentária Editor' })}
           </Button>
         </div>
       </div>
@@ -1264,7 +1264,7 @@ export function QuantitiesPage() {
                   <button
                     onClick={openInTakeoff}
                     className="flex items-center gap-3 min-w-0 text-left"
-                    title={t('quantities.open_in_takeoff', { defaultValue: 'Open in takeoff' })}
+                    title={t('quantities.open_in_takeoff', { defaultValue: 'Open in Levantamento de quantitativos' })}
                   >
                     <FileText size={16} className="shrink-0 text-content-quaternary" />
                     <div className="min-w-0">
@@ -1311,7 +1311,7 @@ export function QuantitiesPage() {
                     >
                       <Ruler size={14} />
                       <span className="hidden sm:inline">
-                        {t('quantities.open_in_takeoff', { defaultValue: 'Open in takeoff' })}
+                        {t('quantities.open_in_takeoff', { defaultValue: 'Open in Levantamento de quantitativos' })}
                       </span>
                     </button>
                   </div>

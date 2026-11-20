@@ -70,7 +70,7 @@ export function CostPerAreaBenchmark({
 
   const helpText = t('boq.cost_per_area_help', {
     defaultValue:
-      'Cost per m2 is the estimate direct cost divided by the gross floor area, taken from the $GFA variable. The comparison positions that figure against your own past projects that recorded both a cost and an area. The percentile is how many of those projects came in below this estimate, so a lower percentile means a cheaper estimate than most of your work.',
+      'Cost per m2 is the Orçamento direct cost divided by the gross floor area, taken from the $GFA variable. The comparison positions that figure against your own past projects that recorded both a cost and an area. The percentile is how many of those projects came in below this Orçamento, so a lower percentile means a cheaper Orçamento than most of your work.',
   });
 
   return (

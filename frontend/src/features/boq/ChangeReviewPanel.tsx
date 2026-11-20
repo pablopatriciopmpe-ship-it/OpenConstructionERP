@@ -399,7 +399,7 @@ export function ChangeReviewPanel({
               <p className="text-2xs text-content-tertiary">
                 {t('boq.changes_scan_hint', {
                   defaultValue:
-                    'Looks for drawings with a newer revision and BIM models with a newer version since your positions were measured. Nothing in the estimate changes.',
+                    'Looks for drawings with a newer revision and BIM models with a newer version since your positions were measured. Nothing in the Orçamento changes.',
                 })}
               </p>
               <div className="flex gap-1" role="group">
@@ -566,7 +566,7 @@ export function ChangeReviewPanel({
                 {isLocked && (
                   <p className="text-2xs text-semantic-warning">
                     {t('boq.changes_qty_locked', {
-                      defaultValue: 'This estimate is locked. Create a revision to change quantities.',
+                      defaultValue: 'This Orçamento is locked. Create a revision to change quantities.',
                     })}
                   </p>
                 )}

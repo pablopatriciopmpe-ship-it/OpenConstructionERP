@@ -146,7 +146,7 @@ export function EditMarkupModal({
 
       addToast({
         type: 'success',
-        title: t('markups.updated', { defaultValue: 'Markup updated' }),
+        title: t('markups.updated', { defaultValue: 'BDI updated' }),
       });
       onUpdated?.(updated);
       onClose();
@@ -201,14 +201,14 @@ export function EditMarkupModal({
         ref={dialogRef}
         role="dialog"
         aria-modal="true"
-        aria-label={t('markups.editTitle', { defaultValue: 'Edit Markup' })}
+        aria-label={t('markups.editTitle', { defaultValue: 'Edit BDI' })}
         className="relative z-10 w-full max-w-lg mx-4 rounded-2xl border border-border-light bg-surface-elevated shadow-xl animate-scale-in"
       >
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-3.5 border-b border-border-light">
           <h2 className="oe-card-title flex items-center gap-2">
             <Edit3 size={16} className="text-oe-blue" />
-            {t('markups.editTitle', { defaultValue: 'Edit Markup' })}
+            {t('markups.editTitle', { defaultValue: 'Edit BDI' })}
           </h2>
           <button
             type="button"

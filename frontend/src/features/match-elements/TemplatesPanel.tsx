@@ -78,7 +78,7 @@ export function TemplatesPanel({ onClose, activeSignatures }: Props) {
           <div className="flex items-center gap-2">
             <Library className="w-5 h-5 text-indigo-500" />
             <h2 id="templates-panel-heading" className="text-base font-semibold">
-              {t('match_elements.templates.title', 'Template library')}
+              {t('match_elements.templates.title', 'Modelo library')}
             </h2>
             <span className="text-xs text-content-tertiary">
               {listQ.data ? t('match_elements.templates.count', '{{count}} signatures', { count: listQ.data.length }) : ''}
@@ -96,7 +96,7 @@ export function TemplatesPanel({ onClose, activeSignatures }: Props) {
           <button
             type="button"
             onClick={onClose}
-            aria-label={t('match_elements.templates.close', 'Close template library')}
+            aria-label={t('match_elements.templates.close', 'Close Modelo library')}
             className="p-1.5 rounded hover:bg-surface-secondary"
           >
             <X className="w-5 h-5" />
@@ -112,7 +112,7 @@ export function TemplatesPanel({ onClose, activeSignatures }: Props) {
           )}
           {listQ.data && listQ.data.length === 0 && (
             <div className="text-center text-content-tertiary py-12 text-sm">
-              <p>{t('match_elements.templates.empty', 'No saved templates yet.')}</p>
+              <p>{t('match_elements.templates.empty', 'No saved Modelos yet.')}</p>
               <p className="text-xs mt-2 opacity-70">
                 {t('match_elements.templates.empty_hint', 'Confirmed matches with "Save to library" enabled appear here and propagate to future projects.')}
               </p>
@@ -166,7 +166,7 @@ export function TemplatesPanel({ onClose, activeSignatures }: Props) {
                 </div>
                 <button
                   onClick={() => {
-                    if (confirm(t('match_elements.templates.remove_confirm', 'Remove this template from the library?'))) deleteMut.mutate(tpl.id);
+                    if (confirm(t('match_elements.templates.remove_confirm', 'Remove this Modelo from the library?'))) deleteMut.mutate(tpl.id);
                   }}
                   disabled={deleteMut.isPending}
                   className="p-1.5 rounded text-content-tertiary hover:text-semantic-error hover:bg-semantic-error-bg disabled:opacity-50"
@@ -181,7 +181,7 @@ export function TemplatesPanel({ onClose, activeSignatures }: Props) {
         </div>
 
         <footer className="px-4 py-3 border-t border-border-light text-xs text-content-tertiary">
-          {t('match_elements.templates.footer', 'Templates are tenant-scoped. Confirmed signatures auto-suggest matches in future projects.')}
+          {t('match_elements.templates.footer', 'Modelos are tenant-scoped. Confirmed signatures auto-suggest matches in future projects.')}
         </footer>
       </aside>
     </>

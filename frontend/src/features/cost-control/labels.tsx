@@ -39,7 +39,7 @@ export function methodHelp(t: TFunction, method: ForecastMethod | string): strin
     case 'maximum':
       return t('cost_control.method_maximum_help', {
         defaultValue:
-          'Each line takes its highest figure: budget, estimate, award, measured or invoiced. Careful by design: a risk is never hidden behind a lower number.',
+          'Each line takes its highest figure: budget, Orçamento, award, measured or invoiced. Careful by design: a risk is never hidden behind a lower number.',
       });
     case 'evm_cpi':
       return t('cost_control.method_evm_cpi_help', {
@@ -53,7 +53,7 @@ export function methodHelp(t: TFunction, method: ForecastMethod | string): strin
     default:
       return t('cost_control.method_best_available_help', {
         defaultValue:
-          'Each line takes its most reliable figure: the final account, else the measured work, else the award plus changes, else the estimate, else the budget.',
+          'Each line takes its most reliable figure: the final account, else the measured work, else the award plus changes, else the Orçamento, else the budget.',
       });
   }
 }
@@ -124,7 +124,7 @@ export function layerLabel(t: TFunction, layer: PhaseLayer): string {
     case 'budget':
       return t('cost_control.layer_budget', { defaultValue: 'Budget' });
     case 'estimate':
-      return t('cost_control.layer_estimate', { defaultValue: 'Estimate' });
+      return t('cost_control.layer_estimate', { defaultValue: 'Orçamento' });
     case 'tender':
       return t('cost_control.layer_tender', { defaultValue: 'Best tender' });
     case 'awarded':
@@ -167,7 +167,7 @@ export function sourceLabel(t: TFunction, source: ForecastSource): string {
     case 'budget':
       return t('cost_control.source_budget', { defaultValue: 'Budget' });
     case 'estimate':
-      return t('cost_control.source_estimate', { defaultValue: 'Estimate' });
+      return t('cost_control.source_estimate', { defaultValue: 'Orçamento' });
     case 'partly_awarded':
       return t('cost_control.source_partly_awarded', { defaultValue: 'Plan, partly awarded' });
     case 'awarded':
@@ -196,7 +196,7 @@ export function sourceExplanation(t: TFunction, source: ForecastSource): string 
       });
     case 'estimate':
       return t('cost_control.source_estimate_why', {
-        defaultValue: 'Nothing is awarded on this line yet, so the estimate is the best figure.',
+        defaultValue: 'Nothing is awarded on this line yet, so the Orçamento is the best figure.',
       });
     case 'partly_awarded':
       return t('cost_control.source_partly_awarded_why', {
@@ -267,11 +267,11 @@ export function stageLabel(t: TFunction, stage: CostStage | string): string {
     case 'budget':
       return t('cost_control.stage_budget', { defaultValue: 'Budget' });
     case 'estimate':
-      return t('cost_control.stage_estimate', { defaultValue: 'Estimate' });
+      return t('cost_control.stage_estimate', { defaultValue: 'Orçamento' });
     case 'detailed_estimate':
-      return t('cost_control.stage_detailed_estimate', { defaultValue: 'Detailed estimate' });
+      return t('cost_control.stage_detailed_estimate', { defaultValue: 'Detailed Orçamento' });
     case 'pre_tender':
-      return t('cost_control.stage_pre_tender', { defaultValue: 'Pre-tender estimate' });
+      return t('cost_control.stage_pre_tender', { defaultValue: 'Pre-tender Orçamento' });
     case 'award':
       return t('cost_control.stage_award', { defaultValue: 'Award' });
     case 'final':
@@ -286,7 +286,7 @@ export function stageHint(t: TFunction, stage: CostStage | string): string {
   switch (stage) {
     case 'budget':
       return t('cost_control.stage_budget_hint', {
-        defaultValue: 'DIN 276 Kostenrahmen · RIBA 0-1 order of cost estimate · AACE class 5',
+        defaultValue: 'DIN 276 Kostenrahmen · RIBA 0-1 order of cost Orçamento · AACE class 5',
       });
     case 'estimate':
       return t('cost_control.stage_estimate_hint', {
@@ -298,7 +298,7 @@ export function stageHint(t: TFunction, stage: CostStage | string): string {
       });
     case 'pre_tender':
       return t('cost_control.stage_pre_tender_hint', {
-        defaultValue: 'DIN 276 Kostenvoranschlag · RIBA 4 pre-tender estimate · AACE class 2',
+        defaultValue: 'DIN 276 Kostenvoranschlag · RIBA 4 pre-tender Orçamento · AACE class 2',
       });
     case 'award':
       return t('cost_control.stage_award_hint', {
@@ -343,7 +343,7 @@ export function findingTitle(t: TFunction, finding: CostControlFinding): string 
       });
     case 'cost_control.pending_changes':
       return t('cost_control.finding_pending', {
-        defaultValue: 'Change orders waiting for a decision: {{n}}',
+        defaultValue: 'Alterações de contrato waiting for a decision: {{n}}',
         n: Number(d.count ?? 0),
       });
     case 'cost_control.snapshot_stale':

@@ -45,7 +45,7 @@ export function CostDatabaseInvite({
 }: CostDatabaseInviteProps) {
   const { t } = useTranslation();
 
-  const title = t('costs.empty_state.title', { defaultValue: 'Start your cost database' });
+  const title = t('costs.empty_state.title', { defaultValue: 'Start your Banco de custos' });
   const importCta = t('costs.empty_state.import_cta', { defaultValue: 'Import a database' });
 
   if (variant === 'compact') {
@@ -64,7 +64,7 @@ export function CostDatabaseInvite({
             <p className="mt-1 text-xs leading-relaxed text-content-secondary">
               {t('costs.empty_state.compact_subtitle', {
                 defaultValue:
-                  'A cost database holds the unit rates you price work with. Load one and every rate becomes searchable here, ready to drop into a bill of quantities.',
+                  'A Banco de custos holds the unit rates you price work with. Load one and every rate becomes searchable here, ready to drop into a bill of quantities.',
               })}
             </p>
           </div>
@@ -96,7 +96,7 @@ export function CostDatabaseInvite({
         <p className="mt-1.5 max-w-md text-sm text-content-secondary">
           {t('costs.empty_state.subtitle', {
             defaultValue:
-              'A cost database holds the unit rates you price work with. Pick how you want to begin - you can do both, and add more any time.',
+              'A Banco de custos holds the unit rates you price work with. Pick how you want to begin - you can do both, and add more any time.',
           })}
         </p>
       </div>
@@ -117,7 +117,7 @@ export function CostDatabaseInvite({
               <p className="mt-1 text-sm leading-relaxed text-content-secondary">
                 {t('costs.empty_state.import_desc', {
                   defaultValue:
-                    'Load a regional construction cost database with tens of thousands of priced items for materials, labour and equipment. Search it and pull rates straight into your estimates.',
+                    'Load a regional construction Banco de custos with tens of thousands of priced items for materials, labour and equipment. Search it and pull rates straight into your Orçamentos.',
                 })}
               </p>
             </div>

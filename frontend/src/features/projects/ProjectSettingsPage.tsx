@@ -862,14 +862,14 @@ export function ProjectSettingsPage() {
             onClick: () => navigate('/validation'),
           },
           {
-            label: t('nav.boq', { defaultValue: 'BOQ' }),
+            label: t('nav.boq', { defaultValue: 'Planilha orçamentária' }),
             onClick: () => navigate(`/projects/${project.id}/boq`),
           },
         ]}
       >
         {t('projects.settings_intro_body', {
           defaultValue:
-            'Set the project currency, VAT, units, classification standard and compliance rule sets here, and re-run the setup wizard to change which modules are active. These choices are the source of truth that BOQ pricing, validation and reports read from, so fixing them once keeps every downstream number consistent. Compliance rule sets chosen here are enforced in Validation.',
+            'Set the project currency, VAT, units, classification standard and compliance rule sets here, and re-run the setup wizard to change which modules are active. These choices are the source of truth that Planilha orçamentária pricing, validation and reports read from, so fixing them once keeps every downstream number consistent. Compliance rule sets chosen here are enforced in Validation.',
         })}
       </DismissibleInfo>
 
@@ -1133,7 +1133,7 @@ export function ProjectSettingsPage() {
         <CardHeader
           title={t('project.settings.vat.title', { defaultValue: 'Default VAT rate' })}
           subtitle={t('project.settings.vat.subtitle', {
-            defaultValue: 'Used when seeding markups for new BOQs in this project.',
+            defaultValue: 'Used when seeding Margens for new Planilhas orçamentárias in this project.',
           })}
           action={
             <Badge variant={overrideActive ? 'blue' : 'neutral'} size="sm">
@@ -1190,7 +1190,7 @@ export function ProjectSettingsPage() {
           <p className="text-xs text-content-tertiary md:basis-full md:max-w-md md:mt-0 mt-1">
             {t('project.settings.vat.helper', {
               defaultValue:
-                'Used when seeding markups for new BOQs. Leave blank to use the regional default ({{regional}}%).',
+                'Used when seeding Margens for new Planilhas orçamentárias. Leave blank to use the regional default ({{regional}}%).',
               regional: regionalVatPct,
             })}
           </p>

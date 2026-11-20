@@ -56,7 +56,7 @@ export function importToastText(
   isGaeb: boolean,
   t: Translate,
 ): { title: string; message?: string } {
-  const ai = () => t('boq.import_toast.ai', { defaultValue: 'AI' });
+  const ai = () => t('boq.import_toast.ai', { defaultValue: 'IA' });
   let method: string;
   if (isGaeb || result.source_format === 'gaeb') {
     const sections = Array.isArray(result.sections) ? result.sections.length : 0;
@@ -76,7 +76,7 @@ export function importToastText(
     });
   } else if (result.method === 'ai') {
     method = result.model_used
-      ? t('boq.import_toast.method_ai', { defaultValue: 'AI: {{model}}', model: result.model_used })
+      ? t('boq.import_toast.method_ai', { defaultValue: 'IA: {{model}}', model: result.model_used })
       : ai();
   } else {
     method = t('boq.import_toast.method_direct', { defaultValue: 'direct' });

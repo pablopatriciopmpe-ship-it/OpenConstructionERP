@@ -380,7 +380,7 @@ export default function AddToBOQModal({
         type: 'success',
         title: t('bim.link_success_title', { defaultValue: 'Linked' }),
         message: t('bim.link_success', {
-          defaultValue: 'Linked {{count}} element(s) to BOQ position',
+          defaultValue: 'Linked {{count}} element(s) to Planilha orçamentária position',
           count,
         }),
       });
@@ -424,7 +424,7 @@ export default function AddToBOQModal({
         type: 'success',
         title: t('bim.link_created_new_title', { defaultValue: 'Position created' }),
         message: t('bim.link_created_new', {
-          defaultValue: 'Created BOQ position and linked {{count}} element(s)',
+          defaultValue: 'Created Planilha orçamentária position and linked {{count}} element(s)',
           count: linkCount,
         }),
       });
@@ -450,7 +450,7 @@ export default function AddToBOQModal({
     mutationFn: () =>
       boqApi.create({
         project_id: projectId,
-        name: t('bim.new_boq_default_name', { defaultValue: 'Bid schedule' }),
+        name: t('bim.new_boq_default_name', { defaultValue: 'Bid Cronograma' }),
       }),
     onSuccess: (boq) => {
       qc.setQueryData<BOQ[]>(['boqs-for-link', projectId], (prev) => [...(prev ?? []), boq]);
@@ -482,7 +482,7 @@ export default function AddToBOQModal({
           <div className="flex items-center gap-2">
             <Link2 size={16} className="text-oe-blue" />
             <h2 className="oe-card-title">
-              {t('bim.add_to_boq_title', { defaultValue: 'Add to BOQ' })}
+              {t('bim.add_to_boq_title', { defaultValue: 'Add to Planilha orçamentária' })}
             </h2>
             <span className="text-2xs text-content-tertiary">
               {elements.length === 1
@@ -511,7 +511,7 @@ export default function AddToBOQModal({
             <span className="inline-flex h-4 w-4 items-center justify-center rounded-full bg-oe-blue text-2xs font-semibold text-white">
               1
             </span>
-            {t('bim.target_boq', { defaultValue: 'Target BOQ' })}
+            {t('bim.target_boq', { defaultValue: 'Target Planilha orçamentária' })}
           </label>
           <select
             ref={targetBoqRef}
@@ -522,7 +522,7 @@ export default function AddToBOQModal({
           >
             {boqs.length === 0 ? (
               <option value="">
-                {t('bim.no_boqs', { defaultValue: 'No BOQs in this project yet' })}
+                {t('bim.no_boqs', { defaultValue: 'No Planilhas orçamentárias in this project yet' })}
               </option>
             ) : (
               boqs.map((b: BOQ) => (
@@ -536,7 +536,7 @@ export default function AddToBOQModal({
             <div className="mt-2 flex flex-wrap items-center gap-2">
               <p className="text-2xs text-content-secondary">
                 {t('bim.no_boqs_create_hint', {
-                  defaultValue: 'This project has no bid schedule yet. Create one to link these elements.',
+                  defaultValue: 'This project has no bid Cronograma yet. Create one to link these elements.',
                 })}
               </p>
               <button
@@ -547,7 +547,7 @@ export default function AddToBOQModal({
                 className="inline-flex items-center gap-1 px-2.5 py-1 text-2xs font-semibold rounded-md bg-oe-blue text-white hover:bg-oe-blue-dark disabled:opacity-50"
               >
                 {createBoqMut.isPending ? <Loader2 size={12} className="animate-spin" /> : <Plus size={12} />}
-                {t('bim.create_boq_here', { defaultValue: 'Create bid schedule' })}
+                {t('bim.create_boq_here', { defaultValue: 'Create bid Cronograma' })}
               </button>
             </div>
           )}
@@ -618,7 +618,7 @@ export default function AddToBOQModal({
               ) : pickablePositions.length === 0 ? (
                 <div className="text-center py-8 text-2xs text-content-tertiary italic">
                   {positions.length === 0
-                    ? t('bim.boq_empty', { defaultValue: 'This BOQ has no positions yet' })
+                    ? t('bim.boq_empty', { defaultValue: 'This Planilha orçamentária has no positions yet' })
                     : t('bim.no_match', { defaultValue: 'No positions match your search' })}
                 </div>
               ) : (
@@ -854,7 +854,7 @@ export default function AddToBOQModal({
                   <span>
                     {t('bim.form_note', {
                       defaultValue:
-                        'Submitting will create a new BOQ position and link {{count}} BIM element(s) to it in one step.',
+                        'Submitting will create a new Planilha orçamentária position and link {{count}} BIM element(s) to it in one step.',
                       count: elements.length,
                     })}
                   </span>

@@ -280,7 +280,7 @@ export function MenuAppearanceCard() {
   const source = menuUser
     ? t('settings.menu_source_personal', { defaultValue: 'Your own menu look, saved on this device.' })
     : menuWorkspace
-      ? t('settings.menu_source_workspace', { defaultValue: 'Following the workspace default.' })
+      ? t('settings.menu_source_workspace', { defaultValue: 'Following the Espaço de trabalho default.' })
       : t('settings.menu_source_platform', { defaultValue: 'Platform default.' });
 
   const saveWorkspace = async (value: MenuLook | null) => {
@@ -291,13 +291,13 @@ export function MenuAppearanceCard() {
       useToastStore.getState().addToast({
         type: 'success',
         title: value
-          ? t('settings.style_workspace_saved', { defaultValue: 'Workspace default saved' })
-          : t('settings.style_workspace_cleared', { defaultValue: 'Workspace default cleared' }),
+          ? t('settings.style_workspace_saved', { defaultValue: 'Espaço de trabalho default saved' })
+          : t('settings.style_workspace_cleared', { defaultValue: 'Espaço de trabalho default cleared' }),
       });
     } catch {
       useToastStore.getState().addToast({
         type: 'error',
-        title: t('settings.style_workspace_failed', { defaultValue: 'Could not save the workspace default' }),
+        title: t('settings.style_workspace_failed', { defaultValue: 'Could not save the Espaço de trabalho default' }),
       });
     } finally {
       setSaving(false);
@@ -457,7 +457,7 @@ export function MenuAppearanceCard() {
           {menuUser && (
             <Button variant="secondary" size="sm" icon={<RotateCcw size={14} />} onClick={followWorkspaceMenu}>
               {menuWorkspace
-                ? t('settings.style_use_workspace', { defaultValue: 'Use workspace default' })
+                ? t('settings.style_use_workspace', { defaultValue: 'Use Espaço de trabalho default' })
                 : t('settings.menu_reset', { defaultValue: 'Reset to default' })}
             </Button>
           )}
@@ -466,21 +466,21 @@ export function MenuAppearanceCard() {
         {isAdmin && (
           <div className="mt-4 rounded-lg border border-border-light bg-surface-secondary/50 p-3">
             <p className="text-sm font-medium text-content-primary">
-              {t('settings.style_workspace_title', { defaultValue: 'Workspace default' })}
+              {t('settings.style_workspace_title', { defaultValue: 'Espaço de trabalho default' })}
             </p>
             <p className="mt-0.5 text-xs text-content-tertiary">
               {t('settings.menu_workspace_desc', {
                 defaultValue:
-                  'Make the menu look above the default for everyone in this workspace. Item icons stay personal, and people who picked their own look keep it.',
+                  'Make the menu look above the default for everyone in this Espaço de trabalho. Item icons stay personal, and people who picked their own look keep it.',
               })}
             </p>
             <div className="mt-3 flex flex-wrap gap-2">
               <Button size="sm" disabled={saving} onClick={() => void saveWorkspace(menu)}>
-                {t('settings.style_workspace_save', { defaultValue: 'Set as workspace default' })}
+                {t('settings.style_workspace_save', { defaultValue: 'Set as Espaço de trabalho default' })}
               </Button>
               {menuWorkspace && (
                 <Button variant="ghost" size="sm" disabled={saving} onClick={() => void saveWorkspace(null)}>
-                  {t('settings.style_workspace_clear', { defaultValue: 'Clear workspace default' })}
+                  {t('settings.style_workspace_clear', { defaultValue: 'Clear Espaço de trabalho default' })}
                 </Button>
               )}
             </div>

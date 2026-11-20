@@ -264,7 +264,7 @@ function ScopeLabel({ scope, boqId }: { scope: FindingScope; boqId: string | und
       return (
         <span className="truncate text-sm font-medium text-content-primary">
           {scope.boqId === boqId || !scope.name
-            ? t('validation.scope_whole_boq', { defaultValue: 'Whole BOQ' })
+            ? t('validation.scope_whole_boq', { defaultValue: 'Whole Planilha orçamentária' })
             : scope.name}
         </span>
       );
@@ -277,7 +277,7 @@ function ScopeLabel({ scope, boqId }: { scope: FindingScope; boqId: string | und
     case 'missing':
       return (
         <span className="text-xs text-content-tertiary">
-          {t('validation.position_not_found', { defaultValue: 'Position no longer in this BOQ' })}
+          {t('validation.position_not_found', { defaultValue: 'Position no longer in this Planilha orçamentária' })}
         </span>
       );
     default:
@@ -328,7 +328,7 @@ function FindingRow<T extends FindingLike>({
             to={link}
             className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium text-oe-blue hover:bg-oe-blue-subtle"
           >
-            {t('validation.open_in_boq', { defaultValue: 'Open in BOQ' })}
+            {t('validation.open_in_boq', { defaultValue: 'Open in Planilha orçamentária' })}
             <ExternalLink size={12} />
           </Link>
         )}
@@ -556,7 +556,7 @@ export function ValidationResults<T extends FindingLike>({
             </p>
             <p className="mt-0.5 text-sm text-content-secondary">
               {t('validation.no_problems_body', {
-                defaultValue: 'All {{total}} checks passed. Nothing in this BOQ needs your attention.',
+                defaultValue: 'All {{total}} checks passed. Nothing in this Planilha orçamentária needs your attention.',
                 total: totalChecks,
               })}
             </p>

@@ -85,7 +85,7 @@ export function SpreadsheetImportEntry({ projectId, schedule, variant }: Spreads
             </h3>
             <p className="mt-1 text-xs text-content-secondary">
               {t('schedule.tabular_import.card_desc', {
-                defaultValue: 'Read a schedule kept in a spreadsheet into a new schedule, or into this one while it is a draft.',
+                defaultValue: 'Read a Cronograma kept in a spreadsheet into a new Cronograma, or into this one while it is a draft.',
               })}
             </p>
           </div>

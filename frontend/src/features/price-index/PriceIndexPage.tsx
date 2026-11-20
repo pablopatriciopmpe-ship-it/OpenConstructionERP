@@ -91,7 +91,7 @@ export function PriceIndexPage() {
         actions={
           <Button variant="secondary" size="sm" onClick={() => navigate('/price-index/resource-index')}>
             <Calculator className="mr-1 h-4 w-4" aria-hidden />
-            {t('price_index.ri.open', { defaultValue: 'Resource-index estimate (Russia)' })}
+            {t('price_index.ri.open', { defaultValue: 'Resource-index Orçamento (Russia)' })}
           </Button>
         }
       />
@@ -876,7 +876,7 @@ function EscalatePanel({ seriesList }: { seriesList: CostIndexSeries[] }) {
         title={
           <span className="inline-flex items-center gap-2">
             <CalendarClock className="h-4 w-4 text-oe-blue" aria-hidden />
-            {t('price_index.escalate_title', { defaultValue: 'Escalate estimate to date' })}
+            {t('price_index.escalate_title', { defaultValue: 'Escalate Orçamento to date' })}
           </span>
         }
         subtitle={t('price_index.escalate_subtitle', {
@@ -1146,7 +1146,7 @@ function EscalateResults({ result }: { result: EscalatePreviewResponse }) {
                 navigate(`/boq?project=${encodeURIComponent(projectId)}`);
               }}
             >
-              {t('price_index.escalate_open_estimate', { defaultValue: 'Open estimate' })}
+              {t('price_index.escalate_open_estimate', { defaultValue: 'Open Orçamento' })}
             </Button>
           )}
           <Button

@@ -252,7 +252,7 @@ const QUANTITY_RULES_PRESETS: QuantityRulePreset[] = [
     id: 'walls-area',
     icon: LayoutPanelTop,
     title: 'Walls - area',
-    subtitle: 'Auto-create one BOQ position per wall type, sized by surface area (m²).',
+    subtitle: 'Auto-create one Planilha orçamentária position per wall type, sized by surface area (m²).',
     patch: {
       name: 'Walls - area',
       element_type_filter: 'Wall*, IfcWall*',
@@ -1358,7 +1358,7 @@ function RuleEditorModal({
                     onChange={() => updateField('target_kind', 'existing')}
                     className="accent-oe-blue"
                   />
-                  {t('bim_rules.target_existing', { defaultValue: 'Link to existing BOQ position' })}
+                  {t('bim_rules.target_existing', { defaultValue: 'Link to existing Planilha orçamentária position' })}
                 </label>
                 <label className="flex items-center gap-2 text-xs text-content-primary">
                   <input
@@ -1379,7 +1379,7 @@ function RuleEditorModal({
                       htmlFor="rule-boq"
                       className="mb-1 block text-2xs font-medium text-content-secondary"
                     >
-                      {t('bim_rules.pick_boq', { defaultValue: 'BOQ' })}
+                      {t('bim_rules.pick_boq', { defaultValue: 'Planilha orçamentária' })}
                     </label>
                     <select
                       id="rule-boq"
@@ -1391,7 +1391,7 @@ function RuleEditorModal({
                       className="oe-select-sm w-full"
                     >
                       <option value="">
-                        {t('bim_rules.select_boq', { defaultValue: 'Select a BOQ…' })}
+                        {t('bim_rules.select_boq', { defaultValue: 'Select a Planilha orçamentária…' })}
                       </option>
                       {(boqsQuery.data ?? []).map((b) => (
                         <option key={b.id} value={b.id}>
@@ -1462,7 +1462,7 @@ function RuleEditorModal({
                   <p className="text-2xs text-content-tertiary">
                     {t('bim_rules.auto_create_hint', {
                       defaultValue:
-                        "On apply, a new BOQ position will be created using this rule's name as the description. Quantities will be computed at apply time.",
+                        "On apply, a new Planilha orçamentária position will be created using this rule's name as the description. Quantities will be computed at apply time.",
                     })}
                   </p>
                   {/* Unit-rate prefill - calls the cost suggestion endpoint
@@ -1649,12 +1649,12 @@ function PreviewModal({ open, onClose, result, loading, onApply, applying, canAp
               </p>
               {(result.positions_to_create ?? 0) > 0 && (
                 <p className="mb-3 text-sm font-semibold text-content-primary" role="status">
-                  {t('bim_rules.preview_create_notice', { defaultValue: 'Applying will create {{count}} new BOQ positions.', count: result.positions_to_create })}
+                  {t('bim_rules.preview_create_notice', { defaultValue: 'Applying will create {{count}} new Planilha orçamentária positions.', count: result.positions_to_create })}
                 </p>
               )}
               {result.target_boq_ambiguous && (
                 <p className="mb-3 text-sm text-content-secondary" role="alert">
-                  {t('bim_rules.preview_target_required', { defaultValue: 'Choose an available, unlocked BOQ and run a new preview.' })}
+                  {t('bim_rules.preview_target_required', { defaultValue: 'Choose an available, unlocked Planilha orçamentária and run a new preview.' })}
                 </p>
               )}
               <div className="mb-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -2849,11 +2849,11 @@ function RequirementsTabContent({
             }}
             className="flex items-center gap-1.5 rounded-lg border border-border-light bg-surface-primary px-2.5 py-1.5 text-2xs font-medium text-content-secondary hover:border-oe-blue hover:text-oe-blue"
             title={t('bim_rules.req_template_btn_title', {
-              defaultValue: 'Download Excel template',
+              defaultValue: 'Download Excel Modelo',
             })}
           >
             <Download size={12} />
-            {t('bim_rules.req_template_btn', { defaultValue: 'Template' })}
+            {t('bim_rules.req_template_btn', { defaultValue: 'Modelo' })}
           </button>
 
           {/* Export current set */}
@@ -3860,7 +3860,7 @@ export function BIMQuantityRulesPage() {
           ? {
               action: {
                 label: t('bim_rules.toast_applied_view_boq', {
-                  defaultValue: 'View in BOQ',
+                  defaultValue: 'View in Planilha orçamentária',
                 }),
                 onClick: () => navigate('/boq'),
               },
@@ -3875,7 +3875,7 @@ export function BIMQuantityRulesPage() {
       const body = err instanceof ApiError ? err.body as { detail?: { code?: string; error?: string } } : undefined;
       const code = body?.detail?.code;
       const message = code === 'quantity_preview_stale'
-        ? t('bim_rules.preview_stale', { defaultValue: 'The model, rules or BOQ changed. Run a new preview before applying.' })
+        ? t('bim_rules.preview_stale', { defaultValue: 'The model, rules or Planilha orçamentária changed. Run a new preview before applying.' })
         : code === 'quantity_preview_required'
           ? t('bim_rules.preview_required', { defaultValue: 'Run a preview before applying rules.' })
           : code === 'quantity_preview_model_not_ready'
@@ -4095,7 +4095,7 @@ export function BIMQuantityRulesPage() {
                 })
               : t('bim_rules.what_a_rule_does', {
                   defaultValue:
-                    'A quantity rule picks model elements by category and properties, such as walls built in a given phase, and writes their total area, volume, length or count into a BOQ position.',
+                    'A quantity rule picks model elements by category and properties, such as walls built in a given phase, and writes their total area, volume, length or count into a Planilha orçamentária position.',
                 })
           }
           actions={
@@ -4120,13 +4120,13 @@ export function BIMQuantityRulesPage() {
           }
           links={[
             { label: t('bim_rules.intro_link_bim', { defaultValue: 'BIM viewer' }), onClick: () => navigate('/bim') },
-            { label: t('bim_rules.intro_link_boq', { defaultValue: 'Open BOQ' }), onClick: () => navigate('/boq') },
+            { label: t('bim_rules.intro_link_boq', { defaultValue: 'Open Planilha orçamentária' }), onClick: () => navigate('/boq') },
             { label: t('bim_rules.intro_link_matrix', { defaultValue: 'Requirements matrix' }), onClick: () => navigate('/requirements/matrix') },
           ]}
         >
           {t('bim_rules.intro_body', {
             defaultValue:
-              'Define a pattern such as category equals Walls and storey equals Level 01, then map it to a BOQ position that already exists or is created for you. Applying the rule links matching elements from a BIM model in bulk, so quantities roll into the BOQ instead of being linked by hand. The same page holds the EIR and information-requirement rules that incoming models are checked against.',
+              'Define a pattern such as category equals Walls and storey equals Level 01, then map it to a Planilha orçamentária position that already exists or is created for you. Applying the rule links matching elements from a BIM model in bulk, so quantities roll into the Planilha orçamentária instead of being linked by hand. The same page holds the EIR and information-requirement rules that incoming models are checked against.',
           })}
         </DismissibleInfo>
 
@@ -4224,7 +4224,7 @@ export function BIMQuantityRulesPage() {
                 htmlFor="apply-boq-picker"
                 className="text-2xs font-medium text-content-secondary"
               >
-                {t('bim_rules.pick_boq', { defaultValue: 'BOQ' })}
+                {t('bim_rules.pick_boq', { defaultValue: 'Planilha orçamentária' })}
               </label>
               <select
                 id="apply-boq-picker"
@@ -4233,7 +4233,7 @@ export function BIMQuantityRulesPage() {
                 className="oe-select-sm"
               >
                 <option value="">
-                  {t('bim_rules.select_boq', { defaultValue: 'Select a BOQ…' })}
+                  {t('bim_rules.select_boq', { defaultValue: 'Select a Planilha orçamentária…' })}
                 </option>
                 {boqOptions.map((b) => (
                   <option key={b.id} value={b.id}>
@@ -4322,13 +4322,13 @@ export function BIMQuantityRulesPage() {
               <SlidersHorizontal size={28} className="mx-auto mb-2 text-content-tertiary" />
               <h3 className="oe-card-title">
                 {t('bim_rules.empty_title_v2', {
-                  defaultValue: 'Start from a template',
+                  defaultValue: 'Start from a Modelo',
                 })}
               </h3>
               <p className="mx-auto mt-1 max-w-md text-xs text-content-secondary">
                 {t('bim_rules.empty_subtitle_v2', {
                   defaultValue:
-                    'A rule auto-creates a BOQ position from BIM elements that match a pattern. Pick a template to see an example you can save or adjust.',
+                    'A rule auto-creates a Planilha orçamentária position from BIM elements that match a pattern. Pick a Modelo to see an example you can save or adjust.',
                 })}
               </p>
             </div>
@@ -4359,7 +4359,7 @@ export function BIMQuantityRulesPage() {
                   <span className="mt-1 flex items-center gap-1 text-2xs font-medium text-oe-blue">
                     <Plus size={12} />
                     {t('bim_rules.empty_use_template', {
-                      defaultValue: 'Use this template',
+                      defaultValue: 'Use this Modelo',
                     })}
                   </span>
                 </button>

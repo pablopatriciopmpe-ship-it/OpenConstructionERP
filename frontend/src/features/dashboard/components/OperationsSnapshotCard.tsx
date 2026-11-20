@@ -98,7 +98,7 @@ export function OperationsSnapshotCard({ projects }: { projects?: ProjectRef[] }
     if (boqTotal === 0) return dash;
     if (boqMultiCurrency) {
       return t('dashboard.snapshot_boq_count', {
-        defaultValue: '{{n}} BOQs · multi-currency',
+        defaultValue: '{{n}} Planilhas orçamentárias · multi-currency',
         n: boqTotal,
       });
     }
@@ -122,7 +122,7 @@ export function OperationsSnapshotCard({ projects }: { projects?: ProjectRef[] }
     {
       key: 'boq',
       icon: <FileSpreadsheet size={14} className={iconCls} />,
-      title: t('dashboard.layout.w_boq_summary', { defaultValue: 'BOQ Summary' }),
+      title: t('dashboard.layout.w_boq_summary', { defaultValue: 'Planilha orçamentária Summary' }),
       value: boqValueLabel,
       href: '/boq',
       empty: boqTotal === 0,
@@ -220,7 +220,7 @@ export function OperationsSnapshotCard({ projects }: { projects?: ProjectRef[] }
     {
       key: 'co',
       icon: <ClipboardList size={14} className={iconCls} />,
-      title: t('dashboard.layout.w_changeorders', { defaultValue: 'Change Orders' }),
+      title: t('dashboard.layout.w_changeorders', { defaultValue: 'Alterações de contrato' }),
       value: coOpen === 0
         ? dash
         : `${coOpen} · ${fmtMoney(co?.total_impact, co?.currency ?? fallbackCurrency)}`,

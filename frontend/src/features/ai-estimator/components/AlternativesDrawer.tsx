@@ -157,7 +157,7 @@ export function AlternativesDrawer({
         <p className="mt-4 text-2xs text-content-tertiary">
           {t('aiest.alts.grounded_note', {
             defaultValue:
-              'Every option is a real catalogue rate. The AI orders the shortlist but never invents a code or a price.',
+              'Every option is a real catalogue rate. The IA orders the shortlist but never invents a code or a price.',
           })}
         </p>
       </div>

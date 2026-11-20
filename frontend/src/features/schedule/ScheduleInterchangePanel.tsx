@@ -159,7 +159,7 @@ export function ScheduleInterchangePanel({
         URL.revokeObjectURL(url);
         addToast({
           type: 'success',
-          title: t('schedule.interchange.export_done', { defaultValue: 'Schedule exported' }),
+          title: t('schedule.interchange.export_done', { defaultValue: 'Cronograma exported' }),
           message: t('schedule.interchange.export_done_msg', {
             defaultValue: 'The interchange document downloaded to your device.',
           }),
@@ -190,7 +190,7 @@ export function ScheduleInterchangePanel({
         type: 'success',
         title: t('schedule.interchange.health_done', { defaultValue: 'Health check ready' }),
         message: t('schedule.interchange.health_done_msg', {
-          defaultValue: 'This is a read-only dry-run. Nothing in the schedule changed.',
+          defaultValue: 'This is a read-only dry-run. Nothing in the Cronograma changed.',
         }),
       });
     },
@@ -223,7 +223,7 @@ export function ScheduleInterchangePanel({
       queryClient.invalidateQueries({ queryKey: ['schedules'] });
       addToast({
         type: 'success',
-        title: t('schedule.interchange.import_done', { defaultValue: 'Schedule imported' }),
+        title: t('schedule.interchange.import_done', { defaultValue: 'Cronograma imported' }),
         message: t('schedule.interchange.import_done_msg', {
           defaultValue: 'Created {{activities}} activities and {{relationships}} links.',
           activities: data.activity_count,
@@ -310,7 +310,7 @@ export function ScheduleInterchangePanel({
       addToast({
         type: 'success',
         title: t('schedule.interchange.vendor_import_done', {
-          defaultValue: 'Schedule file imported',
+          defaultValue: 'Cronograma file imported',
         }),
         message: t('schedule.interchange.vendor_import_done_msg', {
           defaultValue: 'Added {{activities}} activities and {{relationships}} links.',
@@ -375,13 +375,13 @@ export function ScheduleInterchangePanel({
         <div className="mb-1 flex items-center gap-2">
           <Download size={16} className="text-content-secondary" />
           <h3 className="oe-card-title">
-            {t('schedule.interchange.export_title', { defaultValue: 'Export schedule' })}
+            {t('schedule.interchange.export_title', { defaultValue: 'Export Cronograma' })}
           </h3>
         </div>
         <p className="mb-3 text-xs text-content-secondary">
           {t('schedule.interchange.export_desc', {
             defaultValue:
-              'Download this schedule as an open, lossless interchange document (JSON) - the full activity set, logic and calendars. Use it to archive a snapshot or move the plan between projects.',
+              'Download this Cronograma as an open, lossless interchange document (JSON) - the full activity set, logic and calendars. Use it to archive a snapshot or move the plan between projects.',
           })}
         </p>
         <Button
@@ -452,7 +452,7 @@ export function ScheduleInterchangePanel({
         <div className="mb-1 flex flex-wrap items-center gap-2">
           <Stethoscope size={16} className="text-content-secondary" />
           <h3 className="oe-card-title">
-            {t('schedule.interchange.health_title', { defaultValue: 'Schedule health check' })}
+            {t('schedule.interchange.health_title', { defaultValue: 'Cronograma health check' })}
           </h3>
           <Badge variant="neutral">
             {t('schedule.interchange.read_only', { defaultValue: 'Read-only' })}
@@ -461,7 +461,7 @@ export function ScheduleInterchangePanel({
         <p className="mb-3 text-xs text-content-secondary">
           {t('schedule.interchange.health_desc', {
             defaultValue:
-              'Run a logic-hygiene dry-run on this schedule. It reports the repairs a normalise-on-import would apply (dropping dangling or self links, clamping durations and progress, breaking parent cycles, and more) plus key quality tallies. Nothing is changed.',
+              'Run a logic-hygiene dry-run on this Cronograma. It reports the repairs a normalise-on-import would apply (dropping dangling or self links, clamping durations and progress, breaking parent cycles, and more) plus key quality tallies. Nothing is changed.',
           })}
         </p>
         <Button
@@ -487,7 +487,7 @@ export function ScheduleInterchangePanel({
             <ActionsList
               actions={preview.actions}
               emptyLabel={t('schedule.interchange.health_clean', {
-                defaultValue: 'No repairs needed - this schedule is already clean.',
+                defaultValue: 'No repairs needed - this Cronograma is already clean.',
               })}
               title={t('schedule.interchange.would_apply', {
                 defaultValue: 'Repairs that would apply',
@@ -502,13 +502,13 @@ export function ScheduleInterchangePanel({
         <div className="mb-1 flex items-center gap-2">
           <Upload size={16} className="text-content-secondary" />
           <h3 className="oe-card-title">
-            {t('schedule.interchange.import_title', { defaultValue: 'Import schedule' })}
+            {t('schedule.interchange.import_title', { defaultValue: 'Import Cronograma' })}
           </h3>
         </div>
         <p className="mb-3 text-xs text-content-secondary">
           {t('schedule.interchange.import_desc', {
             defaultValue:
-              'Load an interchange document (JSON) to create a new schedule in this project. Optionally normalise it on import to repair logic issues automatically.',
+              'Load an interchange document (JSON) to create a new Cronograma in this project. Optionally normalise it on import to repair logic issues automatically.',
           })}
         </p>
 
@@ -628,7 +628,7 @@ export function ScheduleInterchangePanel({
         <p className="mb-3 text-xs text-content-secondary">
           {t('schedule.interchange.vendor_import_desc', {
             defaultValue:
-              'Load a Microsoft Project XML (.xml) or XER (.xer) file. Its tasks and logic links are added to this schedule, ready for the CPM engine.',
+              'Load a Microsoft Project XML (.xml) or XER (.xer) file. Its tasks and logic links are added to this Cronograma, ready for the CPM engine.',
           })}
         </p>
 
@@ -700,7 +700,7 @@ export function ScheduleInterchangePanel({
             {vendorImportMut.isPending
               ? t('schedule.interchange.importing', { defaultValue: 'Importing...' })
               : t('schedule.interchange.vendor_import', {
-                  defaultValue: 'Import into this schedule',
+                  defaultValue: 'Import into this Cronograma',
                 })}
           </Button>
           </div>

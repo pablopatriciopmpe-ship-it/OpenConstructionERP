@@ -190,7 +190,7 @@ export function SchedulingProfilesPanel({ scheduleId, projectId, canEdit }: Sche
       <Card padding="md">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <label className="flex min-w-[260px] flex-col gap-1 text-xs text-content-secondary">
-            {t('schedule.profiles.used_by_schedule', { defaultValue: 'Profile used by this schedule' })}
+            {t('schedule.profiles.used_by_schedule', { defaultValue: 'Profile used by this Cronograma' })}
             <select
               className="oe-select"
               value={currentId ?? ''}
@@ -233,7 +233,7 @@ export function SchedulingProfilesPanel({ scheduleId, projectId, canEdit }: Sche
               title={t('schedule.profiles.empty_title', { defaultValue: 'No scheduling profiles yet' })}
               description={t('schedule.profiles.empty_text', {
                 defaultValue:
-                  'Without a profile the schedule uses retained logic, calendar-day lags and a zero-float critical path.',
+                  'Without a profile the Cronograma uses retained logic, calendar-day lags and a zero-float critical path.',
               })}
             />
           )}

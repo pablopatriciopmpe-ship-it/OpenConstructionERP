@@ -126,7 +126,7 @@ export function UpcomingMilestonesCard() {
           </span>
         }
         subtitle={t('dashboard.milestones_subtitle', {
-          defaultValue: 'The next key dates from your schedule',
+          defaultValue: 'The next key dates from your Cronograma',
         })}
         action={
           <button
@@ -134,7 +134,7 @@ export function UpcomingMilestonesCard() {
             onClick={() => navigate('/schedule')}
             className="inline-flex items-center gap-1.5 text-xs text-oe-blue hover:underline"
           >
-            {t('dashboard.milestones_open', { defaultValue: 'Open schedule' })}
+            {t('dashboard.milestones_open', { defaultValue: 'Open Cronograma' })}
             <ArrowRight size={12} />
           </button>
         }
@@ -158,7 +158,7 @@ export function UpcomingMilestonesCard() {
           className="mt-3"
           text={t('dashboard.milestones_help', {
             defaultValue:
-              'These are schedule activities marked as milestones that are not yet complete, sorted by date with the soonest first. The chip shows how many days until the date, or how far a date has already slipped. A milestone that has just passed stays listed for two weeks so it is not missed.',
+              'These are Cronograma activities marked as milestones that are not yet complete, sorted by date with the soonest first. The chip shows how many days until the date, or how far a date has already slipped. A milestone that has just passed stays listed for two weeks so it is not missed.',
           })}
         />
       </CardContent>

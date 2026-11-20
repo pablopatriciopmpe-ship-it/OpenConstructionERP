@@ -137,14 +137,14 @@ export function CreateRfiFromMeasurementDialog({
       addToast({
         type: 'success',
         title: t('takeoff_crosslink.rfi_created_title', {
-          defaultValue: 'RFI {{number}} created',
+          defaultValue: 'Pedido de informação (RFI) {{number}} created',
           number: rfi.rfi_number,
         }),
         message: t('takeoff_crosslink.rfi_created_msg', {
           defaultValue: 'Linked to this measurement.',
         }),
         action: {
-          label: t('takeoff_crosslink.rfi_view', { defaultValue: 'View RFI' }),
+          label: t('takeoff_crosslink.rfi_view', { defaultValue: 'View Pedido de informação (RFI)' }),
           onClick: () => openLink(`/rfi/${rfi.id}`),
         },
       });
@@ -155,7 +155,7 @@ export function CreateRfiFromMeasurementDialog({
       addToast({
         type: 'error',
         title: t('takeoff_crosslink.rfi_failed', {
-          defaultValue: 'Could not create RFI',
+          defaultValue: 'Could not create Pedido de informação (RFI)',
         }),
         message: err instanceof Error ? err.message : undefined,
       });
@@ -200,13 +200,13 @@ export function CreateRfiFromMeasurementDialog({
           className="oe-section-title text-start"
         >
           {t('takeoff_crosslink.rfi_dialog_title', {
-            defaultValue: 'Create RFI from measurement',
+            defaultValue: 'Create Pedido de informação (RFI) from measurement',
           })}
         </h2>
         <p className="mt-0.5 text-start text-xs text-content-tertiary">
           {t('takeoff_crosslink.rfi_dialog_desc', {
             defaultValue:
-              'Raise a request for information tied to this measurement. The drawing is attached and the new RFI links back to the measurement.',
+              'Raise a request for information tied to this measurement. The drawing is attached and the new Pedido de informação (RFI) links back to the measurement.',
           })}
         </p>
 
@@ -264,7 +264,7 @@ export function CreateRfiFromMeasurementDialog({
               data-testid="takeoff-rfi-no-project"
             >
               {t('takeoff_crosslink.rfi_no_project', {
-                defaultValue: 'Open this drawing inside a project to raise an RFI.',
+                defaultValue: 'Open this drawing inside a project to raise an Pedido de informação (RFI).',
               })}
             </p>
           )}
@@ -283,7 +283,7 @@ export function CreateRfiFromMeasurementDialog({
             type="button"
             data-testid="takeoff-rfi-submit"
           >
-            {t('takeoff_crosslink.rfi_submit', { defaultValue: 'Create RFI' })}
+            {t('takeoff_crosslink.rfi_submit', { defaultValue: 'Create Pedido de informação (RFI)' })}
           </Button>
         </div>
       </div>

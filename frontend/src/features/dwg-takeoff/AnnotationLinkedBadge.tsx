@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 export function AnnotationLinkedBadge({ linkedBoqPositionId }: { linkedBoqPositionId?: string | null }) {
   const { t } = useTranslation();
   if (!linkedBoqPositionId) return null;
-  const label = t('dwg_takeoff.already_linked', { defaultValue: 'Already linked to a BOQ position' });
+  const label = t('dwg_takeoff.already_linked', { defaultValue: 'Already linked to a Planilha orçamentária position' });
   return (
     <span
       data-testid="annotation-linked-badge"

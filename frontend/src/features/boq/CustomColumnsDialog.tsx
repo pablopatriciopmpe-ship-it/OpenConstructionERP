@@ -80,7 +80,7 @@ const FORMULA_PRESETS: { label: string; snippet: string; hint: string }[] = [
   { label: 'qty × rate', snippet: '=$QUANTITY * $UNIT_RATE', hint: 'Net total' },
   { label: 'pos ref', snippet: '=pos("01.001").qty', hint: 'Pull qty from another row' },
   { label: 'if branch', snippet: '=if($QUANTITY > 100, $UNIT_RATE * 0.95, $UNIT_RATE)', hint: 'Volume discount' },
-  { label: '$VAR', snippet: '=$QUANTITY * $LABOR_RATE', hint: 'Use a BOQ variable' },
+  { label: '$VAR', snippet: '=$QUANTITY * $LABOR_RATE', hint: 'Use a Planilha orçamentária variable' },
   { label: 'round', snippet: '=round($QUANTITY * $UNIT_RATE, 2)', hint: 'Round to 2 decimals' },
 ];
 
@@ -882,7 +882,7 @@ export function CustomColumnsDialog({
           <p className="text-xs text-content-tertiary">
             {t('boq.custom_columns_hint', {
               defaultValue:
-                'Custom columns appear in the BOQ grid before the actions column. Values are stored per position and exported with the BOQ. Removing a column hides it but preserves the underlying data.',
+                'Custom columns appear in the Planilha orçamentária grid before the actions column. Values are stored per position and exported with the Planilha orçamentária. Removing a column hides it but preserves the underlying data.',
             })}
           </p>
         </div>

@@ -43,7 +43,7 @@ export function StrikeReadyChip({
     <span
       className="inline-flex shrink-0 items-center gap-0.5 rounded border border-semantic-success/30 bg-semantic-success-bg px-1 py-0.5 text-2xs font-semibold text-semantic-success"
       title={t('schedule.strike_ready_tooltip', {
-        defaultValue: 'Sensor estimate {{strength}} of {{target}} MPa ({{pct}}% confidence). Start the strike today?',
+        defaultValue: 'Sensor Orçamento {{strength}} of {{target}} MPa ({{pct}}% confidence). Start the strike today?',
         strength: sug.strength_mpa ?? '-',
         target: sug.target_mpa ?? '-',
         pct,

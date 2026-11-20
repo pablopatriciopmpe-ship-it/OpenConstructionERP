@@ -523,7 +523,7 @@ export default function PropertySearchPanel({
           className="inline-flex items-center justify-center gap-1 rounded-md border border-oe-blue/40 px-2 py-1 text-2xs font-medium text-oe-blue hover:bg-oe-blue/5"
           data-testid="property-search-create-rule"
           title={t('bim.property_search_create_rule_hint', {
-            defaultValue: 'Open a quantity rule with this property and value as its filter, then link it to a BOQ position.',
+            defaultValue: 'Open a quantity rule with this property and value as its filter, then link it to a Planilha orçamentária position.',
           })}
         >
           {t('bim.property_search_create_rule', { defaultValue: 'Make a quantity rule from this search' })}

@@ -117,7 +117,7 @@ export function AssemblyTaxPanel({
           disabled={!canEdit || approved}
           title={t('assemblies.tax.recalc_hint', {
             defaultValue:
-              'Take the current master prices and apply the tax rules once. Approved assemblies are never changed.',
+              'Take the current master prices and apply the tax rules once. Approved Composições are never changed.',
           })}
           onClick={() => recalc.mutate()}
         >

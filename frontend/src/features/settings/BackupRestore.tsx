@@ -355,7 +355,7 @@ export function BackupRestore() {
             <p className="text-xs text-content-secondary leading-relaxed">
               {t('backup.scope_note', {
                 defaultValue:
-                  'A backup currently includes your projects, estimates and BOQ, schedules, cost data, documents, tenders and change orders. Site records such as daily diaries, takeoff measurements, inspections, safety and other module data are not part of the backup yet, full coverage is on the way.',
+                  'A backup currently includes your projects, Orçamentos and Planilha orçamentária, schedules, cost data, documents, tenders and Alterações de contrato. Site records such as daily diaries, Levantamento de quantitativos measurements, Inspeções, safety and other module data are not part of the backup yet, full coverage is on the way.',
               })}
             </p>
           </div>
@@ -373,7 +373,7 @@ export function BackupRestore() {
                   <p className="mt-0.5 text-xs text-content-secondary leading-relaxed">
                     {t('backup.export_desc', {
                       defaultValue:
-                        'Export all your projects, BOQ data, cost databases, and settings as a ZIP file.',
+                        'Export all your projects, Planilha orçamentária data, cost databases, and settings as a ZIP file.',
                     })}
                   </p>
                   <div className="mt-3 flex flex-wrap items-center gap-3">
@@ -648,7 +648,7 @@ export function BackupRestore() {
         })}
         message={t('backup.confirm_replace_message', {
           defaultValue:
-            'All existing projects, BOQ data, cost databases, and settings will be permanently deleted and replaced with the backup contents. This action cannot be undone.',
+            'All existing projects, Planilha orçamentária data, cost databases, and settings will be permanently deleted and replaced with the backup contents. This action cannot be undone.',
         })}
         confirmLabel={t('backup.confirm_replace_btn', {
           defaultValue: 'Replace all data',

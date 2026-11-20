@@ -563,7 +563,7 @@ export function MatchDetailPanel({ sessionId, group, projectId, onClose }: Props
               ))}
               {applyQ.data && applyQ.data.positions.length === 0 && (
                 <div className="text-center text-content-tertiary py-8 text-sm">
-                  {t('match_elements.detail.confirm_first', 'Confirm a match first to see the BOQ preview.')}
+                  {t('match_elements.detail.confirm_first', 'Confirm a match first to see the Planilha orçamentária preview.')}
                 </div>
               )}
             </div>

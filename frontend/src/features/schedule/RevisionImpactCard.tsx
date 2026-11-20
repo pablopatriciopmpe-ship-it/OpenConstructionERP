@@ -51,7 +51,7 @@ export function RevisionImpactCard({
     enabled: !!scheduleId && !!baseBaselineId,
   });
 
-  const title = t('schedule.impact.title', { defaultValue: 'Revision impact on BOQ and cost' });
+  const title = t('schedule.impact.title', { defaultValue: 'Revision impact on Planilha orçamentária and cost' });
 
   if (q.isLoading) {
     return (
@@ -82,7 +82,7 @@ export function RevisionImpactCard({
         <p className="text-xs text-content-secondary">
           {t('schedule.impact.summary', {
             defaultValue:
-              '{{linked}} of {{revised}} revised activities are linked to {{positions}} BOQ positions and {{variations}} variations.',
+              '{{linked}} of {{revised}} revised activities are linked to {{positions}} Planilha orçamentária positions and {{variations}} variations.',
             linked: s.activities_linked,
             revised: s.activities_revised,
             positions: s.positions_linked,
@@ -97,7 +97,7 @@ export function RevisionImpactCard({
             </span>
           </span>
           <span className="text-content-tertiary">
-            {t('schedule.impact.linked_value', { defaultValue: 'Linked BOQ value' })}:{' '}
+            {t('schedule.impact.linked_value', { defaultValue: 'Linked Planilha orçamentária value' })}:{' '}
             <span className="font-semibold tabular-nums text-content-primary">
               {money(s.linked_value_total, currency)}
             </span>
@@ -130,7 +130,7 @@ export function RevisionImpactCard({
                   {t('schedule.impact.cost_total', { defaultValue: 'Planned cost delta' })}
                 </th>
                 <th className="px-3 py-2 text-start font-medium">
-                  {t('schedule.impact.col_positions', { defaultValue: 'BOQ positions and variations' })}
+                  {t('schedule.impact.col_positions', { defaultValue: 'Planilha orçamentária positions and variations' })}
                 </th>
               </tr>
             </thead>
@@ -178,7 +178,7 @@ function ImpactRow({ row, currency }: { row: RevisionImpactActivity; currency?: 
         {row.positions.length === 0 ? (
           <span className="inline-flex items-center gap-1 text-content-tertiary">
             <Link2Off size={12} />
-            {t('schedule.impact.unlinked', { defaultValue: 'Not linked to the BOQ' })}
+            {t('schedule.impact.unlinked', { defaultValue: 'Not linked to the Planilha orçamentária' })}
           </span>
         ) : (
           <ul className="space-y-1">
@@ -186,7 +186,7 @@ function ImpactRow({ row, currency }: { row: RevisionImpactActivity; currency?: 
               <li key={p.id}>
                 {p.missing ? (
                   <span className="text-content-tertiary">
-                    {t('schedule.impact.position_missing', { defaultValue: 'Position no longer in the BOQ' })}
+                    {t('schedule.impact.position_missing', { defaultValue: 'Position no longer in the Planilha orçamentária' })}
                   </span>
                 ) : (
                   <span className="text-content-primary">

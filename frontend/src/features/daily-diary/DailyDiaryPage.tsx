@@ -474,7 +474,7 @@ export function DailyDiaryPage() {
         })}
         links={[
           {
-            label: t('daily_diary.intro_link_schedule', { defaultValue: 'Schedule' }),
+            label: t('daily_diary.intro_link_schedule', { defaultValue: 'Cronograma' }),
             onClick: () => navigate('/schedule'),
           },
           {
@@ -486,14 +486,14 @@ export function DailyDiaryPage() {
             onClick: () => navigate('/payroll'),
           },
           {
-            label: t('daily_diary.intro_link_field_reports', { defaultValue: 'Field Reports' }),
+            label: t('daily_diary.intro_link_field_reports', { defaultValue: 'Relatórios de campo' }),
             onClick: () => navigate('/field-reports'),
           },
         ]}
       >
         {t('daily_diary.intro_body', {
           defaultValue:
-            'Each site day you open the diary, log weather, headcount, deliveries and events, attach photos and drone or reality-capture surveys, then close and sign it. A signed diary is sealed with a sha256 fingerprint so it stands as tamper-evident proof for delay claims and disputes, and it feeds schedule progress and the site photo library.',
+            'Each site day you open the diary, log weather, headcount, deliveries and events, attach photos and drone or reality-capture surveys, then close and sign it. A signed diary is sealed with a sha256 fingerprint so it stands as tamper-evident proof for delay claims and disputes, and it feeds Cronograma progress and the site photo library.',
         })}
       </DismissibleInfo>
 
@@ -3722,7 +3722,7 @@ function RealityCaptureModal({
           />
         </WideModalField>
         <WideModalField
-          label={t('daily_diary.point_count', { defaultValue: 'Point count estimate' })}
+          label={t('daily_diary.point_count', { defaultValue: 'Point count Orçamento' })}
         >
           <input
             type="number"

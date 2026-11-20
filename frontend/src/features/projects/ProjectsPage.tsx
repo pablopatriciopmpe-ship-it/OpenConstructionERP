@@ -638,7 +638,7 @@ export function ProjectsPage() {
         subtitle={
           projects
             ? t('projects.subtitle_count', {
-                defaultValue: 'Manage your construction estimation projects ({{count}} total)',
+                defaultValue: 'Manage your construction Estimativa projects ({{count}} total)',
                 count: projects.length,
               })
             : t('common.loading', { defaultValue: 'Loading...' })
@@ -692,7 +692,7 @@ export function ProjectsPage() {
       >
         {t('projects.intro_body', {
           defaultValue:
-            'Every project you create lands here as a card carrying its BOQ count, total value in its own currency, region and uploaded file types, so you see the whole portfolio at a glance without opening each one. Open a card to reach the project hub, or pin and filter to keep daily work on top. Totals feed Analytics and the role dashboards in Reporting.',
+            'Every project you create lands here as a card carrying its Planilha orçamentária count, total value in its own currency, region and uploaded file types, so you see the whole portfolio at a glance without opening each one. Open a card to reach the project hub, or pin and filter to keep daily work on top. Totals feed Analytics and the role Painéis in Reporting.',
         })}
       </DismissibleInfo>
 
@@ -703,7 +703,7 @@ export function ProjectsPage() {
           <p className="text-sm text-content-secondary min-w-0">
             {t('projects.demo_banner', {
               defaultValue:
-                '{{count}} of these are sample projects, included so you can explore the platform with realistic content. Want to start with an empty workspace? Remove them here. Your own projects are never affected.',
+                '{{count}} of these are sample projects, included so you can explore the platform with realistic content. Want to start with an empty Espaço de trabalho? Remove them here. Your own projects are never affected.',
               count: demoCount,
             })}
           </p>
@@ -764,7 +764,7 @@ export function ProjectsPage() {
             {/* 2. Total BOQs */}
             <div className="rounded-xl border border-border-light bg-surface-elevated/90 p-3 shadow-xs transition-shadow duration-normal ease-oe hover:shadow-sm">
               <div className="text-2xs font-medium text-content-tertiary uppercase tracking-wider">
-                {t('projects.stats_boqs', { defaultValue: 'Total BOQs' })}
+                {t('projects.stats_boqs', { defaultValue: 'Total Planilhas orçamentárias' })}
               </div>
               <div className="mt-1 text-xl font-semibold text-content-primary tabular-nums leading-none">
                 {boqStats ? stats.totalBoqs.toLocaleString(getNumberLocale()) : (
@@ -1048,7 +1048,7 @@ export function ProjectsPage() {
             title={t('projects.no_projects', { defaultValue: 'No projects yet' })}
             description={t('projects.no_projects_description', {
               defaultValue:
-                'Projects organize your estimates, documents, and team. Create your first project to get started with cost estimation.',
+                'Projects organize your Orçamentos, documents, and team. Create your first project to get started with cost Estimativa.',
             })}
             action={{
               label: t('projects.create_first', { defaultValue: 'Create your first project' }),
@@ -1575,7 +1575,7 @@ export function ProjectCard({
                 <p className="mb-2 text-sm text-content-secondary">
                   {t('projects.purge_body', {
                     defaultValue:
-                      'This removes the project and everything in it: BOQs, schedules, documents and uploaded files, tasks, finance, procurement, BIM models and all other linked records. The audit log keeps a record of the deletion. This cannot be undone.',
+                      'This removes the project and everything in it: Planilhas orçamentárias, schedules, documents and uploaded files, tasks, finance, procurement, BIM models and all other linked records. The audit log keeps a record of the deletion. This cannot be undone.',
                   })}
                 </p>
                 <label className="mb-1 block text-xs text-content-tertiary" htmlFor={`purge-${project.id}`}>
@@ -1742,7 +1742,7 @@ export function ProjectCard({
                 <Layers size={10} strokeWidth={2.25} />
                 <span className="tabular-nums">{boqStats.boqCount}</span>
                 <span>
-                  {t('projects.boq_short', { defaultValue: 'BOQs' })}
+                  {t('projects.boq_short', { defaultValue: 'Planilhas orçamentárias' })}
                 </span>
               </span>
             )}

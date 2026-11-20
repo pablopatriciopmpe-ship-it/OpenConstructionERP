@@ -109,7 +109,7 @@ function PositionsTable({ rows, onOpen }: { rows: PositionSummary[]; onOpen: (p:
               <th>{t('measurement_book.col_ordinal', { defaultValue: 'No.' })}</th>
               <th>{t('measurement_book.col_description', { defaultValue: 'Description' })}</th>
               <th>{t('measurement_book.col_unit', { defaultValue: 'Unit' })}</th>
-              <th className="text-end">{t('measurement_book.col_boq_qty', { defaultValue: 'BOQ qty' })}</th>
+              <th className="text-end">{t('measurement_book.col_boq_qty', { defaultValue: 'Planilha orçamentária qty' })}</th>
               <th className="text-end">{t('measurement_book.col_measured', { defaultValue: 'Measured' })}</th>
               <th className="text-end">{t('measurement_book.col_checked', { defaultValue: 'Checked' })}</th>
               <th>{t('measurement_book.col_percent', { defaultValue: '% measured' })}</th>
@@ -481,7 +481,7 @@ export function MeasurementBookPage() {
       <PageHeader
         srTitle={t('measurement_book.title', { defaultValue: 'Measurement book' })}
         subtitle={t('measurement_book.subtitle', {
-          defaultValue: 'Measured quantities per BOQ position, checked by a second person, ready for the running bill.',
+          defaultValue: 'Measured quantities per Planilha orçamentária position, checked by a second person, ready for the running bill.',
         })}
       />
       <Explainer />
@@ -507,7 +507,7 @@ export function MeasurementBookPage() {
           ) : rows.length === 0 ? (
             <EmptyState
               icon={<Ruler size={28} />}
-              title={t('measurement_book.empty_title', { defaultValue: 'No BOQ positions yet' })}
+              title={t('measurement_book.empty_title', { defaultValue: 'No Planilha orçamentária positions yet' })}
               description={t('measurement_book.empty_desc', { defaultValue: 'Add positions to a bill of quantities first, then measure them here.' })}
             />
           ) : (

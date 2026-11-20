@@ -373,7 +373,7 @@ function HowVariationsWork() {
       icon: <FileText size={14} className="text-oe-blue" />,
       title: t('variations.flow_2_title', { defaultValue: 'Price the request' }),
       desc: t('variations.flow_2_desc', {
-        defaultValue: 'Estimate the cost and time impact for the client to review.',
+        defaultValue: 'Orçamento the cost and time impact for the client to review.',
       }),
     },
     {
@@ -437,7 +437,7 @@ function HowVariationsWork() {
           {t('variations.mod_contracts', { defaultValue: 'Contracts' })}
         </ModLink>
         {' · '}
-        <ModLink to="/boq">{t('variations.mod_boq', { defaultValue: 'BOQ' })}</ModLink>
+        <ModLink to="/boq">{t('variations.mod_boq', { defaultValue: 'Planilha orçamentária' })}</ModLink>
         {' · '}
         <ModLink to="/reconciliation">
           {t('variations.mod_reconciliation', { defaultValue: 'Reconciliation' })}
@@ -901,7 +901,7 @@ export function VariationsPage() {
           />
           <DashKPI
             label={t('variations.kpi_schedule_impact', {
-              defaultValue: 'Schedule (days)',
+              defaultValue: 'Cronograma (days)',
             })}
             value={String(dashboardQ.data.schedule_impact_days)}
           />
@@ -1346,7 +1346,7 @@ function RequestTable({
         icon={<FileText size={22} />}
         title={t('variations.empty_requests', { defaultValue: 'No variation requests yet' })}
         description={t('variations.empty_requests_desc', {
-          defaultValue: 'Raise a variation request to estimate cost and schedule impacts.',
+          defaultValue: 'Raise a variation request to Orçamento cost and Cronograma impacts.',
         })}
         action={{
           label: t('variations.new_request', { defaultValue: 'New Request' }),
@@ -1964,7 +1964,7 @@ function PricedScope({
       addToast({
         type: 'success',
         title: t('variations.boq_adopted', {
-          defaultValue: 'Estimate taken from the bill',
+          defaultValue: 'Orçamento taken from the bill',
         }),
       });
     },
@@ -1998,7 +1998,7 @@ function PricedScope({
           <p className="text-sm text-content-secondary">
             {t('variations.priced_scope_hint', {
               defaultValue:
-                'Price this variation on a bill of its own, holding only the scope it changes and separate from the project estimate.',
+                'Price this variation on a bill of its own, holding only the scope it changes and separate from the project Orçamento.',
             })}
           </p>
           {pickerOpen ? (
@@ -2098,7 +2098,7 @@ function PricedScope({
             <p className="text-xs text-content-secondary">
               {t('variations.boq_differs_from_estimate', {
                 defaultValue:
-                  'The estimate on this request has not been taken from the bill yet, so the two figures above are saying different things.',
+                  'The Orçamento on this request has not been taken from the bill yet, so the two figures above are saying different things.',
               })}
             </p>
           )}
@@ -2130,7 +2130,7 @@ function PricedScope({
                 onClick={() => adoptMut.mutate()}
                 loading={adoptMut.isPending}
               >
-                {t('variations.adopt_boq_total', { defaultValue: 'Use as estimate' })}
+                {t('variations.adopt_boq_total', { defaultValue: 'Use as Orçamento' })}
               </Button>
             )}
           </div>
@@ -2151,7 +2151,7 @@ function agreedBasisLabel(basis: string, t: Translate): string {
     return t('variations.agreed_basis_priced_boq', { defaultValue: 'Priced bill' });
   }
   if (basis === 'headline_estimate') {
-    return t('variations.agreed_basis_headline', { defaultValue: 'Headline estimate' });
+    return t('variations.agreed_basis_headline', { defaultValue: 'Headline Orçamento' });
   }
   return basis;
 }
@@ -2290,7 +2290,7 @@ export function ApprovalDecisionPanel({
           label={
             baseline.source === 'submitted_boq'
               ? t('variations.submitted_boq_total', { defaultValue: 'Submitted bill total' })
-              : t('variations.headline_estimate', { defaultValue: 'Headline estimate' })
+              : t('variations.headline_estimate', { defaultValue: 'Headline Orçamento' })
           }
           value={
             baseline.amount === null ? (
@@ -2713,8 +2713,8 @@ export function DetailDrawer({
       addToast({
         type: 'success',
         title: linkedCoDead
-          ? t('variations.linked_co_replaced', { defaultValue: 'Replacement change order created' })
-          : t('variations.linked_co_created', { defaultValue: 'Linked change order created' }),
+          ? t('variations.linked_co_replaced', { defaultValue: 'Replacement Alteração de contrato created' })
+          : t('variations.linked_co_created', { defaultValue: 'Linked Alteração de contrato created' }),
       });
     },
     onError: (err) => addToast({ type: 'error', title: getErrorMessage(err) }),
@@ -3083,7 +3083,7 @@ export function DetailDrawer({
                     onClick={() => navigate(changeOrderDeepLink(linkedChangeOrderId))}
                   >
                     <ArrowRight size={12} />
-                    {t('variations.linked_change_order', { defaultValue: 'Change order' })}
+                    {t('variations.linked_change_order', { defaultValue: 'Alteração de contrato' })}
                     {linkedCoDead && linkedCoQ.data ? ` (${linkedCoQ.data.status})` : ''}
                   </button>
                 ) : order.status !== 'voided' ? (
@@ -3094,7 +3094,7 @@ export function DetailDrawer({
                     onClick={() => createLinkedCOMut.mutate()}
                     loading={createLinkedCOMut.isPending}
                   >
-                    {t('variations.create_linked_co', { defaultValue: 'Create linked change order' })}
+                    {t('variations.create_linked_co', { defaultValue: 'Create linked Alteração de contrato' })}
                   </Button>
                 ) : null}
                 {linkedChangeOrderId && linkedCoDead && order.status !== 'voided' && (
@@ -3105,7 +3105,7 @@ export function DetailDrawer({
                     onClick={() => createLinkedCOMut.mutate()}
                     loading={createLinkedCOMut.isPending}
                   >
-                    {t('variations.replace_linked_co', { defaultValue: 'Create replacement change order' })}
+                    {t('variations.replace_linked_co', { defaultValue: 'Create replacement Alteração de contrato' })}
                   </Button>
                 )}
                 {previousCoIds.map((coId) => (
@@ -3116,7 +3116,7 @@ export function DetailDrawer({
                     onClick={() => navigate(changeOrderDeepLink(coId))}
                   >
                     <ArrowRight size={12} />
-                    {t('variations.superseded_change_order', { defaultValue: 'Superseded change order' })}
+                    {t('variations.superseded_change_order', { defaultValue: 'Superseded Alteração de contrato' })}
                   </button>
                 ))}
                 {/* The contract register reads ?highlight= since Issue #435's
@@ -3211,7 +3211,7 @@ export function DetailDrawer({
                     <p className="mt-2 text-sm text-content-secondary">
                       {t('variations.void_alternatives', {
                         defaultValue:
-                          'If you only need a different change order, do not void this order. A rejected, cancelled or withdrawn change order can be replaced by a new linked one, and a standalone change order can be linked to this variation order.',
+                          'If you only need a different Alteração de contrato, do not void this order. A rejected, cancelled or withdrawn Alteração de contrato can be replaced by a new linked one, and a standalone Alteração de contrato can be linked to this variation order.',
                       })}
                     </p>
                     <WideModalField

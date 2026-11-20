@@ -43,7 +43,7 @@ export function kindLabel(t: Translate, kind: string): string {
     case 'lost_hierarchy':
       return t('boq.fidelity.kind_lost_hierarchy', { defaultValue: 'Hierarchy level lost' });
     case 'markup_not_representable':
-      return t('boq.fidelity.kind_markup_not_representable', { defaultValue: 'Markup not representable' });
+      return t('boq.fidelity.kind_markup_not_representable', { defaultValue: 'BDI not representable' });
     case 'attachment_skipped':
       return t('boq.fidelity.kind_attachment_skipped', { defaultValue: 'Attachment skipped' });
     case 'changed_identifier':
@@ -80,7 +80,7 @@ export function fieldLabel(t: Translate, field: string): string {
     case 'ordinal':
       return t('boq.fidelity.field_ordinal', { defaultValue: 'Position number' });
     case 'markup':
-      return t('boq.fidelity.field_markup', { defaultValue: 'Markup' });
+      return t('boq.fidelity.field_markup', { defaultValue: 'BDI' });
     case 'resources':
       return t('boq.fidelity.field_resources', { defaultValue: 'Resources' });
     case 'classification':

@@ -220,7 +220,7 @@ export function ExcelReviewDialog({ open, preview, applying = false, onApply, on
                         <span className="w-20 shrink-0 tabular-nums text-content-secondary">{row.ordinal}</span>
                         <span className="flex-1 text-content-primary">{row.description}</span>
                         <span className="text-content-tertiary">
-                          {t('boq.excel_review.delete_from_boq', { defaultValue: 'Delete from BOQ' })}
+                          {t('boq.excel_review.delete_from_boq', { defaultValue: 'Delete from Planilha orçamentária' })}
                         </span>
                       </label>
                     </li>

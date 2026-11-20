@@ -139,10 +139,10 @@ export function buildMarkupsInsights(
 
   const dataset: InsightDataset = {
     id: 'markups',
-    label: t('markups.insights.ds_markups', { defaultValue: 'Markups' }),
+    label: t('markups.insights.ds_markups', { defaultValue: 'Margens' }),
     currency: currency || '',
     fields: [
-      { key: 'title', label: t('markups.insights.f_title', { defaultValue: 'Markup' }), kind: 'dimension' },
+      { key: 'title', label: t('markups.insights.f_title', { defaultValue: 'BDI' }), kind: 'dimension' },
       { key: 'type', label: t('markups.insights.f_type', { defaultValue: 'Type' }), kind: 'dimension' },
       { key: 'status', label: t('markups.insights.f_status', { defaultValue: 'Status' }), kind: 'dimension' },
       { key: 'assignment', label: t('markups.insights.f_assignment', { defaultValue: 'Assignment' }), kind: 'dimension' },
@@ -157,14 +157,14 @@ export function buildMarkupsInsights(
 
   const base = { datasetId: 'markups', builtin: true } as const;
   const builtins: InsightDef[] = [
-    { ...base, id: 'kpi-markups', title: t('markups.insights.k_markups', { defaultValue: 'Markups' }), chart: 'kpi', agg: 'count', color: 0 },
+    { ...base, id: 'kpi-markups', title: t('markups.insights.k_markups', { defaultValue: 'Margens' }), chart: 'kpi', agg: 'count', color: 0 },
     { ...base, id: 'kpi-active', title: t('markups.insights.k_active', { defaultValue: 'Active' }), chart: 'kpi', measure: 'open', agg: 'sum', color: 1 },
     { ...base, id: 'kpi-resolved', title: t('markups.insights.k_resolved', { defaultValue: 'Resolved' }), chart: 'kpi', measure: 'resolved', agg: 'sum', color: 3 },
     { ...base, id: 'kpi-measurements', title: t('markups.insights.k_measurements', { defaultValue: 'Measurements' }), chart: 'kpi', measure: 'measurement', agg: 'sum', color: 4 },
-    { ...base, id: 'bar-by-type', title: t('markups.insights.c_by_type', { defaultValue: 'Markups by type' }), chart: 'bar', dimension: 'type', agg: 'count', color: 0 },
-    { ...base, id: 'donut-by-status', title: t('markups.insights.c_by_status', { defaultValue: 'Markups by status' }), chart: 'donut', dimension: 'status', agg: 'count', color: 4 },
-    { ...base, id: 'bar-by-assignment', title: t('markups.insights.c_by_assignment', { defaultValue: 'Markups by assignment' }), chart: 'bar', dimension: 'assignment', agg: 'count', color: 5 },
-    { ...base, id: 'area-over-time', title: t('markups.insights.c_over_time', { defaultValue: 'Markups raised over time' }), chart: 'area', dimension: 'month', agg: 'count', color: 3 },
+    { ...base, id: 'bar-by-type', title: t('markups.insights.c_by_type', { defaultValue: 'Margens by type' }), chart: 'bar', dimension: 'type', agg: 'count', color: 0 },
+    { ...base, id: 'donut-by-status', title: t('markups.insights.c_by_status', { defaultValue: 'Margens by status' }), chart: 'donut', dimension: 'status', agg: 'count', color: 4 },
+    { ...base, id: 'bar-by-assignment', title: t('markups.insights.c_by_assignment', { defaultValue: 'Margens by assignment' }), chart: 'bar', dimension: 'assignment', agg: 'count', color: 5 },
+    { ...base, id: 'area-over-time', title: t('markups.insights.c_over_time', { defaultValue: 'Margens raised over time' }), chart: 'area', dimension: 'month', agg: 'count', color: 3 },
   ];
 
   return { datasets: [dataset], builtins };

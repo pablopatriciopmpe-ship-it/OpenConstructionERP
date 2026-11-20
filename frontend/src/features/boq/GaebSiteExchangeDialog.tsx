@@ -770,7 +770,7 @@ export function GaebSiteExchangeDialog({
                               {line.kind === 'markup' && (
                                 <Badge variant="neutral" size="sm" className="mr-1">
                                   {t('boq.gaeb_site.markup_line', {
-                                    defaultValue: 'Markup {{percent}} %',
+                                    defaultValue: 'BDI {{percent}} %',
                                     percent: num(line.markup_percent, 2),
                                   })}
                                 </Badge>

@@ -221,7 +221,7 @@ export function BOQVariablesDialog({ open, onClose, boqId, seed }: BOQVariablesD
     <WideModal
       open={open}
       onClose={onClose}
-      title={t('boq.variables_title', { defaultValue: 'BOQ variables' })}
+      title={t('boq.variables_title', { defaultValue: 'Planilha orçamentária variables' })}
       subtitle={`${drafts.length} / ${MAX_VARIABLES}`}
       size="lg"
       busy={replaceMutation.isPending}
@@ -386,7 +386,7 @@ export function BOQVariablesDialog({ open, onClose, boqId, seed }: BOQVariablesD
             {overCap && (
               <p className="text-xs text-semantic-error">
                 {t('boq.variables_cap', {
-                  defaultValue: 'Maximum {{cap}} variables per BOQ.',
+                  defaultValue: 'Maximum {{cap}} variables per Planilha orçamentária.',
                   cap: MAX_VARIABLES,
                 })}
               </p>

@@ -517,7 +517,7 @@ function CWICRDatabaseGrid(_props: { onLoadDatabase: (file: File) => void }) {
               type: 'warning',
               title: variant.market,
               message: t('costs.market_catalog_not_updated', {
-                defaultValue: 'The prices are switched, but the Resource Catalog could not be updated to this market.',
+                defaultValue: 'The prices are switched, but the Catálogo de insumos could not be updated to this market.',
               }),
             });
           }
@@ -801,7 +801,7 @@ function CWICRDatabaseGrid(_props: { onLoadDatabase: (file: File) => void }) {
               defaultValue_one:
                 '{{items}} item still carries a market price: its recipe has no resource the home price sheet prices. Check it before using it in an estimate.',
               defaultValue:
-                '{{items}} items still carry market prices: their recipes have no resource the home price sheet prices. Check them before using them in an estimate.',
+                '{{items}} items still carry market prices: their recipes have no resource the home price sheet prices. Check them before using them in an Orçamento.',
               items: leftInMarket.toLocaleString(getNumberLocale()),
             }),
           });
@@ -824,7 +824,7 @@ function CWICRDatabaseGrid(_props: { onLoadDatabase: (file: File) => void }) {
             title: variant.market,
             message: t('costs.restore_home_catalog_not_updated', {
               defaultValue:
-                'The prices are back, but the Resource Catalog could not be given its home resources. Import them again from the Resource Catalog page.',
+                'The prices are back, but the Catálogo de insumos could not be given its home resources. Import them again from the Catálogo de insumos page.',
             }),
           });
         }
@@ -1246,7 +1246,7 @@ export function LoadedDatabasesSection() {
             <p className="text-xs text-content-secondary">
               {t('costs.empty_pick_region_above', {
                 defaultValue:
-                  'Pick a region card above and click Install to load a regional cost database.',
+                  'Pick a region card above and click Install to load a regional Banco de custos.',
               })}
             </p>
           </div>
@@ -1851,7 +1851,7 @@ export function VectorDatabaseSection() {
           <div className="flex-1">
             <div className="flex items-center gap-2">
               <h3 className="oe-card-title">
-                CWICR Vector Database - AI Semantic Search
+                CWICR Vector Database - IA Semantic Search
               </h3>
               {isConnected ? (
                 <>
@@ -1886,7 +1886,7 @@ export function VectorDatabaseSection() {
         <p className="text-xs text-content-secondary mb-4">
           {t('costs_import.vector_desc', {
             defaultValue:
-              'Select your region to generate AI vector embeddings. This enables semantic search: find cost items by meaning, not just keywords. For example "concrete wall" finds "reinforced partition C30/37".',
+              'Select your region to generate IA vector embeddings. This enables semantic search: find cost items by meaning, not just keywords. For example "concrete wall" finds "reinforced partition C30/37".',
           })}
         </p>
 
@@ -1969,7 +1969,7 @@ export function VectorDatabaseSection() {
                             <span className="text-2xs text-content-quaternary">55,719 vectors</span>
                           )}
                           <Badge variant="blue" size="sm" className="text-2xs px-1.5 py-0">
-                            AI
+                            IA
                           </Badge>
                         </div>
                       </div>
@@ -2009,7 +2009,7 @@ export function VectorDatabaseSection() {
                   {indexedCount.toLocaleString(getNumberLocale())}
                 </div>
                 <div className="text-2xs text-content-tertiary">
-                  {t('costs.tile_ai_vectors', { defaultValue: 'AI feature vectors' })}
+                  {t('costs.tile_ai_vectors', { defaultValue: 'IA feature vectors' })}
                 </div>
               </div>
               <div className="rounded-lg bg-surface-secondary p-3 text-center">
@@ -2955,8 +2955,8 @@ export function ImportDatabasePage() {
       {/* Breadcrumb */}
       <Breadcrumb
         items={[
-          { label: t('costs.title', 'Cost Database'), to: '/costs' },
-          { label: t('costs.import_title', 'Import Cost Database') },
+          { label: t('costs.title', 'Banco de custos'), to: '/costs' },
+          { label: t('costs.import_title', 'Import Banco de custos') },
         ]}
       />
 
@@ -2964,7 +2964,7 @@ export function ImportDatabasePage() {
           > Import trail; the module name + icon are shown by the global top
           bar. The page renders only its subtitle. */}
       <PageHeader
-        srTitle={t('costs.import_title', { defaultValue: 'Import Cost Database' })}
+        srTitle={t('costs.import_title', { defaultValue: 'Import Banco de custos' })}
         subtitle={t('costs.import_subtitle', {
           defaultValue: 'Load a pricing database or upload your own file.',
         })}
@@ -2975,14 +2975,14 @@ export function ImportDatabasePage() {
         title={t('costs_import.intro_title', { defaultValue: 'Get a regional price book in minutes' })}
         more={t('costs_import.intro_more', { defaultValue: '' }) ? <IntroRichText text={t('costs_import.intro_more')} /> : undefined}
         links={[
-          { label: t('nav.costs', { defaultValue: 'Cost Database' }), onClick: () => navigate('/costs') },
-          { label: t('nav.catalog', { defaultValue: 'Resource Catalog' }), onClick: () => navigate('/catalog') },
-          { label: t('nav.assemblies', { defaultValue: 'Assemblies' }), onClick: () => navigate('/assemblies') },
+          { label: t('nav.costs', { defaultValue: 'Banco de custos' }), onClick: () => navigate('/costs') },
+          { label: t('nav.catalog', { defaultValue: 'Catálogo de insumos' }), onClick: () => navigate('/catalog') },
+          { label: t('nav.assemblies', { defaultValue: 'Composições' }), onClick: () => navigate('/assemblies') },
         ]}
       >
         {t('costs_import.intro_body', {
           defaultValue:
-            'Install a regional CWICR cost database by country and currency, or upload your own Parquet file, with full resource and cost breakdowns indexed for offline use. Once installed the rates appear in the cost database and become matchable across catalog, assemblies and BOQ.',
+            'Install a regional CWICR Banco de custos by country and currency, or upload your own Parquet file, with full resource and cost breakdowns indexed for offline use. Once installed the rates appear in the Banco de custos and become matchable across catalog, Composições and Planilha orçamentária.',
         })}
       </DismissibleInfo>
 
@@ -2995,7 +2995,7 @@ export function ImportDatabasePage() {
             </div>
             <div>
               <h3 className="oe-card-title">
-                {t('costs_import.cwicr_title', { defaultValue: 'CWICR Construction Cost Database' })}
+                {t('costs_import.cwicr_title', { defaultValue: 'CWICR Construction Banco de custos' })}
               </h3>
               <p className="text-xs text-content-tertiary">
                 {t('costs_import.cwicr_stats', {
@@ -3164,7 +3164,7 @@ export function ImportDatabasePage() {
                 {t('costs.import_another', { defaultValue: 'Import Another' })}
               </Button>
               <Button variant="primary" size="lg" onClick={() => navigate('/costs')}>
-                {t('costs.import_go_to_database', { defaultValue: 'Go to Cost Database' })}
+                {t('costs.import_go_to_database', { defaultValue: 'Go to Banco de custos' })}
               </Button>
             </div>
           </div>
@@ -3207,7 +3207,7 @@ export function ImportDatabasePage() {
                 </p>
                 <div className="mt-3 flex flex-wrap items-center gap-2">
                   <span className="text-xs font-medium text-content-secondary mr-1">
-                    {t('costs.import_templates_label', { defaultValue: 'Download a template:' })}
+                    {t('costs.import_templates_label', { defaultValue: 'Download a Modelo:' })}
                   </span>
                   <a
                     href="/templates/cost_database_template.csv"
@@ -3231,7 +3231,7 @@ export function ImportDatabasePage() {
                     className={TEMPLATE_LINK_CLASS}
                   >
                     <Download size={12} />
-                    {t('costs.import_template_recipes', { defaultValue: 'Recipes JSON (6 assemblies)' })}
+                    {t('costs.import_template_recipes', { defaultValue: 'Recipes JSON (6 Composições)' })}
                   </a>
                 </div>
                 <p className="mt-2 text-2xs text-content-tertiary">

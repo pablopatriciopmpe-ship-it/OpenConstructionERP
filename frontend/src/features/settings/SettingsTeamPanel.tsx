@@ -151,9 +151,9 @@ export function SettingsTeamPanel() {
       {/* ── Team / Workspace card ───────────────────────────────────────── */}
       <Card>
         <CardHeader
-          title={t('settings.team_title', { defaultValue: 'Team & workspace' })}
+          title={t('settings.team_title', { defaultValue: 'Team & Espaço de trabalho' })}
           subtitle={t('settings.team_subtitle', {
-            defaultValue: 'Who shares this workspace and how access is organised',
+            defaultValue: 'Who shares this Espaço de trabalho and how access is organised',
           })}
           action={<Building2 size={20} className="text-oe-blue" aria-hidden="true" />}
         />
@@ -209,7 +209,7 @@ export function SettingsTeamPanel() {
                 {/* Role breakdown chips */}
                 <div className="mt-4 flex flex-wrap items-center gap-2">
                   <span className="text-xs text-content-tertiary">
-                    {t('settings.team_roles_label', { defaultValue: 'Roles in this workspace:' })}
+                    {t('settings.team_roles_label', { defaultValue: 'Roles in this Espaço de trabalho:' })}
                   </span>
                   {ROLE_ORDER.filter((r) => stats.counts[r] > 0).map((r) => (
                     <span key={r} className="inline-flex items-center gap-1.5">
@@ -227,13 +227,13 @@ export function SettingsTeamPanel() {
                 <Skeleton className="h-5 w-48" />
               ) : meQuery.data ? (
                 <div className="flex flex-wrap items-center gap-2 text-sm text-content-secondary">
-                  <span>{t('settings.team_your_membership', { defaultValue: 'You are a member of this workspace as' })}</span>
+                  <span>{t('settings.team_your_membership', { defaultValue: 'You are a member of this Espaço de trabalho as' })}</span>
                   <RoleChip role={meQuery.data.role} />
                 </div>
               ) : (
                 <p className="text-sm text-content-secondary">
                   {t('settings.team_no_access', {
-                    defaultValue: 'Workspace membership details are managed by your administrator.',
+                    defaultValue: 'Espaço de trabalho membership details are managed by your administrator.',
                   })}
                 </p>
               )}
@@ -247,7 +247,7 @@ export function SettingsTeamPanel() {
         <CardHeader
           title={t('settings.members_title', { defaultValue: 'Members' })}
           subtitle={t('settings.members_subtitle', {
-            defaultValue: 'People with access to this workspace and their role',
+            defaultValue: 'People with access to this Espaço de trabalho and their role',
           })}
           action={
             isAdmin ? (
@@ -275,7 +275,7 @@ export function SettingsTeamPanel() {
                 <p className="mt-0.5 text-content-secondary">
                   {t('settings.members_readonly_desc', {
                     defaultValue:
-                      'Only administrators and managers can see the full member list. Contact your workspace administrator to change who has access.',
+                      'Only administrators and managers can see the full member list. Contact your Espaço de trabalho administrator to change who has access.',
                   })}
                 </p>
                 {meQuery.data && (
@@ -291,7 +291,7 @@ export function SettingsTeamPanel() {
             <p className="text-sm text-content-secondary">
               {t('settings.members_readonly_desc', {
                 defaultValue:
-                  'Only administrators and managers can see the full member list. Contact your workspace administrator to change who has access.',
+                  'Only administrators and managers can see the full member list. Contact your Espaço de trabalho administrator to change who has access.',
               })}
             </p>
           ) : membersQuery.isPending ? (

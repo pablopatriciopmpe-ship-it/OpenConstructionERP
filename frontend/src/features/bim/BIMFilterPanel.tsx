@@ -1238,12 +1238,12 @@ export default function BIMFilterPanel({
                 onClick={() => onQuickTakeoff(visibleElements)}
                 className="flex-1 inline-flex items-center justify-center gap-1.5 px-2 py-1.5 text-2xs font-medium rounded-md bg-oe-blue text-white hover:bg-oe-blue-dark transition-colors"
                 title={t('bim.quick_takeoff_title', {
-                  defaultValue: 'Create a BOQ position from the current filter',
+                  defaultValue: 'Create a Planilha orçamentária position from the current filter',
                 })}
               >
                 <Link2 size={12} />
                 {t('bim.quick_takeoff', {
-                  defaultValue: 'Link {{count}} to BOQ',
+                  defaultValue: 'Link {{count}} to Planilha orçamentária',
                   count: visibleElements.length,
                 })}
               </button>
@@ -1352,7 +1352,7 @@ export default function BIMFilterPanel({
                 onClick={() => onSmartFilter('unlinked_boq')}
                 className="inline-flex items-center gap-1 px-1.5 py-0.5 text-2xs font-medium rounded border border-border bg-surface-secondary text-content-secondary hover:bg-surface-secondary transition-colors"
                 title={t('bim.smart_filter_unlinked_boq_title', {
-                  defaultValue: 'Show only elements not linked to any BOQ position',
+                  defaultValue: 'Show only elements not linked to any Planilha orçamentária position',
                 })}
               >
                 <Unlink size={10} />
@@ -1501,7 +1501,7 @@ export default function BIMFilterPanel({
                           }}
                           className="opacity-0 group-hover:opacity-100 p-1 rounded text-content-tertiary hover:text-oe-blue hover:bg-surface-primary"
                           title={t('bim.group_link_boq', {
-                            defaultValue: 'Link this group to BOQ',
+                            defaultValue: 'Link this group to Planilha orçamentária',
                           })}
                         >
                           <Link2 size={10} />

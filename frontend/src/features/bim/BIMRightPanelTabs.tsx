@@ -478,7 +478,7 @@ export default function BIMRightPanelTabs({
             <p className="px-1 text-2xs text-content-tertiary mb-2">
               {t('bim.element_bundles.subtitle', {
                 defaultValue:
-                  'Save named selections you reuse across clash, BOQ link, and color-by',
+                  'Save named selections you reuse across clash, Planilha orçamentária link, and color-by',
               })}
             </p>
             <SelectionSetsPanel

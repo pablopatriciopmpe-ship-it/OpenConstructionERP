@@ -179,7 +179,7 @@ export function AICostFinderPanel({
         <div className="flex items-center gap-2">
           <Search size={16} className="text-primary" />
           <span className="font-semibold text-sm">
-            {t('boq.cost_finder_title', { defaultValue: 'AI Cost Finder' })}
+            {t('boq.cost_finder_title', { defaultValue: 'IA Cost Finder' })}
           </span>
         </div>
         <button
@@ -265,7 +265,7 @@ export function AICostFinderPanel({
         {!isLoading && !isError && debouncedQuery.length < 2 && (
           <div className="text-center py-8 text-content-tertiary text-sm">
             {t('boq.cost_finder_no_query', {
-              defaultValue: 'Enter a description to search the cost database',
+              defaultValue: 'Enter a description to search the Banco de custos',
             })}
           </div>
         )}

@@ -195,7 +195,7 @@ export function Stage4Review(props: Stage4ReviewProps) {
       <p className="text-sm text-content-secondary">
         {t('aiest.review.help', {
           defaultValue:
-            'The assembled estimate, fully grounded in catalogue rates. Check the totals and validation, then create or append it to a BOQ. Nothing is written until you confirm.',
+            'The assembled Orçamento, fully grounded in catalogue rates. Check the totals and validation, then create or append it to a Planilha orçamentária. Nothing is written until you confirm.',
         })}
       </p>
 
@@ -255,7 +255,7 @@ export function Stage4Review(props: Stage4ReviewProps) {
           <Info className="mt-0.5 h-3.5 w-3.5 shrink-0" />
           {t('aiest.review.never_blend', {
             defaultValue:
-              'This estimate spans more than one currency. Totals are kept per currency and never converted into a single blended number.',
+              'This Orçamento spans more than one currency. Totals are kept per currency and never converted into a single blended number.',
           })}
         </div>
       )}
@@ -378,7 +378,7 @@ export function Stage4Review(props: Stage4ReviewProps) {
         projectId={projectId}
         confidence={preview.completeness_score}
         producedBy={t('aiest.review.trust_produced', {
-          defaultValue: 'Quantities grouped by AI; every rate comes from your cost database, never invented.',
+          defaultValue: 'Quantities grouped by IA; every rate comes from your Banco de custos, never invented.',
         })}
       />
 
@@ -387,7 +387,7 @@ export function Stage4Review(props: Stage4ReviewProps) {
         <div className="rounded-lg border border-semantic-success/30 bg-semantic-success-bg p-4">
           <div className="flex items-center gap-2 font-medium text-semantic-success">
             <ShieldCheck className="h-5 w-5" />
-            {t('aiest.review.applied', { defaultValue: 'Estimate written to the BOQ.' })}
+            {t('aiest.review.applied', { defaultValue: 'Orçamento written to the Planilha orçamentária.' })}
           </div>
           <Button
             variant="primary"
@@ -397,7 +397,7 @@ export function Stage4Review(props: Stage4ReviewProps) {
               window.location.assign(`/boq/${appliedBoqId}`);
             }}
           >
-            {t('aiest.review.open_boq', { defaultValue: 'Open the BOQ' })}
+            {t('aiest.review.open_boq', { defaultValue: 'Open the Planilha orçamentária' })}
           </Button>
         </div>
       ) : (
@@ -413,7 +413,7 @@ export function Stage4Review(props: Stage4ReviewProps) {
             <span className="text-content-secondary">
               {t('aiest.review.confirm_checkbox', {
                 defaultValue:
-                  'I have reviewed the quantities, rates and validation and confirm this estimate is ready to write.',
+                  'I have reviewed the quantities, rates and validation and confirm this Orçamento is ready to write.',
               })}
             </span>
           </label>
@@ -427,7 +427,7 @@ export function Stage4Review(props: Stage4ReviewProps) {
               disabled={!canApply}
               onClick={onApply}
             >
-              {t('aiest.review.create_boq', { defaultValue: 'Create / append to BOQ' })}
+              {t('aiest.review.create_boq', { defaultValue: 'Create / append to Planilha orçamentária' })}
             </Button>
             {hasErrors ? (
               <span className="inline-flex items-center gap-1 text-xs text-semantic-error">

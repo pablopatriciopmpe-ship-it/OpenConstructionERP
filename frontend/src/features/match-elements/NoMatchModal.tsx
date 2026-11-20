@@ -72,13 +72,13 @@ export function NoMatchModal({ sessionId, groupKey, onClose, onDone }: Props) {
       value: 'rfq',
       icon: Send,
       title: t('match_elements.no_match.rfq.title', 'Send to RFQ'),
-      sub: t('match_elements.no_match.rfq.sub', 'Mark for tendering - request quotes from subcontractors.'),
+      sub: t('match_elements.no_match.rfq.sub', 'Mark for tendering - request Cotações from subcontractors.'),
     },
     {
       value: 'tbd',
       icon: Clock,
       title: t('match_elements.no_match.tbd.title', 'Mark TBD'),
-      sub: t('match_elements.no_match.tbd.sub', 'Park the group; revisit later. Excluded from BOQ totals until resolved.'),
+      sub: t('match_elements.no_match.tbd.sub', 'Park the group; revisit later. Excluded from Planilha orçamentária totals until resolved.'),
     },
   ];
 

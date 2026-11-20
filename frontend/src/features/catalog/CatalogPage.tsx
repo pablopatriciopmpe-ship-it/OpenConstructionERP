@@ -339,7 +339,7 @@ function RegionImportGrid({
           </div>
           <div>
             <h2 className="oe-section-title">
-              {t('catalog.import_regions_title', { defaultValue: 'Import Resource Catalog' })}
+              {t('catalog.import_regions_title', { defaultValue: 'Import Catálogo de insumos' })}
             </h2>
             <p className="text-xs text-content-tertiary">
               {t('catalog.import_regions_desc', {
@@ -926,10 +926,10 @@ function ResourceDetailPanel({
   // humanised form of the raw token for anything not yet mapped.
   const sourceLabels: Record<string, string> = {
     manual: t('catalog.source_manual', { defaultValue: 'Manual' }),
-    boq_import: t('catalog.source_boq_import', { defaultValue: 'BOQ import' }),
+    boq_import: t('catalog.source_boq_import', { defaultValue: 'Planilha orçamentária import' }),
     cad_import: t('catalog.source_cad_import', { defaultValue: 'CAD import' }),
     gaeb_import: t('catalog.source_gaeb_import', { defaultValue: 'GAEB import' }),
-    ai_takeoff: t('catalog.source_ai_takeoff', { defaultValue: 'AI takeoff' }),
+    ai_takeoff: t('catalog.source_ai_takeoff', { defaultValue: 'IA Levantamento de quantitativos' }),
     cwicr: t('catalog.source_cwicr', { defaultValue: 'CWICR' }),
   };
   const sourceLabel =
@@ -1053,7 +1053,7 @@ function ResourceDetailPanel({
               ) : null}
               {specs.source_boq_name ? (
                 <div className="flex items-center gap-1.5">
-                  <span className="text-content-tertiary">{t('boq.boq_abbr', { defaultValue: 'BOQ' })}:</span>
+                  <span className="text-content-tertiary">{t('boq.boq_abbr', { defaultValue: 'Planilha orçamentária' })}:</span>
                   <span className="font-medium text-content-primary">{String(specs.source_boq_name)}</span>
                 </div>
               ) : null}
@@ -1756,12 +1756,12 @@ export function CatalogPage() {
       {/* Faint watermark of the selected resource-database country - reads
           as a wash behind the catalog, never interactive. */}
       <CountryFlagBackdrop code={region || null} />
-      <Breadcrumb items={[{ label: t('catalog.title', { defaultValue: 'Resource Catalog' }) }]} />
+      <Breadcrumb items={[{ label: t('catalog.title', { defaultValue: 'Catálogo de insumos' }) }]} />
       {/* Canonical top block — module name + icon are shown by the global top
           app bar. The page renders only its (contextual) subtitle on the left
           and the page actions on the right. */}
       <PageHeader
-        srTitle={t('catalog.title', { defaultValue: 'Resource Catalog' })}
+        srTitle={t('catalog.title', { defaultValue: 'Catálogo de insumos' })}
         subtitle={
           regionInfo
             ? `${regionInfo.name}, ${total.toLocaleString(getNumberLocale())} ${t('catalog.resources', { defaultValue: 'resources' })}`
@@ -1861,14 +1861,14 @@ export function CatalogPage() {
         more={t('catalog.intro_more', { defaultValue: '' }) ? <IntroRichText text={t('catalog.intro_more')} /> : undefined}
         links={[
           { label: t('nav.cost_explorer', { defaultValue: 'Cost Explorer' }), onClick: () => navigate('/cost-explorer') },
-          { label: t('nav.assemblies', { defaultValue: 'Assemblies' }), onClick: () => navigate('/assemblies') },
-          { label: t('nav.costs', { defaultValue: 'Cost Database' }), onClick: () => navigate('/costs') },
+          { label: t('nav.assemblies', { defaultValue: 'Composições' }), onClick: () => navigate('/assemblies') },
+          { label: t('nav.costs', { defaultValue: 'Banco de custos' }), onClick: () => navigate('/costs') },
           { label: t('nav.boq', { defaultValue: 'Bill of Quantities' }), onClick: () => navigate('/boq') },
         ]}
       >
         {t('catalog.intro_body', {
           defaultValue:
-            'Maintain the atomic items behind every estimate, the individual materials, labour rates and equipment costs, sourced from CWICR regional databases or your own imports. Bulk inflation, regional and group price adjustments apply here, then feed assemblies, BOQ unit rates and cost matching across projects.',
+            'Maintain the atomic items behind every Orçamento, the individual materials, labour rates and equipment costs, sourced from CWICR regional databases or your own imports. Bulk inflation, regional and group price adjustments apply here, then feed Composições, Planilha orçamentária unit rates and cost matching across projects.',
         })}
       </DismissibleInfo>
 
@@ -2122,14 +2122,14 @@ export function CatalogPage() {
             region === 'CUSTOM'
               ? t('catalog.my_catalog_empty', { defaultValue: 'Your catalog is empty' })
               : !hasAnyRegions && !debouncedQuery
-                ? t('catalog.empty_title', { defaultValue: 'Resource Catalog' })
+                ? t('catalog.empty_title', { defaultValue: 'Catálogo de insumos' })
                 : t('catalog.no_results', { defaultValue: 'No resources found' })
           }
           description={
             region === 'CUSTOM'
               ? t('catalog.my_catalog_empty_desc', {
                   defaultValue:
-                    'Add your own materials, equipment, and labor rates. Custom resources can be used in assemblies and applied to BOQ positions.',
+                    'Add your own materials, equipment, and labor rates. Custom resources can be used in Composições and applied to Planilha orçamentária positions.',
                 })
               : !hasAnyRegions && !debouncedQuery
                 ? t('catalog.empty_desc', {

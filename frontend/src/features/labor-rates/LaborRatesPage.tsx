@@ -151,7 +151,7 @@ export function LaborRatesPage() {
     onSuccess: (created: LaborRateTemplate) => {
       addToast({
         type: 'success',
-        title: t('laborRates.saved_title', { defaultValue: 'Template saved' }),
+        title: t('laborRates.saved_title', { defaultValue: 'Modelo saved' }),
         message: t('laborRates.saved_msg', {
           defaultValue: '"{{name}}" is available to reuse.',
           name: created?.name ?? templateName,
@@ -165,7 +165,7 @@ export function LaborRatesPage() {
     onError: (err: unknown) => {
       addToast({
         type: 'error',
-        title: t('laborRates.save_failed', { defaultValue: 'Could not save template' }),
+        title: t('laborRates.save_failed', { defaultValue: 'Could not save Modelo' }),
         message: getErrorMessage(err),
       });
     },
@@ -185,7 +185,7 @@ export function LaborRatesPage() {
     onSuccess: (updated: LaborRateTemplate) => {
       addToast({
         type: 'success',
-        title: t('laborRates.updated_title', { defaultValue: 'Template updated' }),
+        title: t('laborRates.updated_title', { defaultValue: 'Modelo updated' }),
         message: t('laborRates.updated_msg', {
           defaultValue: '"{{name}}" now carries your changes.',
           name: updated?.name ?? templateName,
@@ -196,7 +196,7 @@ export function LaborRatesPage() {
     onError: (err: unknown) => {
       addToast({
         type: 'error',
-        title: t('laborRates.update_failed', { defaultValue: 'Could not update template' }),
+        title: t('laborRates.update_failed', { defaultValue: 'Could not update Modelo' }),
         message: getErrorMessage(err),
       });
     },
@@ -219,7 +219,7 @@ export function LaborRatesPage() {
     }
     if (reference.kind === 'assembly') {
       return t('laborRates.holder_assemblies', {
-        defaultValue: 'priced assemblies: {{n}}',
+        defaultValue: 'priced Composições: {{n}}',
         n,
       });
     }
@@ -232,7 +232,7 @@ export function LaborRatesPage() {
       const name = (templatesQuery.data ?? []).find((tpl) => tpl.id === id)?.name ?? '';
       addToast({
         type: 'success',
-        title: t('laborRates.deleted_title', { defaultValue: 'Template deleted' }),
+        title: t('laborRates.deleted_title', { defaultValue: 'Modelo deleted' }),
         message: t('laborRates.deleted_msg', {
           defaultValue: '"{{name}}" is no longer in the list.',
           name,
@@ -252,14 +252,14 @@ export function LaborRatesPage() {
         addToast({
           type: 'error',
           title: t('laborRates.delete_blocked_title', {
-            defaultValue: 'Template still in use',
+            defaultValue: 'Modelo still in use',
           }),
           // With an unrecognised holder kind the list comes back empty, so the
           // backend's own English sentence is shown rather than a blank clause.
           message: holders
             ? t('laborRates.delete_blocked_msg', {
                 defaultValue:
-                  'This template cannot be deleted while other records use it. Still using it: {{holders}}. Remove them first, then delete the template.',
+                  'This Modelo cannot be deleted while other records use it. Still using it: {{holders}}. Remove them first, then delete the Modelo.',
                 holders,
               })
             : getErrorMessage(err),
@@ -268,7 +268,7 @@ export function LaborRatesPage() {
       }
       addToast({
         type: 'error',
-        title: t('laborRates.delete_failed', { defaultValue: 'Could not delete template' }),
+        title: t('laborRates.delete_failed', { defaultValue: 'Could not delete Modelo' }),
         message: getErrorMessage(err),
       });
     },
@@ -277,7 +277,7 @@ export function LaborRatesPage() {
   /** Confirm what is about to go, then delete it. */
   const onDeleteTemplate = async (template: LaborRateTemplate) => {
     const ok = await confirm({
-      title: t('laborRates.delete_template_q', { defaultValue: 'Delete this rate template?' }),
+      title: t('laborRates.delete_template_q', { defaultValue: 'Delete this rate Modelo?' }),
       message: t('laborRates.delete_template_msg', {
         defaultValue:
           'This permanently deletes "{{name}}", its {{onCosts}} on-costs and its saved all-in rate of {{rate}}. It cannot be undone.',
@@ -285,7 +285,7 @@ export function LaborRatesPage() {
         onCosts: (template.components ?? []).length,
         rate: formatCurrency(template.all_in_rate, template.currency),
       }),
-      confirmLabel: t('laborRates.delete_confirm', { defaultValue: 'Delete template' }),
+      confirmLabel: t('laborRates.delete_confirm', { defaultValue: 'Delete Modelo' }),
     });
     if (ok) deleteMutation.mutate(template.id);
   };
@@ -335,7 +335,7 @@ export function LaborRatesPage() {
           defaultValue: 'Saved to cost catalogue',
         }),
         message: t('laborRates.cost_item_saved_msg', {
-          defaultValue: '"{{code}}" is now a cost item you can add to a BOQ.',
+          defaultValue: '"{{code}}" is now a cost item you can add to a Planilha orçamentária.',
           code: created?.code ?? '',
         }),
       });
@@ -475,7 +475,7 @@ export function LaborRatesPage() {
         <div className="flex flex-wrap items-end gap-3">
           <label className="flex flex-col gap-1 text-sm">
             <span className="font-medium text-content-secondary">
-              {t('laborRates.load_template', { defaultValue: 'Load a saved template' })}
+              {t('laborRates.load_template', { defaultValue: 'Load a saved Modelo' })}
             </span>
             <select
               className={`${inputClass} oe-select`}
@@ -493,7 +493,7 @@ export function LaborRatesPage() {
               <option value="">
                 {templatesQuery.isLoading
                   ? t('laborRates.loading', { defaultValue: 'Loading…' })
-                  : t('laborRates.choose_template', { defaultValue: 'Choose a template…' })}
+                  : t('laborRates.choose_template', { defaultValue: 'Choose a Modelo…' })}
               </option>
               {(templatesQuery.data ?? []).map((tpl) => (
                 <option key={tpl.id} value={tpl.id}>
@@ -512,7 +512,7 @@ export function LaborRatesPage() {
                 icon={<FilePlus size={14} />}
                 onClick={startNewTemplate}
               >
-                {t('laborRates.new_template', { defaultValue: 'New template' })}
+                {t('laborRates.new_template', { defaultValue: 'New Modelo' })}
               </Button>
               <Button
                 variant="danger"
@@ -522,7 +522,7 @@ export function LaborRatesPage() {
                 disabled={deleteMutation.isPending}
                 onClick={() => onDeleteTemplate(editingTemplate)}
               >
-                {t('laborRates.delete_template', { defaultValue: 'Delete template' })}
+                {t('laborRates.delete_template', { defaultValue: 'Delete Modelo' })}
               </Button>
             </div>
           )}
@@ -533,7 +533,7 @@ export function LaborRatesPage() {
                   name: editingTemplate.name,
                 })
               : t('laborRates.template_hint', {
-                  defaultValue: 'Loading a template fills the wage and on-costs below.',
+                  defaultValue: 'Loading a Modelo fills the wage and on-costs below.',
                 })}
           </span>
         </div>
@@ -856,9 +856,9 @@ export function LaborRatesPage() {
                 value={templateName}
                 onChange={(e) => setTemplateName(e.target.value)}
                 placeholder={t('laborRates.template_name', {
-                  defaultValue: 'Template name',
+                  defaultValue: 'Modelo name',
                 })}
-                aria-label={t('laborRates.template_name', { defaultValue: 'Template name' })}
+                aria-label={t('laborRates.template_name', { defaultValue: 'Modelo name' })}
               />
               <div className="flex flex-wrap gap-2">
                 {editingId ? (
@@ -893,7 +893,7 @@ export function LaborRatesPage() {
                       }
                       onClick={() => saveMutation.mutate()}
                     >
-                      {t('laborRates.save_as_new', { defaultValue: 'Save as new template' })}
+                      {t('laborRates.save_as_new', { defaultValue: 'Save as new Modelo' })}
                     </Button>
                   </>
                 ) : (
@@ -911,7 +911,7 @@ export function LaborRatesPage() {
                     }
                     onClick={() => saveMutation.mutate()}
                   >
-                    {t('laborRates.save_template', { defaultValue: 'Save as template' })}
+                    {t('laborRates.save_template', { defaultValue: 'Save as Modelo' })}
                   </Button>
                 )}
               </div>
@@ -919,7 +919,7 @@ export function LaborRatesPage() {
                 <p className="text-xs text-semantic-error">
                   {t('laborRates.base_wage_required', {
                     defaultValue:
-                      'Enter a base hourly wage above zero to save this build-up as a template.',
+                      'Enter a base hourly wage above zero to save this build-up as a Modelo.',
                   })}
                 </p>
               )}
@@ -931,7 +931,7 @@ export function LaborRatesPage() {
               <p className="text-xs text-content-tertiary">
                 {t('laborRates.publish_hint', {
                   defaultValue:
-                    'Publish this rate to the cost catalogue so it can be applied in a BOQ or assembly.',
+                    'Publish this rate to the cost catalogue so it can be applied in a Planilha orçamentária or assembly.',
                 })}
               </p>
               <div className="flex flex-wrap gap-2">

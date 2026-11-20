@@ -121,7 +121,7 @@ export function ScheduleCodesPanel({ scheduleId, projectId }: ScheduleCodesPanel
       <p className="-mt-2 text-xs text-content-secondary">
         {t('schedule.codes.subtitle', {
           defaultValue:
-            'Organise activities with hierarchical code dictionaries and user-defined fields, then slice the schedule into a grouped, banded grid and save the view as a reusable layout.',
+            'Organise activities with hierarchical code dictionaries and user-defined fields, then slice the Cronograma into a grouped, banded grid and save the view as a reusable layout.',
         })}
       </p>
 
@@ -276,7 +276,7 @@ function DictionariesTab({
             <div className="px-4 py-6">
               <p className="text-sm text-content-tertiary">
                 {t('schedule.codes.dicts_empty', {
-                  defaultValue: 'No code dictionaries yet. Create one below or import a template.',
+                  defaultValue: 'No code dictionaries yet. Create one below or import a Modelo.',
                 })}
               </p>
             </div>
@@ -464,7 +464,7 @@ function LibraryImporter({
   return (
     <div className="border-t border-border-light bg-surface-secondary/20 px-4 py-4">
       <h5 className="mb-2 text-2xs font-semibold uppercase tracking-wide text-content-secondary">
-        {t('schedule.codes.library_templates', { defaultValue: 'Library templates' })}
+        {t('schedule.codes.library_templates', { defaultValue: 'Library Modelos' })}
       </h5>
       {libQ.isLoading ? (
         <SkeletonTable rows={2} columns={1} />
@@ -472,7 +472,7 @@ function LibraryImporter({
         <RecoveryCard error={libQ.error} onRetry={() => libQ.refetch()} />
       ) : (libQ.data?.length ?? 0) === 0 ? (
         <p className="text-sm text-content-tertiary">
-          {t('schedule.codes.library_empty', { defaultValue: 'No library templates available.' })}
+          {t('schedule.codes.library_empty', { defaultValue: 'No library Modelos available.' })}
         </p>
       ) : (
         <ul className="space-y-1.5" data-testid="codes-library-list">
@@ -1222,7 +1222,7 @@ function GroupedTab({
             <p>
               {t('schedule.codes.no_dicts_for_group', {
                 defaultValue:
-                  'Create at least one code dictionary first (in the Dictionaries tab), then group the schedule by it here.',
+                  'Create at least one code dictionary first (in the Dictionaries tab), then group the Cronograma by it here.',
               })}
             </p>
           </div>
@@ -1494,7 +1494,7 @@ function GroupedGrid({
           title={t('schedule.codes.grouped_empty', { defaultValue: 'Run a grouped view' })}
           description={t('schedule.codes.grouped_empty_desc', {
             defaultValue:
-              'Pick one to three code dictionaries to group by, then run the query. The grid bands the activities by your chosen codes and pages through them server-side, so even a very large schedule stays responsive.',
+              'Pick one to three code dictionaries to group by, then run the query. The grid bands the activities by your chosen codes and pages through them server-side, so even a very large Cronograma stays responsive.',
           })}
         />
       </Card>

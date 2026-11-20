@@ -165,7 +165,7 @@ export function WorkspaceBrandCard() {
     setBusy(true);
     try {
       await work();
-      toast({ type: 'success', title: t('settings.brand_saved', { defaultValue: 'Workspace logo saved' }) });
+      toast({ type: 'success', title: t('settings.brand_saved', { defaultValue: 'Espaço de trabalho logo saved' }) });
     } catch (e) {
       fail(e);
     } finally {
@@ -191,9 +191,9 @@ export function WorkspaceBrandCard() {
   return (
     <Card>
       <CardHeader
-        title={t('settings.brand_title', { defaultValue: 'Workspace logo' })}
+        title={t('settings.brand_title', { defaultValue: 'Espaço de trabalho logo' })}
         subtitle={t('settings.brand_subtitle', {
-          defaultValue: 'Your company logo in the menu and on the sign-in page, for everyone in this workspace.',
+          defaultValue: 'Your company logo in the menu and on the sign-in page, for everyone in this Espaço de trabalho.',
         })}
       />
       <CardContent>
@@ -336,7 +336,7 @@ export function WorkspaceBrandCard() {
           </div>
         ) : (
           <p className="mt-4 border-t border-border-light pt-4 text-xs text-content-tertiary">
-            {t('settings.brand_admin_only', { defaultValue: 'Only an administrator can change the workspace logo.' })}
+            {t('settings.brand_admin_only', { defaultValue: 'Only an administrator can change the Espaço de trabalho logo.' })}
           </p>
         )}
       </CardContent>

@@ -152,7 +152,7 @@ export function SnapshotComparePanel({
         </div>
       ) : isError || !data ? (
         <p role="alert" className="px-4 py-12 text-center text-sm text-content-secondary">
-          {t('boq.compare_error', { defaultValue: 'Could not compare these BOQs.' })}
+          {t('boq.compare_error', { defaultValue: 'Could not compare these Planilhas orçamentárias.' })}
         </p>
       ) : (
         <div className="flex-1 overflow-y-auto">

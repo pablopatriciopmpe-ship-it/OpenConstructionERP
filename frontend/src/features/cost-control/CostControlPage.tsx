@@ -225,7 +225,7 @@ export function CostControlPage() {
         icon={<Scale size={28} />}
         title={t('cost_control.no_project', { defaultValue: 'Open a project first' })}
         description={t('cost_control.no_project_desc', {
-          defaultValue: 'Cost control works on one project at a time. Pick the project, then come back here.',
+          defaultValue: 'Controle de custos works on one project at a time. Pick the project, then come back here.',
         })}
         action={{ label: t('cost_control.go_projects', { defaultValue: 'Go to projects' }), onClick: () => navigate('/projects') }}
       />
@@ -241,11 +241,11 @@ export function CostControlPage() {
       <Breadcrumb
         items={[
           { label: projectName || t('cost_control.project', { defaultValue: 'Project' }), to: `/projects/${projectId}` },
-          { label: t('nav.cost_control', { defaultValue: 'Cost control' }) },
+          { label: t('nav.cost_control', { defaultValue: 'Controle de custos' }) },
         ]}
       />
       <PageHeader
-        srTitle={t('nav.cost_control', { defaultValue: 'Cost control' })}
+        srTitle={t('nav.cost_control', { defaultValue: 'Controle de custos' })}
         subtitle={t('cost_control.subtitle', {
           defaultValue: 'What the project will cost in the end, where each figure comes from, and how it moved.',
         })}
@@ -327,7 +327,7 @@ export function CostControlPage() {
           title={t('cost_control.empty_title', { defaultValue: 'No cost lines yet' })}
           description={t('cost_control.empty_desc', {
             defaultValue:
-              'Cost control reads the cost lines of the project. Create them from the bill of quantities on the 5D cost model page, then the budget, contracts and claims fill this page by themselves.',
+              'Controle de custos reads the cost lines of the project. Create them from the bill of quantities on the 5D cost model page, then the budget, contracts and claims fill this page by themselves.',
           })}
           action={{ label: t('cost_control.go_5d', { defaultValue: 'Open the 5D cost model' }), onClick: () => navigate('/5d') }}
         />
@@ -354,7 +354,7 @@ export function CostControlPage() {
                 key: 'planned',
                 label: t('cost_control.kpi_planned', { defaultValue: 'Planned' }),
                 value: fmtCurrency(totals.planned, currency),
-                sub: t('cost_control.kpi_planned_sub', { defaultValue: 'Budget, or the estimate where no budget is set' }),
+                sub: t('cost_control.kpi_planned_sub', { defaultValue: 'Budget, or the Orçamento where no budget is set' }),
                 icon: Scale,
               },
               {

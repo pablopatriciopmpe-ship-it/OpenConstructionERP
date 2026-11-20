@@ -345,7 +345,7 @@ export function BOQToolbar({
     >
       {/* ══ Block 1: the toolbar card (two rows) ════════════════════════════ */}
       <section
-        aria-label={t('boq.toolbar_aria', { defaultValue: 'Estimate toolbar' })}
+        aria-label={t('boq.toolbar_aria', { defaultValue: 'Orçamento toolbar' })}
         className="flex min-w-[300px] flex-1 flex-col gap-2 rounded-xl border border-border-light
                    bg-surface-primary px-3 py-2.5 shadow-sm"
       >
@@ -425,11 +425,11 @@ export function BOQToolbar({
               onClick={onToggleAiChat}
               title={t('boq.ai_assistant_tooltip', {
                 defaultValue:
-                  'Describe what you need in plain text - AI creates BOQ positions with realistic pricing.',
+                  'Describe what you need in plain text - IA creates Planilha orçamentária positions with realistic pricing.',
               })}
               data-testid="boq-ai-chat-button"
             >
-              {t('boq.ai_chat_short', { defaultValue: 'AI Chat' })}
+              {t('boq.ai_chat_short', { defaultValue: 'IA Chat' })}
             </Button>
             <QualityAiMenu
               t={t}
@@ -559,7 +559,7 @@ export function BOQToolbar({
                   </button>
                   <button role="menuitem" onClick={() => handleExportItem('pdf')} className="flex w-full items-center gap-2 px-3 py-2.5 text-sm text-content-primary hover:bg-surface-secondary transition-colors">
                     <FileDown size={16} className="text-content-tertiary" />
-                    {t('offers.export_internal_pdf', { defaultValue: 'Internal estimate (PDF)' })}
+                    {t('offers.export_internal_pdf', { defaultValue: 'Internal Orçamento (PDF)' })}
                   </button>
                   <button role="menuitem" onClick={() => handleExportItem('gaeb')} className="flex w-full items-center gap-2 px-3 py-2.5 text-sm text-content-primary hover:bg-surface-secondary transition-colors">
                     <FileText size={16} className="text-content-tertiary" />
@@ -631,7 +631,7 @@ export function BOQToolbar({
                       className="flex w-full items-center gap-2 border-t border-border-light px-3 py-2.5 text-left text-sm leading-snug text-content-primary hover:bg-surface-secondary transition-colors rounded-b-lg"
                     >
                       <ArrowUpRight size={16} className="shrink-0 text-content-tertiary" />
-                      {t('owner_schedule.menu', { defaultValue: 'Owner bid schedule (import / priced file)' })}
+                      {t('owner_schedule.menu', { defaultValue: 'Owner bid Cronograma (import / priced file)' })}
                     </Link>
                   )}
                 </div>,
@@ -678,7 +678,7 @@ export function BOQToolbar({
           {onCarbonFootprint && (
             <IconBtn
               icon={<Leaf size={16} className="text-semantic-success" />}
-              title={t('boq.carbon_footprint_tip', { defaultValue: 'Analyse the embodied carbon of this BOQ from EPD material factors' })}
+              title={t('boq.carbon_footprint_tip', { defaultValue: 'Analyse the embodied carbon of this Planilha orçamentária from EPD material factors' })}
               onClick={onCarbonFootprint}
             />
           )}
@@ -831,7 +831,7 @@ export function BOQToolbar({
               summary.displayRate != null && summary.displayCurrency
                 ? t('boq.grand_total_conversion_tooltip_v2', {
                     defaultValue:
-                      'Whole BOQ rendered in {{disp}} at rate {{rate}} ({{base}} → {{disp}}). View-only - server keeps base values. Switch to "Base" to edit prices.',
+                      'Whole Planilha orçamentária rendered in {{disp}} at rate {{rate}} ({{base}} → {{disp}}). View-only - server keeps base values. Switch to "Base" to edit prices.',
                     base: summary.currencyCode || summary.currencySymbol,
                     disp: summary.displayCurrency,
                     rate: summary.displayRate.toLocaleString(getNumberLocale(), {
@@ -1025,7 +1025,7 @@ function QualityAiMenu(props: QualityAiMenuProps) {
         onClick={() => setOpen((v) => !v)}
         aria-haspopup="menu"
         aria-expanded={open}
-        title={t('boq.quality_ai_menu_tip', { defaultValue: 'More quality & AI tools' })}
+        title={t('boq.quality_ai_menu_tip', { defaultValue: 'More quality & IA tools' })}
         className={`flex shrink-0 items-center gap-1.5 px-2.5 h-7 whitespace-nowrap rounded-lg border text-2xs font-semibold uppercase tracking-wider transition-colors ${
           open
             ? 'bg-violet-100 dark:bg-violet-900/40 border-violet-300 dark:border-violet-700 text-violet-700 dark:text-violet-200'
@@ -1038,7 +1038,7 @@ function QualityAiMenu(props: QualityAiMenuProps) {
         ) : (
           <Sparkles size={14} className="text-violet-500" />
         )}
-        <span className="hidden lg:inline whitespace-nowrap">{t('boq.quality_ai_menu', { defaultValue: 'Quality & AI' })}</span>
+        <span className="hidden lg:inline whitespace-nowrap">{t('boq.quality_ai_menu', { defaultValue: 'Quality & IA' })}</span>
         <ChevronDown size={11} className={`transition-transform ${open ? 'rotate-180' : ''}`} />
       </button>
 
@@ -1047,7 +1047,7 @@ function QualityAiMenu(props: QualityAiMenuProps) {
           <div
             ref={menuRef}
             role="menu"
-            aria-label={t('boq.quality_ai_menu', { defaultValue: 'Quality & AI' })}
+            aria-label={t('boq.quality_ai_menu', { defaultValue: 'Quality & IA' })}
             style={{ position: 'fixed', top: pos.top, right: pos.right, zIndex: 1000 }}
             className="w-72 rounded-xl shadow-2xl border border-border-light dark:border-border-dark bg-white dark:bg-surface-elevated overflow-hidden animate-card-in"
           >
@@ -1061,7 +1061,7 @@ function QualityAiMenu(props: QualityAiMenuProps) {
               <MenuRow
                 icon={<RefreshCw size={14} className={isRecalculating ? 'animate-spin text-oe-blue' : 'text-content-tertiary'} />}
                 label={isRecalculating ? t('boq.recalculating', { defaultValue: 'Updating...' }) : t('boq.recalculate_rates', { defaultValue: 'Update Rates' })}
-                hint={t('boq.recalculate_tip', { defaultValue: 'Matches positions to cost database, attaches resource breakdowns (materials, labor, equipment), and recalculates unit rates from components.' })}
+                hint={t('boq.recalculate_tip', { defaultValue: 'Matches positions to Banco de custos, attaches resource breakdowns (materials, labor, equipment), and recalculates unit rates from components.' })}
                 onClick={fire(onRecalculate)}
                 disabled={isRecalculating}
               />
@@ -1073,7 +1073,7 @@ function QualityAiMenu(props: QualityAiMenuProps) {
                     : anomalyCount
                       ? t('boq.anomalies_badge', { defaultValue: 'Anomalies ({{count}})', count: anomalyCount })
                       : t('boq.price_check', { defaultValue: 'Price Check' })}
-                  hint={t('boq.anomaly_tip', { defaultValue: 'Compares each unit rate against median market rates from the cost database. Flags overpriced and underpriced positions.' })}
+                  hint={t('boq.anomaly_tip', { defaultValue: 'Compares each unit rate against median market rates from the Banco de custos. Flags overpriced and underpriced positions.' })}
                   onClick={isCheckingAnomalies && onCancelAnomalies ? fire(onCancelAnomalies) : fire(onCheckAnomalies ?? (() => {}))}
                   trailing={isCheckingAnomalies && onCancelAnomalies ? (
                     <span className="text-2xs font-medium text-semantic-error">{t('common.cancel', { defaultValue: 'Cancel' })}</span>
@@ -1092,7 +1092,7 @@ function QualityAiMenu(props: QualityAiMenuProps) {
             {/* AI section */}
             <div className="px-3 pt-2.5 pb-1 border-b border-t border-border-light dark:border-border-dark bg-gradient-to-r from-violet-50/40 to-blue-50/40 dark:from-violet-950/20 dark:to-blue-950/20">
               <span className="oe-overline text-violet-700 dark:text-violet-300 inline-flex items-center gap-1">
-                <Sparkles size={10} /> AI
+                <Sparkles size={10} /> IA
               </span>
             </div>
             <div className="py-1">

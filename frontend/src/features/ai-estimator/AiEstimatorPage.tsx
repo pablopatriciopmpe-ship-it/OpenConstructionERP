@@ -282,7 +282,7 @@ export function AiEstimatorPage() {
     onError: (e: Error) =>
       addToast({
         type: 'error',
-        title: t('aiest.toast.start_failed', { defaultValue: 'Could not start the estimate' }),
+        title: t('aiest.toast.start_failed', { defaultValue: 'Could not start the Orçamento' }),
         message: e.message,
       }),
   });
@@ -490,7 +490,7 @@ export function AiEstimatorPage() {
       addToast({
         type: 'success',
         title: t('aiest.toast.applied', {
-          defaultValue: '{{n}} BOQ positions written',
+          defaultValue: '{{n}} Planilha orçamentária positions written',
           n: r.positions_created,
         }),
       });
@@ -499,7 +499,7 @@ export function AiEstimatorPage() {
     onError: (e: Error) =>
       addToast({
         type: 'error',
-        title: t('aiest.toast.apply_failed', { defaultValue: 'Could not write the BOQ' }),
+        title: t('aiest.toast.apply_failed', { defaultValue: 'Could not write the Planilha orçamentária' }),
         message: e.message,
       }),
   });
@@ -610,7 +610,7 @@ export function AiEstimatorPage() {
         addToast({
           type: 'info',
           title: t('aiest.toast.start_first', {
-            defaultValue: 'Start the estimate before jumping ahead',
+            defaultValue: 'Start the Orçamento before jumping ahead',
           }),
         });
         return;
@@ -687,10 +687,10 @@ export function AiEstimatorPage() {
     return (
       <div className="space-y-5 animate-fade-in">
         <PageHeader
-          srTitle={t('nav.ai_estimator', { defaultValue: 'AI Estimate Builder' })}
+          srTitle={t('nav.ai_estimator', { defaultValue: 'IA Orçamento Builder' })}
           subtitle={t('aiest.subtitle', {
             defaultValue:
-              'A full AI-driven estimate from any source. The agent groups quantities and finds catalogue rates, and you confirm every step.',
+              'A full IA-driven Orçamento from any source. The agent groups quantities and finds catalogue rates, and you confirm every step.',
           })}
           actions={<ModuleGuideButton content={ai_estimatorGuide} onCta={openWizardNew} />}
         />
@@ -717,10 +717,10 @@ export function AiEstimatorPage() {
     <ScoreThresholdsProvider value={meta.thresholds}>
     <div className="space-y-5 animate-fade-in">
       <PageHeader
-        srTitle={t('nav.ai_estimator', { defaultValue: 'AI Estimate Builder' })}
+        srTitle={t('nav.ai_estimator', { defaultValue: 'IA Orçamento Builder' })}
         subtitle={t('aiest.subtitle', {
           defaultValue:
-            'A full AI-driven estimate from any source. The agent groups quantities and finds catalogue rates, and you confirm every step.',
+            'A full IA-driven Orçamento from any source. The agent groups quantities and finds catalogue rates, and you confirm every step.',
         })}
         actions={
           <>
@@ -731,7 +731,7 @@ export function AiEstimatorPage() {
               icon={<ArrowLeft className="h-4 w-4" />}
               onClick={backToList}
             >
-              {t('aiest.wizard.back_to_runs', { defaultValue: 'All estimates' })}
+              {t('aiest.wizard.back_to_runs', { defaultValue: 'All Orçamentos' })}
             </Button>
           </>
         }
@@ -917,7 +917,7 @@ export function AiEstimatorPage() {
                       ? t('aiest.wizard.to_groups', { defaultValue: 'Confirm & group' })
                       : stage === 'grouping'
                         ? t('aiest.wizard.to_matching', { defaultValue: 'Match rates' })
-                        : t('aiest.wizard.to_review', { defaultValue: 'Review estimate' })}
+                        : t('aiest.wizard.to_review', { defaultValue: 'Review Orçamento' })}
                   </Button>
                 ) : (
                   <Button
@@ -942,7 +942,7 @@ export function AiEstimatorPage() {
               <p className="text-xs text-content-tertiary">
                 {t('aiest.monitor.before_start', {
                   defaultValue:
-                    'Pick a source and start the estimate to watch the agent work through each stage here.',
+                    'Pick a source and start the Orçamento to watch the agent work through each stage here.',
                 })}
               </p>
             </Card>
@@ -966,11 +966,11 @@ function BetaNotice() {
     <BetaBanner
       moduleKey="ai-estimator"
       title={t('ai-estimator.beta_title', {
-        defaultValue: 'Estimate Builder is in beta',
+        defaultValue: 'Orçamento Builder is in Beta',
       })}
       description={t('ai-estimator.beta_desc', {
         defaultValue:
-          'This AI workflow is still maturing. Treat every grouped quantity and matched rate as a draft and review it before you rely on the estimate. Rates always come from your cost database and are never invented, but the grouping and matching can still miss or misread things.',
+          'This IA workflow is still maturing. Treat every grouped quantity and matched rate as a draft and review it before you rely on the Orçamento. Rates always come from your Banco de custos and are never invented, but the grouping and matching can still miss or misread things.',
       })}
     />
   );
@@ -982,16 +982,16 @@ function IntroBanner() {
   return (
     <DismissibleInfo
       storageKey="ai-estimator"
-      title={t('ai-estimator.intro_title', { defaultValue: 'A guided estimate you can actually trust' })}
+      title={t('ai-estimator.intro_title', { defaultValue: 'A guided Orçamento you can actually trust' })}
       links={[
-        { label: t('ai-estimator.intro_link_boq', { defaultValue: 'Open BOQ' }), onClick: () => navigate('/boq') },
-        { label: t('ai-estimator.intro_link_costs', { defaultValue: 'Cost database' }), onClick: () => navigate('/costs') },
+        { label: t('ai-estimator.intro_link_boq', { defaultValue: 'Open Planilha orçamentária' }), onClick: () => navigate('/boq') },
+        { label: t('ai-estimator.intro_link_costs', { defaultValue: 'Banco de custos' }), onClick: () => navigate('/costs') },
         { label: t('ai-estimator.intro_link_validation', { defaultValue: 'Validation' }), onClick: () => navigate('/validation') },
       ]}
     >
       {t('ai-estimator.intro_body', {
         defaultValue:
-          'Bring any source, a BIM or CAD model, a DWG or PDF takeoff, an Excel or GAEB import, photos or a written description. The agent detects the format, reads it into elements, groups quantities and finds catalogue rates with resource breakdowns, and you confirm each stage before it moves on. Every rate comes from the cost database, never invented, and the validated result writes straight into a BOQ.',
+          'Bring any source, a BIM or CAD model, a DWG or PDF Levantamento de quantitativos, an Excel or GAEB import, photos or a written description. The agent detects the format, reads it into elements, groups quantities and finds catalogue rates with resource breakdowns, and you confirm each stage before it moves on. Every rate comes from the Banco de custos, never invented, and the validated result writes straight into a Planilha orçamentária.',
       })}
     </DismissibleInfo>
   );

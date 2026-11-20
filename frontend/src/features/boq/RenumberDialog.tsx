@@ -65,7 +65,7 @@ const SCHEMES: SchemeInfo[] = [
     titleKey: 'boq.renumber_scheme_gap100',
     titleDefault: 'Gap of 100',
     descKey: 'boq.renumber_scheme_gap100_desc',
-    descDefault: 'Even more headroom for very large BOQs that may grow significantly post-tender.',
+    descDefault: 'Even more headroom for very large Planilhas orçamentárias that may grow significantly post-tender.',
     example: ['01', '01.100', '01.200', '01.300', '02', '02.100'],
   },
   {
@@ -74,7 +74,7 @@ const SCHEMES: SchemeInfo[] = [
     titleKey: 'boq.renumber_scheme_sequential',
     titleDefault: 'Sequential',
     descKey: 'boq.renumber_scheme_sequential_desc',
-    descDefault: 'Compact, traditional numbering. Best for fixed-scope BOQs that won\'t get extra positions later.',
+    descDefault: 'Compact, traditional numbering. Best for fixed-scope Planilhas orçamentárias that won\'t get extra positions later.',
     example: ['01', '01.01', '01.02', '01.03', '02', '02.01'],
   },
   {

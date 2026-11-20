@@ -174,13 +174,13 @@ export function BoqLinkEditor({
     <div data-testid="boq-link-editor" className="space-y-3">
       <div className="flex items-center gap-2 text-sm font-medium text-content-primary">
         <Link2 size={16} className="text-oe-blue" />
-        {t('schedule.boq_links_title', { defaultValue: 'BOQ positions' })}
+        {t('schedule.boq_links_title', { defaultValue: 'Planilha orçamentária positions' })}
       </div>
 
       {linkedIds.length === 0 ? (
         <p className="text-sm text-content-tertiary">
           {t('schedule.boq_links_empty', {
-            defaultValue: 'No BOQ positions linked yet. Link the positions this activity builds.',
+            defaultValue: 'No Planilha orçamentária positions linked yet. Link the positions this activity builds.',
           })}
         </p>
       ) : (
@@ -203,13 +203,13 @@ export function BoqLinkEditor({
         </p>
       ) : boqs.length === 0 ? (
         <p className="text-sm text-content-tertiary">
-          {t('schedule.boq_links_no_boqs', { defaultValue: 'This project has no BOQ yet.' })}
+          {t('schedule.boq_links_no_boqs', { defaultValue: 'This project has no Planilha orçamentária yet.' })}
         </p>
       ) : (
         <div className="flex flex-wrap items-end gap-2 rounded-lg border border-dashed border-border-light p-2">
           {boqs.length > 1 && (
             <label className="flex min-w-[8rem] flex-col gap-1 text-xs text-content-secondary">
-              {t('schedule.boq_links_boq', { defaultValue: 'BOQ' })}
+              {t('schedule.boq_links_boq', { defaultValue: 'Planilha orçamentária' })}
               <select
                 data-testid="boq-link-boq"
                 className={SELECT_CLS}

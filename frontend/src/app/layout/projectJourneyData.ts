@@ -163,8 +163,8 @@ export const JOURNEY_PHASES: readonly JourneyPhase[] = [
     desc: 'Collect quantities, then filter and group them into the structure your estimate needs.',
     modules: [
       { to: '/quantities', labelKey: 'nav.quantities', label: 'Quantities' },
-      { to: '/takeoff', labelKey: 'nav.pdf_measurements', label: 'PDF Takeoff' },
-      { to: '/dwg-takeoff', labelKey: 'nav.dwg_takeoff', label: 'DWG Takeoff' },
+      { to: '/takeoff', labelKey: 'nav.pdf_measurements', label: 'PDF Levantamento de quantitativos' },
+      { to: '/dwg-takeoff', labelKey: 'nav.dwg_takeoff', label: 'DWG Levantamento de quantitativos' },
       { to: '/match-elements', labelKey: 'nav.match_elements', label: 'Match to cost' },
     ],
   },
@@ -178,9 +178,9 @@ export const JOURNEY_PHASES: readonly JourneyPhase[] = [
     desc: 'Turn quantities into a priced bill with rates, assemblies and AI suggestions.',
     modules: [
       { to: '/boq', labelKey: 'boq.title', label: 'Bill of Quantities' },
-      { to: '/costs', labelKey: 'costs.title', label: 'Cost Database' },
-      { to: '/assemblies', labelKey: 'nav.assemblies', label: 'Assemblies' },
-      { to: '/ai-estimate', labelKey: 'nav.ai_estimate', label: 'AI Quick Estimate' },
+      { to: '/costs', labelKey: 'costs.title', label: 'Banco de custos' },
+      { to: '/assemblies', labelKey: 'nav.assemblies', label: 'Composições' },
+      { to: '/ai-estimate', labelKey: 'nav.ai_estimate', label: 'IA Quick Orçamento' },
     ],
     extraRoutes: [
       '/catalog',
@@ -226,7 +226,7 @@ export const JOURNEY_PHASES: readonly JourneyPhase[] = [
     descKey: 'journey.phase.schedule.desc',
     desc: 'Sequence the work in time, link cost to schedule (5D), and plan crews, plant and risk.',
     modules: [
-      { to: '/schedule', labelKey: 'schedule.title', label: 'Schedule' },
+      { to: '/schedule', labelKey: 'schedule.title', label: 'Cronograma' },
       { to: '/5d', labelKey: 'nav.5d_cost_model', label: '5D Cost Model' },
       { to: '/tasks', labelKey: 'tasks.title', label: 'Tasks' },
       { to: '/resources', labelKey: 'nav.resources', label: 'Resources' },
@@ -252,12 +252,12 @@ export const JOURNEY_PHASES: readonly JourneyPhase[] = [
     descKey: 'journey.phase.build.desc',
     desc: 'Run site work day to day: diaries, RFIs, submittals, quality, safety and changes.',
     modules: [
-      { to: '/daily-diary', labelKey: 'nav.daily_diary', label: 'Daily Diary' },
-      { to: '/rfi', labelKey: 'rfi.title', label: 'RFI' },
+      { to: '/daily-diary', labelKey: 'nav.daily_diary', label: 'Diário de obra' },
+      { to: '/rfi', labelKey: 'rfi.title', label: 'Pedido de informação (RFI)' },
       { to: '/submittals', labelKey: 'submittals.title', label: 'Submittals' },
-      { to: '/inspections', labelKey: 'inspections.title', label: 'Inspections' },
+      { to: '/inspections', labelKey: 'inspections.title', label: 'Inspeções' },
       { to: '/photos', labelKey: 'nav.photos', label: 'Photos' },
-      { to: '/changeorders', labelKey: 'nav.change_orders', label: 'Change Orders' },
+      { to: '/changeorders', labelKey: 'nav.change_orders', label: 'Alterações de contrato' },
     ],
     extraRoutes: [
       '/field-reports',
@@ -294,7 +294,7 @@ export const JOURNEY_PHASES: readonly JourneyPhase[] = [
       { to: '/finance', labelKey: 'finance.title', label: 'Finance' },
       { to: '/cvr', labelKey: 'nav.cvr', label: 'Cost-Value Reconciliation' },
       { to: '/project-controls', labelKey: 'nav.project_controls', label: 'Project Controls' },
-      { to: '/bi-dashboards', labelKey: 'nav.bi_dashboards', label: 'BI Dashboards' },
+      { to: '/bi-dashboards', labelKey: 'nav.bi_dashboards', label: 'BI Painéis' },
       { to: '/reports', labelKey: 'nav.reports', label: 'Reports' },
     ],
     extraRoutes: ['/analytics', '/reporting', '/dashboards', '/admin/audit-log'],
@@ -321,9 +321,9 @@ export const JOURNEY_PHASES: readonly JourneyPhase[] = [
 /** Cross-cutting modules that help across every phase rather than sitting on
  *  the line. Shown as an "always on" band under the journey. */
 export const JOURNEY_ALWAYS_ON: readonly JourneyModule[] = [
-  { to: '/ai-agents', labelKey: 'nav.ai_agents', label: 'AI Agents' },
-  { to: '/advisor', labelKey: 'nav.ai_advisor', label: 'AI Cost Advisor' },
-  { to: '/chat', labelKey: 'nav.erp_chat', label: 'AI Chat' },
+  { to: '/ai-agents', labelKey: 'nav.ai_agents', label: 'IA Agents' },
+  { to: '/advisor', labelKey: 'nav.ai_advisor', label: 'IA Cost Advisor' },
+  { to: '/chat', labelKey: 'nav.erp_chat', label: 'IA Chat' },
   { to: '/collaboration', labelKey: 'nav.collaboration', label: 'Collaboration' },
   { to: '/pipelines', labelKey: 'nav.pipelines', label: 'Pipelines' },
 ] as const;

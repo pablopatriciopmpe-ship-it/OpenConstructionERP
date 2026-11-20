@@ -215,7 +215,7 @@ export function ScheduleRiskPanel({ scheduleId, activitiesById }: ScheduleRiskPa
         <div className="mb-3 flex items-center gap-2">
           <Activity size={16} className="text-content-secondary" />
           <h3 className="oe-card-title">
-            {t('schedule.risk.title', { defaultValue: 'Monte-Carlo schedule risk' })}
+            {t('schedule.risk.title', { defaultValue: 'Monte-Carlo Cronograma risk' })}
           </h3>
         </div>
 
@@ -332,7 +332,7 @@ export function ScheduleRiskPanel({ scheduleId, activitiesById }: ScheduleRiskPa
               className="h-4 w-4 rounded border-border accent-oe-blue"
             />
             {t('schedule.risk.with_cost', {
-              defaultValue: 'Add cost inputs for a Joint Confidence Level (cost + schedule)',
+              defaultValue: 'Add cost inputs for a Joint Confidence Level (cost + Cronograma)',
             })}
           </label>
           {form.withCost && (
@@ -420,7 +420,7 @@ export function ScheduleRiskPanel({ scheduleId, activitiesById }: ScheduleRiskPa
             title={t('schedule.risk.empty', { defaultValue: 'No simulation run yet' })}
             description={t('schedule.risk.empty_desc', {
               defaultValue:
-                'Run a Monte-Carlo simulation to turn your activity durations into a finish-date probability distribution. The P5-P95 band, S-curve, contingency and criticality index tell you how much schedule reserve to hold and which activities drive the risk.',
+                'Run a Monte-Carlo simulation to turn your activity durations into a finish-date probability distribution. The P5-P95 band, S-curve, contingency and criticality index tell you how much Cronograma reserve to hold and which activities drive the risk.',
             })}
           />
         </Card>

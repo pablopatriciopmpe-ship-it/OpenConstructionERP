@@ -215,7 +215,7 @@ export function CompactProjectCard({
               <span className="inline-flex items-center gap-1 rounded-md bg-surface-secondary px-1.5 py-0.5 text-2xs font-medium text-content-secondary">
                 <Layers size={10} strokeWidth={2.25} />
                 <span className="tabular-nums">{boqCount}</span>
-                <span>{t('projects.boq_short', { defaultValue: 'BOQs' })}</span>
+                <span>{t('projects.boq_short', { defaultValue: 'Planilhas orçamentárias' })}</span>
               </span>
             )}
           </div>

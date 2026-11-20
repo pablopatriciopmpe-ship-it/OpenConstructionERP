@@ -159,7 +159,7 @@ export function ProgressRigorPanel({ scheduleId, activities, currency, dataDate 
         icon={<Gauge size={40} />}
         title={t('schedule.progress_no_activities_title', { defaultValue: 'No activities to track' })}
         description={t('schedule.progress_no_activities_desc', {
-          defaultValue: 'Add activities to the schedule to set typed progress, steps and suspend/resume.',
+          defaultValue: 'Add activities to the Cronograma to set typed progress, steps and suspend/resume.',
         })}
       />
     );

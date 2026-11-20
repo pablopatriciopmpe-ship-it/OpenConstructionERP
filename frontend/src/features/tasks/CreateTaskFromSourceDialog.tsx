@@ -67,7 +67,7 @@ function sourceKindLabel(
 ): string {
   switch (sourceType) {
     case 'rfi':
-      return t('tasks.from_source_rfi', { defaultValue: 'RFI' });
+      return t('tasks.from_source_rfi', { defaultValue: 'Pedido de informação (RFI)' });
     case 'inbound_capture':
       return t('tasks.from_source_inbound', { defaultValue: 'captured message' });
     default:

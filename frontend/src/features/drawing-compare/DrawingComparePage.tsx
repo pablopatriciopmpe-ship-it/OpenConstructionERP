@@ -110,23 +110,23 @@ export function DrawingComparePage() {
           })}
         </p>
         <ol className="list-decimal space-y-1 pl-5 text-sm text-content-secondary">
-          <li>{t('drawing_compare.how_step1', { defaultValue: 'Pick the older and the newer revision: two PDF sheets from Takeoff or two DWG/DXF versions.' })}</li>
+          <li>{t('drawing_compare.how_step1', { defaultValue: 'Pick the older and the newer revision: two PDF sheets from Levantamento de quantitativos or two DWG/DXF versions.' })}</li>
           <li>{t('drawing_compare.how_step2', { defaultValue: 'Align them automatically by frame and title block, or click the same two marks on both.' })}</li>
           <li>{t('drawing_compare.how_step3', { defaultValue: 'Review each changed region in the overlay (old red, new blue) or side by side.' })}</li>
-          <li>{t('drawing_compare.how_step4', { defaultValue: 'Mark what matters, raise an RFI or a cloud, flag the quantities inside for re-measure, export the report.' })}</li>
+          <li>{t('drawing_compare.how_step4', { defaultValue: 'Mark what matters, raise an Pedido de informação (RFI) or a cloud, flag the quantities inside for re-measure, export the report.' })}</li>
         </ol>
         <p className="mt-2 flex flex-wrap gap-3 text-xs">
           <button type="button" className="text-oe-blue underline" onClick={() => navigate('/takeoff')}>
-            {t('nav.takeoff', { defaultValue: 'PDF Takeoff' })}
+            {t('nav.takeoff', { defaultValue: 'PDF Levantamento de quantitativos' })}
           </button>
           <button type="button" className="text-oe-blue underline" onClick={() => navigate('/dwg-takeoff')}>
-            {t('nav.dwg_takeoff', { defaultValue: 'DWG Takeoff' })}
+            {t('nav.dwg_takeoff', { defaultValue: 'DWG Levantamento de quantitativos' })}
           </button>
           <button type="button" className="text-oe-blue underline" onClick={() => navigate('/rfi')}>
-            {t('rfi.title', { defaultValue: 'RFIs' })}
+            {t('rfi.title', { defaultValue: 'Pedidos de informação' })}
           </button>
           <button type="button" className="text-oe-blue underline" onClick={() => navigate('/markups')}>
-            {t('nav.markups', { defaultValue: 'Markups' })}
+            {t('nav.markups', { defaultValue: 'Margens' })}
           </button>
         </p>
       </CollapsibleSection>

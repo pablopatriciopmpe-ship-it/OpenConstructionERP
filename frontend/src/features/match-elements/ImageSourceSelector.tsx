@@ -220,7 +220,7 @@ export default function ImageSourceSelector({ file, onPick }: Props) {
         <p className="text-2xs leading-relaxed text-content-secondary">
           {t('match_wizard.image_ai_note', {
             defaultValue:
-              'AI reads the image and suggests visible elements with rough quantities. Every suggestion is low-confidence - you review and confirm each one. Needs an AI provider configured in Settings; without one the session opens empty.',
+              'IA reads the image and suggests visible elements with rough quantities. Every suggestion is low-confidence - you review and confirm each one. Needs an IA provider configured in Settings; without one the session opens empty.',
           })}
         </p>
       </div>

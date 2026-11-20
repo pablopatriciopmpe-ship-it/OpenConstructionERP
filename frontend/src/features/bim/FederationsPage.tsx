@@ -1514,7 +1514,7 @@ function HowFederationsWork() {
       <p className="text-xs text-content-tertiary">
         {t('bim_federations.flow_intro', {
           defaultValue:
-            'A federation aligns the discipline models that share an origin into one coordinated set, so clash checking, takeoff and the bill of quantities all read the same models. This page is where that set is assembled.',
+            'A federation aligns the discipline models that share an origin into one coordinated set, so clash checking, Levantamento de quantitativos and the bill of quantities all read the same models. This page is where that set is assembled.',
         })}
       </p>
 
@@ -1559,7 +1559,7 @@ function HowFederationsWork() {
           </ModLink>{' '}
           ·{' '}
           <ModLink to="/quantities">
-            {t('bim_federations.mod_quantities', { defaultValue: 'Quantity takeoff' })}
+            {t('bim_federations.mod_quantities', { defaultValue: 'Quantity Levantamento de quantitativos' })}
           </ModLink>{' '}
           ·{' '}
           <ModLink to="/match-elements">
@@ -1684,7 +1684,7 @@ export function FederationsPage() {
       >
         {t('bim_federations.intro_body', {
           defaultValue:
-            'Group related models that share an origin, such as architectural, structural and MEP, into one federation. Manage the members of a set and open each model in the 3D viewer, so the disciplines stay aligned for clash checking, takeoff and BOQ work.',
+            'Group related models that share an origin, such as architectural, structural and MEP, into one federation. Manage the members of a set and open each model in the 3D viewer, so the disciplines stay aligned for clash checking, Levantamento de quantitativos and Planilha orçamentária work.',
         })}
       </DismissibleInfo>
 

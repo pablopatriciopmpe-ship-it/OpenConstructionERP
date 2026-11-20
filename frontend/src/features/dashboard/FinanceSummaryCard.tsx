@@ -126,7 +126,7 @@ export function FinanceSummaryCard() {
           >
             <div className="oe-overline flex items-center gap-1.5">
               <FileEdit size={12} className="text-violet-500" />
-              {t('dashboard.finance_change_orders', { defaultValue: 'Open change orders' })}
+              {t('dashboard.finance_change_orders', { defaultValue: 'Open Alterações de contrato' })}
             </div>
             <div className="mt-1 text-base font-semibold text-content-primary">
               <MoneyChips

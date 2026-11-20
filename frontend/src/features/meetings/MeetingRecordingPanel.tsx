@@ -233,7 +233,7 @@ export function MeetingRecordingPanel({ meetingId, projectId, attendees }: Meeti
         <p className="text-xs text-content-secondary" data-testid="speech-capability-note">
           {serverSpeech
             ? t('meetings.audio.cap_server', {
-                defaultValue: 'Audio is transcribed by the speech service configured for this workspace.',
+                defaultValue: 'Audio is transcribed by the speech service configured for this Espaço de trabalho.',
               })
             : recorder.speechSupported
               ? t('meetings.audio.cap_browser', {
@@ -246,7 +246,7 @@ export function MeetingRecordingPanel({ meetingId, projectId, attendees }: Meeti
                 })}{' '}
           {!caps.llm_available &&
             t('meetings.audio.cap_no_ai', {
-              defaultValue: 'No AI is configured, so proposals come from simple keyword rules.',
+              defaultValue: 'No IA is configured, so proposals come from simple keyword rules.',
             })}
         </p>
       )}
@@ -309,7 +309,7 @@ export function MeetingRecordingPanel({ meetingId, projectId, attendees }: Meeti
                     <option value="">
                       {caps.default_retention_days > 0
                         ? t('meetings.audio.retention_default', {
-                            defaultValue: 'Workspace default ({{days}})',
+                            defaultValue: 'Espaço de trabalho default ({{days}})',
                             days: caps.default_retention_days,
                           })
                         : t('meetings.audio.retention_forever', { defaultValue: 'Until deleted' })}

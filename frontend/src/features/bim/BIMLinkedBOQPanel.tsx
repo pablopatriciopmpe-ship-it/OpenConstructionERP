@@ -171,7 +171,7 @@ export default function BIMLinkedBOQPanel({
         <div className="flex items-center gap-2">
           <Link2 size={16} className="text-content-tertiary" />
           <h2 className="oe-card-title">
-            {t('bim.linked_boq_title', { defaultValue: 'Linked BOQ' })}
+            {t('bim.linked_boq_title', { defaultValue: 'Linked Planilha orçamentária' })}
           </h2>
         </div>
         <button
@@ -229,7 +229,7 @@ export default function BIMLinkedBOQPanel({
             <Link2 size={24} className="mb-2 opacity-40" />
             <p className="text-xs">
               {positions.length === 0
-                ? t('bim.linked_boq_empty', { defaultValue: 'No linked BOQ positions' })
+                ? t('bim.linked_boq_empty', { defaultValue: 'No linked Planilha orçamentária positions' })
                 : t('bim.linked_boq_no_match', { defaultValue: 'No matching positions' })}
             </p>
           </div>
@@ -293,11 +293,11 @@ export default function BIMLinkedBOQPanel({
                           href={`/boq/${pos.boq_id || derivedBoqId}?highlight=${pos.boq_position_id}`}
                           onClick={(e) => e.stopPropagation()}
                           className="text-2xs text-oe-blue hover:text-oe-blue/80 flex items-center gap-0.5"
-                          title={t('bim.linked_boq_open_in_boq', { defaultValue: 'Open in BOQ' })}
-                          aria-label={t('bim.linked_boq_open_in_boq', { defaultValue: 'Open in BOQ' })}
+                          title={t('bim.linked_boq_open_in_boq', { defaultValue: 'Open in Planilha orçamentária' })}
+                          aria-label={t('bim.linked_boq_open_in_boq', { defaultValue: 'Open in Planilha orçamentária' })}
                         >
                           <ExternalLink size={8} />
-                          BOQ
+                          Planilha orçamentária
                         </a>
                       )}
                     </div>

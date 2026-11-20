@@ -269,7 +269,7 @@ export function CatalogPickerModal({ open, onClose, onSelect }: CatalogPickerMod
                 {debouncedQuery || typeFilter
                   ? t('boq.try_different_search', { defaultValue: 'Try a different search term or filter' })
                   : t('boq.import_catalog_hint', {
-                      defaultValue: 'Import a resource catalog from Settings or the Catalog page',
+                      defaultValue: 'Import a Catálogo de insumos from Settings or the Catalog page',
                     })}
               </p>
             </div>

@@ -230,10 +230,10 @@ export function mapStoredReport(report: ValidationReportResponse): ValidationRep
 
 function getRuleDescriptions(t: (key: string, opts?: Record<string, unknown>) => string): Record<string, string> {
   return {
-    'boq_quality.position_has_quantity': t('validation.rule_position_has_quantity', { defaultValue: 'Checks that every BOQ position has a quantity greater than zero.' }),
+    'boq_quality.position_has_quantity': t('validation.rule_position_has_quantity', { defaultValue: 'Checks that every Planilha orçamentária position has a quantity greater than zero.' }),
     'boq_quality.position_has_unit_rate': t('validation.rule_position_has_unit_rate', { defaultValue: 'Checks that every position has a unit rate assigned.' }),
     'boq_quality.position_has_description': t('validation.rule_position_has_description', { defaultValue: 'Checks that every position has a meaningful description.' }),
-    'boq_quality.no_duplicate_ordinals': t('validation.rule_no_duplicate_ordinals', { defaultValue: 'Ensures all ordinal numbers within the BOQ are unique.' }),
+    'boq_quality.no_duplicate_ordinals': t('validation.rule_no_duplicate_ordinals', { defaultValue: 'Ensures all ordinal numbers within the Planilha orçamentária are unique.' }),
     'boq_quality.unit_rate_in_range': t('validation.rule_unit_rate_in_range', { defaultValue: 'Flags unit rates that deviate more than 5x from median.' }),
     'din276.cost_group_required': t('validation.rule_cost_group_required', { defaultValue: 'Ensures every position has a DIN 276 Kostengruppe assigned.' }),
     'din276.valid_cost_group': t('validation.rule_valid_cost_group', { defaultValue: 'Validates that DIN 276 codes are proper 3-digit codes.' }),
@@ -262,7 +262,7 @@ function getRuleSetDescription(
 ): string {
   const map: Record<string, string> = {
     boq_quality: t('validation.rs_boq_quality', {
-      defaultValue: 'Universal BOQ hygiene: missing quantities/rates, duplicate ordinals, outlier rates.',
+      defaultValue: 'Universal Planilha orçamentária hygiene: missing quantities/rates, duplicate ordinals, outlier rates.',
     }),
     din276: t('validation.rs_din276', {
       defaultValue: 'DIN 276 (DACH) cost-group structure & Kostengruppe completeness.',
@@ -712,7 +712,7 @@ export function ValidationPage() {
       if (result.element_ref) {
         descParts.push(
           t('validation.ncr_element_line', {
-            defaultValue: 'BOQ element: {{ref}}',
+            defaultValue: 'Planilha orçamentária element: {{ref}}',
             ref: result.element_ref,
           }),
         );
@@ -732,7 +732,7 @@ export function ValidationPage() {
 
   const introLinks = [
     {
-      label: t('validation.intro_link_boq', { defaultValue: 'Open BOQ editor' }),
+      label: t('validation.intro_link_boq', { defaultValue: 'Open Planilha orçamentária editor' }),
       onClick: () => navigate('/boq'),
     },
     {
@@ -782,7 +782,7 @@ export function ValidationPage() {
         >
           {t('validation.intro_body', {
             defaultValue:
-              'Validation is a first-class step in the Import → Validate → Enrich → Estimate pipeline. It checks a Bill of Quantities (and its linked canonical/BIM elements) against the rule sets configured for the project - these are derived automatically from the project’s region and classification standard (DIN 276, GAEB, NRM, MasterFormat, boq_quality, …). Each finding links back to the exact BOQ position so you can fix it at the source.',
+              'Validation is a first-class step in the Import → Validate → Enrich → Orçamento pipeline. It checks a Bill of Quantities (and its linked canonical/BIM elements) against the rule sets configured for the project - these are derived automatically from the project’s region and classification standard (DIN 276, GAEB, NRM, MasterFormat, boq_quality, …). Each finding links back to the exact Planilha orçamentária position so you can fix it at the source.',
           })}
         </DismissibleInfo>
       )}
@@ -820,14 +820,14 @@ export function ValidationPage() {
                   options={boqOptions}
                   placeholder={
                     boqOptions.length > 0
-                      ? t('validation.select_boq_placeholder', 'Choose a BOQ...')
-                      : t('validation.no_boqs_for_project', { defaultValue: 'This project has no BOQs yet' })
+                      ? t('validation.select_boq_placeholder', 'Choose a Planilha orçamentária...')
+                      : t('validation.no_boqs_for_project', { defaultValue: 'This project has no Planilhas orçamentárias yet' })
                   }
                 />
               )}
             </div>
             <div className="shrink-0">
-              <span title={!selectedBoqId ? t('validation.select_boq_first', { defaultValue: 'Select a BOQ first' }) : undefined}>
+              <span title={!selectedBoqId ? t('validation.select_boq_first', { defaultValue: 'Select a Planilha orçamentária first' }) : undefined}>
                 <Button
                   variant="primary"
                   size="md"
@@ -877,7 +877,7 @@ export function ValidationPage() {
           title={t('validation.empty_title', 'No validation report yet')}
           description={t(
             'validation.empty_description',
-            'Choose a BOQ and click "Run Validation" to check its data quality.',
+            'Choose a Planilha orçamentária and click "Run Validation" to check its data quality.',
           )}
         />
       )}
@@ -906,7 +906,7 @@ export function ValidationPage() {
                   ? runValidation.error.message
                   : t(
                       'validation.error_description',
-                      'Could not run validation. Check that the BOQ has positions and try again.',
+                      'Could not run validation. Check that the Planilha orçamentária has positions and try again.',
                     )}
               </p>
             </div>
@@ -932,7 +932,7 @@ export function ValidationPage() {
               <div className="mt-2 rounded-xl border border-border-light bg-surface-secondary/40 px-4 py-3 text-sm leading-relaxed text-content-secondary animate-fade-in">
                 {t('validation.intro_body', {
                   defaultValue:
-                    'Validation is a first-class step in the Import → Validate → Enrich → Estimate pipeline. It checks a Bill of Quantities (and its linked canonical/BIM elements) against the rule sets configured for the project - these are derived automatically from the project’s region and classification standard (DIN 276, GAEB, NRM, MasterFormat, boq_quality, …). Each finding links back to the exact BOQ position so you can fix it at the source.',
+                    'Validation is a first-class step in the Import → Validate → Enrich → Orçamento pipeline. It checks a Bill of Quantities (and its linked canonical/BIM elements) against the rule sets configured for the project - these are derived automatically from the project’s region and classification standard (DIN 276, GAEB, NRM, MasterFormat, boq_quality, …). Each finding links back to the exact Planilha orçamentária position so you can fix it at the source.',
                 })}
                 <div className="mt-2 flex flex-wrap gap-3">
                   {introLinks.map((link) => (
@@ -1005,8 +1005,8 @@ export function ValidationPage() {
               disabled={pdfPending}
             >
               {pdfPending
-                ? t('validation.export_boq_pdf_pending', { defaultValue: 'Preparing BOQ PDF…' })
-                : t('validation.export_priced_boq_pdf', { defaultValue: 'Export priced BOQ (PDF)' })}
+                ? t('validation.export_boq_pdf_pending', { defaultValue: 'Preparing Planilha orçamentária PDF…' })
+                : t('validation.export_priced_boq_pdf', { defaultValue: 'Export priced Planilha orçamentária (PDF)' })}
             </Button>
           </div>
 

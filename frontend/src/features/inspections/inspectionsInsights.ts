@@ -131,14 +131,14 @@ export function buildInspectionsInsights(
 
   const base = { datasetId: 'inspections', builtin: true } as const;
   const builtins: InsightDef[] = [
-    { ...base, id: 'kpi-inspections', title: t('inspections.insights.k_inspections', { defaultValue: 'Inspections' }), chart: 'kpi', agg: 'count', color: 0 },
+    { ...base, id: 'kpi-inspections', title: t('inspections.insights.k_inspections', { defaultValue: 'Inspeções' }), chart: 'kpi', agg: 'count', color: 0 },
     { ...base, id: 'kpi-passed', title: t('inspections.insights.k_passed', { defaultValue: 'Passed' }), chart: 'kpi', measure: 'passed', agg: 'sum', color: 3 },
     { ...base, id: 'kpi-failed', title: t('inspections.insights.k_failed', { defaultValue: 'Failed' }), chart: 'kpi', measure: 'failed', agg: 'sum', color: 1 },
     { ...base, id: 'kpi-pass-rate', title: t('inspections.insights.k_pass_rate', { defaultValue: 'Pass rate' }), chart: 'kpi', measure: 'pass_rate', agg: 'avg', color: 3 },
-    { ...base, id: 'bar-by-type', title: t('inspections.insights.c_by_type', { defaultValue: 'Inspections by type' }), chart: 'bar', dimension: 'type', agg: 'count', color: 0 },
-    { ...base, id: 'donut-by-result', title: t('inspections.insights.c_by_result', { defaultValue: 'Inspections by result' }), chart: 'donut', dimension: 'result', agg: 'count', color: 3 },
-    { ...base, id: 'bar-by-status', title: t('inspections.insights.c_by_status', { defaultValue: 'Inspections by status' }), chart: 'bar', dimension: 'status', agg: 'count', color: 4 },
-    { ...base, id: 'area-over-time', title: t('inspections.insights.c_over_time', { defaultValue: 'Inspections over time' }), chart: 'area', dimension: 'month', agg: 'count', color: 5 },
+    { ...base, id: 'bar-by-type', title: t('inspections.insights.c_by_type', { defaultValue: 'Inspeções by type' }), chart: 'bar', dimension: 'type', agg: 'count', color: 0 },
+    { ...base, id: 'donut-by-result', title: t('inspections.insights.c_by_result', { defaultValue: 'Inspeções by result' }), chart: 'donut', dimension: 'result', agg: 'count', color: 3 },
+    { ...base, id: 'bar-by-status', title: t('inspections.insights.c_by_status', { defaultValue: 'Inspeções by status' }), chart: 'bar', dimension: 'status', agg: 'count', color: 4 },
+    { ...base, id: 'area-over-time', title: t('inspections.insights.c_over_time', { defaultValue: 'Inspeções over time' }), chart: 'area', dimension: 'month', agg: 'count', color: 5 },
   ];
 
   return { datasets: [dataset], builtins };

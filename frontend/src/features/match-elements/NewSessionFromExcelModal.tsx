@@ -75,7 +75,7 @@ export function NewSessionFromExcelModal({
             <h2 className="oe-card-title">
               {t(
                 'match_elements.new_excel.title',
-                'New session from Excel BoQ',
+                'New session from Excel Planilha orçamentária',
               )}
             </h2>
           </div>
@@ -111,7 +111,7 @@ export function NewSessionFromExcelModal({
               onChange={(e) => setName(e.target.value)}
               placeholder={t(
                 'match_elements.new_excel.name_placeholder',
-                'e.g. Tender BoQ rev 3',
+                'e.g. Tender Planilha orçamentária rev 3',
               )}
               className="w-full oe-input"
             />

@@ -67,12 +67,12 @@ export function EvmPanel({ scheduleId, asOfDate, currency }: EvmPanelProps) {
           </div>
           <div>
             <h3 className="oe-card-title">
-              {t('schedule.evm.title', { defaultValue: 'Earned Value (EVM)' })}
+              {t('schedule.evm.title', { defaultValue: 'Valor agregado (Valor agregado)' })}
             </h3>
             <p className="mt-1 max-w-xl text-xs text-content-secondary">
               {t('schedule.evm.no_cost_data', {
                 defaultValue:
-                  'This schedule is not cost-loaded yet. Generate activities from a BOQ, or set planned and actual cost on activities, to track PV, EV, AC and the SPI/CPI indices here.',
+                  'This Cronograma is not cost-loaded yet. Generate activities from a Planilha orçamentária, or set planned and actual cost on activities, to track PV, EV, AC and the SPI/CPI indices here.',
               })}
             </p>
           </div>
@@ -105,7 +105,7 @@ export function EvmPanel({ scheduleId, asOfDate, currency }: EvmPanelProps) {
       <div className="mb-3 flex items-center gap-2">
         <TrendingUp size={16} className="text-content-secondary" />
         <h3 className="oe-card-title">
-          {t('schedule.evm.title', { defaultValue: 'Earned Value (EVM)' })}
+          {t('schedule.evm.title', { defaultValue: 'Valor agregado (Valor agregado)' })}
         </h3>
         <span className="text-2xs text-content-tertiary">
           {t('schedule.evm.as_of', { defaultValue: 'as of {{date}}', date: data.as_of_date })}
@@ -122,7 +122,7 @@ export function EvmPanel({ scheduleId, asOfDate, currency }: EvmPanelProps) {
           sub={t('schedule.evm.pv_sub', { defaultValue: 'Budgeted work scheduled' })}
         />
         <StatCard
-          label={t('schedule.evm.ev', { defaultValue: 'Earned Value (EV)' })}
+          label={t('schedule.evm.ev', { defaultValue: 'Valor agregado (EV)' })}
           value={formatCurrency(data.earned_value, currency)}
           icon={TrendingUp}
           tone="success"
@@ -149,7 +149,7 @@ export function EvmPanel({ scheduleId, asOfDate, currency }: EvmPanelProps) {
           <div className="flex items-center justify-between">
             <span className="flex items-center gap-1.5 text-2xs font-semibold uppercase tracking-wide text-content-tertiary">
               <Gauge size={12} />
-              {t('schedule.evm.spi', { defaultValue: 'Schedule Performance (SPI)' })}
+              {t('schedule.evm.spi', { defaultValue: 'Cronograma Performance (SPI)' })}
             </span>
             <Badge variant={healthVariant(spiHealth)} size="sm">
               {indexLabel(spiHealth)}
@@ -159,7 +159,7 @@ export function EvmPanel({ scheduleId, asOfDate, currency }: EvmPanelProps) {
             {formatIndex(data.spi)}
           </p>
           <p className="mt-0.5 text-xs text-content-tertiary">
-            {t('schedule.evm.sv', { defaultValue: 'Schedule variance (SV)' })}:{' '}
+            {t('schedule.evm.sv', { defaultValue: 'Cronograma variance (SV)' })}:{' '}
             <span className={sv >= 0 ? 'text-semantic-success' : 'text-semantic-error'}>
               {formatCurrency(data.schedule_variance, currency)}
             </span>
@@ -199,7 +199,7 @@ export function EvmPanel({ scheduleId, asOfDate, currency }: EvmPanelProps) {
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
           <div>
             <p className="text-2xs text-content-tertiary">
-              {t('schedule.evm.eac', { defaultValue: 'Estimate at Completion (EAC)' })}
+              {t('schedule.evm.eac', { defaultValue: 'Orçamento at Completion (EAC)' })}
             </p>
             <p className="text-lg font-semibold tabular-nums text-content-primary">
               {data.estimate_at_completion == null
@@ -209,7 +209,7 @@ export function EvmPanel({ scheduleId, asOfDate, currency }: EvmPanelProps) {
           </div>
           <div>
             <p className="text-2xs text-content-tertiary">
-              {t('schedule.evm.etc', { defaultValue: 'Estimate to Complete (ETC)' })}
+              {t('schedule.evm.etc', { defaultValue: 'Orçamento to Complete (ETC)' })}
             </p>
             <p className="text-lg font-semibold tabular-nums text-content-primary">
               {data.estimate_to_complete == null

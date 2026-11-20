@@ -76,11 +76,11 @@ export function ProposalReviewList({ proposals, people, busy, onReview }: Propos
         <p className="text-xs text-content-secondary">
           {proposals.ai_generated
             ? t('meetings.audio.proposals_ai_note', {
-                defaultValue: 'Proposed by AI. Check each item, edit it if needed, then confirm or reject it.',
+                defaultValue: 'Proposed by IA. Check each item, edit it if needed, then confirm or reject it.',
               })
             : t('meetings.audio.proposals_heuristic_note', {
                 defaultValue:
-                  'No AI is configured, so these come from simple keyword rules and are rough. Check each one carefully.',
+                  'No IA is configured, so these come from simple keyword rules and are rough. Check each one carefully.',
               })}
         </p>
         <label className="flex items-center gap-1.5 text-xs text-content-secondary">

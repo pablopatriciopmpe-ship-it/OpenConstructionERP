@@ -850,7 +850,7 @@ export function BIMConverterStatusBanner({
                 : allHealthy
                   ? t('bim.converter_panel_subtitle_ok', {
                       defaultValue:
-                        'Converters are ready: RVT and IFC models open in BIM Hub, DWG drawings in DWG Takeoff.',
+                        'Converters are ready: RVT and IFC models open in BIM Hub, DWG drawings in DWG Levantamento de quantitativos.',
                     })
                   : /* Everything is installed and unchecked: there is
                        nothing to install, so the install nag below would be

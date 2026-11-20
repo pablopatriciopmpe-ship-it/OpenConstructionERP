@@ -567,7 +567,7 @@ function SupportUsModal({ onClose, copied, setCopied }: ModalProps) {
                 <p className="mt-0.5 text-xs text-content-secondary leading-relaxed">
                   {t('support.action_donate_body', {
                     defaultValue:
-                      'Donations keep OpenConstructionERP free and open for everyone. They fund new regional cost data, AI estimation and support for more CAD and file formats.',
+                      'Donations keep OpenConstructionERP free and open for everyone. They fund new regional cost data, IA Estimativa and support for more CAD and file formats.',
                   })}
                 </p>
                 {/* Perk line - additive, inline-default only (do not fold into

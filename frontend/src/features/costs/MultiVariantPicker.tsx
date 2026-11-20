@@ -585,7 +585,7 @@ export function MultiVariantPicker({
               onClick={handleApply}
               data-testid="mvp-apply"
             >
-              {t('boq.mvp.apply', { defaultValue: 'Apply & add to BOQ' })}
+              {t('boq.mvp.apply', { defaultValue: 'Apply & add to Planilha orçamentária' })}
             </Button>
           </div>
         </div>

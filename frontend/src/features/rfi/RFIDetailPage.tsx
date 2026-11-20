@@ -435,13 +435,13 @@ export function RFIDetailPage() {
       setEditing(false);
       addToast({
         type: 'success',
-        title: t('rfi.updated', { defaultValue: 'RFI updated successfully' }),
+        title: t('rfi.updated', { defaultValue: 'Pedido de informação (RFI) updated successfully' }),
       });
     },
     onError: (e: Error) =>
       addToast({
         type: 'error',
-        title: t('rfi.update_failed', { defaultValue: 'Failed to update RFI' }),
+        title: t('rfi.update_failed', { defaultValue: 'Failed to update Pedido de informação (RFI)' }),
         message: e.message,
       }),
   });
@@ -452,14 +452,14 @@ export function RFIDetailPage() {
       invalidate();
       addToast({
         type: 'success',
-        title: t('rfi.closed', { defaultValue: 'RFI closed successfully' }),
+        title: t('rfi.closed', { defaultValue: 'Pedido de informação (RFI) closed successfully' }),
       });
     },
     onError: (e: Error) =>
       addToast({
         type: 'error',
         title: t('rfi.close_failed', {
-          defaultValue: 'Failed to close RFI',
+          defaultValue: 'Failed to close Pedido de informação (RFI)',
         }),
         message: e.message,
       }),
@@ -473,13 +473,13 @@ export function RFIDetailPage() {
       invalidate();
       addToast({
         type: 'success',
-        title: t('rfi.opened', { defaultValue: 'RFI opened' }),
+        title: t('rfi.opened', { defaultValue: 'Pedido de informação (RFI) opened' }),
       });
     },
     onError: (e: Error) =>
       addToast({
         type: 'error',
-        title: t('rfi.open_failed', { defaultValue: 'Failed to open RFI' }),
+        title: t('rfi.open_failed', { defaultValue: 'Failed to open Pedido de informação (RFI)' }),
         message: e.message,
       }),
   });
@@ -488,12 +488,12 @@ export function RFIDetailPage() {
 
   const handleClose = useCallback(async () => {
     const ok = await confirm({
-      title: t('rfi.confirm_close_title', { defaultValue: 'Close RFI?' }),
+      title: t('rfi.confirm_close_title', { defaultValue: 'Close Pedido de informação (RFI)?' }),
       message: t('rfi.confirm_close_msg', {
         defaultValue:
-          'This RFI will be closed and no further responses can be added.',
+          'This Pedido de informação (RFI) will be closed and no further responses can be added.',
       }),
-      confirmLabel: t('rfi.action_close', { defaultValue: 'Close RFI' }),
+      confirmLabel: t('rfi.action_close', { defaultValue: 'Close Pedido de informação (RFI)' }),
       variant: 'warning',
     });
     if (ok) closeMut.mutate();
@@ -524,23 +524,23 @@ export function RFIDetailPage() {
       <div className="space-y-5 animate-fade-in">
         <Breadcrumb
           items={[
-            { label: t('rfi.title', { defaultValue: 'RFIs' }), to: '/rfi' },
+            { label: t('rfi.title', { defaultValue: 'Pedidos de informação' }), to: '/rfi' },
             { label: t('common.not_found', { defaultValue: 'Not found' }) },
           ]}
         />
         <EmptyState
           icon={<AlertTriangle size={28} strokeWidth={1.5} />}
-          title={t('rfi.not_found', { defaultValue: 'RFI not found' })}
+          title={t('rfi.not_found', { defaultValue: 'Pedido de informação (RFI) not found' })}
           description={
             error instanceof Error
               ? error.message
               : t('rfi.not_found_hint', {
                   defaultValue:
-                    'The RFI you are looking for does not exist or you do not have access to it.',
+                    'The Pedido de informação (RFI) you are looking for does not exist or you do not have access to it.',
                 })
           }
           action={{
-            label: t('rfi.back_to_list', { defaultValue: 'Back to RFIs' }),
+            label: t('rfi.back_to_list', { defaultValue: 'Back to Pedidos de informação' }),
             onClick: () => navigate('/rfi'),
           }}
         />
@@ -576,7 +576,7 @@ export function RFIDetailPage() {
           ...(rfi.project_id && project?.name
             ? [{ label: project.name, to: `/projects/${rfi.project_id}` }]
             : []),
-          { label: t('rfi.title', { defaultValue: 'RFIs' }), to: '/rfi' },
+          { label: t('rfi.title', { defaultValue: 'Pedidos de informação' }), to: '/rfi' },
           { label: `#${rfi.rfi_number}` },
         ]}
       />
@@ -656,7 +656,7 @@ export function RFIDetailPage() {
             onClick={() => navigate('/rfi')}
             icon={<ArrowLeft size={14} />}
           >
-            {t('rfi.back_to_list', { defaultValue: 'Back to RFIs' })}
+            {t('rfi.back_to_list', { defaultValue: 'Back to Pedidos de informação' })}
           </Button>
           {/* Edit - the PATCH endpoint refuses edits once an RFI is closed
               / void (400), so the affordance is hidden for those states. */}
@@ -706,7 +706,7 @@ export function RFIDetailPage() {
                 )
               }
             >
-              {t('rfi.action_open', { defaultValue: 'Open RFI' })}
+              {t('rfi.action_open', { defaultValue: 'Open Pedido de informação (RFI)' })}
             </Button>
           )}
           {rfi.status === 'open' && (
@@ -733,7 +733,7 @@ export function RFIDetailPage() {
                 )
               }
             >
-              {t('rfi.action_close', { defaultValue: 'Close RFI' })}
+              {t('rfi.action_close', { defaultValue: 'Close Pedido de informação (RFI)' })}
             </Button>
           )}
         </div>
@@ -964,7 +964,7 @@ export function RFIDetailPage() {
                   )
                 }
               >
-                {t('rfi.action_close', { defaultValue: 'Close RFI' })}
+                {t('rfi.action_close', { defaultValue: 'Close Pedido de informação (RFI)' })}
               </Button>
             </div>
           )}
@@ -1056,7 +1056,7 @@ export function RFIDetailPage() {
             <div className="flex items-center gap-2 mb-3">
               <CalendarClock size={14} className="text-content-tertiary" />
               <span className="text-xs font-semibold uppercase tracking-wider text-content-tertiary">
-                {t('rfi.meta_schedule', { defaultValue: 'Schedule' })}
+                {t('rfi.meta_schedule', { defaultValue: 'Cronograma' })}
               </span>
             </div>
             <dl className="space-y-3">
@@ -1115,7 +1115,7 @@ export function RFIDetailPage() {
                 {rfi.schedule_impact && (
                   <Row
                     label={t('rfi.field_schedule_impact_days', {
-                      defaultValue: 'Schedule slip (days)',
+                      defaultValue: 'Cronograma slip (days)',
                     })}
                   >
                     <span className="inline-flex items-center gap-1 text-orange-600 dark:text-orange-400 font-medium">
@@ -1140,7 +1140,7 @@ export function RFIDetailPage() {
                 className="text-sm text-oe-blue hover:underline"
               >
                 {t('rfi.linked_change_order', {
-                  defaultValue: 'View linked change order',
+                  defaultValue: 'View linked Alteração de contrato',
                 })}
               </Link>
             </Card>

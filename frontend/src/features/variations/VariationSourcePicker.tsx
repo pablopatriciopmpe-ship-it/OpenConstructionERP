@@ -204,7 +204,7 @@ export function VariationSourceSelect({
       ))}
       {estimates.map((boq) => (
         <option key={boq.id} value={`boq:${boq.id}`}>
-          {t('variations.boq_source_estimate', { defaultValue: 'Estimate' })}
+          {t('variations.boq_source_estimate', { defaultValue: 'Orçamento' })}
           {' · '}
           {boq.name || boq.id}
         </option>
@@ -305,7 +305,7 @@ export function VariationSourcePicker({
       <p className="text-sm text-content-secondary">
         {t('variations.boq_source_hint', {
           defaultValue:
-            'Name the schedule-of-values lines and estimating positions this variation is priced against. Each seeded line records where it came from, so the price can be defended against the contract rather than asserted.',
+            'Name the Cronograma-of-values lines and estimating positions this variation is priced against. Each seeded line records where it came from, so the price can be defended against the contract rather than asserted.',
         })}
       </p>
 

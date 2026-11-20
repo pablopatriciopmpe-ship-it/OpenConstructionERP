@@ -135,7 +135,7 @@ export function PromptEditor({ promptKey, selectedId, onSelect }: Props) {
           {(listQ.error as Error)?.message ??
             t(
               'match_elements.pipeline.prompts_load_failed',
-              'Could not load prompt templates.',
+              'Could not load prompt Modelos.',
             )}
         </span>
         <button
@@ -154,7 +154,7 @@ export function PromptEditor({ promptKey, selectedId, onSelect }: Props) {
       <div className="text-xs text-content-tertiary bg-surface-secondary border border-border rounded-lg px-3 py-2">
         {t(
           'match_elements.pipeline.no_prompts',
-          'No prompt templates for this stage yet.',
+          'No prompt Modelos for this stage yet.',
         )}
       </div>
     );
@@ -226,7 +226,7 @@ export function PromptEditor({ promptKey, selectedId, onSelect }: Props) {
       {/* User template */}
       <div>
         <div className="text-2xs uppercase tracking-wider text-content-tertiary font-semibold mb-1">
-          {t('match_elements.pipeline.user_template', 'User template')}
+          {t('match_elements.pipeline.user_template', 'User Modelo')}
         </div>
         <textarea
           value={usr}

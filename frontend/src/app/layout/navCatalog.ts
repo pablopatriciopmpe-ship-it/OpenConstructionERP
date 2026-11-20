@@ -279,7 +279,7 @@ const ALL_NAV_GROUPS: NavGroup[] = [
   {
     id: 'grp_takeoff',
     labelKey: 'sidebar.group.takeoff',
-    defaultLabel: 'Takeoff',
+    defaultLabel: 'Levantamento de quantitativos',
     defaultOpen: true,
     items: [
       { labelKey: 'nav.pdf_measurements', to: '/takeoff?tab=measurements', icon: Ruler },
@@ -292,7 +292,7 @@ const ALL_NAV_GROUPS: NavGroup[] = [
       // by pathname and both rows open /bim/rules.
       { labelKey: 'nav.quantity_rules', defaultLabel: 'Quantity Rules', to: '/bim/rules', icon: SlidersHorizontal },
       { labelKey: 'nav.quantities', to: '/quantities', icon: Ruler },
-      { labelKey: 'nav.rebar_schedule', defaultLabel: 'Rebar Schedule', to: '/rebar-schedule', icon: Construction, advancedOnly: true },
+      { labelKey: 'nav.rebar_schedule', defaultLabel: 'Rebar Cronograma', to: '/rebar-schedule', icon: Construction, advancedOnly: true },
     ],
   },
   // ── 3. COST DATA ───────────────────────────────────────────────────
@@ -481,7 +481,7 @@ const ALL_NAV_GROUPS: NavGroup[] = [
   {
     id: 'grp_cost_control',
     labelKey: 'sidebar.group.cost_control',
-    defaultLabel: 'Cost Control & Risk',
+    defaultLabel: 'Controle de custos & Risk',
     defaultOpen: true,
     hideInSimple: true,
     items: [
@@ -592,7 +592,7 @@ const ALL_NAV_GROUPS: NavGroup[] = [
       },
       {
         labelKey: 'nav.quote_capture',
-        defaultLabel: 'Quote capture',
+        defaultLabel: 'Cotação capture',
         to: '/quotes',
         icon: FileText,
         moduleKey: 'quote_capture',
@@ -622,7 +622,7 @@ const ALL_NAV_GROUPS: NavGroup[] = [
   {
     id: 'grp_estimate_detail',
     labelKey: 'sidebar.group.estimate_detail',
-    defaultLabel: 'Estimate Detail',
+    defaultLabel: 'Orçamento Detail',
     defaultOpen: true,
     hideInSimple: true,
     items: [
@@ -651,7 +651,7 @@ const ALL_NAV_GROUPS: NavGroup[] = [
       { labelKey: 'nav.variations', to: '/variations', icon: GitBranch },
       {
         labelKey: 'nav.estimate_archive',
-        defaultLabel: 'Sealed estimates',
+        defaultLabel: 'Sealed Orçamentos',
         to: '/estimate-archive',
         icon: Lock,
         advancedOnly: true,
@@ -1007,7 +1007,7 @@ const ALL_NAV_GROUPS: NavGroup[] = [
   {
     id: 'grp_estimating_ai',
     labelKey: 'sidebar.group.estimating_ai',
-    defaultLabel: 'AI Estimating',
+    defaultLabel: 'IA Estimating',
     defaultOpen: false,
     hideInSimple: true,
     items: [
@@ -1032,7 +1032,7 @@ const ALL_NAV_GROUPS: NavGroup[] = [
   {
     id: 'grp_automation_ai',
     labelKey: 'sidebar.group.automation_ai',
-    defaultLabel: 'Automation & AI',
+    defaultLabel: 'Automation & IA',
     defaultOpen: true,
     hideInSimple: true,
     items: [

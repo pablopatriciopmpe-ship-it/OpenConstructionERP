@@ -399,15 +399,15 @@ export function AssembliesPage() {
 
   return (
     <div className="space-y-5 animate-fade-in">
-      <Breadcrumb items={[{ label: t('nav.assemblies', 'Assemblies') }]} />
+      <Breadcrumb items={[{ label: t('nav.assemblies', 'Composições') }]} />
       {/* Canonical top block — module name + icon are shown in the global top
           app bar. The page renders only its (contextual) subtitle and the
           action stack. */}
       <PageHeader
-        srTitle={t('assemblies.title', 'Assemblies')}
+        srTitle={t('assemblies.title', 'Composições')}
         subtitle={
           total > 0
-            ? `${total} ${t('assemblies.assemblies_found', 'assemblies')}`
+            ? `${total} ${t('assemblies.assemblies_found', 'Composições')}`
             : t('assemblies.description', 'Reusable cost recipes')
         }
         actions={
@@ -481,7 +481,7 @@ export function AssembliesPage() {
             icon={<Library size={14} />}
             onClick={() => navigate('/assemblies/library')}
             title={t('assemblies.browse_library_hint', {
-              defaultValue: 'Browse the built-in canonical recipe templates and apply one as a starting point',
+              defaultValue: 'Browse the built-in canonical recipe Modelos and apply one as a starting point',
             })}
           >
             {t('assemblies.browse_library', { defaultValue: 'Browse Library' })}
@@ -501,7 +501,7 @@ export function AssembliesPage() {
             icon={<Sparkles size={14} />}
             onClick={() => setShowAiGenerate(true)}
           >
-            {t('assemblies.ai_generate', { defaultValue: 'AI Generate' })}
+            {t('assemblies.ai_generate', { defaultValue: 'IA Generate' })}
           </Button>
           <Button
             data-guide="assemblies-new"
@@ -548,7 +548,7 @@ export function AssembliesPage() {
       >
         {t('assemblies.intro_body', {
           defaultValue:
-            'Assemblies are reusable cost recipes that bundle materials, labour and equipment into one composite rate, for example a reinforced concrete wall combining concrete, rebar, formwork and labour. Apply an assembly to a BOQ position to auto-populate its component costs and keep rates consistent across the project.',
+            'Composições are reusable cost recipes that bundle materials, labour and equipment into one composite rate, for example a reinforced concrete wall combining concrete, rebar, formwork and labour. Apply an assembly to a Planilha orçamentária position to auto-populate its component costs and keep rates consistent across the project.',
         })}
       </DismissibleInfo>
 
@@ -562,7 +562,7 @@ export function AssembliesPage() {
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-5">
           <StatTile
             icon={<Layers size={14} />}
-            label={t('assemblies.stat_total', { defaultValue: 'Assemblies' })}
+            label={t('assemblies.stat_total', { defaultValue: 'Composições' })}
             value={String(banner.totalCount)}
             title={
               banner.mostUsed.length > 0
@@ -595,12 +595,12 @@ export function AssembliesPage() {
               banner.avgRate > 0 && !banner.avgRateCurrency
                 ? t('assemblies.stat_avg_rate_no_currency_hint', {
                     defaultValue:
-                      'Most assemblies here have no currency set, so their average cannot be stated in any money.',
+                      'Most Composições here have no currency set, so their average cannot be stated in any money.',
                   })
                 : banner.avgRateMixed
                   ? t('assemblies.stat_avg_rate_mixed_hint', {
                       defaultValue:
-                        'Assemblies span multiple currencies; showing the average for the most common one ({{currency}}).',
+                        'Composições span multiple currencies; showing the average for the most common one ({{currency}}).',
                       currency: banner.avgRateCurrency,
                     })
                   : undefined
@@ -733,7 +733,7 @@ export function AssembliesPage() {
               value={category}
               onChange={(e) => handleCategoryChange(e.target.value)}
               aria-label={t('a11y.assemblies.category_filter', {
-                defaultValue: 'Filter assemblies by category',
+                defaultValue: 'Filter Composições by category',
               })}
               className="oe-select sm:w-44"
             >
@@ -867,14 +867,14 @@ export function AssembliesPage() {
           icon={<Layers size={28} strokeWidth={1.5} />}
           title={
             query || category
-              ? t('assemblies.no_results', { defaultValue: 'No assemblies found' })
-              : t('assemblies.no_assemblies', { defaultValue: 'No assemblies yet' })
+              ? t('assemblies.no_results', { defaultValue: 'No Composições found' })
+              : t('assemblies.no_assemblies', { defaultValue: 'No Composições yet' })
           }
           description={
             query || category
               ? t('assemblies.no_results_hint', { defaultValue: 'Try adjusting your search or filters' })
               : t('assemblies.empty_hint', {
-                  defaultValue: 'Create your first assembly to build reusable cost recipes, or browse the built-in template library for a starting point',
+                  defaultValue: 'Create your first assembly to build reusable cost recipes, or browse the built-in Modelo library for a starting point',
                 })
           }
           action={
@@ -1185,7 +1185,7 @@ function AssemblyTable({
               <th className={`${headerCellBase} text-right`}>{sortBtn('total_rate', t('assemblies.col_rate', { defaultValue: 'Rate' }), 'right')}</th>
               <th className={headerCellBase}>{t('assemblies.col_currency', { defaultValue: 'Currency' })}</th>
               <th className={`${headerCellBase} text-right`}>{sortBtn('component_count', t('assemblies.col_components', { defaultValue: 'Components' }), 'right')}</th>
-              <th className={`${headerCellBase} text-right`}>{sortBtn('usage_count', t('assemblies.col_usage', { defaultValue: 'Used in BOQ' }), 'right')}</th>
+              <th className={`${headerCellBase} text-right`}>{sortBtn('usage_count', t('assemblies.col_usage', { defaultValue: 'Used in Planilha orçamentária' }), 'right')}</th>
               <th className={headerCellBase}>{sortBtn('updated_at', t('assemblies.col_updated', { defaultValue: 'Updated' }))}</th>
               <th className={`${headerCellBase} w-24 text-right`}>
                 <span className="sr-only">{t('common.actions', { defaultValue: 'Actions' })}</span>
@@ -1411,7 +1411,7 @@ function BulkDeleteConfirm({
           <p className="text-xs text-content-tertiary">
             {t('assemblies.bulk_delete_desc', {
               defaultValue:
-                'This permanently removes the selected assemblies and all their components. Assemblies referenced by BOQ positions are not auto-unlinked.',
+                'This permanently removes the selected Composições and all their components. Composições referenced by Planilha orçamentária positions are not auto-unlinked.',
             })}
           </p>
         </div>
@@ -1535,7 +1535,7 @@ function AIGenerateModal({
             </div>
             <div>
               <h2 className="oe-section-title">
-                {t('assemblies.ai_generate_title', { defaultValue: 'AI Assembly Generator' })}
+                {t('assemblies.ai_generate_title', { defaultValue: 'IA Assembly Generator' })}
               </h2>
               <p className="text-xs text-content-tertiary">
                 {t('assemblies.ai_generate_desc', { defaultValue: 'Describe what you need and we search the cost catalogue for matching priced components' })}
@@ -1631,7 +1631,7 @@ function AIGenerateModal({
             <div className="flex flex-col items-center justify-center py-12">
               <Loader2 size={24} className="animate-spin text-violet-500 mb-3" />
               <p className="text-sm text-content-tertiary">
-                {t('assemblies.ai_searching', { defaultValue: 'Searching cost database for matching components...' })}
+                {t('assemblies.ai_searching', { defaultValue: 'Searching Banco de custos for matching components...' })}
               </p>
             </div>
           )}
@@ -1648,7 +1648,7 @@ function AIGenerateModal({
                     <span
                       title={t('assemblies.coverage_hint', {
                         defaultValue:
-                          'How many of the components were matched to a priced catalogue item by the keyword search. This reflects catalogue coverage, not AI certainty - always review the matched rates.',
+                          'How many of the components were matched to a priced catalogue item by the keyword search. This reflects catalogue coverage, not IA certainty - always review the matched rates.',
                       })}
                       className="cursor-help underline decoration-dotted decoration-content-quaternary underline-offset-2"
                     >
@@ -1938,7 +1938,7 @@ function AssemblyCard({
             <>
               <span className="text-content-quaternary">|</span>
               <span className="text-oe-blue">
-                {assembly.usage_count} {t('assemblies.times_used', { defaultValue: 'used in BOQ' })}
+                {assembly.usage_count} {t('assemblies.times_used', { defaultValue: 'used in Planilha orçamentária' })}
               </span>
             </>
           )}

@@ -237,10 +237,10 @@ export function MarkupPanel({ boqId, markups, directCost, currencySymbol, curren
     mutationFn: (data: CreateMarkupData) => boqApi.addMarkup(boqId, data),
     onSuccess: () => {
       invalidate();
-      addToast({ type: 'success', title: t('boq.markup_added', { defaultValue: 'Markup added' }) });
+      addToast({ type: 'success', title: t('boq.markup_added', { defaultValue: 'BDI added' }) });
     },
     onError: (err: Error) => {
-      addToast({ type: 'error', title: t('boq.markup_add_failed', { defaultValue: 'Failed to add markup' }), message: err.message });
+      addToast({ type: 'error', title: t('boq.markup_add_failed', { defaultValue: 'Failed to add BDI' }), message: err.message });
     },
   });
 
@@ -249,7 +249,7 @@ export function MarkupPanel({ boqId, markups, directCost, currencySymbol, curren
       boqApi.updateMarkup(boqId, markupId, data),
     onSuccess: () => invalidate(),
     onError: (err: Error) => {
-      addToast({ type: 'error', title: t('boq.markup_update_failed', { defaultValue: 'Failed to update markup' }), message: err.message });
+      addToast({ type: 'error', title: t('boq.markup_update_failed', { defaultValue: 'Failed to update BDI' }), message: err.message });
     },
   });
 
@@ -257,10 +257,10 @@ export function MarkupPanel({ boqId, markups, directCost, currencySymbol, curren
     mutationFn: (markupId: string) => boqApi.deleteMarkup(boqId, markupId),
     onSuccess: () => {
       invalidate();
-      addToast({ type: 'success', title: t('boq.markup_deleted', { defaultValue: 'Markup deleted' }) });
+      addToast({ type: 'success', title: t('boq.markup_deleted', { defaultValue: 'BDI deleted' }) });
     },
     onError: (err: Error) => {
-      addToast({ type: 'error', title: t('boq.markup_delete_failed', { defaultValue: 'Failed to delete markup' }), message: err.message });
+      addToast({ type: 'error', title: t('boq.markup_delete_failed', { defaultValue: 'Failed to delete BDI' }), message: err.message });
     },
   });
 
@@ -269,10 +269,10 @@ export function MarkupPanel({ boqId, markups, directCost, currencySymbol, curren
     onSuccess: () => {
       invalidate();
       setShowRegionMenu(false);
-      addToast({ type: 'success', title: t('boq.template_applied', { defaultValue: 'Regional template applied' }) });
+      addToast({ type: 'success', title: t('boq.template_applied', { defaultValue: 'Regional Modelo applied' }) });
     },
     onError: (err: Error) => {
-      addToast({ type: 'error', title: t('boq.apply_defaults_failed', { defaultValue: 'Failed to apply template' }), message: err.message });
+      addToast({ type: 'error', title: t('boq.apply_defaults_failed', { defaultValue: 'Failed to apply Modelo' }), message: err.message });
     },
   });
 
@@ -364,7 +364,7 @@ export function MarkupPanel({ boqId, markups, directCost, currencySymbol, curren
 
   const handleAddMarkup = useCallback(() => {
     addMutation.mutate({
-      name: t('boq.new_markup', { defaultValue: 'New Markup' }),
+      name: t('boq.new_markup', { defaultValue: 'New BDI' }),
       percentage: 5,
       category: 'overhead',
       sort_order: markups.length,
@@ -438,13 +438,13 @@ export function MarkupPanel({ boqId, markups, directCost, currencySymbol, curren
           type: 'error',
           title: signed
             ? t('boq.markup_pct_invalid_signed_title', {
-                defaultValue: 'Enter a percentage from -100 to 100 (negative = below the schedule of rates)',
+                defaultValue: 'Enter a percentage from -100 to 100 (negative = below the Cronograma of rates)',
               })
             : t('boq.markup_pct_invalid_title', {
                 defaultValue: 'Enter a percentage from 0 to 100',
               }),
           message: t('boq.markup_pct_invalid_msg', {
-            defaultValue: 'The markup percentage must be a number between 0 and 100.',
+            defaultValue: 'The BDI percentage must be a number between 0 and 100.',
           }),
         });
         return; // leave editState intact so the field stays editable
@@ -499,12 +499,12 @@ export function MarkupPanel({ boqId, markups, directCost, currencySymbol, curren
       <button
         onClick={() => setIsOpen(!isOpen)}
         aria-expanded={isOpen}
-        aria-label={t('boq.markups_title', { defaultValue: 'Markups & Overheads' })}
+        aria-label={t('boq.markups_title', { defaultValue: 'Margens & Overheads' })}
         className="flex w-full items-center justify-between px-5 py-3 text-left hover:bg-surface-secondary/50 transition-colors"
       >
         <div className="flex items-center gap-2">
           <span className="text-sm font-semibold text-content-primary">
-            {t('boq.markups_title', { defaultValue: 'Markups & Overheads' })}
+            {t('boq.markups_title', { defaultValue: 'Margens & Overheads' })}
           </span>
           {markups.length > 0 && (
             <span className="text-2xs text-content-tertiary bg-surface-secondary rounded-full px-2 py-0.5">
@@ -536,7 +536,7 @@ export function MarkupPanel({ boqId, markups, directCost, currencySymbol, curren
               {t('boq.priced_from_published_rates', { defaultValue: 'Prices are published unit prices' })}
               <span className="block text-xs text-content-tertiary">
                 {t('boq.priced_from_published_rates_hint', {
-                  defaultValue: 'They already contain overhead and profit. Validation warns if a markup adds them again.',
+                  defaultValue: 'They already contain overhead and profit. Validation warns if a BDI adds them again.',
                 })}
               </span>
             </span>
@@ -549,11 +549,11 @@ export function MarkupPanel({ boqId, markups, directCost, currencySymbol, curren
                 onClick={() => setShowRegionMenu(!showRegionMenu)}
                 aria-expanded={showRegionMenu}
                 aria-haspopup="true"
-                aria-label={t('boq.apply_template', { defaultValue: 'Apply Regional Template' })}
+                aria-label={t('boq.apply_template', { defaultValue: 'Apply Regional Modelo' })}
                 className="flex items-center gap-1.5 text-xs text-content-secondary hover:text-content-primary transition-colors rounded-md px-2 py-1.5 hover:bg-surface-secondary"
               >
                 <Globe size={14} className="shrink-0" />
-                <span className="whitespace-nowrap">{t('boq.apply_template', { defaultValue: 'Apply Regional Template' })}</span>
+                <span className="whitespace-nowrap">{t('boq.apply_template', { defaultValue: 'Apply Regional Modelo' })}</span>
                 <ChevronDown size={12} className="shrink-0" />
               </button>
               {showRegionMenu && (
@@ -562,7 +562,7 @@ export function MarkupPanel({ boqId, markups, directCost, currencySymbol, curren
                     <button
                       key={region.code}
                       onClick={() => {
-                        if (markups.length > 0 && !confirm(t('boq.confirm_replace_markups', { defaultValue: 'This will replace existing markups. Continue?' }))) {
+                        if (markups.length > 0 && !confirm(t('boq.confirm_replace_markups', { defaultValue: 'This will replace existing Margens. Continue?' }))) {
                           setShowRegionMenu(false);
                           return;
                         }
@@ -595,11 +595,11 @@ export function MarkupPanel({ boqId, markups, directCost, currencySymbol, curren
               <button
                 onClick={handleAddMarkup}
                 disabled={addMutation.isPending}
-                aria-label={t('boq.add_markup', { defaultValue: 'Add Markup' })}
+                aria-label={t('boq.add_markup', { defaultValue: 'Add BDI' })}
                 className="flex items-center gap-1.5 text-xs font-medium text-oe-blue-text hover:text-oe-blue-text transition-colors rounded-md px-2 py-1.5 hover:bg-oe-blue-subtle whitespace-nowrap"
               >
                 <Plus size={14} className="shrink-0" />
-                <span>{t('boq.add_markup', { defaultValue: 'Add Markup' })}</span>
+                <span>{t('boq.add_markup', { defaultValue: 'Add BDI' })}</span>
               </button>
               {sections && sections.length > 0 && (
                 <select
@@ -607,7 +607,7 @@ export function MarkupPanel({ boqId, markups, directCost, currencySymbol, curren
                     if (!e.target.value) return;
                     const sec = sections.find((s) => s.id === e.target.value);
                     addMutation.mutate({
-                      name: `${t('boq.new_markup', { defaultValue: 'New Markup' })} (${sec?.ordinal ?? ''})`,
+                      name: `${t('boq.new_markup', { defaultValue: 'New BDI' })} (${sec?.ordinal ?? ''})`,
                       percentage: 5,
                       category: 'overhead',
                       sort_order: markups.length,
@@ -617,7 +617,7 @@ export function MarkupPanel({ boqId, markups, directCost, currencySymbol, curren
                   }}
                   className="h-7 rounded-md border border-border bg-surface-primary px-1.5 text-2xs text-content-tertiary focus:outline-none focus:ring-1 focus:ring-oe-blue"
                   defaultValue=""
-                  title={t('boq.add_scoped_markup', { defaultValue: 'Add markup for section' })}
+                  title={t('boq.add_scoped_markup', { defaultValue: 'Add BDI for section' })}
                 >
                   <option value="" disabled>{t('boq.scope_to_section', { defaultValue: 'Scope to section...' })}</option>
                   {sections.map((sec) => (
@@ -836,7 +836,7 @@ export function MarkupPanel({ boqId, markups, directCost, currencySymbol, curren
             </div>
           ) : (
             <div className="px-5 py-6 text-center text-sm text-content-tertiary">
-              {t('boq.no_markups', { defaultValue: 'No markups yet. Add one or apply a regional template.' })}
+              {t('boq.no_markups', { defaultValue: 'No Margens yet. Add one or apply a regional Modelo.' })}
             </div>
           )}
 

@@ -139,7 +139,7 @@ export function BOQSummaryWidget({ projects }: { projects?: ProjectRef[] }) {
   const { isLoading, byWidget } = useDashboardRollupContext();
   const payload = byWidget('boq_summary');
 
-  const title = t('dashboard.layout.w_boq_summary', { defaultValue: 'BOQ Summary' });
+  const title = t('dashboard.layout.w_boq_summary', { defaultValue: 'Planilha orçamentária Summary' });
   const subtitle = t('dashboard.boq_summary_subtitle', {
     defaultValue: 'Bill of Quantities health across your projects',
   });
@@ -153,9 +153,9 @@ export function BOQSummaryWidget({ projects }: { projects?: ProjectRef[] }) {
       <WidgetCard icon={icon} title={title} subtitle={subtitle}>
         <EmptyCTA
           message={t('dashboard.boq_summary_empty', {
-            defaultValue: 'No BOQs yet - create your first to track value and completeness.',
+            defaultValue: 'No Planilhas orçamentárias yet - create your first to track value and completeness.',
           })}
-          ctaLabel={t('dashboard.boq_summary_cta', { defaultValue: 'Open BOQs' })}
+          ctaLabel={t('dashboard.boq_summary_cta', { defaultValue: 'Open Planilhas orçamentárias' })}
           onClick={() => navigate('/boq')}
         />
       </WidgetCard>
@@ -177,7 +177,7 @@ export function BOQSummaryWidget({ projects }: { projects?: ProjectRef[] }) {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div>
           <div className="text-2xs uppercase tracking-wider text-content-tertiary mb-1">
-            {t('dashboard.total_boqs', { defaultValue: 'Total BOQs' })}
+            {t('dashboard.total_boqs', { defaultValue: 'Total Planilhas orçamentárias' })}
           </div>
           <div className="text-xl font-semibold tabular-nums">{payload.total_boqs}</div>
         </div>
@@ -227,7 +227,7 @@ export function CriticalPathWidget(_props: { projects?: ProjectRef[] } = {}) {
     return (
       <WidgetCard icon={icon} title={title} subtitle={subtitle}>
         <EmptyCTA
-          message={t('dashboard.critical_path_empty', { defaultValue: 'No at-risk schedule items.' })}
+          message={t('dashboard.critical_path_empty', { defaultValue: 'No at-risk Cronograma items.' })}
           ctaLabel={t('dashboard.critical_path_cta', { defaultValue: 'Open Schedules' })}
           onClick={() => navigate('/schedule')}
         />
@@ -498,8 +498,8 @@ export function ChangeOrdersWidget({ projects }: { projects?: ProjectRef[] }) {
 
   const fallbackCurrency = projects?.[0]?.currency ?? 'EUR';
 
-  const title = t('dashboard.layout.w_changeorders', { defaultValue: 'Change Orders' });
-  const subtitle = t('dashboard.change_orders_subtitle', { defaultValue: 'Open change orders and impact' });
+  const title = t('dashboard.layout.w_changeorders', { defaultValue: 'Alterações de contrato' });
+  const subtitle = t('dashboard.change_orders_subtitle', { defaultValue: 'Open Alterações de contrato and impact' });
   const icon = <ClipboardList size={16} className="text-content-tertiary" />;
 
   if (isLoading && !payload) {
@@ -509,8 +509,8 @@ export function ChangeOrdersWidget({ projects }: { projects?: ProjectRef[] }) {
     return (
       <WidgetCard icon={icon} title={title} subtitle={subtitle}>
         <EmptyCTA
-          message={t('dashboard.change_orders_empty', { defaultValue: 'No open change orders.' })}
-          ctaLabel={t('dashboard.change_orders_cta', { defaultValue: 'Open Change Orders' })}
+          message={t('dashboard.change_orders_empty', { defaultValue: 'No open Alterações de contrato.' })}
+          ctaLabel={t('dashboard.change_orders_cta', { defaultValue: 'Open Alterações de contrato' })}
           onClick={() => navigate('/change-orders')}
         />
       </WidgetCard>

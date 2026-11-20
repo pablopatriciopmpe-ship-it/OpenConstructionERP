@@ -1730,7 +1730,7 @@ export function OrdinalCellRenderer(params: ICellRendererParams) {
         : 'bg-semantic-error/15 text-semantic-error';
   const confidenceTooltip = t('boq.ai_confidence_tooltip', {
     defaultValue:
-      'AI suggested this line with {{pct}}% confidence. Review the quantity and rate, then confirm.',
+      'IA suggested this line with {{pct}}% confidence. Review the quantity and rate, then confirm.',
     pct: confidencePct,
   });
 
@@ -1932,9 +1932,9 @@ export function BimLinkCellRenderer(params: ICellRendererParams) {
                      bg-semantic-error/10 text-semantic-error
                      hover:bg-semantic-error/25 transition-colors cursor-pointer"
           title={pdfSource
-            ? `${t('boq.pdf_link_tooltip_v2', { defaultValue: 'PDF takeoff - click for details & navigation' })} - ${pdfSource}`
-            : t('boq.pdf_link_tooltip_v2', { defaultValue: 'PDF takeoff - click for details & navigation' })}
-          aria-label={t('boq.pdf_link_tooltip_v2', { defaultValue: 'PDF takeoff - click for details & navigation' })}
+            ? `${t('boq.pdf_link_tooltip_v2', { defaultValue: 'PDF Levantamento de quantitativos - click for details & navigation' })} - ${pdfSource}`
+            : t('boq.pdf_link_tooltip_v2', { defaultValue: 'PDF Levantamento de quantitativos - click for details & navigation' })}
+          aria-label={t('boq.pdf_link_tooltip_v2', { defaultValue: 'PDF Levantamento de quantitativos - click for details & navigation' })}
         >
           <FileText size={12} />
         </button>
@@ -2479,7 +2479,7 @@ const BimLinkPopover = forwardRef<
                                              bg-semantic-success-bg
                                              hover:bg-semantic-success hover:text-white
                                              opacity-0 group-hover/prow:opacity-100 transition-all"
-                                  title={t('boq.set_as_quantity_title', { defaultValue: 'Push this value into the BOQ quantity field' })}
+                                  title={t('boq.set_as_quantity_title', { defaultValue: 'Push this value into the Planilha orçamentária quantity field' })}
                                 >
                                   {t('boq.set_as_quantity', { defaultValue: 'Set as qty' })}
                                   <ArrowRight size={8} />
@@ -2601,7 +2601,7 @@ const BimLinkPopover = forwardRef<
             <div className="flex items-center gap-1.5 px-3 py-1.5 w-full bg-semantic-success/10 border-b border-border-light/50 dark:border-border-dark/50 shrink-0">
               <Ruler size={12} className="text-semantic-success shrink-0" />
               <span className="text-2xs font-semibold uppercase tracking-wider text-semantic-success flex-1 text-left">
-                {t('boq.apply_to_boq', { defaultValue: 'Apply to BOQ' })}
+                {t('boq.apply_to_boq', { defaultValue: 'Apply to Planilha orçamentária' })}
               </span>
               {isEnriching && (
                 <Loader2 size={10} className="animate-spin text-semantic-success shrink-0" />
@@ -2972,7 +2972,7 @@ function PdfDwgSourcePopover(props: PdfDwgSourcePopoverProps) {
           </span>
           <span className="oe-overline">
             {kind === 'pdf'
-              ? t('boq.source_pdf', { defaultValue: 'PDF takeoff' })
+              ? t('boq.source_pdf', { defaultValue: 'PDF Levantamento de quantitativos' })
               : t('boq.source_dwg', { defaultValue: 'DWG drawing' })}
           </span>
         </div>
@@ -3055,7 +3055,7 @@ function PdfDwgSourcePopover(props: PdfDwgSourcePopoverProps) {
             type="button"
             onClick={applyQuantity}
             className={`flex-1 h-8 flex items-center justify-center gap-1.5 rounded-md text-2xs font-semibold text-white bg-gradient-to-r ${accent} ring-1 shadow-sm hover:shadow-md active:scale-[0.98] transition-all`}
-            title={t('boq.source_apply_qty_title', { defaultValue: 'Set this value as the BOQ position quantity' })}
+            title={t('boq.source_apply_qty_title', { defaultValue: 'Set this value as the Planilha orçamentária position quantity' })}
           >
             <ArrowRight size={12} />
             {t('boq.source_apply_qty', { defaultValue: 'Set as quantity' })}
@@ -5907,7 +5907,7 @@ export function UnitRateCellRenderer(params: ICellRendererParams) {
         className="flex items-center justify-end gap-1 w-full h-full text-xs tabular-nums leading-[32px] text-content-tertiary"
         title={t('boq.deduction_rate_tooltip', {
           defaultValue:
-            'A deduction of {{amount}}. The line adds nothing itself: its amount is taken off by the deductions line among the bill markups.',
+            'A deduction of {{amount}}. The line adds nothing itself: its amount is taken off by the deductions line among the bill Margens.',
           amount: money(meta.deduction_amount),
         })}
         data-testid={`boq-deduction-rate-${data.id}`}

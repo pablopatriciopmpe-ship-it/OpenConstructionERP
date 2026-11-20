@@ -270,13 +270,13 @@ export function MeasurementLedger({
               className="flex items-center gap-1 px-1.5 py-1 rounded text-2xs bg-oe-blue/10 text-oe-blue border border-oe-blue/30 hover:bg-oe-blue/20 disabled:opacity-40 disabled:pointer-events-none transition-colors"
               title={t('takeoff_viewer.ledger_add_all_to_boq_hint', {
                 defaultValue:
-                  'Send every filtered measurement to a BOQ as new positions',
+                  'Send every filtered measurement to a Planilha orçamentária as new positions',
               })}
               data-testid="ledger-add-all-to-boq"
             >
               <Link2 size={10} />
               {t('takeoff_viewer.ledger_add_all_to_boq', {
-                defaultValue: 'Add to BOQ',
+                defaultValue: 'Add to Planilha orçamentária',
               })}{' '}
               ({linkableRows.length})
             </button>
@@ -641,7 +641,7 @@ function GroupRows({
                             : 'text-content-tertiary hover:text-oe-blue hover:bg-oe-blue/10',
                         )}
                         aria-label={t('takeoff_viewer.ledger_add_to_boq', {
-                          defaultValue: 'Add to BOQ',
+                          defaultValue: 'Add to Planilha orçamentária',
                         })}
                         title={
                           measurement.linkedPositionId
@@ -654,7 +654,7 @@ function GroupRows({
                               })
                             : t('takeoff_viewer.ledger_add_to_boq_hint', {
                                 defaultValue:
-                                  "Send this measurement's quantity to a BOQ position",
+                                  "Send this measurement's quantity to a Planilha orçamentária position",
                               })
                         }
                         data-testid="ledger-add-to-boq"
@@ -671,10 +671,10 @@ function GroupRows({
                         }}
                         className="p-0.5 rounded text-content-tertiary hover:text-oe-blue hover:bg-oe-blue/10 transition-colors"
                         aria-label={t('takeoff_crosslink.create_rfi', {
-                          defaultValue: 'Create RFI',
+                          defaultValue: 'Create Pedido de informação (RFI)',
                         })}
                         title={t('takeoff_crosslink.create_rfi_hint', {
-                          defaultValue: 'Raise an RFI tied to this measurement',
+                          defaultValue: 'Raise an Pedido de informação (RFI) tied to this measurement',
                         })}
                         data-testid="ledger-create-rfi"
                       >

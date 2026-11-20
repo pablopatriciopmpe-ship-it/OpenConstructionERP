@@ -80,10 +80,10 @@ export function ExportEmbeddingPanel({ t, boqId, enabled, currency, readOnly = f
           data-testid="export-embed-toggle"
         />
         <span>
-          {t('boq.export_embed_markups', { defaultValue: 'Sale rates: markups in unit rates' })}
+          {t('boq.export_embed_markups', { defaultValue: 'Sale rates: Margens in unit rates' })}
           <span className="block text-xs text-content-tertiary">
             {t('boq.export_embed_markups_hint', {
-              defaultValue: 'Only tax stays a separate line. The estimate itself is not changed.',
+              defaultValue: 'Only tax stays a separate line. The Orçamento itself is not changed.',
             })}
           </span>
         </span>

@@ -58,7 +58,7 @@ export function BOQRenameTitle({ boqId, name, locked }: BOQRenameTitleProps) {
         maxLength={255}
         disabled={rename.isPending}
         data-testid="boq-rename-input"
-        aria-label={t('boq.rename', { defaultValue: 'Rename estimate' })}
+        aria-label={t('boq.rename', { defaultValue: 'Rename Orçamento' })}
         onChange={(e) => setDraft(e.target.value)}
         onBlur={commit}
         onKeyDown={(e) => {
@@ -85,8 +85,8 @@ export function BOQRenameTitle({ boqId, name, locked }: BOQRenameTitleProps) {
           type="button"
           onClick={start}
           data-testid="boq-rename-button"
-          title={t('boq.rename', { defaultValue: 'Rename estimate' })}
-          aria-label={t('boq.rename', { defaultValue: 'Rename estimate' })}
+          title={t('boq.rename', { defaultValue: 'Rename Orçamento' })}
+          aria-label={t('boq.rename', { defaultValue: 'Rename Orçamento' })}
           className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-content-tertiary transition-all hover:bg-oe-blue-subtle hover:text-oe-blue-text"
         >
           <Pencil size={14} />

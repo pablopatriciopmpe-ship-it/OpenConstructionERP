@@ -468,14 +468,14 @@ export function ProgressPage() {
           <IntroRichText
             text={t('progress.intro_more', {
               defaultValue:
-                'How a number gets here\nSomebody records an observation: a percent complete, a period label, and either one BOQ position or the project as a whole. Use "Record progress" at the top of the page. Entries are append-only, so correcting a reading means recording the corrected value again in the same period rather than editing the old one.\n\nHow the headline percentage is worked out\nThe project percentage is a quantity-weighted rollup of the latest reading for each position. Weighted means a large line counts for more than a small one. It also means a position nobody has measured counts as zero and still occupies its share, so a project where one line is finished and three hundred are untouched reads close to zero rather than close to done. If the bill of quantities carries no quantities at all, the rollup falls back to a plain average over the same positions. If no position has been measured at all, it falls back to your project-level readings.\n\nWhat the three panels show\nThe S-curve plots cumulative actual against plan over time; the planned line only appears for periods that have a plan figure. "By period" shows what each period added and where the cumulative total stood at its end. The quantity variance table compares design quantity against earned quantity per position, which is what tells you a line is running over or under rather than merely late.\n\nWhere it does not reach\nThis page is the physical view. The same entries are read in money terms by the 5D cost page, and progress recorded here feeds earned value there. Within a single period the highest reading wins here, which is worth knowing if a reading is corrected downward.',
+                'How a number gets here\nSomebody records an observation: a percent complete, a period label, and either one Planilha orçamentária position or the project as a whole. Use "Record progress" at the top of the page. Entries are append-only, so correcting a reading means recording the corrected value again in the same period rather than editing the old one.\n\nHow the headline percentage is worked out\nThe project percentage is a quantity-weighted rollup of the latest reading for each position. Weighted means a large line counts for more than a small one. It also means a position nobody has measured counts as zero and still occupies its share, so a project where one line is finished and three hundred are untouched reads close to zero rather than close to done. If the bill of quantities carries no quantities at all, the rollup falls back to a plain average over the same positions. If no position has been measured at all, it falls back to your project-level readings.\n\nWhat the three panels show\nThe S-curve plots cumulative actual against plan over time; the planned line only appears for periods that have a plan figure. "By period" shows what each period added and where the cumulative total stood at its end. The quantity variance table compares design quantity against earned quantity per position, which is what tells you a line is running over or under rather than merely late.\n\nWhere it does not reach\nThis page is the physical view. The same entries are read in money terms by the 5D cost page, and progress recorded here feeds Valor agregado there. Within a single period the highest reading wins here, which is worth knowing if a reading is corrected downward.',
             })}
           />
         }
       >
         {t('progress.intro_body', {
           defaultValue:
-            'This page answers one question: how much of the work is actually built, as opposed to how much has been spent. It is fed by percent-complete observations recorded against BOQ positions or against the project as a whole, and it turns them into an actual versus planned S-curve, what each period added, and a design versus earned quantity comparison per position. If it is empty, nothing has been recorded yet - use "Record progress" to add the first observation.',
+            'This page answers one question: how much of the work is actually built, as opposed to how much has been spent. It is fed by percent-complete observations recorded against Planilha orçamentária positions or against the project as a whole, and it turns them into an actual versus planned S-curve, what each period added, and a design versus earned quantity comparison per position. If it is empty, nothing has been recorded yet - use "Record progress" to add the first observation.',
         })}
       </DismissibleInfo>
 
@@ -505,7 +505,7 @@ export function ProgressPage() {
               defaultValue: 'Compare the recorded progress with the planned programme',
             })}
           >
-            {t('progress.link_schedule', { defaultValue: 'Schedule' })}
+            {t('progress.link_schedule', { defaultValue: 'Cronograma' })}
           </RelatedRecordLink>
         </RelatedRecordStrip>
       )}
@@ -690,7 +690,7 @@ export function ProgressPage() {
               emptyTitle={t('progress.variance_empty_title', { defaultValue: 'No tracked positions yet' })}
               emptyDescription={t('progress.variance_empty_desc', {
                 defaultValue:
-                  'This table compares design quantity against earned quantity per BOQ position, so it needs a bill of quantities to compare against. Recording progress alone will not fill it.',
+                  'This table compares design quantity against earned quantity per Planilha orçamentária position, so it needs a bill of quantities to compare against. Recording progress alone will not fill it.',
               })}
               // Deliberately not "Record progress": with no positions there is
               // nothing to compare a reading against, so sending the user to

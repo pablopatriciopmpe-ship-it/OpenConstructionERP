@@ -547,7 +547,7 @@ export function BOQEditorPage() {
       addRecent({
         type: 'boq',
         id: boqId,
-        title: boq.name || t('boq.untitled', { defaultValue: 'Untitled BOQ' }),
+        title: boq.name || t('boq.untitled', { defaultValue: 'Untitled Planilha orçamentária' }),
         url: `/boq/${boqId}`,
       });
     }
@@ -881,11 +881,11 @@ export function BOQEditorPage() {
           {
             type: 'warning',
             title: t('boq.link_locked_skipped_title', {
-              defaultValue: 'Locked estimates left unchanged',
+              defaultValue: 'Locked Orçamentos left unchanged',
             }),
             message: t('boq.link_locked_skipped_msg', {
               defaultValue:
-                '{{count}} linked position(s) in locked estimates kept the old definition: {{bills}}. Unlock those estimates or create a revision to take the change.',
+                '{{count}} linked position(s) in locked Orçamentos kept the old definition: {{bills}}. Unlock those Orçamentos or create a revision to take the change.',
               count: prop.locked_skipped,
               bills: fmtList(bills, 'prose'),
             }),
@@ -1015,9 +1015,9 @@ export function BOQEditorPage() {
       addToast(
         {
           type: 'success',
-          title: t('boq.locked_success', { defaultValue: 'Estimate locked' }),
+          title: t('boq.locked_success', { defaultValue: 'Orçamento locked' }),
           message: t('boq.locked_budget_seeded', {
-            defaultValue: 'Estimate locked. Its total is now the project budget.',
+            defaultValue: 'Orçamento locked. Its total is now the project budget.',
           }),
         },
         { duration: 8000 },
@@ -1035,10 +1035,10 @@ export function BOQEditorPage() {
   const handleLock = useCallback(async () => {
     // Lock is irreversible without admin unlock — confirm before mutating (Bug 8).
     const ok = await confirm({
-      title: t('boq.lock_title', { defaultValue: 'Lock estimate?' }),
+      title: t('boq.lock_title', { defaultValue: 'Lock Orçamento?' }),
       message: t('boq.lock_confirm', {
         defaultValue:
-          'Lock this estimate? Locked estimates cannot be edited. Unlocking requires admin privileges.',
+          'Lock this Orçamento? Locked Orçamentos cannot be edited. Unlocking requires admin privileges.',
       }),
       confirmLabel: t('boq.lock', { defaultValue: 'Lock' }),
       variant: 'warning',
@@ -1051,7 +1051,7 @@ export function BOQEditorPage() {
     mutationFn: () => apiPost(`/v1/boq/boqs/${boqId}/unlock/`, {}),
     onSuccess: () => {
       invalidateAll();
-      addToast({ type: 'success', title: t('boq.unlocked_success', { defaultValue: 'Estimate unlocked' }) });
+      addToast({ type: 'success', title: t('boq.unlocked_success', { defaultValue: 'Orçamento unlocked' }) });
     },
     onError: (err) => {
       addToast({ type: 'error', title: t('boq.unlock_failed', { defaultValue: 'Unlock failed' }), message: editorErrorText(err, t) });
@@ -1072,7 +1072,7 @@ export function BOQEditorPage() {
       if (!data.created && !data.budget_lines_created) {
         addToast({
           type: 'info',
-          title: t('boq.budget_up_to_date', { defaultValue: 'The project budget already includes this estimate' }),
+          title: t('boq.budget_up_to_date', { defaultValue: 'The project budget already includes this Orçamento' }),
         });
         return;
       }
@@ -2823,7 +2823,7 @@ export function BOQEditorPage() {
     const all: Tip[] = [
       {
         id: 'tip_sections',
-        text: t('boq.tip_sections', { defaultValue: 'Add sections to organize your estimate (e.g., Foundations, Walls, Roof)' }),
+        text: t('boq.tip_sections', { defaultValue: 'Add sections to organize your Orçamento (e.g., Foundations, Walls, Roof)' }),
         condition: 'no_sections',
       },
       {
@@ -2838,12 +2838,12 @@ export function BOQEditorPage() {
       },
       {
         id: 'tip_markups',
-        text: t('boq.tip_markups', { defaultValue: 'Add markups for overhead costs and profit using the Markups section below the table' }),
+        text: t('boq.tip_markups', { defaultValue: 'Add Margens for overhead costs and profit using the Margens section below the table' }),
         condition: 'no_markups',
       },
       {
         id: 'tip_descriptions',
-        text: t('boq.tip_autocomplete', { defaultValue: 'Fill in descriptions for all positions - start typing to see suggestions from the cost database' }),
+        text: t('boq.tip_autocomplete', { defaultValue: 'Fill in descriptions for all positions - start typing to see suggestions from the Banco de custos' }),
         condition: 'has_empty_descriptions',
       },
     ];
@@ -3650,7 +3650,7 @@ export function BOQEditorPage() {
       const parts: string[] = [];
       if (enrichedCount > 0) {
         parts.push(t('boq.recalc_enriched', {
-          defaultValue: '{{count}} positions matched to cost database',
+          defaultValue: '{{count}} positions matched to Banco de custos',
           count: enrichedCount,
         }));
       }
@@ -3674,7 +3674,7 @@ export function BOQEditorPage() {
           ? t('boq.recalculate_complete', { defaultValue: 'Rates updated' })
           : t('boq.recalculate_no_changes', { defaultValue: 'No changes needed' }),
         message: parts.join('. ') || t('boq.recalculate_all_manual', {
-          defaultValue: 'All positions use manual rates - add resources from cost database to enable automatic rate calculation.',
+          defaultValue: 'All positions use manual rates - add resources from Banco de custos to enable automatic rate calculation.',
         }),
       });
       invalidateAll();
@@ -3734,7 +3734,7 @@ export function BOQEditorPage() {
       addToast({
         type: 'success',
         title: t('boq.paste_import_success', { defaultValue: 'Imported successfully' }),
-        message: t('boq.paste_import_count', { defaultValue: '{{count}} positions added to BOQ', count: rows.length }),
+        message: t('boq.paste_import_count', { defaultValue: '{{count}} positions added to Planilha orçamentária', count: rows.length }),
       });
       setExcelPasteOpen(false);
       invalidateAll();
@@ -4468,7 +4468,7 @@ export function BOQEditorPage() {
       addToast({
         type: 'success',
         title: t('boq.vector_indexed', { defaultValue: 'Vector Database Ready' }),
-        message: t('boq.vector_indexed_msg', { defaultValue: 'Cost database indexed. AI features are now available.' }),
+        message: t('boq.vector_indexed_msg', { defaultValue: 'Banco de custos indexed. IA features are now available.' }),
       });
       setShowVectorSetup(false);
     };
@@ -4528,7 +4528,7 @@ export function BOQEditorPage() {
           addToast(
             {
               type: 'info',
-              title: t('boq.ai_rate_suggestion', { defaultValue: 'AI Rate Suggestion' }),
+              title: t('boq.ai_rate_suggestion', { defaultValue: 'IA Rate Suggestion' }),
               message: `${rateStr} (${conf}%, ${result.matches.length} matches)`,
               action: {
                 label: t('boq.apply_rate', { defaultValue: 'Apply' }),
@@ -4547,7 +4547,7 @@ export function BOQEditorPage() {
           addToast({
             type: 'warning',
             title: t('boq.ai_no_rate', { defaultValue: 'No Rate Found' }),
-            message: t('boq.ai_no_rate_msg', { defaultValue: 'No similar items found in the cost database.' }),
+            message: t('boq.ai_no_rate_msg', { defaultValue: 'No similar items found in the Banco de custos.' }),
           });
         }
       } catch (err) {
@@ -4555,7 +4555,7 @@ export function BOQEditorPage() {
         addToast({
           type: 'error',
           title: t('boq.ai_rate_error', { defaultValue: 'Rate suggestion failed' }),
-          message: detail.includes('API') ? detail : t('boq.ai_error_generic', { defaultValue: 'Could not connect to AI service. Check that the embedding model is available.' }),
+          message: detail.includes('API') ? detail : t('boq.ai_error_generic', { defaultValue: 'Could not connect to IA service. Check that the embedding model is available.' }),
         });
       }
     },
@@ -4586,7 +4586,7 @@ export function BOQEditorPage() {
           }
           addToast({
             type: 'info',
-            title: t('boq.ai_classification', { defaultValue: 'AI Classification' }),
+            title: t('boq.ai_classification', { defaultValue: 'IA Classification' }),
             message: `${top.standard.toUpperCase()}: ${top.code} - ${top.label} (${Math.round(top.confidence * 100)}%)`,
           });
           updatePositionMutate({
@@ -4597,7 +4597,7 @@ export function BOQEditorPage() {
           addToast({
             type: 'warning',
             title: t('boq.ai_no_classification', { defaultValue: 'No Classification Found' }),
-            message: t('boq.ai_no_classification_msg', { defaultValue: 'Could not determine classification from cost database.' }),
+            message: t('boq.ai_no_classification_msg', { defaultValue: 'Could not determine classification from Banco de custos.' }),
           });
         }
       } catch (err) {
@@ -4605,7 +4605,7 @@ export function BOQEditorPage() {
         addToast({
           type: 'error',
           title: t('boq.ai_classify_error', { defaultValue: 'Classification failed' }),
-          message: detail.includes('API') ? detail : t('boq.ai_error_generic', { defaultValue: 'Could not connect to AI service. Check that the embedding model is available.' }),
+          message: detail.includes('API') ? detail : t('boq.ai_error_generic', { defaultValue: 'Could not connect to IA service. Check that the embedding model is available.' }),
         });
       }
     },
@@ -4666,7 +4666,7 @@ export function BOQEditorPage() {
       addToast({
         type: 'error',
         title: t('boq.anomaly_check_error', { defaultValue: 'Anomaly check failed' }),
-        message: detail.includes('API') ? detail : t('boq.ai_error_generic', { defaultValue: 'Could not connect to AI service. Check that the embedding model is available.' }),
+        message: detail.includes('API') ? detail : t('boq.ai_error_generic', { defaultValue: 'Could not connect to IA service. Check that the embedding model is available.' }),
       });
     } finally {
       clearTimeout(timeout);
@@ -4892,10 +4892,10 @@ export function BOQEditorPage() {
                 defaultValue: 'This file also contains a price list',
               }),
               message: t('boq.import_save_price_list_hint', {
-                defaultValue: 'Save it as a cost database to price new positions from it.',
+                defaultValue: 'Save it as a Banco de custos to price new positions from it.',
               }),
               action: {
-                label: t('boq.import_save_price_list', { defaultValue: 'Save as cost database' }),
+                label: t('boq.import_save_price_list', { defaultValue: 'Save as Banco de custos' }),
                 onClick: () => {
                   void saveImportedPriceList(file).then(
                     (saved) => {
@@ -4903,7 +4903,7 @@ export function BOQEditorPage() {
                       addToast({
                         type: 'success',
                         title: t('boq.import_price_list_saved', {
-                          defaultValue: 'Cost database "{{name}}" saved with {{count}} items',
+                          defaultValue: 'Banco de custos "{{name}}" saved with {{count}} items',
                           name: saved.catalog,
                           count: saved.imported,
                         }),
@@ -5194,7 +5194,7 @@ export function BOQEditorPage() {
       const traced = Boolean(trace.contract_line_id || trace.source_position_id);
       const source = trace.contract_line_id
         ? t('boq.variation_trace_to_contract_line', { defaultValue: 'a contract line' })
-        : t('boq.variation_trace_to_position', { defaultValue: 'an estimate position' });
+        : t('boq.variation_trace_to_position', { defaultValue: 'an Orçamento position' });
       out[trace.position_id] = {
         kind: trace.change_kind,
         traced,
@@ -5206,7 +5206,7 @@ export function BOQEditorPage() {
               kind: changeKindLabel(trace.change_kind, t).toLowerCase(),
             })
           : t('boq.variation_trace_badge_untraced', {
-              defaultValue: 'Not traced to a contract line or estimate position yet. Right-click to trace.',
+              defaultValue: 'Not traced to a contract line or Orçamento position yet. Right-click to trace.',
             }),
       };
     }
@@ -5220,7 +5220,7 @@ export function BOQEditorPage() {
             traced: false,
             short: '?',
             title: t('boq.variation_trace_badge_untraced', {
-              defaultValue: 'Not traced to a contract line or estimate position yet. Right-click to trace.',
+              defaultValue: 'Not traced to a contract line or Orçamento position yet. Right-click to trace.',
             }),
           }
         : undefined,
@@ -5316,7 +5316,7 @@ export function BOQEditorPage() {
   if (isError) {
     return (
       <div className="w-full py-16 text-center">
-        <p className="text-content-secondary">{t('boq.load_error', { defaultValue: 'Failed to load BOQ. Please try again.' })}</p>
+        <p className="text-content-secondary">{t('boq.load_error', { defaultValue: 'Failed to load Planilha orçamentária. Please try again.' })}</p>
       </div>
     );
   }
@@ -5324,7 +5324,7 @@ export function BOQEditorPage() {
   if (!boq) {
     return (
       <div className="w-full py-16 text-center">
-        <p className="text-content-secondary">{t('boq.not_found', { defaultValue: 'BOQ not found' })}</p>
+        <p className="text-content-secondary">{t('boq.not_found', { defaultValue: 'Planilha orçamentária not found' })}</p>
       </div>
     );
   }
@@ -5369,7 +5369,7 @@ export function BOQEditorPage() {
                     addToast({ type: 'error', title: t('boq.submit_review_failed', { defaultValue: 'Could not submit for review' }), message: editorErrorText(err, t) });
                   }
                 }}
-                title={t('boq.submit_review_tooltip', { defaultValue: 'Submit this estimate for review and approval' })}
+                title={t('boq.submit_review_tooltip', { defaultValue: 'Submit this Orçamento for review and approval' })}
               >
                 <CheckCircle size={14} className="mr-1" />
                 {t('boq.submit_for_review', { defaultValue: 'Submit for Review' })}
@@ -5384,7 +5384,7 @@ export function BOQEditorPage() {
                     queryClient.invalidateQueries({ queryKey: ['boq', boqId] });
                     addToast({ type: 'info', title: t('boq.returned_to_draft', { defaultValue: 'Returned to draft for changes' }) });
                   } catch (err) {
-                    addToast({ type: 'error', title: t('boq.request_changes_failed', { defaultValue: 'Could not return the estimate to draft' }), message: editorErrorText(err, t) });
+                    addToast({ type: 'error', title: t('boq.request_changes_failed', { defaultValue: 'Could not return the Orçamento to draft' }), message: editorErrorText(err, t) });
                   }
                 }}
               >
@@ -5393,9 +5393,9 @@ export function BOQEditorPage() {
               </Button>
             )}
             {!boq.is_locked && isManager && (
-              <Button variant="secondary" onClick={handleLock} disabled={lockMutation.isPending} title={t('boq.lock_tooltip', { defaultValue: 'Lock prevents edits. Create a revision to make changes to a locked estimate.' })}>
+              <Button variant="secondary" onClick={handleLock} disabled={lockMutation.isPending} title={t('boq.lock_tooltip', { defaultValue: 'Lock prevents edits. Create a revision to make changes to a locked Orçamento.' })}>
                 <Lock size={14} className="mr-1" />
-                {t('boq.lock', { defaultValue: 'Lock Estimate' })}
+                {t('boq.lock', { defaultValue: 'Lock Orçamento' })}
               </Button>
             )}
             {boq.is_locked && isManager && (
@@ -5421,7 +5421,7 @@ export function BOQEditorPage() {
                 navigate(`/validation?boq_id=${boq.id}&project=${boq.project_id}`)
               }
               title={t('boq.validate_dashboard_hint', {
-                defaultValue: 'Open the Validation dashboard for this BOQ',
+                defaultValue: 'Open the Validation Painel for this Planilha orçamentária',
               })}
             >
               <ShieldCheck size={14} className="mr-1" />
@@ -5431,7 +5431,7 @@ export function BOQEditorPage() {
               variant="secondary"
               onClick={() => setTenderOpen(true)}
               title={t('boq.tender_btn_hint', {
-                defaultValue: 'Create a tender package from this estimate',
+                defaultValue: 'Create a tender package from this Orçamento',
               })}
             >
               <Send size={14} className="mr-1" />
@@ -5441,7 +5441,7 @@ export function BOQEditorPage() {
               variant="secondary"
               onClick={() => setCompareOpen(true)}
               title={t('boq.compare_btn_hint', {
-                defaultValue: 'Compare this estimate against another BOQ',
+                defaultValue: 'Compare this Orçamento against another Planilha orçamentária',
               })}
             >
               <GitCompare size={14} className="mr-1" />
@@ -5469,13 +5469,13 @@ export function BOQEditorPage() {
               })}
             >
               <Percent size={14} className="mr-1" />
-              {t('boq.markups_btn', { defaultValue: 'Markups' })}
+              {t('boq.markups_btn', { defaultValue: 'Margens' })}
             </Button>
             <Button
               variant="secondary"
               onClick={() => setScenarioOpen(true)}
               title={t('boq.scenario_btn_hint', {
-                defaultValue: 'Clone this estimate into a what-if scenario and adjust it freely',
+                defaultValue: 'Clone this Orçamento into a what-if scenario and adjust it freely',
               })}
             >
               <FlaskConical size={14} className="mr-1" />
@@ -5501,11 +5501,11 @@ export function BOQEditorPage() {
               title={
                 boq.is_locked
                   ? t('boq.qty_from_model_locked', {
-                      defaultValue: 'This estimate is locked. Unlock it or create a revision to add quantities from the model.',
+                      defaultValue: 'This Orçamento is locked. Unlock it or create a revision to add quantities from the model.',
                     })
                   : t('bim_rules.what_a_rule_does', {
                       defaultValue:
-                        'A quantity rule picks model elements by category and properties, such as walls built in a given phase, and writes their total area, volume, length or count into a BOQ position.',
+                        'A quantity rule picks model elements by category and properties, such as walls built in a given phase, and writes their total area, volume, length or count into a Planilha orçamentária position.',
                     })
               }
             >
@@ -5536,7 +5536,7 @@ export function BOQEditorPage() {
                   navigate(`/price-index/resource-index?boq=${boq.id}&project=${boq.project_id}`)
                 }
                 title={t('boq.resource_index_btn_hint', {
-                  defaultValue: 'Price this estimate by the resource-index method, with every multiplication shown',
+                  defaultValue: 'Price this Orçamento by the resource-index method, with every multiplication shown',
                 })}
               >
                 <Percent size={14} className="mr-1" />
@@ -5586,11 +5586,11 @@ export function BOQEditorPage() {
       <DismissibleInfo
         storageKey="boq-editor"
         className="mb-4"
-        title={t('boq_editor.intro_title', { defaultValue: 'Edit the estimate without losing the thread' })}
+        title={t('boq_editor.intro_title', { defaultValue: 'Edit the Orçamento without losing the thread' })}
         more={t('boq_editor.intro_more', { defaultValue: '' }) ? <IntroRichText text={t('boq_editor.intro_more')} /> : undefined}
         links={[
-          { label: t('nav.assemblies', { defaultValue: 'Assemblies' }), onClick: () => navigate('/assemblies') },
-          { label: t('nav.costs', { defaultValue: 'Cost Database' }), onClick: () => navigate('/costs') },
+          { label: t('nav.assemblies', { defaultValue: 'Composições' }), onClick: () => navigate('/assemblies') },
+          { label: t('nav.costs', { defaultValue: 'Banco de custos' }), onClick: () => navigate('/costs') },
           {
             label: t('nav.cost_explorer', { defaultValue: 'Cost Explorer' }),
             onClick: () => navigate('/cost-explorer'),
@@ -5602,7 +5602,7 @@ export function BOQEditorPage() {
           // the globally active project, so no project param is emitted here.
           // The advisor consumes a ?q= prefill separately under its own batch.
           {
-            label: t('boq.draft_with_ai', { defaultValue: 'Draft positions with AI' }),
+            label: t('boq.draft_with_ai', { defaultValue: 'Draft positions with IA' }),
             onClick: () => navigate('/ai-estimate'),
           },
           {
@@ -5613,7 +5613,7 @@ export function BOQEditorPage() {
       >
         {t('boq_editor.intro_body', {
           defaultValue:
-            'This is the working grid where you add, renumber and price positions in a hierarchy, paste from Excel, apply assemblies and link rows to cost-database items or BIM elements. Changes recompute the total instantly and stay available to validation and the cost rollup.',
+            'This is the working grid where you add, renumber and price positions in a hierarchy, paste from Excel, apply Composições and link rows to cost-database items or BIM elements. Changes recompute the total instantly and stay available to validation and the cost rollup.',
         })}
       </DismissibleInfo>
 
@@ -5628,7 +5628,7 @@ export function BOQEditorPage() {
             data-testid="boq-save-as-template"
             onClick={() => setSaveTemplateOpen(true)}
           >
-            {t('boq_templates.save_as_template', { defaultValue: 'Save as template' })}
+            {t('boq_templates.save_as_template', { defaultValue: 'Save as Modelo' })}
           </Button>
           {saveTemplateOpen && (
             <TemplateFromBoqDialog boqId={boq.id} boqName={boq.name} onClose={() => setSaveTemplateOpen(false)} />
@@ -5671,7 +5671,7 @@ export function BOQEditorPage() {
             <Lock size={16} className="shrink-0" />
             <div className="min-w-0 flex-1">
               <p className="text-sm font-semibold">
-                {t('boq.locked_banner_title', { defaultValue: 'This estimate is locked' })}
+                {t('boq.locked_banner_title', { defaultValue: 'This Orçamento is locked' })}
               </p>
               <p className="text-xs">
                 {t('boq.locked_banner_body', {
@@ -6087,7 +6087,7 @@ export function BOQEditorPage() {
           updateMutation.mutate({ id: posId, data });
           addToast({
             type: 'success',
-            title: t('boq.ai_applied', { defaultValue: 'AI Suggestion Applied' }),
+            title: t('boq.ai_applied', { defaultValue: 'IA Suggestion Applied' }),
           });
         }}
         onAddPosition={handleCostFinderAddPosition}
@@ -6108,7 +6108,7 @@ export function BOQEditorPage() {
             setCostDbModalOpen(false);
             setCostDbForPositionId(null);
             invalidateAll();
-            addToast({ type: 'success', title: t('boq.positions_added', { defaultValue: 'Positions added from cost database' }) });
+            addToast({ type: 'success', title: t('boq.positions_added', { defaultValue: 'Positions added from Banco de custos' }) });
           }}
           onSelectForResources={costDbForPositionId ? (item, picked) => {
             handleCostDbAddResource({
@@ -6158,7 +6158,7 @@ export function BOQEditorPage() {
           onApplied={() => {
             setAssemblyModalOpen(false);
             invalidateAll();
-            addToast({ type: 'success', title: t('boq.toasts.assembly_applied', { defaultValue: 'Assembly applied to BOQ' }) });
+            addToast({ type: 'success', title: t('boq.toasts.assembly_applied', { defaultValue: 'Assembly applied to Planilha orçamentária' }) });
           }}
         />
       )}
@@ -6233,17 +6233,17 @@ export function BOQEditorPage() {
                 </div>
                 <div>
                   <h3 id="boq-recalc-confirm-title" className="oe-section-title">{t('boq.recalc_confirm_title', { defaultValue: 'Update Unit Rates' })}</h3>
-                  <p className="text-xs text-content-secondary">{t('boq.recalc_confirm_subtitle', { defaultValue: 'Match positions to cost database' })}</p>
+                  <p className="text-xs text-content-secondary">{t('boq.recalc_confirm_subtitle', { defaultValue: 'Match positions to Banco de custos' })}</p>
                 </div>
               </div>
               <div className="space-y-2 text-sm text-content-secondary">
-                <p>{t('boq.recalc_confirm_step1', { defaultValue: '1. Search cost database for matching items by description' })}</p>
+                <p>{t('boq.recalc_confirm_step1', { defaultValue: '1. Search Banco de custos for matching items by description' })}</p>
                 <p>{t('boq.recalc_confirm_step2', { defaultValue: '2. Attach resource breakdowns (materials, labor, equipment)' })}</p>
                 <p>{t('boq.recalc_confirm_step3', { defaultValue: '3. Recalculate unit rates from resource components' })}</p>
               </div>
               <div className="mt-3 rounded-lg bg-semantic-warning-bg border border-semantic-warning/30 px-3 py-2">
                 <p className="text-xs text-semantic-warning">
-                  {t('boq.recalc_confirm_warning', { defaultValue: 'Positions with manual rates that have no match in the cost database will not be changed.' })}
+                  {t('boq.recalc_confirm_warning', { defaultValue: 'Positions with manual rates that have no match in the Banco de custos will not be changed.' })}
                 </p>
               </div>
             </div>
@@ -6290,7 +6290,7 @@ export function BOQEditorPage() {
             <p className="text-xs text-content-secondary leading-relaxed mb-4">
               {t('boq.gaeb_export_desc', {
                 defaultValue:
-                  'This will export your BOQ as GAEB XML 3.3 format, compatible with standard tender workflows.',
+                  'This will export your Planilha orçamentária as GAEB XML 3.3 format, compatible with standard tender workflows.',
               })}
             </p>
 
@@ -6819,7 +6819,7 @@ export function BOQEditorPage() {
               <span className="text-content-secondary">{t('boq.shortcut_import', { defaultValue: 'Import' })}</span>
 
               <kbd className="inline-flex items-center rounded border border-border-light bg-surface-secondary px-1.5 py-0.5 text-xs font-mono">{t('boq.shortcut_ctrl_l', { defaultValue: 'Ctrl+L' })}</kbd>
-              <span className="text-content-secondary">{t('boq.shortcut_lock', { defaultValue: 'Lock / Unlock Estimate' })}</span>
+              <span className="text-content-secondary">{t('boq.shortcut_lock', { defaultValue: 'Lock / Unlock Orçamento' })}</span>
 
               <kbd className="inline-flex items-center rounded border border-border-light bg-surface-secondary px-1.5 py-0.5 text-xs font-mono">Alt+L</kbd>
               <span className="text-content-secondary">{t('boq.edit_texts', { defaultValue: 'Edit Kurztext and Langtext' })}</span>
@@ -6831,7 +6831,7 @@ export function BOQEditorPage() {
               <span className="text-content-secondary">{t('boq.shortcut_redo', { defaultValue: 'Redo' })}</span>
 
               <kbd className="inline-flex items-center rounded border border-border-light bg-surface-secondary px-1.5 py-0.5 text-xs font-mono">{t('boq.shortcut_ctrl_slash', { defaultValue: 'Ctrl+/' })}</kbd>
-              <span className="text-content-secondary">{t('boq.shortcut_ai_chat', { defaultValue: 'Toggle AI Chat' })}</span>
+              <span className="text-content-secondary">{t('boq.shortcut_ai_chat', { defaultValue: 'Toggle IA Chat' })}</span>
 
               <kbd className="inline-flex items-center rounded border border-border-light bg-surface-secondary px-1.5 py-0.5 text-xs font-mono">{t('boq.shortcut_ctrl_shift_v', { defaultValue: 'Ctrl+Shift+V' })}</kbd>
               <span className="text-content-secondary">{t('boq.shortcut_paste_excel', { defaultValue: 'Paste from Excel' })}</span>
@@ -6866,7 +6866,7 @@ export function BOQEditorPage() {
                 </div>
                 <div>
                   <h3 className="oe-section-title">
-                    {t('boq.vector_setup_title', { defaultValue: 'AI Features Setup' })}
+                    {t('boq.vector_setup_title', { defaultValue: 'IA Features Setup' })}
                   </h3>
                   <p className="text-xs text-content-tertiary">
                     {t('boq.vector_setup_subtitle', { defaultValue: 'One-time setup required' })}
@@ -6878,7 +6878,7 @@ export function BOQEditorPage() {
             <div className="px-6 pb-4">
               <p className="text-sm text-content-secondary leading-relaxed mb-4">
                 {t('boq.vector_setup_desc', {
-                  defaultValue: 'AI rate suggestions, classification, and anomaly detection require a vector-indexed cost database. This is a one-time setup that takes about 30 seconds.',
+                  defaultValue: 'IA rate suggestions, classification, and anomaly detection require a vector-indexed Banco de custos. This is a one-time setup that takes about 30 seconds.',
                 })}
               </p>
 
@@ -6896,7 +6896,7 @@ export function BOQEditorPage() {
                     <div className="text-sm font-medium text-content-primary">
                       {vectorIndexing
                         ? t('boq.vector_indexing', { defaultValue: 'Indexing...' })
-                        : t('boq.vector_index_now', { defaultValue: 'Index existing cost database' })
+                        : t('boq.vector_index_now', { defaultValue: 'Index existing Banco de custos' })
                       }
                     </div>
                     <div className="text-xs text-content-tertiary">
@@ -6918,7 +6918,7 @@ export function BOQEditorPage() {
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="text-sm font-medium text-content-primary">
-                      {t('boq.vector_download', { defaultValue: 'Download cost database first' })}
+                      {t('boq.vector_download', { defaultValue: 'Download Banco de custos first' })}
                     </div>
                     <div className="text-xs text-content-tertiary">
                       {t('boq.vector_download_desc', { defaultValue: 'Import CWICR databases (55,000+ items, 9 regions)' })}
@@ -6934,11 +6934,11 @@ export function BOQEditorPage() {
                 <p className="text-xs text-content-tertiary leading-relaxed">
                   {vectorStatus?.cost_collection
                     ? t('boq.vector_status_partial', {
-                        defaultValue: 'Vector DB has {{count}} items indexed. Minimum ~100 items needed for AI features.',
+                        defaultValue: 'Vector DB has {{count}} items indexed. Minimum ~100 items needed for IA features.',
                         count: vectorStatus.cost_collection.vectors_count,
                       })
                     : t('boq.vector_status_empty', {
-                        defaultValue: 'No vector database found. Import a cost database or index your existing cost items.',
+                        defaultValue: 'No vector database found. Import a Banco de custos or index your existing cost items.',
                       })
                   }
                 </p>

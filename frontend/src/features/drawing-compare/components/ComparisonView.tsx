@@ -196,7 +196,7 @@ export function ComparisonView({ comparison, canWrite, canDelete, onDeleted }: C
         }}
         title={t('drawing_compare.delete_title', { defaultValue: 'Delete this comparison?' })}
         message={t('drawing_compare.delete_message', {
-          defaultValue: 'The change list and its triage are removed. RFIs, clouds and re-measure flags raised from it stay.',
+          defaultValue: 'The change list and its triage are removed. Pedidos de informação, clouds and re-measure flags raised from it stay.',
         })}
         confirmLabel={t('common.delete', { defaultValue: 'Delete' })}
         variant="danger"

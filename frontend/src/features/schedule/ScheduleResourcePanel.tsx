@@ -134,7 +134,7 @@ export function ScheduleResourcePanel({
       <p className="-mt-2 text-xs text-content-secondary">
         {t('schedule.resources.subtitle', {
           defaultValue:
-            'See a resource time-phased demand against its availability and cost, then level the schedule to a set of per-resource limits and preview the honest finish-date impact before committing.',
+            'See a resource time-phased demand against its availability and cost, then level the Cronograma to a set of per-resource limits and preview the honest finish-date impact before committing.',
         })}
       </p>
 
@@ -596,7 +596,7 @@ function LevelingTab({
     const ok = window.confirm(
       t('schedule.resources.apply_confirm', {
         defaultValue:
-          'Apply leveling? This shifts the start and end dates of the affected activities in this schedule.',
+          'Apply leveling? This shifts the start and end dates of the affected activities in this Cronograma.',
       }),
     );
     if (ok) applyMut.mutate();
@@ -872,7 +872,7 @@ function PreviewResult({
         {preview.shifts.length === 0 ? (
           <div className="px-4 py-6 text-sm text-content-tertiary">
             {t('schedule.resources.no_shifts', {
-              defaultValue: 'Nothing moved - the schedule already fits the limits you set.',
+              defaultValue: 'Nothing moved - the Cronograma already fits the limits you set.',
             })}
           </div>
         ) : (

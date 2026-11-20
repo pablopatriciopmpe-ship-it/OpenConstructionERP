@@ -79,7 +79,7 @@ export function RevisionsPanel({ boqId, onOpen, onCompare }: RevisionsPanelProps
       <p className="border-b border-border px-4 py-2 text-2xs text-content-tertiary">
         {t('boq.revisions_hint', {
           defaultValue:
-            'Revisions are bills issued one after another (R0, R1, R2). Snapshots are saved states of one bill; branches are alternative estimates.',
+            'Revisions are bills issued one after another (R0, R1, R2). Snapshots are saved states of one bill; branches are alternative Orçamentos.',
         })}
       </p>
       <div className="flex items-center gap-1 border-b border-border px-3 py-1.5">

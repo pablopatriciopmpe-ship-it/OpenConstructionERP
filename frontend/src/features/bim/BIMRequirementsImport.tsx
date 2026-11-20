@@ -222,7 +222,7 @@ export default function BIMRequirementsImport() {
             ) : (
               <Download className="w-3.5 h-3.5" />
             )}
-            {t('bim.requirements.downloadTemplate', { defaultValue: 'Download Excel template' })}
+            {t('bim.requirements.downloadTemplate', { defaultValue: 'Download Excel Modelo' })}
           </button>
         </div>
       </div>

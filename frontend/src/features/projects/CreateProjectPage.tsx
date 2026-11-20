@@ -1714,7 +1714,7 @@ export function CreateProjectModal({
                     </span>
                     <div>
                       <p className="text-sm font-semibold text-content-primary">
-                        {t('projects.create.grp_schedule_title', { defaultValue: 'Schedule & budget' })}
+                        {t('projects.create.grp_schedule_title', { defaultValue: 'Cronograma & budget' })}
                       </p>
                       <p className="text-2xs text-content-tertiary">
                         {t('projects.create.grp_schedule_sub', { defaultValue: 'Dates, budget, contract value and the regional cost factor. Optional.' })}
@@ -1754,7 +1754,7 @@ export function CreateProjectModal({
                   <div>
                     <OptionalLabel
                       htmlFor="qc-budget"
-                      text={t('projects.budget_estimate', { defaultValue: 'Budget estimate' })}
+                      text={t('projects.budget_estimate', { defaultValue: 'Budget Orçamento' })}
                       optionalText={t('projects.create.optional_badge', { defaultValue: 'Optional' })}
                     />
                     <input
@@ -1882,7 +1882,7 @@ export function CreateProjectModal({
           {/* Step 2 — Region & currency */}
           {mode === 'wizard' && step === 2 && (
             <div className="space-y-4">
-              <InfoHint text={t('projects.create_hint', { defaultValue: 'Region determines available cost databases and VAT rates. Classification standard defines the cost-structure schema for your BOQ. Currency sets all pricing in the BOQ.' })} />
+              <InfoHint text={t('projects.create_hint', { defaultValue: 'Region determines available cost databases and VAT rates. Classification standard defines the cost-structure schema for your Planilha orçamentária. Currency sets all pricing in the Planilha orçamentária.' })} />
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {!isEdit && <ProjectCompanyFields value={company} onChange={setCompany} prefill />}
                 <div>

@@ -940,8 +940,8 @@ function SourceStep({
 
   const tabs = [
     { id: 'bim' as const, icon: Building2, label: t('match_wizard.tab_bim', 'BIM model') },
-    { id: 'excel' as const, icon: FileSpreadsheet, label: t('match_wizard.tab_excel', 'Excel BoQ') },
-    { id: 'pdf' as const, icon: FileType, label: t('match_wizard.tab_pdf', { defaultValue: 'PDF BoQ' }) },
+    { id: 'excel' as const, icon: FileSpreadsheet, label: t('match_wizard.tab_excel', 'Excel Planilha orçamentária') },
+    { id: 'pdf' as const, icon: FileType, label: t('match_wizard.tab_pdf', { defaultValue: 'PDF Planilha orçamentária' }) },
     {
       id: 'image' as const,
       icon: ImageIcon,
@@ -999,7 +999,7 @@ function SourceStep({
             <div className="rounded-2xl border border-border-light bg-surface-secondary p-5 text-sm text-content-secondary text-center">
               {t(
                 'match_wizard.no_bim',
-                'No BIM models in this project. Upload one in /bim, or switch to Excel BoQ / pasted text.',
+                'No BIM models in this project. Upload one in /bim, or switch to Excel Planilha orçamentária / pasted text.',
               )}
             </div>
           )}
@@ -1227,7 +1227,7 @@ function ReviewStep({
         <p className="text-sm text-content-secondary leading-relaxed max-w-xl">
           {t(
             'match_wizard.step4_help',
-            'This creates the session and runs the first match. You then continue in the same flow: the visible 7-stage pipeline (Convert → Load → Schema → Filter → Group → Match → Rollup) opens so you can tune each step and re-run until the priced BoQ fits this project.',
+            'This creates the session and runs the first match. You then continue in the same flow: the visible 7-stage pipeline (Convert → Load → Schema → Filter → Group → Match → Rollup) opens so you can tune each step and re-run until the priced Planilha orçamentária fits this project.',
           )}
         </p>
       </header>
@@ -1412,7 +1412,7 @@ export function MatchWizard({
             <p className="text-xs text-content-secondary mt-0.5 leading-relaxed">
               {t(
                 'match_wizard.goal_blurb',
-                'Four quick steps set up the match. You then review and tune the 7-stage pipeline - each pass sharpens the costing until the estimate fits this specific project.',
+                'Four quick steps set up the match. You then review and tune the 7-stage pipeline - each pass sharpens the costing until the Orçamento fits this specific project.',
               )}
             </p>
           </div>

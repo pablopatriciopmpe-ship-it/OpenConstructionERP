@@ -259,7 +259,7 @@ export function ActivityGrid({
       await invalidateGantt();
       addToast({
         type: 'success',
-        title: t('schedule.rescheduled', { defaultValue: 'Schedule recalculated' }),
+        title: t('schedule.rescheduled', { defaultValue: 'Cronograma recalculated' }),
       });
     },
     onError: (error: Error) =>

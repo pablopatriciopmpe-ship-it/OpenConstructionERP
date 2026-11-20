@@ -457,7 +457,7 @@ function AddTaskModal({
           <div className="flex items-center gap-2 pt-2 pb-1">
             <Calendar size={14} className="text-content-tertiary" />
             <span className="text-xs font-semibold uppercase tracking-wider text-content-tertiary">
-              {t('tasks.section_schedule', { defaultValue: 'Assignment & Schedule' })}
+              {t('tasks.section_schedule', { defaultValue: 'Assignment & Cronograma' })}
             </span>
             <div className="flex-1 h-px bg-border-light" />
           </div>
@@ -619,7 +619,7 @@ const TaskCard = React.memo(function TaskCard({
               const label = task.meeting_id
                 ? t('tasks.from_meeting', { defaultValue: 'Meeting' })
                 : src === 'rfi'
-                  ? t('tasks.from_rfi', { defaultValue: 'RFI' })
+                  ? t('tasks.from_rfi', { defaultValue: 'Pedido de informação (RFI)' })
                   : src === 'inspection'
                     ? t('tasks.from_inspection', { defaultValue: 'Inspection' })
                     : src === 'correspondence'
@@ -1403,8 +1403,8 @@ export function TasksPage() {
     } catch (e: unknown) {
       addToast({
         type: 'error',
-        title: t('tasks.template_download_failed', { defaultValue: 'Failed to download template' }),
-        message: e instanceof Error ? e.message : t('tasks.template_error_generic', { defaultValue: 'An unexpected error occurred while downloading the import template.' }),
+        title: t('tasks.template_download_failed', { defaultValue: 'Failed to download Modelo' }),
+        message: e instanceof Error ? e.message : t('tasks.template_error_generic', { defaultValue: 'An unexpected error occurred while downloading the import Modelo.' }),
       });
     }
   };
@@ -1524,18 +1524,18 @@ export function TasksPage() {
         }
         links={[
           {
-            label: t('nav.schedule', { defaultValue: '4D Schedule' }),
+            label: t('nav.schedule', { defaultValue: 'Cronograma' }),
             onClick: () => navigate('/schedule'),
           },
           {
-            label: t('nav.meetings', { defaultValue: 'Meetings' }),
+            label: t('nav.meetings', { defaultValue: 'Reuniões' }),
             onClick: () => navigate('/meetings'),
           },
         ]}
       >
         {t('tasks.intro_body', {
           defaultValue:
-            'Capture lightweight action items, decisions and follow-ups with an assignee, due date, priority and checklist, separate from the 4D Schedule that plans the build timeline. Create them from meetings, pin them to BIM elements, and use My Tasks for a cross-project list of everything on your plate. They complement Last Planner weekly commitments rather than replace them.',
+            'Capture lightweight action items, decisions and follow-ups with an assignee, due date, priority and checklist, separate from the Cronograma that plans the build timeline. Create them from Reuniões, pin them to BIM elements, and use My Tasks for a cross-project list of everything on your plate. They complement Last Planner weekly commitments rather than replace them.',
         })}
       </DismissibleInfo>
 
@@ -1996,7 +1996,7 @@ export function TasksPage() {
                 <FileDown size={16} className="text-oe-blue shrink-0" />
                 <div className="flex-1">
                   <p className="text-sm text-content-secondary">
-                    {t('tasks.import_template_hint', { defaultValue: 'Download the import template to see the expected format.' })}
+                    {t('tasks.import_template_hint', { defaultValue: 'Download the import Modelo to see the expected format.' })}
                   </p>
                 </div>
                 <Button
@@ -2004,7 +2004,7 @@ export function TasksPage() {
                   size="sm"
                   onClick={handleDownloadTemplate}
                 >
-                  {t('tasks.download_template', { defaultValue: 'Template' })}
+                  {t('tasks.download_template', { defaultValue: 'Modelo' })}
                 </Button>
               </div>
 

@@ -69,7 +69,7 @@ export function PipelinePreview() {
           <p className="text-2xs text-content-tertiary">
             {t(
               'match_elements.pipeline.subtitle',
-              'Seven steps from CAD file to priced BoQ - every step is visible and tunable',
+              'Seven steps from CAD file to priced Planilha orçamentária - every step is visible and tunable',
             )}
           </p>
         </div>
@@ -238,7 +238,7 @@ export function MatchPipeline({ sessionId }: Props) {
             <p className="text-2xs text-content-tertiary">
               {t(
                 'match_elements.pipeline.subtitle',
-                'Seven steps from CAD file to priced BoQ - every step is visible and tunable',
+                'Seven steps from CAD file to priced Planilha orçamentária - every step is visible and tunable',
               )}
               {stages.length > 0 && (
                 <span className="ml-1.5 font-semibold text-content-secondary">

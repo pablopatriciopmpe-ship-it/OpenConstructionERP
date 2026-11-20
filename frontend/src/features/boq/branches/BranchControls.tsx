@@ -111,7 +111,7 @@ export function BranchControls({ boqId, boqName, branchOfId, onNavigate, onChang
         size="sm"
         onClick={() => setPanelOpen(true)}
         title={t('boq.branch.button_hint', {
-          defaultValue: 'Variants of this estimate: switch, compare, carry changes, merge',
+          defaultValue: 'Variants of this Orçamento: switch, compare, carry changes, merge',
         })}
         data-testid="branch-switcher"
       >
@@ -128,14 +128,14 @@ export function BranchControls({ boqId, boqName, branchOfId, onNavigate, onChang
           <div
             role="dialog"
             aria-modal="true"
-            aria-label={t('boq.branch.panel_title', { defaultValue: 'Estimate branches' })}
+            aria-label={t('boq.branch.panel_title', { defaultValue: 'Orçamento branches' })}
             className="relative ml-auto flex h-full w-[460px] max-w-full flex-col border-l border-border bg-surface-elevated shadow-2xl animate-slide-in-right"
           >
             <div className="flex items-center justify-between border-b border-border px-4 py-3">
               <div className="flex items-center gap-2">
                 <GitBranch size={16} className="text-oe-blue" />
                 <h3 className="oe-card-title">
-                  {t('boq.branch.panel_title', { defaultValue: 'Estimate branches' })}
+                  {t('boq.branch.panel_title', { defaultValue: 'Orçamento branches' })}
                 </h3>
               </div>
               <button
@@ -176,7 +176,7 @@ export function BranchControls({ boqId, boqName, branchOfId, onNavigate, onChang
                     tree?.can_merge
                       ? undefined
                       : t('boq.branch.merge_needs_permission', {
-                          defaultValue: 'Merging into the main estimate needs the merge permission',
+                          defaultValue: 'Merging into the main Orçamento needs the merge permission',
                         })
                   }
                 >
@@ -206,7 +206,7 @@ export function BranchControls({ boqId, boqName, branchOfId, onNavigate, onChang
             {(tree?.design_options.length ?? 0) > 0 && (
               <label className="block border-b border-border px-4 py-3">
                 <span className="block text-2xs font-medium text-content-secondary mb-1">
-                  {t('boq.branch.design_option', { defaultValue: 'Design option priced by this estimate' })}
+                  {t('boq.branch.design_option', { defaultValue: 'Design option priced by this Orçamento' })}
                 </span>
                 <select
                   value={current?.design_option?.id ?? ''}
@@ -233,7 +233,7 @@ export function BranchControls({ boqId, boqName, branchOfId, onNavigate, onChang
                 <p className="px-6 py-10 text-center text-sm text-content-secondary">
                   {t('boq.branch.empty', {
                     defaultValue:
-                      'No branches yet. Create one to price an alternative (for example precast instead of cast in place) without touching this estimate.',
+                      'No branches yet. Create one to price an alternative (for example precast instead of cast in place) without touching this Orçamento.',
                   })}
                 </p>
               ) : (

@@ -198,7 +198,7 @@ function HowAssetsWork() {
           </ModLink>{' '}
           ·{' '}
           <ModLink to="/quantities">
-            {t('assets.mod_quantities', { defaultValue: 'Quantity takeoff' })}
+            {t('assets.mod_quantities', { defaultValue: 'Quantity Levantamento de quantitativos' })}
           </ModLink>{' '}
           ·{' '}
           <ModLink to="/match-elements">

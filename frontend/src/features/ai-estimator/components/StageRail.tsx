@@ -81,7 +81,7 @@ export function StageRail({
   return (
     <ol
       className="flex flex-col gap-1"
-      aria-label={t('aiest.rail.steps', { defaultValue: 'Estimate steps' })}
+      aria-label={t('aiest.rail.steps', { defaultValue: 'Orçamento steps' })}
     >
       {STAGES.map((s) => {
         const isCurrent = s.id === current;

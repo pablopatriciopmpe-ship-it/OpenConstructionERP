@@ -1297,14 +1297,14 @@ export function CostsPage() {
         more={t('costs.intro_more', { defaultValue: '' }) ? <IntroRichText text={t('costs.intro_more')} /> : undefined}
         links={[
           { label: t('nav.cost_explorer', { defaultValue: 'Cost Explorer' }), onClick: () => navigate('/cost-explorer') },
-          { label: t('nav.costs_import', { defaultValue: 'Import Cost Database' }), onClick: () => navigate('/costs/import') },
-          { label: t('nav.catalog', { defaultValue: 'Resource Catalog' }), onClick: () => navigate('/catalog') },
+          { label: t('nav.costs_import', { defaultValue: 'Import Banco de custos' }), onClick: () => navigate('/costs/import') },
+          { label: t('nav.catalog', { defaultValue: 'Catálogo de insumos' }), onClick: () => navigate('/catalog') },
           { label: t('nav.boq', { defaultValue: 'Bill of Quantities' }), onClick: () => navigate('/boq') },
         ]}
       >
         {t('costs.intro_body', {
           defaultValue:
-            'Browse and maintain unit and composite rates for materials, labour and equipment across regional catalogues like CWICR, or add your own. Each rate carries its currency and classification, so items you pull into a BOQ flow straight into the cost and schedule rollup.',
+            'Browse and maintain unit and composite rates for materials, labour and equipment across regional catalogues like CWICR, or add your own. Each rate carries its currency and classification, so items you pull into a Planilha orçamentária flow straight into the cost and Cronograma rollup.',
         })}
       </DismissibleInfo>
 
@@ -1487,7 +1487,7 @@ export function CostsPage() {
                 onChange={(e) => handleSearch(e.target.value)}
                 placeholder={
                   semanticSearch
-                    ? t('costs.semantic_placeholder', 'Describe what you need (AI finds similar)...')
+                    ? t('costs.semantic_placeholder', 'Describe what you need (IA finds similar)...')
                     : regionInfo
                       ? t('costs.search_in_region', { defaultValue: 'Search in {{name}}...', name: regionInfo.name })
                       : t('costs.search_placeholder', 'Search by description or code...')
@@ -1509,7 +1509,7 @@ export function CostsPage() {
             </div>
             <button
               onClick={() => setSemanticSearch(!semanticSearch)}
-              title={semanticSearch ? t('costs.switch_to_text_search', { defaultValue: 'Switch to text search' }) : t('costs.switch_to_ai_search', { defaultValue: 'Switch to AI semantic search' })}
+              title={semanticSearch ? t('costs.switch_to_text_search', { defaultValue: 'Switch to text search' }) : t('costs.switch_to_ai_search', { defaultValue: 'Switch to IA semantic search' })}
               className={`flex h-8 shrink-0 items-center gap-1.5 rounded-lg border px-2.5 transition-all text-xs font-medium ${
                 semanticSearch
                   ? 'border-purple-400 bg-purple-500/10 text-purple-500'
@@ -1519,8 +1519,8 @@ export function CostsPage() {
               <Sparkles size={14} />
               <span className="hidden sm:inline">
                 {semanticSearch
-                  ? t('costs.ai_search_on', { defaultValue: 'AI: on' })
-                  : t('costs.ai_search_off', { defaultValue: 'AI search' })}
+                  ? t('costs.ai_search_on', { defaultValue: 'IA: on' })
+                  : t('costs.ai_search_off', { defaultValue: 'IA search' })}
               </span>
             </button>
           </div>
@@ -1538,7 +1538,7 @@ export function CostsPage() {
               <span>
                 {t('costs.semantic_unavailable', {
                   defaultValue:
-                    'AI search is not installed on this deployment, so these are text search results.',
+                    'IA search is not installed on this deployment, so these are text search results.',
                 })}
               </span>
             </div>
@@ -1655,10 +1655,10 @@ export function CostsPage() {
             specialTab === 'favourites'
               ? t('costs.no_favourites_hint', { defaultValue: 'Click the star icon on any cost item to add it to your favourites' })
               : specialTab === 'recent'
-                ? t('costs.no_recent_hint', { defaultValue: 'Items you add to BOQ will appear here for quick access' })
+                ? t('costs.no_recent_hint', { defaultValue: 'Items you add to Planilha orçamentária will appear here for quick access' })
                 : query
                   ? t('costs.no_results_hint', 'Try adjusting your search or filters')
-                  : t('costs.empty_hint', 'Start typing to search the cost database')
+                  : t('costs.empty_hint', 'Start typing to search the Banco de custos')
           }
         />
       ) : (
@@ -1857,7 +1857,7 @@ export function CostsPage() {
               icon={<Table2 size={14} />}
               onClick={() => setShowAddToBOQ(true)}
             >
-              {t('costs.add_to_boq', { defaultValue: 'Add to BOQ' })}
+              {t('costs.add_to_boq', { defaultValue: 'Add to Planilha orçamentária' })}
             </Button>
             <Button
               variant="secondary"
@@ -2183,8 +2183,8 @@ function AddToBOQModal({
 
       addToast({
         type: 'success',
-        title: t('costs.items_added_to_boq', { defaultValue: '{{count}} items added to BOQ', count: items.length }),
-        message: t('costs.positions_created_hint', { defaultValue: 'Positions created with unit rates from cost database' }),
+        title: t('costs.items_added_to_boq', { defaultValue: '{{count}} items added to Planilha orçamentária', count: items.length }),
+        message: t('costs.positions_created_hint', { defaultValue: 'Positions created with unit rates from Banco de custos' }),
       });
       onSuccess();
     } catch (err) {
@@ -2246,7 +2246,7 @@ function AddToBOQModal({
               <Table2 size={20} />
             </div>
             <div>
-              <h2 id="add-to-boq-modal-title" className="oe-section-title">{t('costs.add_to_boq', { defaultValue: 'Add to BOQ' })}</h2>
+              <h2 id="add-to-boq-modal-title" className="oe-section-title">{t('costs.add_to_boq', { defaultValue: 'Add to Planilha orçamentária' })}</h2>
               <p className="text-xs text-content-tertiary">
                 {t('costs.n_items_selected', { defaultValue: '{{count}} items selected', count: items.length })}
               </p>
@@ -2303,16 +2303,16 @@ function AddToBOQModal({
                   onChange={(e) => { setBoqId(e.target.value); setSectionId(''); }}
                   className="oe-select-lg w-full"
                 >
-                  <option value="">{t('boq.select_boq', { defaultValue: 'Select BOQ...' })}</option>
+                  <option value="">{t('boq.select_boq', { defaultValue: 'Select Planilha orçamentária...' })}</option>
                   {boqs.map((b) => (
                     <option key={b.id} value={b.id}>{b.name} ({t(`boq.status_${b.status}`, { defaultValue: b.status })})</option>
                   ))}
                 </select>
               ) : (
                 <div className="flex items-center gap-2">
-                  <span className="text-xs text-content-tertiary">{t('boq.no_boqs_in_project', { defaultValue: 'No BOQs in this project.' })}</span>
+                  <span className="text-xs text-content-tertiary">{t('boq.no_boqs_in_project', { defaultValue: 'No Planilhas orçamentárias in this project.' })}</span>
                   <Button variant="primary" size="sm" onClick={() => { onClose(); navigate('/boq'); }}>
-                    {t('boq.create_boq', { defaultValue: 'Create BOQ' })}
+                    {t('boq.create_boq', { defaultValue: 'Create Planilha orçamentária' })}
                   </Button>
                 </div>
               )}
@@ -2421,7 +2421,7 @@ function AddToBOQModal({
             >
               {isAdding
                 ? t('costs.adding', { defaultValue: 'Adding...' })
-                : t('costs.add_n_to_boq', { defaultValue: 'Add {{count}} to BOQ', count: items.length })}
+                : t('costs.add_n_to_boq', { defaultValue: 'Add {{count}} to Planilha orçamentária', count: items.length })}
             </Button>
           </div>
         </div>
@@ -2512,7 +2512,7 @@ function CreateAssemblyFromCostsModal({
         title: t('costs.assembly_mixed_currency_title', { defaultValue: 'Mixed currencies' }),
         message: t('costs.assembly_mixed_currency_msg', {
           defaultValue:
-            'Assemblies must be single-currency. The selected cost items span {{count}} currencies ({{list}}). Select items that share one currency.',
+            'Composições must be single-currency. The selected cost items span {{count}} currencies ({{list}}). Select items that share one currency.',
           count: distinctCurrencies.length,
           list: fmtList(distinctCurrencies),
         }),
@@ -2645,7 +2645,7 @@ function CreateAssemblyFromCostsModal({
               <div className="mt-2 rounded-lg border border-semantic-warning/30 bg-semantic-warning-bg px-3 py-2 text-xs text-semantic-warning">
                 {t('costs.assembly_mixed_currency_warning', {
                   defaultValue:
-                    'Assemblies must be single-currency. The selected items span {{count}} currencies ({{list}}) - pick items that share one currency to continue.',
+                    'Composições must be single-currency. The selected items span {{count}} currencies ({{list}}) - pick items that share one currency to continue.',
                   count: distinctCurrencies.length,
                   list: fmtList(distinctCurrencies),
                 })}
@@ -3405,7 +3405,7 @@ function CostVariantDetail({
             <span className="rounded bg-surface-primary/70 px-1.5 py-0.5">
               <span className="font-semibold text-content-primary">{stats.position_count.toLocaleString(getNumberLocale())}</span>
               <span className="ml-1 text-content-tertiary">
-                {t('costs.variant_position_count_label', { defaultValue: 'Estimates' })}
+                {t('costs.variant_position_count_label', { defaultValue: 'Orçamentos' })}
               </span>
             </span>
           </>
@@ -3699,7 +3699,7 @@ function CostItemRow({
           <div className="flex items-center justify-end gap-0.5 whitespace-nowrap">
             <button
               onClick={(e) => { e.stopPropagation(); onSelect(); }}
-              title={t('costs.add_to_boq', 'Select for BOQ')}
+              title={t('costs.add_to_boq', 'Select for Planilha orçamentária')}
               className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-md transition-all ${
                 isSelected
                   ? 'bg-oe-blue text-white'
@@ -3722,7 +3722,7 @@ function CostItemRow({
             {/* CONN-83 — Benchmark this rate against the AI Cost Advisor. */}
             <button
               onClick={(e) => { e.stopPropagation(); onBenchmark(); }}
-              title={t('costs.benchmark_rate', { defaultValue: 'Benchmark this rate with the AI Cost Advisor' })}
+              title={t('costs.benchmark_rate', { defaultValue: 'Benchmark this rate with the IA Cost Advisor' })}
               className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-content-tertiary transition-all hover:bg-violet-500/10 hover:text-violet-500"
             >
               <Sparkles size={14} />

@@ -111,7 +111,7 @@ export function AssemblyLibraryPage() {
     <div className="space-y-5 animate-fade-in">
       <Breadcrumb
         items={[
-          { label: t('nav.assemblies', 'Assemblies'), to: '/assemblies' },
+          { label: t('nav.assemblies', 'Composições'), to: '/assemblies' },
           { label: t('assemblies.library.title', 'Assembly library') },
         ]}
       />
@@ -122,11 +122,11 @@ export function AssemblyLibraryPage() {
         srTitle={t('assemblies.library.title', 'Assembly library')}
         subtitle={t(
           'assemblies.library.description',
-          'Canonical recipe templates, pick a starting point and apply it to your project.'
+          'Canonical recipe Modelos, pick a starting point and apply it to your project.'
         )}
         actions={
           <Badge variant="neutral">
-            {`${total} ${t('assemblies.library.templates_found', 'templates')}`}
+            {`${total} ${t('assemblies.library.templates_found', 'Modelos')}`}
           </Badge>
         }
       />
@@ -135,14 +135,14 @@ export function AssemblyLibraryPage() {
         storageKey="assemblies-library"
         title={t('assembly_library.intro_title', { defaultValue: 'Find a ready recipe instead of building one' })}
         links={[
-          { label: t('nav.assemblies', { defaultValue: 'Assemblies' }), onClick: () => navigate('/assemblies') },
+          { label: t('nav.assemblies', { defaultValue: 'Composições' }), onClick: () => navigate('/assemblies') },
           { label: t('assemblies.new_assembly', { defaultValue: 'New Assembly' }), onClick: () => navigate('/assemblies/new') },
           { label: t('nav.boq', { defaultValue: 'Bill of Quantities' }), onClick: () => navigate('/boq') },
         ]}
       >
         {t('assembly_library.intro_body', {
           defaultValue:
-            'Search the shared library of assembly templates by trade and category, preview the components and rates, and save the ones you want into your own assemblies. Saved assemblies are then ready to apply to BOQ positions on any project.',
+            'Search the shared library of assembly Modelos by trade and category, preview the components and rates, and save the ones you want into your own Composições. Saved Composições are then ready to apply to Planilha orçamentária positions on any project.',
         })}
       </DismissibleInfo>
 
@@ -196,7 +196,7 @@ export function AssemblyLibraryPage() {
       ) : templates.length === 0 ? (
         <EmptyState
           icon={<Library className="h-8 w-8" />}
-          title={t('assemblies.library.empty_title', 'No templates match the current filter')}
+          title={t('assemblies.library.empty_title', 'No Modelos match the current filter')}
           description={t(
             'assemblies.library.empty_description',
             'Adjust the search or category to broaden your results.'
@@ -425,7 +425,7 @@ function TemplateDrawer({
         type: 'error',
         title: t(
           'assemblies.library.no_project',
-          'Pick a project to apply this template.'
+          'Pick a project to apply this Modelo.'
         ),
       });
       return;
@@ -494,10 +494,10 @@ function TemplateDrawer({
 
       addToast({
         type: 'success',
-        title: t('assemblies.library.saved_title', 'Assembly created from template'),
+        title: t('assemblies.library.saved_title', 'Assembly created from Modelo'),
         message: t(
           'assemblies.library.saved_message',
-          '{{name}} was added to your assemblies. Open it to fine-tune rates and apply it to a BOQ.',
+          '{{name}} was added to your Composições. Open it to fine-tune rates and apply it to a Planilha orçamentária.',
           { name: localisedName }
         ),
       });
@@ -655,7 +655,7 @@ function TemplateDrawer({
             <p className="mb-3 text-xs text-content-tertiary">
               {t(
                 'assemblies.library.preview_explainer',
-                'Resolves each template component against the project cost catalogue so you can review rates. Nothing is saved until you create an assembly from the preview.'
+                'Resolves each Modelo component against the project cost catalogue so you can review rates. Nothing is saved until you create an assembly from the preview.'
               )}
             </p>
             <div className="space-y-3">
@@ -793,7 +793,7 @@ function TemplateDrawer({
                 <p className="text-xs text-content-tertiary">
                   {t(
                     'assemblies.library.save_explainer',
-                    'Create a reusable assembly in this project from the preview above. You can then refine rates and apply it to a BOQ from the assembly editor.'
+                    'Create a reusable assembly in this project from the preview above. You can then refine rates and apply it to a Planilha orçamentária from the assembly editor.'
                   )}
                 </p>
                 <Button
@@ -806,7 +806,7 @@ function TemplateDrawer({
                   ) : (
                     <Save className="mr-1.5 h-4 w-4" />
                   )}
-                  {t('assemblies.library.save_button', 'Create assembly from template')}
+                  {t('assemblies.library.save_button', 'Create assembly from Modelo')}
                 </Button>
               </div>
             </section>

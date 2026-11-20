@@ -462,7 +462,7 @@ export function ScheduleDelayPanel({
               })}
               description={t('schedule.delay.select_empty_desc', {
                 defaultValue:
-                  'A forensic delay analysis attributes schedule slip to its causes window by window, separating excusable/compensable delay from contractor and concurrent delay - the evidence behind an Extension-of-Time claim.',
+                  'A forensic delay analysis attributes Cronograma slip to its causes window by window, separating excusable/compensable delay from contractor and concurrent delay - the evidence behind an Extension-of-Time claim.',
               })}
             />
           </Card>
@@ -734,7 +734,7 @@ function DelayDetail({
           )}
           <p className="mt-2 text-xs text-content-tertiary">
             {t('schedule.delay.indicative_note', {
-              defaultValue: 'Indicative result from the schedule data, not an expert opinion.',
+              defaultValue: 'Indicative result from the Cronograma data, not an expert opinion.',
             })}
           </p>
 
@@ -782,7 +782,7 @@ function DelayDetail({
                         {rawWindows[i]?.no_snapshot && (
                           <p className="mt-0.5 max-w-xs text-2xs text-semantic-warning">
                             {t('schedule.delay.window_no_snapshot', {
-                              defaultValue: 'No schedule snapshot inside this window, so slip cannot be placed here.',
+                              defaultValue: 'No Cronograma snapshot inside this window, so slip cannot be placed here.',
                             })}
                           </p>
                         )}

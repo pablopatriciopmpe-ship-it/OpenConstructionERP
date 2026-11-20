@@ -85,7 +85,7 @@ export function QuoteReview({ quote }: { quote: Quote }) {
 
       <div className="flex flex-col gap-4">
         <section className="rounded border p-3">
-          <h3 className="mb-2 text-sm font-semibold">{t('quote_capture.header', 'Quote header')}</h3>
+          <h3 className="mb-2 text-sm font-semibold">{t('quote_capture.header', 'Cotação header')}</h3>
           <table className="oe-table-compact">
             <tbody>
               {HEADER_KEYS.map((key) => {
@@ -280,7 +280,7 @@ export function QuoteReview({ quote }: { quote: Quote }) {
                     confirmMut.mutate(
                       { target, acceptWarnings },
                       {
-                        onSuccess: () => addToast({ type: 'success', title: t('quote_capture.confirmed', 'Quote confirmed') }),
+                        onSuccess: () => addToast({ type: 'success', title: t('quote_capture.confirmed', 'Cotação confirmed') }),
                         onError,
                       },
                     )

@@ -421,7 +421,7 @@ export function AIPositionCopilot({
   return (
     <div
       role="region"
-      aria-label={t('boq.copilot.title', { defaultValue: 'AI Copilot' })}
+      aria-label={t('boq.copilot.title', { defaultValue: 'IA Copilot' })}
       data-testid="boq-ai-copilot"
       className={
         variant === 'inline'
@@ -438,7 +438,7 @@ export function AIPositionCopilot({
           <div className="min-w-0">
             <div className="flex items-center gap-2">
               <span className="text-sm font-semibold text-content-primary">
-                {t('boq.copilot.title', { defaultValue: 'AI Copilot' })}
+                {t('boq.copilot.title', { defaultValue: 'IA Copilot' })}
               </span>
               {ordinal && (
                 <span className="font-mono text-2xs text-content-tertiary">{ordinal}</span>

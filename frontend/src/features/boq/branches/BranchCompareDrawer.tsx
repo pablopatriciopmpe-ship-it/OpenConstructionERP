@@ -167,9 +167,9 @@ export function BranchCompareDrawer({ nodes, currentBoqId, isOpen, onClose }: Br
 
         <div className="border-b border-border p-3 space-y-2">
           <div className="flex items-end gap-2">
-            {picker(aId, setAId, t('boq.branch.compare_a', { defaultValue: 'Estimate A' }))}
+            {picker(aId, setAId, t('boq.branch.compare_a', { defaultValue: 'Orçamento A' }))}
             <ArrowRight size={14} className="mb-2.5 shrink-0 text-content-quaternary" />
-            {picker(bId, setBId, t('boq.branch.compare_b', { defaultValue: 'Estimate B' }))}
+            {picker(bId, setBId, t('boq.branch.compare_b', { defaultValue: 'Orçamento B' }))}
           </div>
           <div className="flex flex-wrap items-center gap-2">
             <div role="tablist" className="inline-flex rounded-lg border border-border-light p-0.5">
@@ -254,7 +254,7 @@ export function BranchCompareDrawer({ nodes, currentBoqId, isOpen, onClose }: Br
         <div className="flex-1 overflow-y-auto">
           {!ready ? (
             <p className="px-4 py-12 text-center text-sm text-content-secondary">
-              {t('boq.branch.compare_hint', { defaultValue: 'Pick two different estimates to compare.' })}
+              {t('boq.branch.compare_hint', { defaultValue: 'Pick two different Orçamentos to compare.' })}
             </p>
           ) : isLoading ? (
             <div className="flex items-center justify-center py-12">

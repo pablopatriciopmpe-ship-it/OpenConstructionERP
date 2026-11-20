@@ -114,15 +114,15 @@ export function buildChangeordersInsights(
 
   const dataset: InsightDataset = {
     id: 'changeorders',
-    label: t('changeorders.insights.ds_orders', { defaultValue: 'Change orders' }),
+    label: t('changeorders.insights.ds_orders', { defaultValue: 'Alterações de contrato' }),
     currency: currency || '',
     fields: [
-      { key: 'code', label: t('changeorders.insights.f_code', { defaultValue: 'Change order' }), kind: 'dimension' },
+      { key: 'code', label: t('changeorders.insights.f_code', { defaultValue: 'Alteração de contrato' }), kind: 'dimension' },
       { key: 'status', label: t('changeorders.insights.f_status', { defaultValue: 'Status' }), kind: 'dimension' },
       { key: 'reason', label: t('changeorders.insights.f_reason', { defaultValue: 'Reason' }), kind: 'dimension' },
       { key: 'month', label: t('changeorders.insights.f_month', { defaultValue: 'Month raised' }), kind: 'dimension' },
       { key: 'value', label: t('changeorders.insights.f_value', { defaultValue: 'Cost impact' }), kind: 'measure', format: 'currency' },
-      { key: 'schedule', label: t('changeorders.insights.f_schedule', { defaultValue: 'Schedule impact (days)' }), kind: 'measure', format: 'number' },
+      { key: 'schedule', label: t('changeorders.insights.f_schedule', { defaultValue: 'Cronograma impact (days)' }), kind: 'measure', format: 'number' },
       { key: 'items', label: t('changeorders.insights.f_items', { defaultValue: 'Line items' }), kind: 'measure', format: 'number' },
       { key: 'approved', label: t('changeorders.insights.f_approved', { defaultValue: 'Approved' }), kind: 'measure', format: 'number' },
       { key: 'pending', label: t('changeorders.insights.f_pending', { defaultValue: 'Pending' }), kind: 'measure', format: 'number' },
@@ -133,14 +133,14 @@ export function buildChangeordersInsights(
 
   const base = { datasetId: 'changeorders', builtin: true } as const;
   const builtins: InsightDef[] = [
-    { ...base, id: 'kpi-orders', title: t('changeorders.insights.k_orders', { defaultValue: 'Change orders' }), chart: 'kpi', agg: 'count', color: 0 },
+    { ...base, id: 'kpi-orders', title: t('changeorders.insights.k_orders', { defaultValue: 'Alterações de contrato' }), chart: 'kpi', agg: 'count', color: 0 },
     { ...base, id: 'kpi-value', title: t('changeorders.insights.k_value', { defaultValue: 'Total cost impact' }), chart: 'kpi', measure: 'value', agg: 'sum', color: 1 },
     { ...base, id: 'kpi-approved', title: t('changeorders.insights.k_approved', { defaultValue: 'Approved' }), chart: 'kpi', measure: 'approved', agg: 'sum', color: 2 },
     { ...base, id: 'kpi-pending', title: t('changeorders.insights.k_pending', { defaultValue: 'Pending' }), chart: 'kpi', measure: 'pending', agg: 'sum', color: 4 },
     { ...base, id: 'bar-value-by-reason', title: t('changeorders.insights.c_value_by_reason', { defaultValue: 'Cost impact by reason' }), chart: 'bar', dimension: 'reason', measure: 'value', agg: 'sum', color: 1 },
-    { ...base, id: 'donut-by-status', title: t('changeorders.insights.c_by_status', { defaultValue: 'Change orders by status' }), chart: 'donut', dimension: 'status', agg: 'count', color: 4 },
-    { ...base, id: 'bar-by-reason', title: t('changeorders.insights.c_by_reason', { defaultValue: 'Change orders by reason' }), chart: 'bar', dimension: 'reason', agg: 'count', color: 0 },
-    { ...base, id: 'area-over-time', title: t('changeorders.insights.c_over_time', { defaultValue: 'Change orders over time' }), chart: 'area', dimension: 'month', agg: 'count', color: 5 },
+    { ...base, id: 'donut-by-status', title: t('changeorders.insights.c_by_status', { defaultValue: 'Alterações de contrato by status' }), chart: 'donut', dimension: 'status', agg: 'count', color: 4 },
+    { ...base, id: 'bar-by-reason', title: t('changeorders.insights.c_by_reason', { defaultValue: 'Alterações de contrato by reason' }), chart: 'bar', dimension: 'reason', agg: 'count', color: 0 },
+    { ...base, id: 'area-over-time', title: t('changeorders.insights.c_over_time', { defaultValue: 'Alterações de contrato over time' }), chart: 'area', dimension: 'month', agg: 'count', color: 5 },
   ];
 
   return { datasets: [dataset], builtins };

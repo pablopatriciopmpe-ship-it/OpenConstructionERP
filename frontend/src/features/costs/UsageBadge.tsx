@@ -71,7 +71,7 @@ export function UsageBadge({ count, band, className }: UsageBadgeProps) {
   if (count <= 0) {
     // Quiet "not yet used" state - a small outlined dot, no alarm colour.
     const label = t('costs.usage.unused', {
-      defaultValue: 'Not used in any estimate yet',
+      defaultValue: 'Not used in any Orçamento yet',
     });
     return (
       <span
@@ -94,7 +94,7 @@ export function UsageBadge({ count, band, className }: UsageBadgeProps) {
 
   const usageLabel = t('costs.usage.used_count', {
     count,
-    defaultValue: 'Used in {{count}} estimate position',
+    defaultValue: 'Used in {{count}} Orçamento position',
     defaultValue_other: 'Used in {{count}} estimate positions',
   });
   // Usage and freshness are one translated sentence, so each language can
@@ -103,7 +103,7 @@ export function UsageBadge({ count, band, className }: UsageBadgeProps) {
     ? t('costs.usage.used_count_with_age', {
         count,
         age: formatAge(band.age_days, t),
-        defaultValue: 'Used in {{count}} estimate position, last {{age}}',
+        defaultValue: 'Used in {{count}} Orçamento position, last {{age}}',
         defaultValue_other: 'Used in {{count}} estimate positions, last {{age}}',
       })
     : usageLabel;

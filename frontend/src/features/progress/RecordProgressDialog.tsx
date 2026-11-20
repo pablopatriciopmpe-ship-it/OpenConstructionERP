@@ -172,7 +172,7 @@ export function RecordProgressDialog({
               onClick={() => setScope('position')}
               disabled={positions.length === 0}
             >
-              {t('progress.record_scope_position', { defaultValue: 'One BOQ position' })}
+              {t('progress.record_scope_position', { defaultValue: 'One Planilha orçamentária position' })}
             </Button>
           </div>
           <p className="text-2xs leading-relaxed text-content-tertiary">
@@ -190,7 +190,7 @@ export function RecordProgressDialog({
             <p className="text-2xs text-content-tertiary">
               {t('progress.record_no_positions', {
                 defaultValue:
-                  'This project has no priced BOQ positions yet, so only a project-level reading can be recorded.',
+                  'This project has no priced Planilha orçamentária positions yet, so only a project-level reading can be recorded.',
               })}
             </p>
           )}

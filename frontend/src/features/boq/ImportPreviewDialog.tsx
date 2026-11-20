@@ -487,7 +487,7 @@ export function ImportPreviewDialog({ open, onClose, boqId, onImported, onFideli
             <>
               <p className="text-xs text-content-secondary">
                 {t('boq.import_preview.upload_hint', {
-                  defaultValue: 'Choose a file to preview before importing into this BOQ.',
+                  defaultValue: 'Choose a file to preview before importing into this Planilha orçamentária.',
                 })}
               </p>
 

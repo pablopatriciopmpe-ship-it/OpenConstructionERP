@@ -115,7 +115,7 @@ export function ExchangeFidelityDialog({ open, boqId, reportId, onClose }: Excha
           <p className="text-xs text-content-secondary">
             {t('boq.fidelity.intro', {
               defaultValue:
-                'Every exchange format holds less than the bill. This report lists what an import or export did not carry across unchanged: cut texts, rounded values, dropped attributes, markups the format cannot hold.',
+                'Every exchange format holds less than the bill. This report lists what an import or export did not carry across unchanged: cut texts, rounded values, dropped attributes, Margens the format cannot hold.',
             })}
           </p>
 

@@ -167,7 +167,7 @@ export default function BIMFilterReportModal({
     } catch (e) {
       useToastStore.getState().addToast({
         type: 'error',
-        title: t('bim.boq_export_failed', { defaultValue: 'BOQ export failed' }),
+        title: t('bim.boq_export_failed', { defaultValue: 'Planilha orçamentária export failed' }),
         message: e instanceof Error ? e.message : String(e),
       });
     } finally {

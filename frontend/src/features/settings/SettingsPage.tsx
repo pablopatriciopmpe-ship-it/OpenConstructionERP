@@ -613,7 +613,7 @@ export function AIConfigurationCard() {
       setToolModeTouched(false); setTimeoutTouched(false);
       addToast({
         type: 'success',
-        title: t('settings.ai_saved', { defaultValue: 'AI settings saved' }),
+        title: t('settings.ai_saved', { defaultValue: 'IA settings saved' }),
       });
       // Let the floating chat (and any other panels probing AI status)
       // refresh themselves immediately instead of waiting for the next
@@ -670,9 +670,9 @@ export function AIConfigurationCard() {
   return (
     <Card className="lg:col-span-2">
       <CardHeader
-        title={t('settings.ai_title', { defaultValue: 'AI Configuration' })}
+        title={t('settings.ai_title', { defaultValue: 'IA Configuration' })}
         subtitle={t('settings.ai_subtitle', {
-          defaultValue: 'Choose your AI provider for estimation and analysis',
+          defaultValue: 'Choose your IA provider for Estimativa and analysis',
         })}
         action={
           hasUnsavedKey || modelTouched || baseUrlTouched || hasUnsavedOptions ? (
@@ -687,7 +687,7 @@ export function AIConfigurationCard() {
           {/* Provider selection */}
           <div>
             <label className="oe-label">
-              {t('settings.ai_provider', { defaultValue: 'AI Provider' })}
+              {t('settings.ai_provider', { defaultValue: 'IA Provider' })}
             </label>
             <p className="text-xs text-content-tertiary mb-3">
               {t('settings.ai_provider_help', { defaultValue: 'Pick the LLM provider whose API key you have. Recommended: Anthropic Claude.' })}
@@ -811,7 +811,7 @@ export function AIConfigurationCard() {
                   })
                 : t('settings.ai_key_hint_provider', {
                     defaultValue:
-                      'Your key is stored encrypted on your server. When you use an AI feature, the text of that request goes to this provider and its own terms apply.',
+                      'Your key is stored encrypted on your server. When you use an IA feature, the text of that request goes to this provider and its own terms apply.',
                   })}
             </p>
             {selectedProvider === 'openrouter' && (
@@ -965,7 +965,7 @@ export function AIConfigurationCard() {
             <p className="mt-1.5 text-xs text-content-tertiary">
               {t('settings.ai_model_hint', {
                 defaultValue:
-                  'AI providers rename and retire models over time. If a connection fails with a "model not found" error, set the exact current model id here (e.g. gemini-2.5-flash, anthropic/claude-sonnet-4). Leave blank to use the recommended default.',
+                  'IA providers rename and retire models over time. If a connection fails with a "model not found" error, set the exact current model id here (e.g. gemini-2.5-flash, anthropic/claude-sonnet-4). Leave blank to use the recommended default.',
               })}
             </p>
           </div>
@@ -1101,7 +1101,7 @@ function _InterfaceModeCard() {
             }`}
           >
             <span className="text-sm font-semibold">{t('nav.mode_simple', { defaultValue: 'Simple' })}</span>
-            <span className="text-xs text-center leading-snug">{t('settings.mode_simple_detail', { defaultValue: 'Essential estimation tools. Clean interface for focused work.' })}</span>
+            <span className="text-xs text-center leading-snug">{t('settings.mode_simple_detail', { defaultValue: 'Essential Estimativa tools. Clean interface for focused work.' })}</span>
             <span className={`mt-1 inline-flex h-5 items-center rounded-full px-2 text-2xs font-semibold tracking-wide ${
               !isAdvanced ? 'bg-oe-blue/15 text-oe-blue' : 'bg-surface-tertiary text-content-tertiary'
             }`}>STD</span>
@@ -1493,17 +1493,17 @@ const DEFAULT_TAB: TabDef = {
 
 const TABS: readonly TabDef[] = [
   DEFAULT_TAB,
-  { id: 'dashboard',    labelKey: 'settings.tab_dashboard',    defaultLabel: 'Dashboard',    icon: LayoutGrid, descKey: 'settings.tab_dashboard_desc',  descDefault: 'Reorder, show or hide dashboard sections' },
+  { id: 'dashboard',    labelKey: 'settings.tab_dashboard',    defaultLabel: 'Painel',    icon: LayoutGrid, descKey: 'settings.tab_dashboard_desc',  descDefault: 'Reorder, show or hide Painel sections' },
   { id: 'account',      labelKey: 'settings.tab_account',      defaultLabel: 'Account',      icon: User,     descKey: 'settings.tab_account_desc',      descDefault: 'Password and sign out' },
   { id: 'team',         labelKey: 'settings.tab_team',         defaultLabel: 'Team & Plan',  icon: Users,    descKey: 'settings.tab_team_desc',         descDefault: 'Members, roles, and license' },
   // Company & documents - logos and the letterhead printed on exported
   // documents. Visible to everyone; the panel is read-only below admin.
-  { id: 'company',      labelKey: 'settings.tab_company',      defaultLabel: 'Documents & templates', icon: Building2, descKey: 'settings.tab_company_desc', descDefault: 'Logos, letterhead, and how printed documents look' },
+  { id: 'company',      labelKey: 'settings.tab_company',      defaultLabel: 'Documents & Modelos', icon: Building2, descKey: 'settings.tab_company_desc', descDefault: 'Logos, letterhead, and how printed documents look' },
   // Market & standards: country, packs, standards and units; language and formats sit below as display formats.
   { id: 'market',       labelKey: 'settings.tab_market',       defaultLabel: 'Market & standards', icon: Globe, descKey: 'settings.tab_market_desc', descDefault: 'Country, packs, standards and units' },
   { id: 'einvoice',     labelKey: 'settings.tab_einvoice',     defaultLabel: 'E-invoice',    icon: ReceiptText, descKey: 'settings.tab_einvoice_desc',  descDefault: 'Seller identity and bank account for electronic invoices' },
   { id: 'converters',   labelKey: 'settings.tab_converters',   defaultLabel: 'Converters',  icon: Layers,   descKey: 'settings.tab_converters_desc',   descDefault: 'DDC converters - installed versions and GitHub sources' },
-  { id: 'ai',           labelKey: 'settings.tab_ai',           defaultLabel: 'AI',           icon: Sparkles, descKey: 'settings.tab_ai_desc',           descDefault: 'AI provider and semantic search' },
+  { id: 'ai',           labelKey: 'settings.tab_ai',           defaultLabel: 'IA',           icon: Sparkles, descKey: 'settings.tab_ai_desc',           descDefault: 'IA provider and semantic search' },
   { id: 'security',     labelKey: 'settings.tab_security',     defaultLabel: 'Data & Security', icon: ShieldCheck, descKey: 'settings.tab_security_desc', descDefault: 'Where your data lives and what leaves this instance' },
   { id: 'integrations', labelKey: 'settings.tab_integrations', defaultLabel: 'Integrations', icon: Plug,     descKey: 'settings.tab_integrations_desc', descDefault: 'Slack, Teams, Telegram, webhooks' },
   { id: 'datafeeds',    labelKey: 'settings.tab_datafeeds',    defaultLabel: 'Data feeds',   icon: Database, descKey: 'settings.tab_datafeeds_desc',    descDefault: 'Tables for Excel, Power Query and BI tools' },
@@ -1875,10 +1875,10 @@ export function SettingsPage() {
           {activeTab === 'dashboard' && (
             <Card className="lg:col-span-2">
               <CardHeader
-                title={t('dashboard.layout.title', { defaultValue: 'Customize dashboard' })}
+                title={t('dashboard.layout.title', { defaultValue: 'Customize Painel' })}
                 subtitle={t('settings.dashboard_layout_subtitle', {
                   defaultValue:
-                    'Choose which sections appear on your dashboard and in what order. This is personal to you and saved to this browser.',
+                    'Choose which sections appear on your Painel and in what order. This is personal to you and saved to this browser.',
                 })}
               />
               <CardContent>
@@ -2011,7 +2011,7 @@ export function SettingsPage() {
                         <p className="text-xs text-content-secondary mt-0.5">
                           {t('settings.remove_demo_desc', {
                             defaultValue:
-                              'New installs come with a few sample projects so you can explore the platform. Remove them to start with an empty workspace. This permanently deletes the sample projects and everything inside them (BOQs, documents, schedules). Your own projects and all user accounts are kept, and the sample content will not come back on restart.',
+                              'New installs come with a few sample projects so you can explore the platform. Remove them to start with an empty Espaço de trabalho. This permanently deletes the sample projects and everything inside them (Planilhas orçamentárias, documents, schedules). Your own projects and all user accounts are kept, and the sample content will not come back on restart.',
                           })}
                         </p>
                       </div>
@@ -2034,7 +2034,7 @@ export function SettingsPage() {
                         {t('settings.delete_account_row_title', { defaultValue: 'Delete account' })}
                       </p>
                       <p className="text-xs text-content-secondary mt-0.5">
-                        {t('settings.delete_account_row_desc', { defaultValue: 'Permanently erase your personal data. Your projects and history stay in the workspace but are no longer tied to your name.' })}
+                        {t('settings.delete_account_row_desc', { defaultValue: 'Permanently erase your personal data. Your projects and history stay in the Espaço de trabalho but are no longer tied to your name.' })}
                       </p>
                     </div>
                     <Button
@@ -2161,7 +2161,7 @@ export function SettingsPage() {
             <>
               <div className="lg:col-span-2">
                 <InfoHint
-                  text={t('settings.ai_guidance_provider', { defaultValue: 'AI features (estimation, takeoff analysis, semantic search) need an AI provider. Keys are stored encrypted on your server, and the text of each AI request goes to the provider you choose. Choose a local model to keep that text on your own network.' })}
+                  text={t('settings.ai_guidance_provider', { defaultValue: 'IA features (Estimativa, Levantamento de quantitativos analysis, semantic search) need an IA provider. Keys are stored encrypted on your server, and the text of each IA request goes to the provider you choose. Choose a local model to keep that text on your own network.' })}
                 />
               </div>
               <AIConfigurationCard />
@@ -2290,7 +2290,7 @@ export function SettingsPage() {
                         {t('settings.governance_validation', { defaultValue: 'Validation Rules' })}
                       </span>
                       <p className="text-xs text-content-tertiary mt-0.5">
-                        {t('settings.governance_validation_desc', { defaultValue: 'Configure which validation rules apply to projects and BOQs' })}
+                        {t('settings.governance_validation_desc', { defaultValue: 'Configure which validation rules apply to projects and Planilhas orçamentárias' })}
                       </p>
                     </div>
                     <ChevronRight size={16} className="ml-auto shrink-0 text-content-quaternary" />

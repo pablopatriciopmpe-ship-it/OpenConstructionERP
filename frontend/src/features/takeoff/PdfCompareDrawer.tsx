@@ -293,7 +293,7 @@ export function PdfCompareDrawer({
         </span>
       }
       subtitle={t('takeoff_compare.subtitle', {
-        defaultValue: 'Diff two takeoff PDFs with cost delta',
+        defaultValue: 'Diff two Levantamento de quantitativos PDFs with cost delta',
       })}
     >
       <div className="flex flex-col gap-4 p-5">
@@ -342,7 +342,7 @@ export function PdfCompareDrawer({
           <p className="rounded-md border border-semantic-warning/30 bg-semantic-warning/5 px-3 py-2 text-xs text-content-secondary">
             {t('takeoff_compare.need_two_documents', {
               defaultValue:
-                'You need at least two uploaded takeoff PDFs to compare. Upload an updated revision to compare against the current one.',
+                'You need at least two uploaded Levantamento de quantitativos PDFs to compare. Upload an updated revision to compare against the current one.',
             })}
           </p>
         )}
@@ -540,7 +540,7 @@ function CarryOverPanel({
                 onChange={(e) => onPushQuantity(e.target.checked)}
                 className="h-3.5 w-3.5 accent-oe-blue"
               />
-              {t('takeoff_compare.carry_push', { defaultValue: 'Also update the linked BOQ quantities' })}
+              {t('takeoff_compare.carry_push', { defaultValue: 'Also update the linked Planilha orçamentária quantities' })}
             </label>
             <button
               type="button"
@@ -720,13 +720,13 @@ function PositionDeltas({ deltas, currency }: { deltas: TakeoffPositionDelta[]; 
   return (
     <div className="mb-4 rounded-lg border border-border-light p-3" data-testid="takeoff-position-deltas">
       <div className="text-2xs font-medium text-content-tertiary mb-2">
-        {t('takeoff_compare.position_deltas', { defaultValue: 'Quantity change per BOQ position' })}
+        {t('takeoff_compare.position_deltas', { defaultValue: 'Quantity change per Planilha orçamentária position' })}
       </div>
       <table className="oe-table-compact">
         <thead>
           <tr className="text-2xs text-content-tertiary">
             <th className="pb-1">{t('takeoff_compare.position', { defaultValue: 'Position' })}</th>
-            <th className="text-right pb-1">{t('takeoff_compare.qty_in_boq', { defaultValue: 'In BOQ' })}</th>
+            <th className="text-right pb-1">{t('takeoff_compare.qty_in_boq', { defaultValue: 'In Planilha orçamentária' })}</th>
             <th className="text-right pb-1">{t('takeoff_compare.qty_before', { defaultValue: 'Before' })}</th>
             <th className="text-right pb-1">{t('takeoff_compare.qty_after', { defaultValue: 'After' })}</th>
             <th className="text-right pb-1">{t('takeoff_compare.qty_delta', { defaultValue: 'Delta' })}</th>
@@ -852,7 +852,7 @@ function SummaryTab({
           <p className="text-xs text-content-tertiary">
             {t('takeoff_compare.no_cost_impact', {
               defaultValue:
-                'No cost impact - no linked BOQ measurement changed value between these revisions.',
+                'No cost impact - no linked Planilha orçamentária measurement changed value between these revisions.',
             })}
           </p>
         )}
@@ -982,7 +982,7 @@ function MeasurementsTab({
           {r.linked_boq_position_id && (
             <div className="mt-1.5 flex items-center justify-between gap-2">
               <span className="text-2xs text-content-tertiary">
-                {t('takeoff_compare.linked_boq', { defaultValue: 'Linked to BOQ position' })}
+                {t('takeoff_compare.linked_boq', { defaultValue: 'Linked to Planilha orçamentária position' })}
               </span>
               {r.cost_impact != null && r.cost_currency ? (
                 <MoneyDisplay

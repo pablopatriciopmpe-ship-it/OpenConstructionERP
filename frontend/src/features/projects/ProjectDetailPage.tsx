@@ -478,7 +478,7 @@ function computeProjectHealth(
   const noErrors = validationRun && errorCount === 0;
 
   const checks: HealthCheck[] = [
-    { key: 'has_boq', label: t('projects.health_has_boq', { defaultValue: 'BOQ created' }), done: hasBoq },
+    { key: 'has_boq', label: t('projects.health_has_boq', { defaultValue: 'Planilha orçamentária created' }), done: hasBoq },
     { key: 'has_positions', label: t('projects.health_has_positions', { defaultValue: 'Positions added' }), done: hasPositions },
     { key: 'all_priced', label: t('projects.health_all_priced', { defaultValue: 'All positions priced' }), done: allPriced },
     { key: 'validation_run', label: t('projects.health_validation_run', { defaultValue: 'Validation run' }), done: validationRun },
@@ -492,7 +492,7 @@ function computeProjectHealth(
   let nextStep: NextStep | null = null;
   if (!hasBoq) {
     nextStep = {
-      label: t('projects.health_action_create_boq', { defaultValue: 'Create BOQ' }),
+      label: t('projects.health_action_create_boq', { defaultValue: 'Create Planilha orçamentária' }),
       description: t('projects.health_next_create_boq', {
         defaultValue: 'Start by creating your first Bill of Quantities for this project.',
       }),
@@ -503,7 +503,7 @@ function computeProjectHealth(
     nextStep = {
       label: t('projects.health_action_add_positions', { defaultValue: 'Add positions' }),
       description: t('projects.health_next_add_positions', {
-        defaultValue: 'Open the BOQ editor and add your first positions - manually, from Excel, or with AI.',
+        defaultValue: 'Open the Planilha orçamentária editor and add your first positions - manually, from Excel, or with IA.',
       }),
       to: `/boq/${largestBoq.id}`,
       variant: 'primary',
@@ -525,7 +525,7 @@ function computeProjectHealth(
     nextStep = {
       label: t('projects.health_action_run_validation', { defaultValue: 'Run validation' }),
       description: t('projects.health_next_run_validation', {
-        defaultValue: 'Check your BOQ against classification and quality rules to catch issues early.',
+        defaultValue: 'Check your Planilha orçamentária against classification and quality rules to catch issues early.',
       }),
       to: '/validation',
       variant: 'primary',
@@ -1205,7 +1205,7 @@ function ImportDialog({
               </h2>
               <span className="inline-flex items-center gap-1 rounded-full bg-oe-blue-subtle px-2 py-0.5 text-2xs font-medium text-oe-blue-text">
                 <Sparkles size={10} />
-                {t('import.ai_powered', { defaultValue: 'AI-powered' })}
+                {t('import.ai_powered', { defaultValue: 'IA-powered' })}
               </span>
             </div>
             <p className="mt-0.5 text-sm text-content-secondary">
@@ -2103,14 +2103,14 @@ export function ProjectDetailPage() {
             onClick: () => navigate(`/projects/${project.id}/settings`),
           },
           {
-            label: t('nav.boq', { defaultValue: 'BOQ' }),
+            label: t('nav.boq', { defaultValue: 'Planilha orçamentária' }),
             onClick: () => navigate(`/projects/${project.id}/boq`),
           },
         ]}
       >
         {t('projects.detail_intro_body', {
           defaultValue:
-            'This is the project hub: its BOQs, 4D schedule, 5D budget, tendering and key stats sit on one page so you do not hunt through the sidebar to find where the work lives. Jump straight into a cost work-product or open Project Settings to change region, currency or active modules. Edits to BOQs and costs roll up into the totals shown across Analytics and Reporting.',
+            'This is the project hub: its Planilhas orçamentárias, Cronograma, 5D budget, tendering and key stats sit on one page so you do not hunt through the sidebar to find where the work lives. Jump straight into a cost work-product or open Project Settings to change region, currency or active modules. Edits to Planilhas orçamentárias and costs roll up into the totals shown across Analytics and Reporting.',
         })}
       </DismissibleInfo>
 
@@ -2437,7 +2437,7 @@ export function ProjectDetailPage() {
         <WidgetSection
           icon={<Activity size={14} />}
           title={t('project.section.activity_files', {
-            defaultValue: 'Activity, files & AI',
+            defaultValue: 'Activity, files & IA',
           })}
           className="grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
         >
@@ -2556,7 +2556,7 @@ export function ProjectDetailPage() {
       {/* ── Tab Bar ──────────────────────────────────────────────────────── */}
       <div className="flex items-center gap-1 overflow-x-auto border-b border-border-light">
         {([
-          { key: 'dashboard' as ProjectTab, label: t('projects.dashboard', { defaultValue: 'Dashboard' }), icon: <LayoutDashboard size={16} /> },
+          { key: 'dashboard' as ProjectTab, label: t('projects.dashboard', { defaultValue: 'Painel' }), icon: <LayoutDashboard size={16} /> },
           { key: 'overview' as ProjectTab, label: t('projects.overview'), icon: <Table2 size={16} /> },
           { key: 'schedule' as ProjectTab, label: t('projects.4d_schedule'), icon: <CalendarClock size={16} /> },
           { key: 'budget' as ProjectTab, label: t('projects.5d_budget'), icon: <Wallet size={16} /> },
@@ -2658,14 +2658,14 @@ export function ProjectDetailPage() {
                   className="cursor-pointer rounded-xl border border-border-light bg-surface-elevated/90 p-4 shadow-xs transition-shadow duration-normal ease-oe hover:shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-oe-blue/40"
                   role="button"
                   tabIndex={0}
-                  aria-label={t('projects.dash_schedule_progress', { defaultValue: 'Schedule Progress' })}
+                  aria-label={t('projects.dash_schedule_progress', { defaultValue: 'Cronograma Progress' })}
                   onClick={() => setActiveTab('schedule')}
                   onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setActiveTab('schedule'); } }}
                 >
                   <div className="flex items-start justify-between">
                     <div>
                       <p className="text-xs font-medium text-content-tertiary uppercase tracking-wide">
-                        {t('projects.dash_schedule_progress', { defaultValue: 'Schedule Progress' })}
+                        {t('projects.dash_schedule_progress', { defaultValue: 'Cronograma Progress' })}
                       </p>
                       <p className="mt-0.5 text-xl font-semibold text-content-primary tabular-nums leading-tight">
                         {fmtPercent(parseFloat(dashboardData.schedule.progress_pct))}
@@ -2742,7 +2742,7 @@ export function ProjectDetailPage() {
                           dashboardData.quality.ncrs_open}
                       </p>
                       <p className="text-xs text-content-secondary mt-1">
-                        {dashboardData.communication.open_rfis} RFIs,{' '}
+                        {dashboardData.communication.open_rfis} Pedidos de informação,{' '}
                         {dashboardData.communication.open_tasks} {t('projects.dash_tasks', { defaultValue: 'tasks' })}
                       </p>
                     </div>
@@ -2840,14 +2840,14 @@ export function ProjectDetailPage() {
                   className="cursor-pointer"
                   role="button"
                   tabIndex={0}
-                  aria-label={t('projects.dash_schedule', { defaultValue: 'Schedule' })}
+                  aria-label={t('projects.dash_schedule', { defaultValue: 'Cronograma' })}
                   onClick={() => setActiveTab('schedule')}
                   onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setActiveTab('schedule'); } }}
                 >
                   <div className="flex items-center gap-2 mb-3">
                     <CalendarClock size={16} className="text-content-tertiary" />
                     <h3 className="oe-card-title">
-                      {t('projects.dash_schedule', { defaultValue: 'Schedule' })}
+                      {t('projects.dash_schedule', { defaultValue: 'Cronograma' })}
                     </h3>
                   </div>
                   <div className="flex items-center gap-6">
@@ -2915,7 +2915,7 @@ export function ProjectDetailPage() {
                   <div className="grid grid-cols-2 gap-3">
                     {[
                       {
-                        label: t('projects.dash_rfis', { defaultValue: 'RFIs' }),
+                        label: t('projects.dash_rfis', { defaultValue: 'Pedidos de informação' }),
                         count: dashboardData.communication.open_rfis,
                         alert: dashboardData.communication.overdue_rfis,
                         alertLabel: t('projects.dash_overdue', { defaultValue: 'overdue' }),
@@ -3024,7 +3024,7 @@ export function ProjectDetailPage() {
                         const typeLabels: Record<string, string> = {
                           rfi_created: 'RFI',
                           task_created: t('projects.dash_task', { defaultValue: 'Task' }),
-                          change_order: t('projects.dash_change_order', { defaultValue: 'Change Order' }),
+                          change_order: t('projects.dash_change_order', { defaultValue: 'Alteração de contrato' }),
                           document_uploaded: t('projects.dash_document', { defaultValue: 'Document' }),
                           punch_item: t('projects.dash_punch_item', { defaultValue: 'Punch Item' }),
                           field_report: t('projects.dash_field_report', { defaultValue: 'Field Report' }),
@@ -3091,7 +3091,7 @@ export function ProjectDetailPage() {
                       icon={<Plus size={14} />}
                       onClick={() => navigate(`/projects/${projectId}/boq/new`)}
                     >
-                      {t('projects.new_boq', { defaultValue: 'New BOQ' })}
+                      {t('projects.new_boq', { defaultValue: 'New Planilha orçamentária' })}
                     </Button>
                     <Button
                       variant="secondary"
@@ -3100,7 +3100,7 @@ export function ProjectDetailPage() {
                       icon={<MessageSquare size={14} />}
                       onClick={() => navigate('/rfi')}
                     >
-                      {t('projects.dash_new_rfi', { defaultValue: 'New RFI' })}
+                      {t('projects.dash_new_rfi', { defaultValue: 'New Pedido de informação (RFI)' })}
                     </Button>
                     <Button
                       variant="secondary"
@@ -3160,7 +3160,7 @@ export function ProjectDetailPage() {
                       icon={<Calendar size={14} />}
                       onClick={() => navigate('/schedule')}
                     >
-                      {t('projects.dash_schedule_link', { defaultValue: 'Schedule' })}
+                      {t('projects.dash_schedule_link', { defaultValue: 'Cronograma' })}
                     </Button>
                     <Button
                       variant="secondary"
@@ -3229,8 +3229,8 @@ export function ProjectDetailPage() {
           ) : (
             <EmptyState
               icon={<LayoutDashboard size={28} strokeWidth={1.5} />}
-              title={t('projects.dash_empty', { defaultValue: 'No dashboard data' })}
-              description={t('projects.dash_empty_desc', { defaultValue: 'Start adding BOQs, schedules, and documents to see project KPIs here.' })}
+              title={t('projects.dash_empty', { defaultValue: 'No Painel data' })}
+              description={t('projects.dash_empty_desc', { defaultValue: 'Start adding Planilhas orçamentárias, schedules, and documents to see project KPIs here.' })}
             />
           )}
         </TabErrorBoundary>
@@ -3338,7 +3338,7 @@ export function ProjectDetailPage() {
                           variant="ghost"
                           size="sm"
                           icon={<Upload size={14} />}
-                          title={t('boq.import_tooltip', { defaultValue: 'Import GAEB, Excel, or CSV into this BOQ' })}
+                          title={t('boq.import_tooltip', { defaultValue: 'Import GAEB, Excel, or CSV into this Planilha orçamentária' })}
                           onClick={(e) => {
                             e.stopPropagation();
                             setImportTarget({ boqId: boq.id, boqName: boq.name });
@@ -3372,7 +3372,7 @@ export function ProjectDetailPage() {
               <EmptyState
                 icon={<CalendarClock size={28} strokeWidth={1.5} />}
                 title={t('projects.no_schedules', { defaultValue: 'No schedules yet' })}
-                description={t('projects.no_schedules_desc', { defaultValue: 'Create a schedule to manage project timelines.' })}
+                description={t('projects.no_schedules_desc', { defaultValue: 'Create a Cronograma to manage project timelines.' })}
               />
             ) : (
               <div className="divide-y divide-border-light rounded-lg border border-border-light">

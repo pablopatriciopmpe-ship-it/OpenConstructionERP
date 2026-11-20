@@ -119,7 +119,7 @@ function CostLine({ cost }: { cost: PlanCost }) {
       {complete
         ? t('schedule.preview_cost_loaded', {
             defaultValue:
-              'Cost loaded: {{planned}}, the priced total of the bill, spread over the activities. Markups are not included.',
+              'Cost loaded: {{planned}}, the priced total of the bill, spread over the activities. Margens are not included.',
             planned: fmtCurrency(cost.planned_total, cost.currency),
           })
         : t('schedule.preview_cost_partial', {
@@ -286,7 +286,7 @@ export function GenerationPreviewPanel({
           sections: preview.summary_count,
         })}{' '}
         {t('schedule.preview_estimated', {
-          defaultValue: '{{count}} durations are estimates.',
+          defaultValue: '{{count}} durations are Orçamentos.',
           count: preview.estimated_count,
         })}{' '}
         {preview.skipped_count > 0 &&
@@ -424,13 +424,13 @@ export function GenerationPreviewPanel({
         {preview.compressed_pct != null &&
           !preview.fits &&
           ` ${t('schedule.preview_shortened_to_floor', {
-            defaultValue: 'Every duration is already cut to half of its estimate, the shortest a plan is squeezed to.',
+            defaultValue: 'Every duration is already cut to half of its Orçamento, the shortest a plan is squeezed to.',
           })}`}
         {preview.compressed_pct != null &&
           preview.fits &&
           ` ${t('schedule.warning_durations_shortened', {
             defaultValue:
-              'To fit the dates you asked for, every duration was shortened to {{percent}}% of its estimate. Check that the crews can keep that pace.',
+              'To fit the dates you asked for, every duration was shortened to {{percent}}% of its Orçamento. Check that the crews can keep that pace.',
             percent: preview.compressed_pct,
           })}`}
         {preview.warnings
@@ -443,7 +443,7 @@ export function GenerationPreviewPanel({
           <Info size={14} className="mt-0.5 shrink-0" />
           {t('schedule.preview_budget_bill', {
             defaultValue:
-              'This bill is saved as a budget estimate. Its lump sums become one bar each, so the plan is only as detailed as the budget. A detailed bill gives a plan you can build to.',
+              'This bill is saved as a budget Orçamento. Its lump sums become one bar each, so the plan is only as detailed as the budget. A detailed bill gives a plan you can build to.',
           })}
         </p>
       ) : (

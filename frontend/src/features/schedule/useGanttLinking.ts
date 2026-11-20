@@ -56,7 +56,7 @@ export function useGanttLinking(scheduleId: string, canEdit: boolean): GanttLink
         type: 'warning',
         title: t('schedule.link_reschedule_failed', {
           defaultValue:
-            'The link was saved, but the dates could not be recalculated. Recalculate the schedule to update them.',
+            'The link was saved, but the dates could not be recalculated. Recalculate the Cronograma to update them.',
         }),
         message: scheduleErrorMessage(error, t),
       });

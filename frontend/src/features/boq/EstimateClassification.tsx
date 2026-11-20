@@ -360,7 +360,7 @@ export function EstimateClassification({ boqId }: { boqId: string }) {
           <p className="text-2xs text-content-tertiary leading-relaxed">
             {t('boq.aace_reference', {
               defaultValue:
-                'Based on AACE International Recommended Practice 18R-97. Classification is auto-detected from BOQ completeness metrics.',
+                'Based on AACE International Recommended Practice 18R-97. Classification is auto-detected from Planilha orçamentária completeness metrics.',
             })}
           </p>
         </div>

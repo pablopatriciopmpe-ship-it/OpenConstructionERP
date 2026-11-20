@@ -34,8 +34,8 @@ export function MenuSizeCard() {
     mode === 'wrap'
       ? t('settings.menu_size_labels_wrap', { defaultValue: 'Full names on several lines' })
       : t('settings.menu_size_labels_single', { defaultValue: 'One line, cut off at the panel edge' });
-  const sample = t('settings.menu_size_sample', { defaultValue: 'Bill of quantities and cost estimates' });
-  const sampleShort = t('settings.menu_size_sample_short', { defaultValue: 'Schedule' });
+  const sample = t('settings.menu_size_sample', { defaultValue: 'Bill of quantities and cost Orçamentos' });
+  const sampleShort = t('settings.menu_size_sample_short', { defaultValue: 'Cronograma' });
 
   return (
     <Card className="lg:col-span-2">

@@ -24,17 +24,17 @@ export function DegradedBanner({ reason }: { reason: DegradedReason | null | und
     case 'no_ai_key':
       body = t('aiest.degraded.no_ai_key', {
         defaultValue:
-          'AI not connected - running in deterministic mode. The agent reads, groups and matches using rule-based extraction and keyword search. Connect a provider to add AI reasoning at every stage.',
+          'IA not connected - running in deterministic mode. The agent reads, groups and matches using rule-based extraction and keyword search. Connect a provider to add IA reasoning at every stage.',
       });
       cta = {
         to: '/settings?tab=ai',
-        label: t('aiest.degraded.connect', { defaultValue: 'Connect an AI provider' }),
+        label: t('aiest.degraded.connect', { defaultValue: 'Connect an IA provider' }),
       };
       break;
     case 'no_vectors':
       body = t('aiest.degraded.no_vectors', {
         defaultValue:
-          'Semantic rate search is unavailable, so matching uses keyword lookup. Scores may be lower but every rate still comes from the cost database. Install a catalogue vector index for sharper matches.',
+          'Semantic rate search is unavailable, so matching uses keyword lookup. Scores may be lower but every rate still comes from the Banco de custos. Install a catalogue vector index for sharper matches.',
       });
       cta = {
         to: '/match-elements',
@@ -44,7 +44,7 @@ export function DegradedBanner({ reason }: { reason: DegradedReason | null | und
     case 'no_catalogue':
       body = t('aiest.degraded.no_catalogue', {
         defaultValue:
-          'No cost catalogue is loaded for this currency or region, so groups come back without rates. Load a catalogue to ground the estimate - rates are never invented.',
+          'No cost catalogue is loaded for this currency or region, so groups come back without rates. Load a catalogue to ground the Orçamento - rates are never invented.',
       });
       cta = {
         to: '/costs',
@@ -53,7 +53,7 @@ export function DegradedBanner({ reason }: { reason: DegradedReason | null | und
       break;
     default:
       body = t('aiest.degraded.generic', {
-        defaultValue: 'Running in deterministic mode. Some AI features are unavailable.',
+        defaultValue: 'Running in deterministic mode. Some IA features are unavailable.',
       });
   }
 

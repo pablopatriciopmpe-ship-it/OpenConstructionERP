@@ -227,7 +227,7 @@ export function CompanyDocumentsSettings() {
         ]}
         activeId={sub}
         onChange={setSub}
-        ariaLabel={t('settings.tab_company', { defaultValue: 'Documents & templates' })}
+        ariaLabel={t('settings.tab_company', { defaultValue: 'Documents & Modelos' })}
       />
       {sub === 'letterhead' && <LetterheadSettings />}
       {sub === 'documents' && (
@@ -480,7 +480,7 @@ function LetterheadSettings() {
           title={t('settings.company.details_title', { defaultValue: 'Company letterhead' })}
           subtitle={t('settings.company.details_subtitle', {
             defaultValue:
-              'Printed at the top of the first page of the documents you export, such as RFIs. Write each line exactly as it appears on your company paper.',
+              'Printed at the top of the first page of the documents you export, such as Pedidos de informação. Write each line exactly as it appears on your company paper.',
           })}
         />
 

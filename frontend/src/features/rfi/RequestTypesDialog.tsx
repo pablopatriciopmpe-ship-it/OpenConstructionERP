@@ -333,7 +333,7 @@ export function RequestTypesDialog({
                     {type.is_builtin && (
                       <p className="mt-0.5 text-2xs text-content-tertiary">
                         {t('rfi.types.builtin_hint', {
-                          defaultValue: 'Every project starts with RFI. Load a preset to manage it like any other type.',
+                          defaultValue: 'Every project starts with Pedido de informação (RFI). Load a preset to manage it like any other type.',
                         })}
                       </p>
                     )}

@@ -68,7 +68,7 @@ export function DocumentPane({ quote, anchor }: { quote: Quote; anchor: Anchor |
         </div>
         <div className="relative w-full overflow-hidden rounded border bg-white">
           {src ? (
-            <img src={src} alt={t('quote_capture.page_image', 'Quote page')} className="block w-full" />
+            <img src={src} alt={t('quote_capture.page_image', 'Cotação page')} className="block w-full" />
           ) : (
             <div className="p-6 text-sm text-content-secondary">{t('quote_capture.loading_page', 'Loading page...')}</div>
           )}

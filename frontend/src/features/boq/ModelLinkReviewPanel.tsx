@@ -73,7 +73,7 @@ export function ModelLinkReviewPanel({
         addToast({
           type: 'info',
           title: t('boq.model_review_no_links', {
-            defaultValue: 'No model links in this BOQ',
+            defaultValue: 'No model links in this Planilha orçamentária',
           }),
         });
       }

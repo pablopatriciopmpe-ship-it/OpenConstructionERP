@@ -45,11 +45,11 @@ export function bucketLabel(t: TFunction, kind: AssignKind): string {
     case 'contract_line':
       return t('cost_control.chain.bucket_contract_line', { defaultValue: 'Contract lines' });
     case 'contract':
-      return t('cost_control.chain.bucket_contract', { defaultValue: 'Contracts without a schedule' });
+      return t('cost_control.chain.bucket_contract', { defaultValue: 'Contracts without a Cronograma' });
     case 'po_item':
       return t('cost_control.chain.bucket_po_item', { defaultValue: 'Purchase order items' });
     case 'change_order_item':
-      return t('cost_control.chain.bucket_change_order_item', { defaultValue: 'Change order items' });
+      return t('cost_control.chain.bucket_change_order_item', { defaultValue: 'Alteração de contrato items' });
     case 'invoice_line':
       return t('cost_control.chain.bucket_invoice_line', { defaultValue: 'Supplier invoice lines' });
     default:

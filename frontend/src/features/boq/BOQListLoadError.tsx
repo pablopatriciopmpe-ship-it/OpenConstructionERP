@@ -42,7 +42,7 @@ export function BOQListLoadError({ error, projects, onRetry }: BOQListLoadErrorP
   return (
     <EmptyState
       icon={<AlertTriangle size={28} strokeWidth={1.5} />}
-      title={t('boq.list_load_failed_title', { defaultValue: 'Estimates could not be loaded' })}
+      title={t('boq.list_load_failed_title', { defaultValue: 'Orçamentos could not be loaded' })}
       description={t('boq.list_load_failed_projects', {
         defaultValue:
           'These projects could not be read: {{projects}}. They may have been archived or deleted, or your access removed, since this page opened. Nothing is listed, so that no total leaves them out.',
@@ -75,7 +75,7 @@ export function BOQListSkippedNotice({ projects, onRefresh }: BOQListSkippedNoti
       <span className="min-w-0 flex-1">
         {t('boq.list_projects_skipped', {
           defaultValue:
-            'Not included: {{projects}}. These projects were archived or are no longer shared with you, so the estimates and totals here leave them out.',
+            'Not included: {{projects}}. These projects were archived or are no longer shared with you, so the Orçamentos and totals here leave them out.',
           projects: fmtList(projects.map((p) => p.name)),
         })}
       </span>

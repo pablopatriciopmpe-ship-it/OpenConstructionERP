@@ -158,7 +158,7 @@ export function buildVariationsInsights(
       { key: 'urgency', label: t('variations.insights.f_urgency', { defaultValue: 'Urgency' }), kind: 'dimension' },
       { key: 'month', label: t('variations.insights.f_month', { defaultValue: 'Month logged' }), kind: 'dimension' },
       { key: 'cost', label: t('variations.insights.f_cost', { defaultValue: 'Cost impact' }), kind: 'measure', format: 'currency' },
-      { key: 'schedule', label: t('variations.insights.f_schedule', { defaultValue: 'Schedule impact (days)' }), kind: 'measure', format: 'number' },
+      { key: 'schedule', label: t('variations.insights.f_schedule', { defaultValue: 'Cronograma impact (days)' }), kind: 'measure', format: 'number' },
       { key: 'approved', label: t('variations.insights.f_approved', { defaultValue: 'Approved' }), kind: 'measure', format: 'number' },
       { key: 'pending', label: t('variations.insights.f_pending', { defaultValue: 'Pending' }), kind: 'measure', format: 'number' },
     ],

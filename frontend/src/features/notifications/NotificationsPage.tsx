@@ -318,7 +318,7 @@ export function NotificationsPage() {
         }
         links={[
           {
-            label: t('nav.bi_dashboards', { defaultValue: 'BI Dashboards' }),
+            label: t('nav.bi_dashboards', { defaultValue: 'BI Painéis' }),
             onClick: () => navigate('/bi-dashboards'),
           },
           {
@@ -333,7 +333,7 @@ export function NotificationsPage() {
       >
         {t('notifications.intro_body', {
           defaultValue:
-            'The inbox collects every alert the platform raises, imports finished, validation results, safety events, approvals and system messages, with filters for read and unread and a click that takes you straight to the source record. Use the Preferences tab to choose which event types reach you on which channel. Threshold alerts from BI Dashboards and outbound rules from Notification Webhooks both run through here.',
+            'The inbox collects every alert the platform raises, imports finished, validation results, safety events, approvals and system messages, with filters for read and unread and a click that takes you straight to the source record. Use the Preferences tab to choose which event types reach you on which channel. Threshold alerts from BI Painéis and outbound rules from Notification Webhooks both run through here.',
         })}
       </DismissibleInfo>
 

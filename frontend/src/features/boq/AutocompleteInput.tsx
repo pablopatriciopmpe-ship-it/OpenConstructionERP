@@ -317,7 +317,7 @@ export function AutocompleteInput({
               <path d="M8 1l1.5 4.5L14 7l-4.5 1.5L8 13l-1.5-4.5L2 7l4.5-1.5L8 1z" fill="currentColor" />
             </svg>
             <span className="text-2xs font-medium text-violet-600 dark:text-violet-400">
-              AI Semantic Search
+              IA Semantic Search
             </span>
             <span className="text-2xs text-content-tertiary ml-auto">
               {suggestions.length} matches

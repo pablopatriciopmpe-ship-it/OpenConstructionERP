@@ -90,7 +90,7 @@ export function scheduleDeleteBlocked(
   if (impact.blocked_reason === 'schedule_has_baselines') {
     return t('schedule.error_schedule_has_baselines', {
       defaultValue:
-        'This schedule has {{count}} baselines. Deleting the schedule deletes them too, and only an administrator can delete baselines. Ask an administrator to delete the schedule, or to delete its baselines first; then you can delete it.',
+        'This Cronograma has {{count}} baselines. Deleting the Cronograma deletes them too, and only an administrator can delete baselines. Ask an administrator to delete the Cronograma, or to delete its baselines first; then you can delete it.',
       count: impact.baseline_count ?? 0,
     });
   }
@@ -117,11 +117,11 @@ export function scheduleDeleteConfirmation(
   const parts = [
     plain
       ? t('schedule.confirm_delete', {
-          defaultValue: 'This will permanently delete the schedule and all its activities. This cannot be undone.',
+          defaultValue: 'This will permanently delete the Cronograma and all its activities. This cannot be undone.',
         })
       : t('schedule.confirm_delete_named', {
           defaultValue:
-            '"{{name}}" is {{status}} and has {{count}} activities. Deleting it removes the schedule, all its activities and the links between them. This cannot be undone.',
+            '"{{name}}" is {{status}} and has {{count}} activities. Deleting it removes the Cronograma, all its activities and the links between them. This cannot be undone.',
           name: schedule.name,
           status: t(`schedule.status_${schedule.status}`, { defaultValue: schedule.status }),
           count: activityCount,
@@ -147,7 +147,7 @@ export function scheduleDeleteConfirmation(
     );
   }
   return {
-    title: t('schedule.confirm_delete_title', { defaultValue: 'Delete schedule?' }),
+    title: t('schedule.confirm_delete_title', { defaultValue: 'Delete Cronograma?' }),
     message: parts.join(' '),
     confirmLabel: t('schedule.purge'),
   };

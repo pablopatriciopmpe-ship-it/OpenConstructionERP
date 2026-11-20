@@ -288,7 +288,7 @@ export function AISmartPanel({
         <div className="flex items-center gap-2">
           <Brain size={16} className="text-primary" />
           <span className="font-semibold text-sm">
-            {t('boq.ai_smart_panel', { defaultValue: 'AI Smart Actions' })}
+            {t('boq.ai_smart_panel', { defaultValue: 'IA Smart Actions' })}
           </span>
         </div>
         <button
@@ -314,7 +314,7 @@ export function AISmartPanel({
           </div>
         ) : (
           <p className="text-xs text-content-tertiary italic">
-            {t('boq.ai_no_selection', { defaultValue: 'Select a position in the grid for per-position AI actions' })}
+            {t('boq.ai_no_selection', { defaultValue: 'Select a position in the grid for per-position IA actions' })}
           </p>
         )}
       </div>
@@ -337,17 +337,17 @@ export function AISmartPanel({
             <AlertTriangle size={14} className="text-semantic-warning shrink-0 mt-0.5" />
             <div>
               <p className="text-xs font-medium text-semantic-warning">
-                {t('boq.ai_not_configured', { defaultValue: 'AI not configured' })}
+                {t('boq.ai_not_configured', { defaultValue: 'IA not configured' })}
               </p>
               <p className="text-2xs text-semantic-warning mt-0.5">
-                {t('boq.ai_not_configured_desc', { defaultValue: 'Add your API key in Settings to use AI Smart Actions.' })}
+                {t('boq.ai_not_configured_desc', { defaultValue: 'Add your API key in Settings to use IA Smart Actions.' })}
               </p>
               <Link
                 to="/settings"
                 className="inline-flex items-center gap-1 mt-1.5 text-2xs font-medium text-semantic-warning hover:underline"
               >
                 <Settings size={12} />
-                {t('boq.go_to_settings', { defaultValue: 'Configure AI' })}
+                {t('boq.go_to_settings', { defaultValue: 'Configure IA' })}
               </Link>
             </div>
           </div>
@@ -460,7 +460,7 @@ export function AISmartPanel({
                     className="flex items-center gap-1 mt-1.5 px-2 py-1 text-xs font-medium rounded bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
                   >
                     <Plus size={12} />
-                    {t('boq.ai_add_to_boq', { defaultValue: 'Add to BOQ' })}
+                    {t('boq.ai_add_to_boq', { defaultValue: 'Add to Planilha orçamentária' })}
                   </button>
                 </div>
               ))}
@@ -468,7 +468,7 @@ export function AISmartPanel({
           )}
           {prereqResult && prereqResult.suggestions.length === 0 && (
             <p className="text-xs text-content-tertiary italic">
-              {t('boq.ai_no_prereqs', { defaultValue: 'No missing items found - BOQ looks complete for this position.' })}
+              {t('boq.ai_no_prereqs', { defaultValue: 'No missing items found - Planilha orçamentária looks complete for this position.' })}
             </p>
           )}
         </ActionCard>
@@ -523,7 +523,7 @@ export function AISmartPanel({
         {/* Divider */}
         <div className="border-t border-border-light pt-3">
           <div className="oe-overline">
-            {t('boq.ai_global_actions', { defaultValue: 'BOQ-level Actions' })}
+            {t('boq.ai_global_actions', { defaultValue: 'Planilha orçamentária-level Actions' })}
           </div>
         </div>
 
@@ -610,7 +610,7 @@ export function AISmartPanel({
                         className="flex items-center gap-1 mt-1.5 px-2 py-1 text-xs font-medium rounded bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
                       >
                         <Plus size={12} />
-                        {t('boq.ai_add_to_boq', { defaultValue: 'Add to BOQ' })}
+                        {t('boq.ai_add_to_boq', { defaultValue: 'Add to Planilha orçamentária' })}
                       </button>
                     </div>
                   ))}
@@ -625,7 +625,7 @@ export function AISmartPanel({
       <div className="shrink-0 px-4 py-2 border-t border-border-light text-2xs text-content-tertiary">
         <div className="flex items-center gap-1">
           <Sparkles size={10} />
-          {t('boq.ai_smart_footer', { defaultValue: 'Powered by your AI provider (Settings > AI). Results are suggestions - always review.' })}
+          {t('boq.ai_smart_footer', { defaultValue: 'Powered by your IA provider (Settings > IA). Results are suggestions - always review.' })}
         </div>
       </div>
     </div>
@@ -668,7 +668,7 @@ function ActionCard({ icon, title, subtitle, loading, disabled, onClick, expande
             <Sparkles size={12} />
           )}
           {loading
-            ? t('boq.ai_running_short', { defaultValue: 'AI...' })
+            ? t('boq.ai_running_short', { defaultValue: 'IA...' })
             : t('boq.ai_run', { defaultValue: 'Run' })}
         </button>
         {hasResult && (

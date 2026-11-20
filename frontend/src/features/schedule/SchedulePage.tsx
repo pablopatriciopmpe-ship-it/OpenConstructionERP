@@ -734,7 +734,7 @@ function GanttChart({
           </h3>
           <p className="mt-1.5 max-w-md text-sm text-content-secondary">
             {t('schedule.gantt_empty_hint', {
-              defaultValue: 'Add activities manually or generate them from a BOQ to see the timeline. Dependencies and critical path will render automatically.',
+              defaultValue: 'Add activities manually or generate them from a Planilha orçamentária to see the timeline. Dependencies and critical path will render automatically.',
             })}
           </p>
           {/* Decorative timeline preview */}
@@ -870,13 +870,13 @@ function GanttChart({
                           if (pid) navigate(`/boq?positionId=${encodeURIComponent(pid)}`);
                         }}
                         title={t('schedule.view_in_boq', {
-                          defaultValue: 'View in BOQ ({{count}} position(s))',
+                          defaultValue: 'View in Planilha orçamentária ({{count}} position(s))',
                           count: activity.boq_position_ids.length,
                         })}
                         className="inline-flex items-center gap-0.5 px-1 py-0.5 rounded text-2xs font-semibold bg-oe-blue-subtle text-oe-blue-text border border-oe-blue/30 hover:bg-oe-blue/10 transition-colors"
                       >
                         <Table2 size={9} className="shrink-0" />
-                        {t('schedule.view_in_boq_short', { defaultValue: 'BOQ' })}
+                        {t('schedule.view_in_boq_short', { defaultValue: 'Planilha orçamentária' })}
                       </button>
                     )}
                   </div>
@@ -1411,7 +1411,7 @@ export function ScheduleDetail({
   });
   const wbsTakenMessage = (code: string) =>
     t('schedule.wbs_code_taken', {
-      defaultValue: 'WBS code {{code}} is already used by another activity in this schedule.',
+      defaultValue: 'WBS code {{code}} is already used by another activity in this Cronograma.',
       code: code.trim(),
     });
 
@@ -1428,7 +1428,7 @@ export function ScheduleDetail({
   const generateFailed = (error: unknown) =>
     addToast({
       type: 'error',
-      title: t('schedule.generate_failed_title', { defaultValue: 'The schedule was not generated' }),
+      title: t('schedule.generate_failed_title', { defaultValue: 'The Cronograma was not generated' }),
       message: scheduleErrorMessage(error, t),
     });
 
@@ -1451,7 +1451,7 @@ export function ScheduleDetail({
       // Reset CPM/risk results since activities changed
       setCpmResult(null);
       setRiskResult(null);
-      addToast({ type: 'success', title: t('toasts.schedule_generated', { defaultValue: 'Schedule generated from BOQ' }) });
+      addToast({ type: 'success', title: t('toasts.schedule_generated', { defaultValue: 'Cronograma generated from Planilha orçamentária' }) });
     },
     onError: (error: Error, { boqId, replace }) => {
       // A populated schedule is not overwritten unasked: the server refuses
@@ -1521,9 +1521,9 @@ export function ScheduleDetail({
       setSelectedBOQId('');
       addToast({
         type: 'success',
-        title: t('toasts.schedule_generated', { defaultValue: 'Schedule generated from BOQ' }),
+        title: t('toasts.schedule_generated', { defaultValue: 'Cronograma generated from Planilha orçamentária' }),
         message: t('schedule.generated_into_new_schedule', {
-          defaultValue: 'The plan is in the new schedule "{{name}}". The schedule you were on is unchanged.',
+          defaultValue: 'The plan is in the new Cronograma "{{name}}". The Cronograma you were on is unchanged.',
           name: created.name,
         }),
       });
@@ -1680,7 +1680,7 @@ export function ScheduleDetail({
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['gantt', schedule.id] });
       queryClient.invalidateQueries({ queryKey: ['schedules'] });
-      addToast({ type: 'success', title: t('schedule.activated', { defaultValue: 'Schedule activated' }) });
+      addToast({ type: 'success', title: t('schedule.activated', { defaultValue: 'Cronograma activated' }) });
     },
     onError: (error: Error) => {
       addToast({ type: 'error', title: t('toasts.error', { defaultValue: 'Error' }), message: error.message });
@@ -1842,8 +1842,8 @@ export function ScheduleDetail({
               data-guide="schedule-generate"
             >
               {hasActivities
-                ? t('schedule.regenerate_from_boq', { defaultValue: 'Regenerate from BOQ' })
-                : t('schedule.generate_from_boq', 'Generate from BOQ')}
+                ? t('schedule.regenerate_from_boq', { defaultValue: 'Regenerate from Planilha orçamentária' })
+                : t('schedule.generate_from_boq', 'Generate from Planilha orçamentária')}
             </Button>
           )}
           {/* Clear all activities, next to Regenerate: the schedule itself stays.
@@ -1858,7 +1858,7 @@ export function ScheduleDetail({
                   title: t('schedule.confirm_clear_all_title', { defaultValue: 'Clear all activities?' }),
                   message: t('schedule.confirm_clear_all', {
                     defaultValue:
-                      'Delete all {{count}} activities of this schedule and the links between them? The schedule itself stays, and you can generate it again from a BOQ. This cannot be undone.',
+                      'Delete all {{count}} activities of this Cronograma and the links between them? The Cronograma itself stays, and you can generate it again from a Planilha orçamentária. This cannot be undone.',
                     count: ganttData?.summary.total_activities ?? 0,
                   }),
                   confirmLabel: t('schedule.clear_all', { defaultValue: 'Clear all' }),
@@ -1877,7 +1877,7 @@ export function ScheduleDetail({
                 {([
                   { key: 'table' as const, label: t('schedule.view_table', 'Table') },
                   { key: 'gantt' as const, label: t('schedule.view_gantt', 'Gantt') },
-                  { key: 'evm' as const, label: t('schedule.view_evm', { defaultValue: 'EVM' }) },
+                  { key: 'evm' as const, label: t('schedule.view_evm', { defaultValue: 'Valor agregado' }) },
                   { key: '4d' as const, label: t('schedule.view_4d', { defaultValue: '4D' }) },
                   { key: 'quality' as const, label: t('schedule.view_quality', { defaultValue: 'Quality' }) },
                   { key: 'risk' as const, label: t('schedule.view_risk', { defaultValue: 'Risk' }) },
@@ -1998,7 +1998,7 @@ export function ScheduleDetail({
                   link.download = `schedule_${schedule.name.replace(/\s+/g, '_')}.tsv`;
                   link.click();
                   URL.revokeObjectURL(url);
-                  addToast({ type: 'success', title: t('schedule.exported', { defaultValue: 'Schedule exported' }) });
+                  addToast({ type: 'success', title: t('schedule.exported', { defaultValue: 'Cronograma exported' }) });
                 }}
               >
                 {t('common.export', { defaultValue: 'Export' })}
@@ -2045,7 +2045,7 @@ export function ScheduleDetail({
                 <p key={w.code}>
                   {t('schedule.warning_plan_exceeds_window', {
                     defaultValue:
-                      'The plan does not fit the dates you asked for: it ends on {{planned}}, you asked for {{requested}}. Four crews work side by side and every duration is already cut to half of its estimate, the shortest a plan is squeezed to. Move the end date, or shorten the plan by hand.',
+                      'The plan does not fit the dates you asked for: it ends on {{planned}}, you asked for {{requested}}. Four crews work side by side and every duration is already cut to half of its Orçamento, the shortest a plan is squeezed to. Move the end date, or shorten the plan by hand.',
                     planned: formatDate(w.planned_end),
                     requested: formatDate(w.requested_end),
                   })}
@@ -2056,7 +2056,7 @@ export function ScheduleDetail({
                 <p key={w.code}>
                   {t('schedule.warning_durations_shortened', {
                     defaultValue:
-                      'To fit the dates you asked for, every duration was shortened to {{percent}}% of its estimate. Check that the crews can keep that pace.',
+                      'To fit the dates you asked for, every duration was shortened to {{percent}}% of its Orçamento. Check that the crews can keep that pace.',
                     percent: w.percent,
                   })}
                 </p>
@@ -2317,7 +2317,7 @@ export function ScheduleDetail({
                 </h3>
                 <p className="mt-1.5 max-w-md text-sm text-content-secondary">
                   {t('schedule.detail_empty_desc', {
-                    defaultValue: 'Add activities manually or generate them from an existing BOQ. The Gantt chart, dependencies, and critical path analysis will appear here.',
+                    defaultValue: 'Add activities manually or generate them from an existing Planilha orçamentária. The Gantt chart, dependencies, and critical path analysis will appear here.',
                   })}
                 </p>
 
@@ -2333,7 +2333,7 @@ export function ScheduleDetail({
                     </div>
                     <div>
                       <p className="text-sm font-semibold text-content-primary">
-                        {t('schedule.quickstart_boq_title', { defaultValue: 'Generate from BOQ' })}
+                        {t('schedule.quickstart_boq_title', { defaultValue: 'Generate from Planilha orçamentária' })}
                       </p>
                       <p className="mt-0.5 text-xs text-content-tertiary">
                         {t('schedule.quickstart_boq_desc', { defaultValue: 'Auto-create activities from your Bill of Quantities' })}
@@ -2502,7 +2502,7 @@ export function ScheduleDetail({
       <Modal
         open={!!selectedActivity}
         onClose={() => setSelectedActivityId(null)}
-        title={t('schedule.edit_activity_links', { defaultValue: 'Dependencies and BOQ links' })}
+        title={t('schedule.edit_activity_links', { defaultValue: 'Dependencies and Planilha orçamentária links' })}
       >
         {selectedActivity && (
           <div className="space-y-4">
@@ -2556,15 +2556,15 @@ export function ScheduleDetail({
         onClose={() => setShowGenerateBOQ(false)}
         title={
           hasActivities
-            ? t('schedule.regenerate_from_boq', { defaultValue: 'Regenerate from BOQ' })
-            : t('schedule.generate_from_boq', 'Generate from BOQ')
+            ? t('schedule.regenerate_from_boq', { defaultValue: 'Regenerate from Planilha orçamentária' })
+            : t('schedule.generate_from_boq', 'Generate from Planilha orçamentária')
         }
       >
         <div className="space-y-4">
           <p className="text-sm text-content-secondary">
             {t('schedule.generate_from_boq_tree_description', {
               defaultValue:
-                'Select a BOQ. Every section becomes a summary and every position with a quantity one activity, sized from its labour, else from its unit with a gang of two to four people, else from its cost. Within a section up to four crews work side by side, and each next section starts once half of the work before it is done. You see the plan before anything is written.',
+                'Select a Planilha orçamentária. Every section becomes a summary and every position with a quantity one activity, sized from its labour, else from its unit with a gang of two to four people, else from its cost. Within a section up to four crews work side by side, and each next section starts once half of the work before it is done. You see the plan before anything is written.',
             })}
           </p>
 
@@ -2643,7 +2643,7 @@ export function ScheduleDetail({
 
           {!boqs || boqs.length === 0 ? (
             <p className="text-sm text-content-tertiary">
-              {t('schedule.no_boqs_available', 'No BOQs available for this project.')}
+              {t('schedule.no_boqs_available', 'No Planilhas orçamentárias available for this project.')}
             </p>
           ) : (
             <div className="space-y-2">
@@ -2676,7 +2676,7 @@ export function ScheduleDetail({
                   {isBudgetEstimate(boq.estimate_type) && (
                     <Badge variant="warning" size="sm" className="mt-1 ml-1">
                       {t('schedule.boq_budget_badge', {
-                        defaultValue: 'Budget estimate: one bar per lump sum',
+                        defaultValue: 'Budget Orçamento: one bar per lump sum',
                       })}
                     </Badge>
                   )}
@@ -2699,12 +2699,12 @@ export function ScheduleDetail({
             <div className="space-y-1 text-sm">
               <p className="text-content-primary">
                 {t('schedule.error_schedule_has_activities', {
-                  defaultValue: 'This schedule already has {{count}} activities.',
+                  defaultValue: 'This Cronograma already has {{count}} activities.',
                   count: generationPreview.existing_activity_count,
                 })}{' '}
                 {t('schedule.generate_conflict_replace_hint', {
                   defaultValue:
-                    'Replacing them deletes them and their links, then builds the plan again from the BOQ. A new schedule leaves this one as it is.',
+                    'Replacing them deletes them and their links, then builds the plan again from the Planilha orçamentária. A new Cronograma leaves this one as it is.',
                 })}
               </p>
               {generationPreview.existing_started_count > 0 && (
@@ -2756,7 +2756,7 @@ export function ScheduleDetail({
                     disabled={generateFromBOQ.isPending}
                     onClick={() => generateIntoNewSchedule.mutate(generationPreview.boq_id)}
                   >
-                    {t('schedule.generate_conflict_new_schedule', { defaultValue: 'Create a new schedule' })}
+                    {t('schedule.generate_conflict_new_schedule', { defaultValue: 'Create a new Cronograma' })}
                   </Button>
                 )}
                 <Button
@@ -2788,18 +2788,18 @@ export function ScheduleDetail({
       <Modal
         open={!!generateConflict}
         onClose={() => setGenerateConflict(null)}
-        title={t('schedule.generate_conflict_title', { defaultValue: 'This schedule already has activities' })}
+        title={t('schedule.generate_conflict_title', { defaultValue: 'This Cronograma already has activities' })}
       >
         {generateConflict && (
           <div className="space-y-4">
             <p className="text-sm text-content-primary">
               {t('schedule.error_schedule_has_activities', {
-                defaultValue: 'This schedule already has {{count}} activities.',
+                defaultValue: 'This Cronograma already has {{count}} activities.',
                 count: generateConflict.activityCount,
               })}{' '}
               {t('schedule.generate_conflict_replace_hint', {
                 defaultValue:
-                  'Replacing them deletes them and their links, then builds the plan again from the BOQ. A new schedule leaves this one as it is.',
+                  'Replacing them deletes them and their links, then builds the plan again from the Planilha orçamentária. A new Cronograma leaves this one as it is.',
               })}
             </p>
             {generateConflict.startedCount > 0 && (
@@ -2830,7 +2830,7 @@ export function ScheduleDetail({
                   disabled={generateFromBOQ.isPending}
                   onClick={() => generateIntoNewSchedule.mutate(generateConflict.boqId)}
                 >
-                  {t('schedule.generate_conflict_new_schedule', { defaultValue: 'Create a new schedule' })}
+                  {t('schedule.generate_conflict_new_schedule', { defaultValue: 'Create a new Cronograma' })}
                 </Button>
               )}
               <Button
@@ -2928,7 +2928,7 @@ export function ProjectSchedules({
   const [showGenerateTarget, setShowGenerateTarget] = useState(false);
   const openCreateForGenerate = useCallback(() => {
     setForm((f) =>
-      f.name ? f : { ...f, name: t('schedule.default_schedule_name', { defaultValue: 'Construction schedule' }) },
+      f.name ? f : { ...f, name: t('schedule.default_schedule_name', { defaultValue: 'Construction Cronograma' }) },
     );
     setShowCreate(true);
   }, [t]);
@@ -2944,7 +2944,7 @@ export function ProjectSchedules({
       addToast({
         type: 'info',
         title: t('schedule.create_before_generate', {
-          defaultValue: 'Create a schedule first, then it generates from your BOQ.',
+          defaultValue: 'Create a Cronograma first, then it generates from your Planilha orçamentária.',
         }),
       });
     }
@@ -2964,7 +2964,7 @@ export function ProjectSchedules({
       queryClient.invalidateQueries({ queryKey: ['schedules', project.id] });
       setShowCreate(false);
       setForm({ name: '', description: '', start_date: '', end_date: '' });
-      addToast({ type: 'success', title: t('toasts.schedule_created', { defaultValue: 'Schedule created' }) });
+      addToast({ type: 'success', title: t('toasts.schedule_created', { defaultValue: 'Cronograma created' }) });
       // Continue the CONN-34 deep-link flow: drop into the freshly created
       // schedule so Generate-from-BOQ opens with the deep-link BOQ chosen.
       if (generateBoqId) setSelectedSchedule(created);
@@ -3004,7 +3004,7 @@ export function ProjectSchedules({
               disabled={!canCreateSchedule}
               title={createHint}
             >
-              {t('schedule.create_schedule', 'Create Schedule')}
+              {t('schedule.create_schedule', 'Create Cronograma')}
             </Button>
             <Button
               variant="secondary"
@@ -3030,7 +3030,7 @@ export function ProjectSchedules({
         </select>
         <span className="text-xs text-content-tertiary" data-testid="schedule-archive-delete-hint">
           {t('schedule.archive_filter_delete_hint', {
-            defaultValue: 'To delete a schedule, archive it first. Archived schedules are listed under Archived, where the project owner can delete them.',
+            defaultValue: 'To delete a Cronograma, archive it first. Archived schedules are listed under Archived, where the project owner can delete them.',
           })}
         </span>
       </label>
@@ -3051,11 +3051,11 @@ export function ProjectSchedules({
               <CalendarDays size={32} className="text-oe-blue" />
             </div>
             <h2 className="oe-section-title">
-              {t('schedule.empty_hero_title', { defaultValue: '4D Schedule with Gantt Chart' })}
+              {t('schedule.empty_hero_title', { defaultValue: 'Cronograma with Gantt Chart' })}
             </h2>
             <p className="text-sm text-content-secondary mt-2 max-w-lg mx-auto">
               {t('schedule.empty_hero_desc', {
-                defaultValue: 'Plan your construction timeline with interactive Gantt charts, dependency management, and Critical Path Method analysis. Generate schedules automatically from your BOQ.',
+                defaultValue: 'Plan your construction timeline with interactive Gantt charts, dependency management, and Critical Path Method analysis. Generate schedules automatically from your Planilha orçamentária.',
               })}
             </p>
           </div>
@@ -3067,7 +3067,7 @@ export function ProjectSchedules({
                 <FileBarChart size={20} className="text-blue-600 dark:text-blue-400" />
               </div>
               <h3 className="oe-card-title mb-1">
-                {t('schedule.feature_boq_title', { defaultValue: 'Auto-generate from BOQ' })}
+                {t('schedule.feature_boq_title', { defaultValue: 'Auto-generate from Planilha orçamentária' })}
               </h3>
               <p className="text-xs text-content-tertiary">
                 {t('schedule.feature_boq_desc', {
@@ -3136,7 +3136,7 @@ export function ProjectSchedules({
               disabled={!canCreateSchedule}
               title={createHint}
             >
-              {t('schedule.create_schedule', { defaultValue: 'Create Schedule' })}
+              {t('schedule.create_schedule', { defaultValue: 'Create Cronograma' })}
             </Button>
           </div>
         </div>
@@ -3196,13 +3196,13 @@ export function ProjectSchedules({
           setShowGenerateTarget(false);
           onConsumeGenerateBoq?.();
         }}
-        title={t('schedule.generate_target_title', { defaultValue: 'Which schedule should the BOQ go into?' })}
+        title={t('schedule.generate_target_title', { defaultValue: 'Which Cronograma should the Planilha orçamentária go into?' })}
       >
         <div className="space-y-3">
           <p className="text-sm text-content-secondary">
             {t('schedule.generate_target_hint', {
               defaultValue:
-                'Pick a schedule to generate into, or start a new one. A schedule that already has activities asks before anything is replaced.',
+                'Pick a Cronograma to generate into, or start a new one. A Cronograma that already has activities asks before anything is replaced.',
             })}
           </p>
           <div className="max-h-72 space-y-2 overflow-y-auto">
@@ -3257,7 +3257,7 @@ export function ProjectSchedules({
                 openCreateForGenerate();
               }}
             >
-              {t('schedule.new_schedule', { defaultValue: 'New schedule' })}
+              {t('schedule.new_schedule', { defaultValue: 'New Cronograma' })}
             </Button>
           </div>
         </div>
@@ -3279,7 +3279,7 @@ export function ProjectSchedules({
       <Modal
         open={showCreate}
         onClose={() => setShowCreate(false)}
-        title={t('schedule.create_schedule', 'Create Schedule')}
+        title={t('schedule.create_schedule', 'Create Cronograma')}
       >
         <form
           onSubmit={(e) => {
@@ -3289,8 +3289,8 @@ export function ProjectSchedules({
           className="space-y-4"
         >
           <Input
-            label={t('schedule.schedule_name', 'Schedule Name')}
-            placeholder={t('schedule.schedule_name_placeholder', 'e.g. Main Construction Schedule')}
+            label={t('schedule.schedule_name', 'Cronograma Name')}
+            placeholder={t('schedule.schedule_name_placeholder', 'e.g. Main Construction Cronograma')}
             value={form.name}
             onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
             required aria-required="true"
@@ -3354,7 +3354,7 @@ function HowScheduleWorks() {
   const steps: { icon: React.ReactNode; title: string; desc: string }[] = [
     {
       icon: <CalendarDays size={14} className="text-oe-blue" />,
-      title: t('schedule.flow_1_title', { defaultValue: 'Create a schedule' }),
+      title: t('schedule.flow_1_title', { defaultValue: 'Create a Cronograma' }),
       desc: t('schedule.flow_1_desc', {
         defaultValue: 'Set up a programme for the project and give it a start date.',
       }),
@@ -3363,7 +3363,7 @@ function HowScheduleWorks() {
       icon: <ListPlus size={14} className="text-oe-blue" />,
       title: t('schedule.flow_2_title', { defaultValue: 'Add or generate activities' }),
       desc: t('schedule.flow_2_desc', {
-        defaultValue: 'Add activities by hand or generate them straight from a BOQ.',
+        defaultValue: 'Add activities by hand or generate them straight from a Planilha orçamentária.',
       }),
     },
     {
@@ -3393,12 +3393,12 @@ function HowScheduleWorks() {
     <CollapsibleSection
       storageKey="schedule.how"
       icon={<Network size={16} className="text-oe-blue" />}
-      title={t('schedule.flow_title', { defaultValue: 'How the 4D Schedule fits together' })}
+      title={t('schedule.flow_title', { defaultValue: 'How the Cronograma fits together' })}
     >
       <p className="text-xs text-content-tertiary">
         {t('schedule.flow_intro', {
           defaultValue:
-            'The schedule turns a priced estimate into a build timeline, then tracks it against what actually happens on site. This page is where that timeline is built.',
+            'The Cronograma turns a priced Orçamento into a build timeline, then tracks it against what actually happens on site. This page is where that timeline is built.',
         })}
       </p>
 
@@ -3434,7 +3434,7 @@ function HowScheduleWorks() {
           <span className="font-medium text-content-secondary">
             {t('schedule.flow_pulls', { defaultValue: 'Pulls from:' })}
           </span>{' '}
-          <ModLink to="/boq">{t('schedule.mod_boq', { defaultValue: 'BOQ' })}</ModLink> ·{' '}
+          <ModLink to="/boq">{t('schedule.mod_boq', { defaultValue: 'Planilha orçamentária' })}</ModLink> ·{' '}
           <ModLink to="/resources">
             {t('schedule.mod_resources', { defaultValue: 'Resources & crew' })}
           </ModLink>
@@ -3444,7 +3444,7 @@ function HowScheduleWorks() {
             {t('schedule.flow_feeds', { defaultValue: 'Feeds:' })}
           </span>{' '}
           <ModLink to="/field-reports">
-            {t('schedule.mod_field', { defaultValue: 'Field reports' })}
+            {t('schedule.mod_field', { defaultValue: 'Relatórios de campo' })}
           </ModLink>{' '}
           ·{' '}
           <ModLink to="/portfolio">
@@ -3515,7 +3515,7 @@ export function SchedulePage() {
       <div className="space-y-5 animate-fade-in">
         <Breadcrumb items={[
           { label: selectedProject.name, to: `/projects/${selectedProject.id}` },
-          { label: t('schedule.title', '4D Schedule') },
+          { label: t('schedule.title', 'Cronograma') },
         ]} />
 
         <ProjectSchedules
@@ -3532,11 +3532,11 @@ export function SchedulePage() {
   return (
     <div className="space-y-5 animate-fade-in">
       <Breadcrumb items={[
-        { label: t('schedule.title', '4D Schedule') },
+        { label: t('schedule.title', 'Cronograma') },
       ]} />
 
       <PageHeader
-        srTitle={t('schedule.title', '4D Schedule')}
+        srTitle={t('schedule.title', 'Cronograma')}
         subtitle={t(
           'schedule.subtitle',
           'Plan the build timeline as a Gantt with dependencies and the critical path.',
@@ -3547,7 +3547,7 @@ export function SchedulePage() {
       <DismissibleInfo
         storageKey="schedule"
         title={t('schedule.intro_title', {
-          defaultValue: 'Build the plan straight from the estimate',
+          defaultValue: 'Build the plan straight from the Orçamento',
         })}
         more={
           t('schedule.intro_more', { defaultValue: '' })
@@ -3555,14 +3555,14 @@ export function SchedulePage() {
             : undefined
         }
         links={[
-          { label: t('schedule.intro_link_boq', { defaultValue: 'Open BOQ' }), onClick: () => navigate('/boq') },
+          { label: t('schedule.intro_link_boq', { defaultValue: 'Open Planilha orçamentária' }), onClick: () => navigate('/boq') },
           { label: t('schedule.intro_link_bim', { defaultValue: 'BIM viewer' }), onClick: () => navigate('/bim') },
           { label: t('schedule.intro_link_advanced', { defaultValue: 'Last Planner' }), onClick: () => navigate('/schedule-advanced') },
         ]}
       >
         {t('schedule.intro_body', {
           defaultValue:
-            'Create a schedule, add activities by hand or generate them from a BOQ, and view the timeline as a Gantt with dependencies and the critical path. Run CPM to find the longest path and the float, and link activities to BIM elements to drive a 4D sequence on the model.',
+            'Create a Cronograma, add activities by hand or generate them from a Planilha orçamentária, and view the timeline as a Gantt with dependencies and the critical path. Run CPM to find the longest path and the float, and link activities to BIM elements to drive a 4D sequence on the model.',
         })}
       </DismissibleInfo>
 
@@ -3585,7 +3585,7 @@ export function SchedulePage() {
             </h2>
             <p className="text-sm text-content-secondary mt-2 max-w-md mx-auto">
               {t('schedule.no_projects_desc', {
-                defaultValue: 'Create a project first to start building your 4D schedule with Gantt charts, dependencies, and critical path analysis.',
+                defaultValue: 'Create a project first to start building your Cronograma with Gantt charts, dependencies, and critical path analysis.',
               })}
             </p>
           </div>
@@ -3604,7 +3604,7 @@ export function SchedulePage() {
                 <CalendarDays size={16} className="text-oe-blue" />
               </div>
               <div>
-                <p className="text-sm font-medium text-content-primary">{t('schedule.step_2_title', { defaultValue: 'Create a Schedule' })}</p>
+                <p className="text-sm font-medium text-content-primary">{t('schedule.step_2_title', { defaultValue: 'Create a Cronograma' })}</p>
                 <p className="text-xs text-content-tertiary mt-0.5">{t('schedule.step_2_desc', { defaultValue: 'Add timelines and milestones' })}</p>
               </div>
             </div>

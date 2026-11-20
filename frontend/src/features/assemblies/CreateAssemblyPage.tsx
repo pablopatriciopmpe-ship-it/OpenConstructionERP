@@ -255,7 +255,7 @@ export function CreateAssemblyModal({ open, onClose }: CreateAssemblyModalProps)
                 value={form.bid_factor}
                 onChange={(e) => set('bid_factor', e.target.value)}
                 placeholder="1.00"
-                hint={t('assemblies.bid_factor_hint', { defaultValue: 'Multiplier applied to the total rate (1.00 = no markup)' })}
+                hint={t('assemblies.bid_factor_hint', { defaultValue: 'Multiplier applied to the total rate (1.00 = no BDI)' })}
               />
             </div>
 

@@ -292,7 +292,7 @@ export function BrandingEditorModal({
     if (!canPersist) return undefined;
     const ok = await persistToServer();
     return ok
-      ? t('branding.saved_workspace', { defaultValue: 'Applied across this workspace.' })
+      ? t('branding.saved_workspace', { defaultValue: 'Applied across this Espaço de trabalho.' })
       : undefined;
   };
 

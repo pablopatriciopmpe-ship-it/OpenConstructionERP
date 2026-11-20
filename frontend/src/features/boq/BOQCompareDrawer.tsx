@@ -145,7 +145,7 @@ export function BOQCompareDrawer({
       <div
         role="dialog"
         aria-modal="true"
-        aria-label={t('boq.compare_title', { defaultValue: 'Compare estimates' })}
+        aria-label={t('boq.compare_title', { defaultValue: 'Compare Orçamentos' })}
         className="relative ml-auto flex h-full w-[560px] flex-col bg-surface-elevated border-l border-border shadow-2xl animate-slide-in-right"
       >
         {/* Header */}
@@ -153,7 +153,7 @@ export function BOQCompareDrawer({
           <div className="flex items-center gap-2">
             <GitCompare size={16} className="text-oe-blue" />
             <h3 className="oe-card-title">
-              {t('boq.compare_title', { defaultValue: 'Compare estimates' })}
+              {t('boq.compare_title', { defaultValue: 'Compare Orçamentos' })}
             </h3>
           </div>
           <button
@@ -177,7 +177,7 @@ export function BOQCompareDrawer({
               className="oe-select w-full"
             >
               <option value="">
-                {t('boq.compare_pick', { defaultValue: '- Select a BOQ -' })}
+                {t('boq.compare_pick', { defaultValue: '- Select a Planilha orçamentária -' })}
               </option>
               {groups.baseline && (
                 <optgroup label={t('boq.compare_group_baseline', { defaultValue: 'Baseline' })}>
@@ -187,7 +187,7 @@ export function BOQCompareDrawer({
               {groups.revisions.length > 0 && (
                 <optgroup
                   label={t('boq.compare_group_revisions', {
-                    defaultValue: 'Revisions of this estimate',
+                    defaultValue: 'Revisions of this Orçamento',
                   })}
                 >
                   {groups.revisions.map((b) => (
@@ -210,7 +210,7 @@ export function BOQCompareDrawer({
               )}
               {groups.others.length > 0 && (
                 <optgroup
-                  label={t('boq.compare_group_other', { defaultValue: 'Other estimates' })}
+                  label={t('boq.compare_group_other', { defaultValue: 'Other Orçamentos' })}
                 >
                   {groups.others.map((b) => (
                     <option key={b.id} value={b.id}>
@@ -306,7 +306,7 @@ export function BOQCompareDrawer({
               <GitCompare size={32} className="text-content-quaternary mb-3" />
               <p className="text-sm text-content-secondary">
                 {t('boq.compare_select_hint', {
-                  defaultValue: 'Pick another BOQ above to see a line-by-line diff.',
+                  defaultValue: 'Pick another Planilha orçamentária above to see a line-by-line diff.',
                 })}
               </p>
             </div>
@@ -318,7 +318,7 @@ export function BOQCompareDrawer({
             <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
               <p className="text-sm text-semantic-error">
                 {t('boq.compare_error', {
-                  defaultValue: 'Could not compare these BOQs.',
+                  defaultValue: 'Could not compare these Planilhas orçamentárias.',
                 })}
               </p>
               <p className="text-2xs text-content-tertiary mt-1">
@@ -329,7 +329,7 @@ export function BOQCompareDrawer({
             <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
               <p className="text-sm text-content-secondary">
                 {t('boq.compare_no_diff', {
-                  defaultValue: 'No differences between these BOQs.',
+                  defaultValue: 'No differences between these Planilhas orçamentárias.',
                 })}
               </p>
             </div>

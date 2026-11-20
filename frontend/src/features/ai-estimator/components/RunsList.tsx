@@ -29,10 +29,10 @@ export function RunsList({ runs, loading, error, onRetry, locale, onNew, onOpen 
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h2 className="oe-section-title">
-          {t('aiest.runs.title', { defaultValue: 'Your AI estimates' })}
+          {t('aiest.runs.title', { defaultValue: 'Your IA Orçamentos' })}
         </h2>
         <Button variant="primary" icon={<Plus className="h-4 w-4" />} onClick={onNew}>
-          {t('aiest.runs.new', { defaultValue: 'New estimate' })}
+          {t('aiest.runs.new', { defaultValue: 'New Orçamento' })}
         </Button>
       </div>
 
@@ -51,7 +51,7 @@ export function RunsList({ runs, loading, error, onRetry, locale, onNew, onOpen 
             <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-semantic-error" />
             <div className="min-w-0 flex-1">
               <div className="text-sm font-medium text-content-primary">
-                {t('aiest.runs.load_error', { defaultValue: 'Could not load your estimates' })}
+                {t('aiest.runs.load_error', { defaultValue: 'Could not load your Orçamentos' })}
               </div>
               <p className="mt-0.5 break-words text-xs text-content-tertiary">{error}</p>
               {onRetry && (
@@ -71,13 +71,13 @@ export function RunsList({ runs, loading, error, onRetry, locale, onNew, onOpen 
       ) : runs.length === 0 ? (
         <EmptyState
           icon={<Wand2 className="h-6 w-6" />}
-          title={t('aiest.runs.empty_title', { defaultValue: 'No AI estimates yet' })}
+          title={t('aiest.runs.empty_title', { defaultValue: 'No IA Orçamentos yet' })}
           description={t('aiest.runs.empty_desc', {
             defaultValue:
-              'Start one from any source. The agent reads your data, groups quantities, finds exact catalogue rates and assembles a validated estimate you confirm.',
+              'Start one from any source. The agent reads your data, groups quantities, finds exact catalogue rates and assembles a validated Orçamento you confirm.',
           })}
           action={{
-            label: t('aiest.runs.start_first', { defaultValue: 'Start your first estimate' }),
+            label: t('aiest.runs.start_first', { defaultValue: 'Start your first Orçamento' }),
             onClick: onNew,
           }}
         />
@@ -98,7 +98,7 @@ export function RunsList({ runs, loading, error, onRetry, locale, onNew, onOpen 
                   <div className="min-w-0 flex-1">
                     <div className="truncate text-sm font-medium text-content-primary">
                       {r.name ||
-                        t('aiest.runs.untitled', { defaultValue: 'Untitled estimate' })}
+                        t('aiest.runs.untitled', { defaultValue: 'Untitled Orçamento' })}
                     </div>
                     <div className="flex flex-wrap items-center gap-2 text-xs text-content-tertiary">
                       <DateDisplay value={r.created_at} format="relative" />

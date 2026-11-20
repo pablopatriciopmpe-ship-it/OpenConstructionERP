@@ -289,7 +289,7 @@ export function Snapshot4DView({
               <p className="mt-0.5 max-w-xl text-xs text-content-secondary">
                 {t('schedule.snapshot.empty_hint', {
                   defaultValue:
-                    'No BIM elements are linked to this schedule for the chosen date and model. Link activities to model elements to drive a 4D sequence, then scrub the date to see status change over time.',
+                    'No BIM elements are linked to this Cronograma for the chosen date and model. Link activities to model elements to drive a 4D sequence, then scrub the date to see status change over time.',
                 })}
               </p>
             </div>

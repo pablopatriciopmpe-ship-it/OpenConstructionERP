@@ -778,7 +778,7 @@ function SummaryTab({
           <p className="text-xs text-content-tertiary">
             {t('dwg_compare.no_cost_impact', {
               defaultValue:
-                'No cost impact - no linked BOQ annotation changed value between these revisions.',
+                'No cost impact - no linked Planilha orçamentária annotation changed value between these revisions.',
             })}
           </p>
         )}
@@ -962,7 +962,7 @@ function AnnotationsTab({
           {r.linked_boq_position_id && (
             <div className="mt-1.5 flex items-center justify-between gap-2">
               <span className="text-2xs text-content-tertiary">
-                {t('dwg_compare.linked_boq', { defaultValue: 'Linked to BOQ position' })}
+                {t('dwg_compare.linked_boq', { defaultValue: 'Linked to Planilha orçamentária position' })}
               </span>
               {r.cost_impact != null && r.cost_currency ? (
                 <MoneyDisplay

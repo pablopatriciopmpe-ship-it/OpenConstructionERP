@@ -264,7 +264,7 @@ export function DashboardCasesCard() {
                   })
                 : t('cases.dashboard_card.body', {
                     defaultValue:
-                      'Follow a guided playbook from a PDF to a priced, validated estimate, step by step across the modules.',
+                      'Follow a guided playbook from a PDF to a priced, validated Orçamento, step by step across the modules.',
                   })}
           </p>
         </div>
@@ -315,10 +315,10 @@ export function DashboardCasesCard() {
             type="button"
             onClick={() => hide(CASES_WIDGET_ID)}
             title={t('cases.dashboard_card.hide_hint', {
-              defaultValue: 'Hide this block. You can bring it back from Customize dashboard.',
+              defaultValue: 'Hide this block. You can bring it back from Customize Painel.',
             })}
             aria-label={t('cases.dashboard_card.hide_hint', {
-              defaultValue: 'Hide this block. You can bring it back from Customize dashboard.',
+              defaultValue: 'Hide this block. You can bring it back from Customize Painel.',
             })}
             className="rounded-md p-1.5 text-content-tertiary transition-colors hover:bg-oe-blue/10 hover:text-oe-blue focus:outline-none focus-visible:ring-2 focus-visible:ring-oe-blue/40"
           >

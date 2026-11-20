@@ -98,7 +98,7 @@ export function NewSessionFromTextModal({ projectId, onClose, onCreated }: Props
               onChange={(e) => setName(e.target.value)}
               placeholder={t(
                 'match_elements.new_text.name_placeholder',
-                'e.g. Quick estimate Q3',
+                'e.g. Quick Orçamento Q3',
               )}
               className="w-full oe-input"
             />

@@ -126,7 +126,7 @@ function ConvergenceBadge({
     <span
       className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-2xs font-medium ${cfg.cls}`}
       title={t('boq.cost_risk_convergence_hint', {
-        defaultValue: 'Split-half stability of the P80 estimate ({{margin}}% of P50). Lower is better.',
+        defaultValue: 'Split-half stability of the P80 Orçamento ({{margin}}% of P50). Lower is better.',
         margin: fmtFixed(marginPct, 2),
       })}
     >
@@ -233,7 +233,7 @@ function ContingencyCard({
       <p className="text-2xs leading-snug text-content-secondary border-t border-blue-400/20 pt-2">
         {t('boq.cost_risk_guidance', {
           defaultValue:
-            'Budgeting at P{{p}} gives {{p}}% confidence the final cost will not exceed this amount. There is a {{base}}% chance it lands at or below the deterministic base estimate.',
+            'Budgeting at P{{p}} gives {{p}}% confidence the final cost will not exceed this amount. There is a {{base}}% chance it lands at or below the deterministic base Orçamento.',
           p: targetConfidence,
           base: fmtFixed(probWithinBase, 0),
         })}
@@ -483,7 +483,7 @@ export function CostRiskPanel({ boqId, locale = 'de-DE' }: { boqId: string; loca
   const hasData = data && num(data.base_total) > 0;
 
   function cvLabel(cv: number): string {
-    if (cv < 10) return t('boq.cost_risk_cv_tight', { defaultValue: 'Tight estimate' });
+    if (cv < 10) return t('boq.cost_risk_cv_tight', { defaultValue: 'Tight Orçamento' });
     if (cv < 25) return t('boq.cost_risk_cv_normal', { defaultValue: 'Normal uncertainty' });
     if (cv < 50) return t('boq.cost_risk_cv_high', { defaultValue: 'High uncertainty' });
     return t('boq.cost_risk_cv_very_high', { defaultValue: 'Very high uncertainty' });

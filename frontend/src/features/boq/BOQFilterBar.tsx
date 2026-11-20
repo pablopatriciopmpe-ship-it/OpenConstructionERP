@@ -69,7 +69,7 @@ export function BOQFilterBar({
     },
     {
       key: 'ai',
-      label: t('boq.filter_ai', { defaultValue: 'AI added' }),
+      label: t('boq.filter_ai', { defaultValue: 'IA added' }),
       icon: <Sparkles size={12} />,
     },
     ...(outdatedDrawingCount > 0 || filter === 'drawing_revised'

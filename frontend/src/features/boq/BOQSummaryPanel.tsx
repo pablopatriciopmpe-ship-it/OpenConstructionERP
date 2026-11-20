@@ -158,7 +158,7 @@ export function QualityScoreRing({
             <div className="flex items-center gap-2">
               <Percent size={14} className="text-content-tertiary shrink-0" />
               <span className="flex-1 text-xs text-content-secondary">
-                {t('boq.quality_markups', { defaultValue: 'Markups added' })}
+                {t('boq.quality_markups', { defaultValue: 'Margens added' })}
               </span>
               {breakdown.hasMarkups ? (
                 <CheckCircle2 size={14} className="text-semantic-success shrink-0" />
@@ -171,7 +171,7 @@ export function QualityScoreRing({
           </div>
           <div className="mt-3 pt-2.5 border-t border-border-light">
             <p className="text-2xs text-content-tertiary">
-              {t('boq.quality_hint', { defaultValue: 'Fill in all fields to reach 100% and ensure estimate accuracy.' })}
+              {t('boq.quality_hint', { defaultValue: 'Fill in all fields to reach 100% and ensure Orçamento accuracy.' })}
             </p>
           </div>
         </div>
@@ -311,8 +311,8 @@ export function QuickAddFAB({
     {
       id: 'costs',
       icon: <Database size={16} />,
-      label: t('boq.quick_import_costs', { defaultValue: 'Import from Cost Database' }),
-      description: t('boq.quick_import_costs_desc', { defaultValue: 'Browse and select items from the cost database' }),
+      label: t('boq.quick_import_costs', { defaultValue: 'Import from Banco de custos' }),
+      description: t('boq.quick_import_costs_desc', { defaultValue: 'Browse and select items from the Banco de custos' }),
       onClick: onImportFromCosts,
     },
   ];
@@ -392,7 +392,7 @@ export function EmptyBOQOnboarding({
       id: 'sections',
       icon: <Layers size={20} />,
       title: t('boq.step_add_sections', { defaultValue: 'Add sections' }),
-      description: t('boq.step_add_sections_desc', { defaultValue: 'Organize your estimate into sections (e.g., Foundations, Walls, Roof)' }),
+      description: t('boq.step_add_sections_desc', { defaultValue: 'Organize your Orçamento into sections (e.g., Foundations, Walls, Roof)' }),
       action: t('boq.add_section', { defaultValue: 'Add Section' }),
       onClick: onAddSection,
       complete: sectionCount > 0,
@@ -419,7 +419,7 @@ export function EmptyBOQOnboarding({
       id: 'review',
       icon: <CheckCircle2 size={20} />,
       title: t('boq.step_review', { defaultValue: 'Review totals' }),
-      description: t('boq.step_review_desc', { defaultValue: 'Add markups for overhead costs and profit, then review your grand total' }),
+      description: t('boq.step_review_desc', { defaultValue: 'Add Margens for overhead costs and profit, then review your grand total' }),
       action: null,
       onClick: undefined,
       complete: hasMarkups,
@@ -437,7 +437,7 @@ export function EmptyBOQOnboarding({
             <Sparkles size={24} className="text-oe-blue" />
           </div>
           <h3 className="oe-section-title">
-            {t('boq.start_building', { defaultValue: 'Start building your estimate' })}
+            {t('boq.start_building', { defaultValue: 'Start building your Orçamento' })}
           </h3>
           <p className="mt-1.5 text-sm text-content-secondary max-w-sm mx-auto">
             {t('boq.start_building_desc', { defaultValue: 'Follow these steps to create a professional Bill of Quantities' })}
@@ -552,7 +552,7 @@ export function ExportWarningDialog({
         <p className="text-xs text-content-secondary mb-4">
           {t('boq.export_quality_warning_desc', {
             defaultValue:
-              'Your estimate has a quality score below 60%. Missing quantities, zero prices, or incomplete descriptions may affect the exported document. Consider reviewing the estimate before exporting.',
+              'Your Orçamento has a quality score below 60%. Missing quantities, zero prices, or incomplete descriptions may affect the exported document. Consider reviewing the Orçamento before exporting.',
           })}
         </p>
         <div className="flex items-center justify-end gap-2">

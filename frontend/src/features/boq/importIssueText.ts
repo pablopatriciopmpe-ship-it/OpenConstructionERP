@@ -175,7 +175,7 @@ function xpweIssue(issue: ImportIssue, t: Translate, formatNumber: (value: numbe
     case 'xpwe_no_bill_items':
       return t('boq.import_issue.xpwe_no_bill_items', {
         defaultValue:
-          'The file holds a price list and no measured bill (price-list items: {{count}}). Import it into a cost database instead',
+          'The file holds a price list and no measured bill (price-list items: {{count}}). Import it into a Banco de custos instead',
         count: issue.count ?? 0,
       });
     case 'xpwe_more_warnings':
@@ -192,7 +192,7 @@ function xpweIssue(issue: ImportIssue, t: Translate, formatNumber: (value: numbe
       if (issue.count == null || issue.amount == null) return null;
       return t('boq.import_issue.xpwe_deductions_moved', {
         defaultValue:
-          "{{count}} items with a negative amount were imported without a price. Their {{amount}} is taken off by the deductions line among the bill's markups",
+          "{{count}} items with a negative amount were imported without a price. Their {{amount}} is taken off by the deductions line among the bill's Margens",
         count: issue.count,
         amount: formatNumber(Math.abs(issue.amount)),
       });

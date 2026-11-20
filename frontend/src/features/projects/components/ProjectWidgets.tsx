@@ -289,7 +289,7 @@ export function RFIInboxWidget({ projectId }: { projectId: string }) {
     : fallback.data?.items ?? null;
   const isLoading = rollup.hasProvider ? rollup.isLoadingFromRollup : fallback.isLoading;
 
-  const title = t('project.widget.rfi-inbox.title', { defaultValue: 'RFI inbox' });
+  const title = t('project.widget.rfi-inbox.title', { defaultValue: 'Pedido de informação (RFI) inbox' });
   const subtitle = t('project.widget.rfi-inbox.card_subtitle', {
     defaultValue: 'Latest open requests',
   });
@@ -306,7 +306,7 @@ export function RFIInboxWidget({ projectId }: { projectId: string }) {
       ) : !data || data.length === 0 ? (
         <WidgetEmpty
           message={t('project.widget.rfi-inbox.empty', {
-            defaultValue: 'No open RFIs.',
+            defaultValue: 'No open Pedidos de informação.',
           })}
         />
       ) : (
@@ -378,7 +378,7 @@ export function ChangeOrdersPulseWidget({
   const isLoading = rollup.hasProvider ? rollup.isLoadingFromRollup : fallback.isLoading;
 
   const title = t('project.widget.change-orders.title', {
-    defaultValue: 'Change orders pulse',
+    defaultValue: 'Alterações de contrato pulse',
   });
   const subtitle = t('project.widget.change-orders.card_subtitle', {
     defaultValue: 'Pending vs approved this month',
@@ -396,7 +396,7 @@ export function ChangeOrdersPulseWidget({
       ) : !data ? (
         <WidgetEmpty
           message={t('project.widget.change-orders.empty', {
-            defaultValue: 'No change orders yet.',
+            defaultValue: 'No Alterações de contrato yet.',
           })}
         />
       ) : (
@@ -484,7 +484,7 @@ export function DailyDiaryWidget({ projectId }: { projectId: string }) {
   const isLoading = rollup.hasProvider ? rollup.isLoadingFromRollup : fallback.isLoading;
 
   const latest = data?.[0];
-  const title = t('project.widget.daily-diary.title', { defaultValue: 'Daily diary' });
+  const title = t('project.widget.daily-diary.title', { defaultValue: 'Diário de obra' });
   const subtitle = t('project.widget.daily-diary.card_subtitle', {
     defaultValue: 'Latest field entry',
   });
@@ -775,9 +775,9 @@ export function AIInsightsWidget({ projectId }: { projectId: string }) {
     `/v1/ai-agents/insights?project_id=${projectId}&limit=2`,
   );
 
-  const title = t('project.widget.ai-insights.title', { defaultValue: 'AI insights' });
+  const title = t('project.widget.ai-insights.title', { defaultValue: 'IA insights' });
   const subtitle = t('project.widget.ai-insights.card_subtitle', {
-    defaultValue: 'Top AI suggestions for this project',
+    defaultValue: 'Top IA suggestions for this project',
   });
   const icon = <Sparkles size={16} className="text-violet-500" />;
   const cta = {
@@ -792,7 +792,7 @@ export function AIInsightsWidget({ projectId }: { projectId: string }) {
       ) : !data || data.length === 0 ? (
         <WidgetEmpty
           message={t('project.widget.ai-insights.empty', {
-            defaultValue: 'No AI suggestions right now.',
+            defaultValue: 'No IA suggestions right now.',
           })}
         />
       ) : (
@@ -1632,7 +1632,7 @@ export function ScheduleStripWidget({ projectId }: { projectId: string }) {
   );
 
   const title = t('project.widget.schedule-strip.title', {
-    defaultValue: 'Schedule summary',
+    defaultValue: 'Cronograma summary',
   });
   const subtitle = t('project.widget.schedule-strip.card_subtitle', {
     defaultValue: 'Progress and next milestone',
@@ -1655,7 +1655,7 @@ export function ScheduleStripWidget({ projectId }: { projectId: string }) {
       ) : !data || !data.total_activities ? (
         <WidgetEmpty
           message={t('project.widget.schedule-strip.empty', {
-            defaultValue: 'No schedule data yet. Create your first schedule.',
+            defaultValue: 'No Cronograma data yet. Create your first Cronograma.',
           })}
         />
       ) : (

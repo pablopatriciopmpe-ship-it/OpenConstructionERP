@@ -253,7 +253,7 @@ export default function BIMToolsPanel({
       await exportBoqXlsx(modelId, buildBoqExportBody(exportScope, exportGroupBy, ctx));
       useToastStore.getState().addToast({
         type: 'success',
-        title: t('bim.boq_export_done', { defaultValue: 'BOQ exported' }),
+        title: t('bim.boq_export_done', { defaultValue: 'Planilha orçamentária exported' }),
         message: t('bim.boq_export_done_msg', {
           defaultValue: 'The Bill of Quantities spreadsheet has been downloaded.',
         }),
@@ -261,7 +261,7 @@ export default function BIMToolsPanel({
     } catch (e) {
       useToastStore.getState().addToast({
         type: 'error',
-        title: t('bim.boq_export_failed', { defaultValue: 'BOQ export failed' }),
+        title: t('bim.boq_export_failed', { defaultValue: 'Planilha orçamentária export failed' }),
         message: e instanceof Error ? e.message : String(e),
       });
     } finally {
@@ -671,7 +671,7 @@ export default function BIMToolsPanel({
           <FileSpreadsheet size={12} />
           {exporting
             ? t('bim.boq_export_running', { defaultValue: 'Exporting…' })
-            : t('bim.boq_export_button', { defaultValue: 'Export BOQ (Excel)' })}
+            : t('bim.boq_export_button', { defaultValue: 'Export Planilha orçamentária (Excel)' })}
         </button>
         {onOpenReport && (
           <button

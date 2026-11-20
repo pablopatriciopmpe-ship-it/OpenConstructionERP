@@ -151,7 +151,7 @@ export function buildPunchlistInsights(items: PunchItem[], t: Translate): Punchl
 
   const dataset: InsightDataset = {
     id: 'punch',
-    label: t('punch.insights.ds_punch', { defaultValue: 'Punch list' }),
+    label: t('punch.insights.ds_punch', { defaultValue: 'Pendências' }),
     currency: '',
     fields: [
       { key: 'title', label: t('punch.insights.f_title', { defaultValue: 'Item' }), kind: 'dimension' },

@@ -1631,7 +1631,7 @@ function PivotTab({ sessionId, describe, thresholdRules, setThresholdRules }: Pi
               {sortedGroups.length} {t('explorer.groups', { defaultValue: 'groups' })} · {result.total_count.toLocaleString(getNumberLocale())} {t('explorer.elements', { defaultValue: 'elements' })}
             </span>
             <Button variant="primary" size="sm" onClick={() => setShowCreateBOQ(true)} className="shrink-0 whitespace-nowrap">
-              {t('explorer.create_boq_from_pivot', { defaultValue: 'Create BOQ' })}
+              {t('explorer.create_boq_from_pivot', { defaultValue: 'Create Planilha orçamentária' })}
             </Button>
           </div>
         </Card>
@@ -1853,7 +1853,7 @@ function PivotTab({ sessionId, describe, thresholdRules, setThresholdRules }: Pi
               <DownloadIcon size={13} /> CSV
             </button>
             <Button variant="primary" size="sm" onClick={() => setShowCreateBOQ(true)} className="shrink-0 whitespace-nowrap">
-              {t('explorer.create_boq_from_pivot', { defaultValue: 'Create BOQ' })}
+              {t('explorer.create_boq_from_pivot', { defaultValue: 'Create Planilha orçamentária' })}
             </Button>
           </div>
         </Card>
@@ -2951,14 +2951,14 @@ function CreateBOQFromPivotModal({ open, onClose, groups, groupByColumns, aggCol
 
       addToast({
         type: 'success',
-        title: t('explorer.boq_created_success', { defaultValue: '{{count}} positions created in BOQ', count: groups.length }),
+        title: t('explorer.boq_created_success', { defaultValue: '{{count}} positions created in Planilha orçamentária', count: groups.length }),
       });
       onClose();
       navigate(`/boq/${boqId}`);
     } catch (err) {
       addToast({
         type: 'error',
-        title: t('explorer.boq_create_failed', { defaultValue: 'Failed to create BOQ positions' }),
+        title: t('explorer.boq_create_failed', { defaultValue: 'Failed to create Planilha orçamentária positions' }),
         message: err instanceof Error ? err.message : 'Unknown error',
       });
     } finally {
@@ -2980,10 +2980,10 @@ function CreateBOQFromPivotModal({ open, onClose, groups, groupByColumns, aggCol
             </div>
             <div>
               <h2 className="text-lg font-semibold text-content-primary">
-                {t('explorer.create_boq_title', { defaultValue: 'Create BOQ from Pivot' })}
+                {t('explorer.create_boq_title', { defaultValue: 'Create Planilha orçamentária from Pivot' })}
               </h2>
               <p className="text-xs text-content-tertiary">
-                {t('explorer.create_boq_subtitle', { defaultValue: '{{count}} groups will become BOQ positions', count: groups.length })}
+                {t('explorer.create_boq_subtitle', { defaultValue: '{{count}} groups will become Planilha orçamentária positions', count: groups.length })}
               </p>
             </div>
           </div>
@@ -3026,7 +3026,7 @@ function CreateBOQFromPivotModal({ open, onClose, groups, groupByColumns, aggCol
                 onChange={(e) => setBoqId(e.target.value)}
                 className="oe-select-lg w-full"
               >
-                <option value="">{t('boq.select_boq', { defaultValue: 'Select BOQ...' })}</option>
+                <option value="">{t('boq.select_boq', { defaultValue: 'Select Planilha orçamentária...' })}</option>
                 {boqs?.map((b) => <option key={b.id} value={b.id}>{b.name}</option>)}
               </select>
             </div>

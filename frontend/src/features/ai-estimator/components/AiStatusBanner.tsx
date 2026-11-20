@@ -53,7 +53,7 @@ export function AiStatusBanner({ readiness }: { readiness: AiReadiness }) {
       <Chip
         ready={llmReady}
         icon={<BrainCircuit className="h-4 w-4" />}
-        label={t('aiest.status.ai_label', { defaultValue: 'AI agent' })}
+        label={t('aiest.status.ai_label', { defaultValue: 'IA agent' })}
         detail={
           llmReady
             ? preferredModel || t('aiest.status.connected', { defaultValue: 'connected' })
@@ -75,7 +75,7 @@ export function AiStatusBanner({ readiness }: { readiness: AiReadiness }) {
           to="/settings?tab=ai"
           className="inline-flex items-center gap-1 rounded-full border border-oe-blue/30 bg-surface-primary px-3 py-1.5 text-xs font-semibold text-oe-blue transition-colors hover:bg-oe-blue hover:text-content-inverse"
         >
-          {t('aiest.status.connect_ai', { defaultValue: 'Connect an AI provider' })}
+          {t('aiest.status.connect_ai', { defaultValue: 'Connect an IA provider' })}
           <ArrowRight className="h-3 w-3" />
         </Link>
       )}

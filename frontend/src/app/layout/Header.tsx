@@ -613,8 +613,8 @@ export function Header({ title, onMenuClick }: HeaderProps) {
         <button
           type="button"
           onClick={() => openAiPanel({ pathname: location.pathname, navigate })}
-          aria-label={t('header.ask_ai', { defaultValue: 'Ask AI' })}
-          title={t('header.ask_ai', { defaultValue: 'Ask AI' })}
+          aria-label={t('header.ask_ai', { defaultValue: 'Ask IA' })}
+          title={t('header.ask_ai', { defaultValue: 'Ask IA' })}
           data-testid="header-ask-ai"
           className={clsx(
             'flex h-8 items-center gap-1.5 rounded-lg px-2 text-content-secondary',
@@ -622,7 +622,7 @@ export function Header({ title, onMenuClick }: HeaderProps) {
           )}
         >
           <Sparkles size={16} strokeWidth={1.75} />
-          <span className="hidden 2xl:inline text-sm">{t('header.ask_ai', { defaultValue: 'Ask AI' })}</span>
+          <span className="hidden 2xl:inline text-sm">{t('header.ask_ai', { defaultValue: 'Ask IA' })}</span>
         </button>
         )}
 

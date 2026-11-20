@@ -44,7 +44,7 @@ export function ProjectComponentTaxCard({ project }: { project: Project }) {
         title={t('project.settings.component_tax.title', { defaultValue: 'Input tax on assembly components' })}
         subtitle={t('project.settings.component_tax.subtitle', {
           defaultValue:
-            'Split materials and services into net cost and input tax, and decide whether the tax is recoverable or part of the cost. Bill-level tax markups are separate and unchanged.',
+            'Split materials and services into net cost and input tax, and decide whether the tax is recoverable or part of the cost. Bill-level tax Margens are separate and unchanged.',
         })}
       />
       <div className="mt-4 flex flex-col gap-3">

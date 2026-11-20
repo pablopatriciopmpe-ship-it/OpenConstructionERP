@@ -266,7 +266,7 @@ export function PreliminariesPage() {
         srTitle={t('preliminaries.title', { defaultValue: 'Preliminaries' })}
         subtitle={t('preliminaries.subtitle', {
           defaultValue:
-            'Price the general conditions - site establishment, staff, temporary works, standing plant and welfare - as time-related items times the project duration plus fixed one-offs. The total adds to the estimate alongside the measured work.',
+            'Price the general conditions - site establishment, staff, temporary works, standing plant and welfare - as time-related items times the project duration plus fixed one-offs. The total adds to the Orçamento alongside the measured work.',
         })}
         actions={<InsightsToggleButton open={insights.open} onClick={insights.toggle} />}
       />

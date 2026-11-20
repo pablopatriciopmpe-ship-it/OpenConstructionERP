@@ -149,7 +149,7 @@ function WasteFactorsContent() {
           type: 'info',
           title: t('waste_factors.no_materials_title', { defaultValue: 'No materials to load' }),
           message: t('waste_factors.no_materials_msg', {
-            defaultValue: "This project's estimate has no material quantities yet.",
+            defaultValue: "This project's Orçamento has no material quantities yet.",
           }),
         });
         return;

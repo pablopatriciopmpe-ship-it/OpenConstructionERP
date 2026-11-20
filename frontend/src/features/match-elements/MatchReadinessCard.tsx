@@ -106,28 +106,28 @@ function sentence(item: MatchReadinessItem, t: TFunction, locale: string): strin
     case 'demo_mode':
       return t('match_readiness.demo_mode', {
         defaultValue:
-          'This public demo cannot match models: it has no AI search service and no cost catalogues, so every run ends without results. Matching needs a self-hosted install of the platform.',
+          'This public demo cannot match models: it has no IA search service and no cost catalogues, so every run ends without results. Matching needs a self-hosted install of the platform.',
       });
     case 'search_client_missing':
       return t('match_readiness.search_client_missing', {
         defaultValue:
-          'The AI search client is not installed on this server, so cost catalogues cannot be searched. Install it with "pip install openconstructionerp[semantic-clients]" and restart the app.',
+          'The IA search client is not installed on this server, so cost catalogues cannot be searched. Install it with "pip install openconstructionerp[semantic-clients]" and restart the app.',
       });
     case 'search_unreachable':
       if (p.local_install === 'available') {
         return t('match_readiness.search_unreachable_local', {
           defaultValue:
-            'The AI search service that holds the cost catalogues is not installed on this computer, so there is nothing to match against. Install it below with one click (no Docker, about 30 seconds).',
+            'The IA search service that holds the cost catalogues is not installed on this computer, so there is nothing to match against. Install it below with one click (no Docker, about 30 seconds).',
         });
       }
       return t('match_readiness.search_unreachable', {
         defaultValue:
-          'The AI search service that holds the cost catalogues is not answering, so there is nothing to match against. Start it again or ask your administrator.',
+          'The IA search service that holds the cost catalogues is not answering, so there is nothing to match against. Start it again or ask your administrator.',
       });
     case 'search_not_configured':
       return t('match_readiness.search_not_configured', {
         defaultValue:
-          'This installation has no AI search server for cost catalogues, so no catalogue can be installed and matching has nothing to search. An administrator runs a Qdrant server, sets CWICR_QDRANT_URL to its address and restarts the app.',
+          'This installation has no IA search server for cost catalogues, so no catalogue can be installed and matching has nothing to search. An administrator runs a Qdrant server, sets CWICR_QDRANT_URL to its address and restarts the app.',
       });
     case 'no_catalogue_installed':
       return p.catalogue

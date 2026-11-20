@@ -118,14 +118,14 @@ export function buildMeetingsInsights(
 
   const base = { datasetId: 'meetings', builtin: true } as const;
   const builtins: InsightDef[] = [
-    { ...base, id: 'kpi-meetings', title: t('meetings.insights.k_meetings', { defaultValue: 'Meetings' }), chart: 'kpi', agg: 'count', color: 0 },
+    { ...base, id: 'kpi-meetings', title: t('meetings.insights.k_meetings', { defaultValue: 'Reuniões' }), chart: 'kpi', agg: 'count', color: 0 },
     { ...base, id: 'kpi-completed', title: t('meetings.insights.k_completed', { defaultValue: 'Completed' }), chart: 'kpi', measure: 'done', agg: 'sum', color: 3 },
     { ...base, id: 'kpi-open-actions', title: t('meetings.insights.k_open_actions', { defaultValue: 'Open action items' }), chart: 'kpi', measure: 'open_actions', agg: 'sum', color: 1 },
     { ...base, id: 'kpi-avg-attendees', title: t('meetings.insights.k_avg_attendees', { defaultValue: 'Avg attendees' }), chart: 'kpi', measure: 'attendees', agg: 'avg', color: 4 },
-    { ...base, id: 'donut-by-status', title: t('meetings.insights.c_by_status', { defaultValue: 'Meetings by status' }), chart: 'donut', dimension: 'status', agg: 'count', color: 4 },
-    { ...base, id: 'bar-by-type', title: t('meetings.insights.c_by_type', { defaultValue: 'Meetings by type' }), chart: 'bar', dimension: 'type', agg: 'count', color: 0 },
+    { ...base, id: 'donut-by-status', title: t('meetings.insights.c_by_status', { defaultValue: 'Reuniões by status' }), chart: 'donut', dimension: 'status', agg: 'count', color: 4 },
+    { ...base, id: 'bar-by-type', title: t('meetings.insights.c_by_type', { defaultValue: 'Reuniões by type' }), chart: 'bar', dimension: 'type', agg: 'count', color: 0 },
     { ...base, id: 'bar-actions-by-type', title: t('meetings.insights.c_actions_by_type', { defaultValue: 'Action items by meeting type' }), chart: 'bar', dimension: 'type', measure: 'actions', agg: 'sum', color: 1 },
-    { ...base, id: 'area-over-time', title: t('meetings.insights.c_over_time', { defaultValue: 'Meetings over time' }), chart: 'area', dimension: 'month', agg: 'count', color: 5 },
+    { ...base, id: 'area-over-time', title: t('meetings.insights.c_over_time', { defaultValue: 'Reuniões over time' }), chart: 'area', dimension: 'month', agg: 'count', color: 5 },
   ];
 
   return { datasets: [dataset], builtins };

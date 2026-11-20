@@ -78,7 +78,7 @@ export function ScheduleQualityPanel({
         <div className="mb-3 flex items-center gap-2 text-sm text-content-secondary">
           <Loader2 size={14} className="animate-spin" />
           {t('schedule.quality.running', {
-            defaultValue: 'Analysing the schedule network...',
+            defaultValue: 'Analysing the Cronograma network...',
           })}
         </div>
         <SkeletonTable rows={5} columns={4} />
@@ -107,7 +107,7 @@ export function ScheduleQualityPanel({
           })}
           description={t('schedule.quality.empty_desc', {
             defaultValue:
-              'Add activities and dependencies to this schedule, then run the analysis to see the Longest Path, float paths and a scheduling quality log.',
+              'Add activities and dependencies to this Cronograma, then run the analysis to see the Longest Path, float paths and a scheduling quality log.',
           })}
         />
       </Card>
@@ -132,7 +132,7 @@ export function ScheduleQualityPanel({
           <div className="flex items-center gap-2">
             <ShieldCheck size={16} className="text-content-secondary" />
             <h3 className="oe-card-title">
-              {t('schedule.quality.title', { defaultValue: 'Schedule quality' })}
+              {t('schedule.quality.title', { defaultValue: 'Cronograma quality' })}
             </h3>
           </div>
           <Button

@@ -130,7 +130,7 @@ export function buildAllowancesInsights(
   const builtins: InsightDef[] = [
     { ...base, id: 'kpi-count', title: t('allowances.insights.k_count', { defaultValue: 'Allowances' }), chart: 'kpi', agg: 'count', color: 0 },
     { ...base, id: 'kpi-held', title: t('allowances.insights.k_held', { defaultValue: 'Total held' }), chart: 'kpi', measure: 'held', agg: 'sum', color: 1 },
-    { ...base, id: 'kpi-remaining', title: t('allowances.insights.k_remaining', { defaultValue: 'Remaining in estimate' }), chart: 'kpi', measure: 'remaining', agg: 'sum', color: 2 },
+    { ...base, id: 'kpi-remaining', title: t('allowances.insights.k_remaining', { defaultValue: 'Remaining in Orçamento' }), chart: 'kpi', measure: 'remaining', agg: 'sum', color: 2 },
     { ...base, id: 'kpi-overdrawn', title: t('allowances.insights.k_overdrawn', { defaultValue: 'Over-drawn' }), chart: 'kpi', measure: 'overdrawn', agg: 'sum', color: 4 },
     { ...base, id: 'bar-held-by-type', title: t('allowances.insights.c_held_by_type', { defaultValue: 'Held by type' }), chart: 'bar', dimension: 'type', measure: 'held', agg: 'sum', color: 1 },
     { ...base, id: 'donut-by-status', title: t('allowances.insights.c_by_status', { defaultValue: 'Allowances by status' }), chart: 'donut', dimension: 'status', agg: 'count', color: 4 },
