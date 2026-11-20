@@ -16,9 +16,17 @@ from decimal import Decimal, InvalidOperation
 from typing import Annotated
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict, Field, PlainSerializer, field_validator, model_validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    PlainSerializer,
+    computed_field,
+    field_validator,
+    model_validator,
+)
 
-from app.core.decimal_types import Decimal18_6, FiniteDecimal
+from app.core.decimal_types import Decimal18_2, Decimal18_6, FiniteDecimal
 
 # Upper bound shared by every numeric input. 1e12 is far beyond any real index
 # value / money amount yet keeps each pairwise product finite in Decimal, so an
@@ -380,3 +388,206 @@ class EscalatePreviewResponse(BaseModel):
     project_name: str | None = None
     project_fallback: bool = False
     results: list[EscalatePreviewLine] = Field(default_factory=list)
+
+
+# ── CUB (Custo Unitário Básico de Construção) ───────────────────────────────
+
+#: The 27 federative units the CUB is published for.
+VALID_CUB_UFS: frozenset[str] = frozenset(
+    {
+        "AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", "MT",
+        "MS", "MG", "PA", "PB", "PR", "PE", "PI", "RJ", "RN", "RS", "RO",
+        "RR", "SC", "SP", "SE", "TO",
+    }
+)
+
+#: NBR 12.721 standard projects the Sinduscons publish. The list is open on
+#: purpose: a state may publish a variant the national list does not carry, and
+#: refusing it would block an official value. The frontend offers these as
+#: suggestions, the backend only checks the shape.
+CUB_PROJECT_STANDARDS: tuple[str, ...] = (
+    "R1-B", "R1-N", "R1-A",
+    "PP-4-B", "PP-4-N", "PP-4-A",
+    "R8-B", "R8-N", "R8-A",
+    "R16-N", "R16-A",
+    "PIS", "RP1Q",
+    "CAL-8-N", "CAL-8-A",
+    "CSL-8-N", "CSL-8-A", "CSL-16-N", "CSL-16-A",
+    "GI",
+)
+
+#: ``desonerado`` / ``nao_desonerado`` (the folha de pagamento regimes).
+VALID_CUB_TAX_REGIMES: tuple[str, ...] = ("desonerado", "nao_desonerado")
+
+
+def cub_attribution(source: str) -> str:
+    """The credit line every screen and export must carry.
+
+    Centralised so the wording cannot drift between the panel, the quick
+    estimate and a PDF. ``source`` is the Sinduscon/CBIC name stored on the row;
+    a row without one still gets a truthful generic credit.
+    """
+    credit = (source or "").strip() or "Sinduscon / CBIC"
+    return (
+        f"CUB/m² divulgado por {credit}, calculado nos termos da Lei Federal "
+        "nº 4.591/1964 e ABNT NBR 12.721:2006 — valor exclusivamente referencial."
+    )
+
+
+CUB_EXCLUSIONS: str = (
+    "O CUB não inclui fundações, elevadores, ar-condicionado, projetos, "
+    "remuneração do construtor e impostos. Compare com o custo direto de "
+    "construção, não com o preço de venda."
+)
+
+
+class CubRateBase(BaseModel):
+    """One CUB/m² value as imported or edited by an administrator."""
+
+    model_config = ConfigDict(str_strip_whitespace=True)
+
+    reference_month: str = Field(..., description="ISO year-month, e.g. '2026-10'")
+    uf: str = Field(..., min_length=2, max_length=2)
+    regional_code: str = Field(default="", max_length=64)
+    sinduscon_code: str = Field(default="", max_length=64)
+    sinduscon_name: str = Field(default="", max_length=255)
+    project_standard: str = Field(..., min_length=1, max_length=16)
+    tax_regime: str = Field(default="nao_desonerado")
+    material: Decimal18_2 = Field(default=Decimal("0"), ge=0)
+    labor: Decimal18_2 = Field(default=Decimal("0"), ge=0)
+    administrative: Decimal18_2 = Field(default=Decimal("0"), ge=0)
+    equipment: Decimal18_2 = Field(default=Decimal("0"), ge=0)
+    total_sqm: Decimal18_2 = Field(..., gt=0)
+    currency: str = Field(default="BRL", min_length=3, max_length=3)
+    source_name: str = Field(default="", max_length=255)
+    source_url: str = Field(default="", max_length=500)
+    published_at: date | None = None
+    notes: str = Field(default="", max_length=5000)
+
+    @field_validator("reference_month")
+    @classmethod
+    def _check_month(cls, value: str) -> str:
+        text = _validate_period(value)
+        today = date.today()
+        if text > f"{today.year:04d}-{today.month:02d}":
+            raise ValueError("reference_month cannot be in the future")
+        if text < "2015-10":
+            raise ValueError("reference_month is older than the national CUB series (2015-10)")
+        return text
+
+    @field_validator("uf")
+    @classmethod
+    def _check_uf(cls, value: str) -> str:
+        text = value.strip().upper()
+        if text not in VALID_CUB_UFS:
+            raise ValueError(f"unknown UF: {value!r}")
+        return text
+
+    @field_validator("project_standard")
+    @classmethod
+    def _check_standard(cls, value: str) -> str:
+        return value.strip().upper()
+
+    @field_validator("tax_regime")
+    @classmethod
+    def _check_regime(cls, value: str) -> str:
+        text = value.strip().lower().replace("-", "_").replace(" ", "_")
+        if text in {"nao_desonerado", "não_desonerado", "onerado", "non_exempt"}:
+            return "nao_desonerado"
+        if text in {"desonerado", "exempt"}:
+            return "desonerado"
+        raise ValueError("tax_regime must be 'desonerado' or 'nao_desonerado'")
+
+    @field_validator("currency")
+    @classmethod
+    def _check_currency(cls, value: str) -> str:
+        return value.strip().upper()
+
+    @model_validator(mode="after")
+    def _check_breakdown(self) -> "CubRateBase":
+        components = self.material + self.labor + self.administrative + self.equipment
+        if components > 0 and abs(components - self.total_sqm) > Decimal("0.02"):
+            raise ValueError(
+                "material + labor + administrative + equipment must equal total_sqm "
+                f"(components={components}, total={self.total_sqm})"
+            )
+        return self
+
+
+class CubRateCreate(CubRateBase):
+    """Create a CUB row by hand."""
+
+
+class CubRateUpdate(CubRateBase):
+    """Replace a CUB row by hand (full payload, revalidated)."""
+
+
+class CubRateResponse(CubRateBase):
+    """A CUB row as returned by the API, with its mandatory attribution."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    id: UUID
+    verified: bool = False
+    created_at: datetime
+    updated_at: datetime
+
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def attribution(self) -> str:
+        return cub_attribution(self.sinduscon_name or self.source_name)
+
+
+class CubImportSkipped(BaseModel):
+    """One CSV line that could not be imported and why."""
+
+    line: int
+    message: str
+
+
+class CubImportSummary(BaseModel):
+    """Result of a curated CSV import."""
+
+    created: int = 0
+    updated: int = 0
+    unchanged: int = 0
+    skipped: list[CubImportSkipped] = Field(default_factory=list)
+    attribution: str = ""
+
+
+class CubRateListResponse(BaseModel):
+    """A filtered page of CUB rows."""
+
+    items: list[CubRateResponse] = Field(default_factory=list)
+    total: int = 0
+
+
+class CubCatalogResponse(BaseModel):
+    """What the stored rows can be filtered by."""
+
+    months: list[str] = Field(default_factory=list)
+    standards: list[str] = Field(default_factory=list)
+    ufs: list[str] = Field(default_factory=list)
+    regimes: list[str] = Field(default_factory=list)
+
+
+class CubCompareResponse(BaseModel):
+    """Quick parametric estimate (area × CUB) with range and breakdown."""
+
+    uf: str
+    project_standard: str
+    tax_regime: str
+    reference_month: str
+    cub_sqm: Decimal18_2
+    area_sqm: Decimal18_2
+    estimated_total: Decimal18_2
+    adjustment_pct: Decimal18_2
+    range_min: Decimal18_2
+    range_max: Decimal18_2
+    material_total: Decimal18_2
+    labor_total: Decimal18_2
+    administrative_total: Decimal18_2
+    equipment_total: Decimal18_2
+    source_name: str
+    attribution: str
+    exclusions: str

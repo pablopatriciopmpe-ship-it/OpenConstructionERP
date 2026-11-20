@@ -34,11 +34,16 @@ async def on_startup() -> None:
 
     try:
         from app.database import async_session_factory
-        from app.modules.price_index.seed import seed_price_index_demo, seed_resource_index_samples
+        from app.modules.price_index.seed import (
+            seed_cub_demo,
+            seed_price_index_demo,
+            seed_resource_index_samples,
+        )
 
         async with async_session_factory() as session:
             await seed_price_index_demo(session)
             await seed_resource_index_samples(session)
+            await seed_cub_demo(session)
             await session.commit()
     except Exception:  # noqa: BLE001 - startup hook must not raise
         logger.warning("Price index demo seed failed at startup", exc_info=True)

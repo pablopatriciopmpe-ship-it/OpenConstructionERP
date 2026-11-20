@@ -6009,6 +6009,7 @@ export function BOQEditorPage() {
           currencyCode={currencyCode}
           grossFloorArea={grossFloorArea}
           locale={locale}
+          project={project}
         />
       )}
 

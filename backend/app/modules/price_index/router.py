@@ -21,7 +21,7 @@ from __future__ import annotations
 
 import uuid
 
-from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile, status
+from fastapi import APIRouter, Depends, File, Form, HTTPException, Query, UploadFile, status
 
 from app.dependencies import CurrentUserId, RequirePermission, SessionDep, verify_project_access
 from app.modules.price_index.models import CostIndexSeries
@@ -41,6 +41,13 @@ from app.modules.price_index.schemas import (
     LocationFactorCreate,
     LocationFactorResponse,
     LocationFactorUpdate,
+    CubCatalogResponse,
+    CubCompareResponse,
+    CubImportSummary,
+    CubRateCreate,
+    CubRateListResponse,
+    CubRateResponse,
+    CubRateUpdate,
 )
 from app.modules.price_index.service import (
     AmbiguousSeriesError,
@@ -458,3 +465,248 @@ async def escalate_preview(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=str(exc),
         ) from exc
+
+
+# ── CUB (Custo Unitário Básico de Construção) ────────────────────────────────
+#
+# Curated reference data, never scraped. Static routes are declared before
+# ``/cub/{cub_id}/`` so FastAPI does not read "latest" or "months" as an id.
+
+from app.modules.price_index.cub import (  # noqa: E402
+    MAX_BYTES,
+    CubConflictError,
+    CubImportError,
+    CubNotFoundError,
+    compare_cub,
+    create_cub_rate,
+    cub_catalog,
+    delete_cub_rate,
+    get_cub_rate,
+    import_cub_rows,
+    latest_cub_rate,
+    list_cub_months,
+    list_cub_rates,
+    parse_cub_csv,
+    set_cub_verified,
+    update_cub_rate,
+)
+
+
+@router.get("/cub/", response_model=CubRateListResponse)
+async def list_cub(
+    session: SessionDep,
+    _user_id: CurrentUserId,
+    uf: str | None = Query(default=None, min_length=2, max_length=2),
+    month: str | None = Query(default=None, pattern=r"^\d{4}-(0[1-9]|1[0-2])$"),
+    standard: str | None = Query(default=None, max_length=16),
+    regime: str | None = Query(default=None, max_length=24),
+    limit: int = Query(default=200, ge=1, le=1000),
+    offset: int = Query(default=0, ge=0),
+) -> CubRateListResponse:
+    """List stored CUB values, newest competence first."""
+    rows, total = await list_cub_rates(
+        session,
+        uf=uf,
+        month=month,
+        standard=standard,
+        regime=regime,
+        limit=limit,
+        offset=offset,
+    )
+    return CubRateListResponse(
+        items=[CubRateResponse.model_validate(row) for row in rows],
+        total=total,
+    )
+
+
+@router.get("/cub/catalog/", response_model=CubCatalogResponse)
+async def get_cub_catalog(session: SessionDep, _user_id: CurrentUserId) -> CubCatalogResponse:
+    """Distinct months, standards, UFs and regimes currently stored."""
+    return CubCatalogResponse(**await cub_catalog(session))
+
+
+@router.get("/cub/months/")
+async def get_cub_months(
+    session: SessionDep,
+    _user_id: CurrentUserId,
+    uf: str | None = Query(default=None, min_length=2, max_length=2),
+) -> list[str]:
+    """Competences with at least one stored row, newest first."""
+    return await list_cub_months(session, uf=uf)
+
+
+@router.get("/cub/latest/", response_model=CubRateResponse)
+async def get_latest_cub(
+    session: SessionDep,
+    _user_id: CurrentUserId,
+    uf: str = Query(..., min_length=2, max_length=2),
+    standard: str = Query(..., max_length=16),
+    regime: str = Query(default="nao_desonerado", max_length=24),
+) -> CubRateResponse:
+    """The newest stored competence for one UF / standard / regime."""
+    row = await latest_cub_rate(session, uf=uf, standard=standard, regime=regime)
+    if row is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No CUB row for that selection")
+    return CubRateResponse.model_validate(row)
+
+
+@router.get("/cub/compare/", response_model=CubCompareResponse)
+async def get_cub_compare(
+    session: SessionDep,
+    _user_id: CurrentUserId,
+    area: Decimal = Query(..., gt=0, description="Gross floor area in m2"),
+    uf: str = Query(..., min_length=2, max_length=2),
+    standard: str = Query(default="R8-N", max_length=16),
+    regime: str = Query(default="nao_desonerado", max_length=24),
+    month: str | None = Query(default=None, pattern=r"^\d{4}-(0[1-9]|1[0-2])$"),
+    margin: Decimal = Query(
+        default=Decimal("10.0"),
+        ge=0,
+        le=100,
+        description="Adjustment margin in percent (e.g. 10.0 for +/-10%)",
+    ),
+) -> CubCompareResponse:
+    """Quick parametric estimate (area * CUB/m2) with range and breakdown."""
+    res = await compare_cub(
+        session,
+        area=area,
+        uf=uf,
+        standard=standard,
+        regime=regime,
+        month=month,
+        adjustment_pct=margin,
+    )
+    if res is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="No CUB row found for that selection",
+        )
+    return res
+
+
+@router.post(
+    "/cub/import/",
+    response_model=CubImportSummary,
+    dependencies=[_MANAGE],
+)
+async def import_cub(
+    session: SessionDep,
+    _user_id: CurrentUserId,
+    file: UploadFile = File(..., description="Curated CSV filled from the official bulletin"),
+    verify: bool = Form(default=False),
+) -> CubImportSummary:
+    """Import a curated CUB CSV. Nothing is downloaded from a publisher."""
+    content = await file.read(MAX_BYTES + 1)
+    if len(content) > MAX_BYTES:
+        raise HTTPException(
+            status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
+            detail={"problem": "too_large", "message": "The CSV exceeds 2 MB"},
+        )
+    try:
+        parsed = parse_cub_csv(content)
+    except CubImportError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            detail={"problem": exc.problem, "message": str(exc)},
+        ) from exc
+    summary = await import_cub_rows(
+        session,
+        parsed.rows,
+        imported_by=str(_user_id),
+        verify=verify,
+    )
+    summary.skipped = parsed.skipped
+    await session.commit()
+    return summary
+
+
+@router.post(
+    "/cub/",
+    response_model=CubRateResponse,
+    status_code=status.HTTP_201_CREATED,
+    dependencies=[_MANAGE],
+)
+async def create_cub(
+    data: CubRateCreate,
+    session: SessionDep,
+    _user_id: CurrentUserId,
+) -> CubRateResponse:
+    """Add one CUB value by hand."""
+    try:
+        row = await create_cub_rate(session, data, imported_by=str(_user_id))
+    except CubConflictError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail={"problem": exc.problem, "message": str(exc)},
+        ) from exc
+    await session.commit()
+    return CubRateResponse.model_validate(row)
+
+
+@router.put(
+    "/cub/{cub_id}/",
+    response_model=CubRateResponse,
+    dependencies=[_MANAGE],
+)
+async def replace_cub(
+    cub_id: uuid.UUID,
+    data: CubRateUpdate,
+    session: SessionDep,
+    _user_id: CurrentUserId,
+) -> CubRateResponse:
+    """Replace a CUB value by hand; the row drops back to unverified."""
+    try:
+        row = await update_cub_rate(session, cub_id, data, imported_by=str(_user_id))
+    except CubNotFoundError as exc:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)) from exc
+    await session.commit()
+    return CubRateResponse.model_validate(row)
+
+
+@router.post(
+    "/cub/{cub_id}/verify/",
+    response_model=CubRateResponse,
+    dependencies=[_MANAGE],
+)
+async def verify_cub(
+    cub_id: uuid.UUID,
+    session: SessionDep,
+    _user_id: CurrentUserId,
+    verified: bool = Form(default=True),
+) -> CubRateResponse:
+    """Mark a row as checked against the official bulletin."""
+    try:
+        row = await set_cub_verified(session, cub_id, verified)
+    except CubNotFoundError as exc:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)) from exc
+    await session.commit()
+    return CubRateResponse.model_validate(row)
+
+
+@router.delete(
+    "/cub/{cub_id}/",
+    status_code=status.HTTP_204_NO_CONTENT,
+    dependencies=[_MANAGE],
+)
+async def remove_cub(
+    cub_id: uuid.UUID,
+    session: SessionDep,
+    _user_id: CurrentUserId,
+) -> None:
+    """Delete a CUB value."""
+    if not await delete_cub_rate(session, cub_id):
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="CUB row not found")
+    await session.commit()
+
+
+@router.get("/cub/{cub_id}/", response_model=CubRateResponse)
+async def get_cub(
+    cub_id: uuid.UUID,
+    session: SessionDep,
+    _user_id: CurrentUserId,
+) -> CubRateResponse:
+    """One CUB row by id."""
+    row = await get_cub_rate(session, cub_id)
+    if row is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="CUB row not found")
+    return CubRateResponse.model_validate(row)

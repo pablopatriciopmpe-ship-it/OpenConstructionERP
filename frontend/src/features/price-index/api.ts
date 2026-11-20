@@ -10,7 +10,7 @@
  * slash.
  */
 
-import { apiGet, apiPost, apiPatch, apiDelete, fetchWithAuth, triggerDownload } from '@/shared/lib/api';
+import { apiGet, apiPost, apiPatch, apiPut, apiDelete, fetchWithAuth, triggerDownload } from '@/shared/lib/api';
 
 const BASE = '/v1/price-index';
 
@@ -475,4 +475,193 @@ export async function importStatsSaP0151(file: File): Promise<P0151ImportResult>
     throw new Error(typeof detail === 'string' ? detail : (detail?.message ?? res.statusText));
   }
   return body as P0151ImportResult;
+}
+
+/* -- CUB (Custo Unitário Básico de Construção) ---------------------------- */
+
+export interface CubRate {
+  id: string;
+  /** ISO year-month, e.g. "2026-10". */
+  reference_month: string;
+  uf: string;
+  regional_code: string;
+  sinduscon_code: string;
+  sinduscon_name: string;
+  project_standard: string;
+  tax_regime: 'desonerado' | 'nao_desonerado' | string;
+  material: string;
+  labor: string;
+  administrative: string;
+  equipment: string;
+  /** Published R$/m². Decimal string, like every money field on this API. */
+  total_sqm: string;
+  currency: string;
+  source_name: string;
+  source_url: string;
+  published_at: string | null;
+  notes: string;
+  verified: boolean;
+  /** Mandatory credit line built by the backend from the stored source. */
+  attribution: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CubRateListResponse {
+  items: CubRate[];
+  total: number;
+}
+
+export interface CubCatalog {
+  months: string[];
+  standards: string[];
+  ufs: string[];
+  regimes: string[];
+}
+
+export interface CubImportSkipped {
+  line: number;
+  message: string;
+}
+
+export interface CubImportSummary {
+  created: number;
+  updated: number;
+  unchanged: number;
+  skipped: CubImportSkipped[];
+  attribution: string;
+}
+
+export interface CubRatePayload {
+  reference_month: string;
+  uf: string;
+  regional_code?: string;
+  sinduscon_code?: string;
+  sinduscon_name?: string;
+  project_standard: string;
+  tax_regime: 'desonerado' | 'nao_desonerado';
+  material: string;
+  labor: string;
+  administrative: string;
+  equipment: string;
+  total_sqm: string;
+  currency?: string;
+  source_name?: string;
+  source_url?: string;
+  published_at?: string | null;
+  notes?: string;
+}
+
+export interface CubFilter {
+  uf?: string;
+  month?: string;
+  standard?: string;
+  regime?: string;
+  limit?: number;
+  offset?: number;
+}
+
+function cubQuery(params: Record<string, string | number | undefined>): string {
+  const search = new URLSearchParams();
+  for (const [key, value] of Object.entries(params)) {
+    if (value !== undefined && value !== '') search.set(key, String(value));
+  }
+  const text = search.toString();
+  return text ? `?${text}` : '';
+}
+
+export async function listCubRates(filter: CubFilter = {}): Promise<CubRateListResponse> {
+  return apiGet<CubRateListResponse>(`${BASE}/cub/${cubQuery(filter)}`);
+}
+
+export async function getCubCatalog(): Promise<CubCatalog> {
+  return apiGet<CubCatalog>(`${BASE}/cub/catalog/`);
+}
+
+export async function getLatestCub(
+  uf: string,
+  standard: string,
+  regime: string,
+): Promise<CubRate> {
+  return apiGet<CubRate>(`${BASE}/cub/latest/${cubQuery({ uf, standard, regime })}`);
+}
+
+export interface CubCompareParams {
+  area: number | string;
+  uf: string;
+  standard?: string;
+  regime?: string;
+  month?: string;
+  margin?: number | string;
+}
+
+export interface CubCompareResult {
+  uf: string;
+  project_standard: string;
+  tax_regime: string;
+  reference_month: string;
+  cub_sqm: string;
+  area_sqm: string;
+  estimated_total: string;
+  adjustment_pct: string;
+  range_min: string;
+  range_max: string;
+  material_total: string;
+  labor_total: string;
+  administrative_total: string;
+  equipment_total: string;
+  source_name: string;
+  attribution: string;
+  exclusions: string;
+}
+
+export async function compareCub(params: CubCompareParams): Promise<CubCompareResult> {
+  return apiGet<CubCompareResult>(
+    `${BASE}/cub/compare/${cubQuery(params as Record<string, string | number | undefined>)}`,
+  );
+}
+
+export async function createCubRate(data: CubRatePayload): Promise<CubRate> {
+  return apiPost<CubRate>(`${BASE}/cub/`, data);
+}
+
+export async function replaceCubRate(id: string, data: CubRatePayload): Promise<CubRate> {
+  return apiPut<CubRate>(`${BASE}/cub/${id}/`, data);
+}
+
+export async function verifyCubRate(id: string, verified = true): Promise<CubRate> {
+  const form = new FormData();
+  form.append('verified', String(verified));
+  const res = await fetchWithAuth(`/api${BASE}/cub/${id}/verify/`, {
+    method: 'POST',
+    headers: { Accept: 'application/json' },
+    body: form,
+  });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    const detail = (body as { detail?: { message?: string } | string }).detail;
+    throw new Error(typeof detail === 'string' ? detail : (detail?.message ?? res.statusText));
+  }
+  return body as CubRate;
+}
+
+export async function deleteCubRate(id: string): Promise<void> {
+  return apiDelete(`${BASE}/cub/${id}/`);
+}
+
+export async function importCubCsv(file: File, verify = false): Promise<CubImportSummary> {
+  const form = new FormData();
+  form.append('file', file);
+  form.append('verify', String(verify));
+  const res = await fetchWithAuth(`/api${BASE}/cub/import/`, {
+    method: 'POST',
+    headers: { Accept: 'application/json' },
+    body: form,
+  });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    const detail = (body as { detail?: { message?: string } | string }).detail;
+    throw new Error(typeof detail === 'string' ? detail : (detail?.message ?? res.statusText));
+  }
+  return body as CubImportSummary;
 }

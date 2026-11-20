@@ -69,6 +69,7 @@ import {
   type EscalatePreviewResponse,
 } from './api';
 import { InccPanel } from './InccPanel';
+import { CubPanel } from './CubPanel';
 
 const QK = {
   series: ['price-index', 'series'] as const,
@@ -96,6 +97,7 @@ export function PriceIndexPage() {
         }
       />
       <InccPanel />
+      <CubPanel />
       <PriceIndexContent />
     </div>
   );

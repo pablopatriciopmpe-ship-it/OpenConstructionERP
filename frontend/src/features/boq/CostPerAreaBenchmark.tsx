@@ -17,12 +17,13 @@
  * means without leaving the page.
  */
 
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
-import { Ruler } from 'lucide-react';
+import { Landmark, Ruler } from 'lucide-react';
 import { InfoHint } from '@/shared/ui';
 import { fetchCostBenchmark } from '@/features/costs/api';
+import { getLatestCub } from '@/features/price-index/api';
 import { fmtWithCurrency } from './boqHelpers';
 import { fmtFixed } from '@/shared/lib/formatters';
 
@@ -34,6 +35,25 @@ interface CostPerAreaBenchmarkProps {
   /** Gross floor area in m2 (from the BOQ $GFA variable). Null hides the strip. */
   grossFloorArea: number | null;
   locale: string;
+  project?: {
+    name?: string;
+    address?: { state?: string | null } | null;
+    region?: string | null;
+  } | null;
+}
+
+function deriveUf(project?: { name?: string; address?: { state?: string | null } | null } | null): string {
+  if (!project) return 'SP';
+  const state = project.address?.state?.trim().toUpperCase();
+  if (state && state.length === 2) return state;
+  if (state?.includes('SÃO PAULO') || state?.includes('SAO PAULO')) return 'SP';
+  if (state?.includes('RIO DE JANEIRO')) return 'RJ';
+  if (state?.includes('MINAS GERAIS')) return 'MG';
+  const name = project.name?.toUpperCase() ?? '';
+  if (name.includes('SÃO PAULO') || name.includes('SAO PAULO') || name.includes(' - SP')) return 'SP';
+  if (name.includes('RIO DE JANEIRO') || name.includes(' - RJ')) return 'RJ';
+  if (name.includes('MINAS GERAIS') || name.includes('BELO HORIZONTE') || name.includes(' - MG')) return 'MG';
+  return 'SP';
 }
 
 export function CostPerAreaBenchmark({
@@ -41,6 +61,7 @@ export function CostPerAreaBenchmark({
   currencyCode,
   grossFloorArea,
   locale,
+  project,
 }: CostPerAreaBenchmarkProps) {
   const { t } = useTranslation();
 
@@ -55,6 +76,26 @@ export function CostPerAreaBenchmark({
     enabled: hasArea,
     staleTime: 5 * 60 * 1000,
   });
+
+  const isBrazil =
+    currencyCode === 'BRL' ||
+    locale?.startsWith('pt') ||
+    project?.region === 'BR' ||
+    project?.region === 'Brazil';
+
+  const cubUf = useMemo(() => deriveUf(project), [project]);
+  const [cubStandard] = useState('R8-N');
+
+  const { data: cubData } = useQuery({
+    queryKey: ['price-index', 'cub', 'latest', cubUf, cubStandard, 'nao_desonerado'],
+    queryFn: () => getLatestCub(cubUf, cubStandard, 'nao_desonerado'),
+    enabled: hasArea && isBrazil,
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const cubSqm = cubData ? Number(cubData.total_sqm) : null;
+  const cubDelta =
+    cubSqm && cubSqm > 0 ? ((costPerM2 - cubSqm) / cubSqm) * 100 : null;
 
   const areaFmt = useMemo(
     () => new Intl.NumberFormat(locale || undefined, { maximumFractionDigits: 0 }),
@@ -127,6 +168,59 @@ export function CostPerAreaBenchmark({
                 </span>
               )}
             </p>
+          </div>
+        )}
+
+        {/* ── CUB Benchmark Comparison ──────────────────────────────── */}
+        {cubData && cubSqm !== null && (
+          <div
+            className="min-w-0 border-l border-border-light pl-4"
+            data-testid="boq-cub-benchmark-chip"
+          >
+            <div className="flex items-center gap-1.5">
+              <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded text-oe-blue">
+                <Landmark size={12} strokeWidth={2} />
+              </span>
+              <p className="text-2xs uppercase tracking-wide text-content-tertiary">
+                {t('boq.cub_reference_label', {
+                  defaultValue: 'CUB {{uf}} · {{std}}',
+                  uf: cubData.uf,
+                  std: cubData.project_standard,
+                })}
+              </p>
+              <span className="text-2xs text-content-tertiary">
+                ({cubData.reference_month})
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <p className="text-sm font-semibold text-content-primary tabular-nums">
+                {fmtWithCurrency(cubSqm, locale || 'pt-BR', 'BRL')}
+                <span className="ml-1 text-2xs font-normal text-content-tertiary">/m²</span>
+              </p>
+              {cubDelta !== null && (
+                <span
+                  className={`inline-flex items-center rounded-full px-2 py-0.5 text-2xs font-semibold tabular-nums ${
+                    Math.abs(cubDelta) <= 5
+                      ? 'bg-semantic-success/15 text-semantic-success'
+                      : cubDelta > 5
+                        ? 'bg-semantic-warning/15 text-semantic-warning'
+                        : 'bg-oe-blue/15 text-oe-blue'
+                  }`}
+                  title={`Diferença de ${cubDelta >= 0 ? '+' : ''}${cubDelta.toFixed(1)}% em relação ao CUB ${cubData.uf}`}
+                >
+                  Δ {cubDelta >= 0 ? `+${cubDelta.toFixed(1)}%` : `${cubDelta.toFixed(1)}%`}{' '}
+                  {cubDelta >= 0
+                    ? t('boq.cub_above', { defaultValue: 'acima' })
+                    : t('boq.cub_below', { defaultValue: 'abaixo' })}
+                </span>
+              )}
+              <InfoHint
+                text={`${cubData.attribution}\n\n${t('boq.cub_disclaimer', {
+                  defaultValue:
+                    'O CUB não inclui fundações, elevadores, instalações especiais, projetos e BDI. Comparação direta com o custo direto de execução.',
+                })}`}
+              />
+            </div>
           </div>
         )}
 
