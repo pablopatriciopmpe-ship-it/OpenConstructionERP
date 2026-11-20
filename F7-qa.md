@@ -62,6 +62,10 @@ membership de equipe ao tenant.
 
 ## Publicação
 
-Branches de publicação solicitadas: `release/v0.1` e `preview/release`.
-O push de `preview/release` dispara `.github/workflows/preview-build.yml`;
-o run e o resultado do build devem ser acrescentados após o Actions concluir.
+Branches publicadas: `release/v0.1` em `17f3ad97` e `preview/release` no mesmo
+HEAD. O push foi aceito pelo fork, mas o GitHub Actions exibiu: “Workflows are
+not currently being run on this fork due to the scale of GitHub Actions usage”.
+Não existe run ID nem resultado de build para `preview/release`; a compilação
+fica bloqueada no provedor, não no código. Desbloqueio: um mantenedor deve
+reabilitar GitHub Actions/uso de Actions neste fork e então reenviar o push ou
+executar manualmente `Preview build (frontend)` em `preview/release`.
