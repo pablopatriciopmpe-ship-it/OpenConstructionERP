@@ -7,15 +7,9 @@
 
 name: Terraform (STACKIT)
 
+# Evolux: gatilhos automáticos (push/pull_request/schedule/release) desligados neste fork para não
+# estourar o uso de Actions; este workflow só roda sob demanda (workflow_dispatch).
 on:
-  push:
-    paths:
-      - "deploy/terraform/stackit/**"
-      - ".github/workflows/terraform-stackit.yml"
-  pull_request:
-    paths:
-      - "deploy/terraform/stackit/**"
-      - ".github/workflows/terraform-stackit.yml"
   workflow_dispatch:
 
 permissions:

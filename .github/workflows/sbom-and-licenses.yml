@@ -8,6 +8,8 @@ name: SBOM and License Inventory
 # and none of them carry a licence inventory. Release Signing died the same way
 # on the same day. It is now called from there, after the installers are
 # attached and before they are checksummed.
+# Evolux: gatilhos automáticos (push/pull_request/schedule/release) desligados neste fork para não
+# estourar o uso de Actions; este workflow só roda sob demanda (workflow_dispatch).
 on:
   workflow_call:
     inputs:

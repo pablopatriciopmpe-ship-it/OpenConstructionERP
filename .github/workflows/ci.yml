@@ -1,9 +1,8 @@
 name: CI
 
+# Evolux: gatilhos automáticos (push/pull_request/schedule/release) desligados neste fork para não
+# estourar o uso de Actions; este workflow só roda sob demanda (workflow_dispatch).
 on:
-  push:
-    branches: [main]
-  pull_request:
   workflow_call:
   # A release candidate is assembled on a branch and gated here before any of it
   # lands on main, so the full matrix can be asked for by hand against that branch.

@@ -18,6 +18,8 @@ name: Stability (load, fresh install, long session)
 # It is manual only. Nothing here runs on push, so nothing here can starve or be
 # cancelled by a later push the way the CI lane on main is.
 
+# Evolux: gatilhos automáticos (push/pull_request/schedule/release) desligados neste fork para não
+# estourar o uso de Actions; este workflow só roda sob demanda (workflow_dispatch).
 on:
   workflow_dispatch:
     inputs:

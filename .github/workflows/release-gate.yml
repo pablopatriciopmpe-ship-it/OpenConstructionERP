@@ -20,13 +20,9 @@
 
 name: Release gate
 
+# Evolux: gatilhos automáticos (push/pull_request/schedule/release) desligados neste fork para não
+# estourar o uso de Actions; este workflow só roda sob demanda (workflow_dispatch).
 on:
-  # GitHub only offers workflow_dispatch for a file that exists on the default
-  # branch, so until this file reaches main the only way to run it is a push to
-  # a branch named for it. It never runs on ordinary pushes.
-  push:
-    branches:
-      - 'wip/release-gate-*'
   workflow_dispatch:
     inputs:
       previous_version:

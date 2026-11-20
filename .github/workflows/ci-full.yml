@@ -87,9 +87,9 @@ name: CI Full Suite
 # arrival teaches everyone to ignore it, and then removing it is the only
 # honest option left.
 
+# Evolux: gatilhos automáticos (push/pull_request/schedule/release) desligados neste fork para não
+# estourar o uso de Actions; este workflow só roda sob demanda (workflow_dispatch).
 on:
-  schedule:
-    - cron: "30 2 * * *"
   workflow_dispatch:
 
 permissions:
