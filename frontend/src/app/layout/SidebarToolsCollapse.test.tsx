@@ -44,7 +44,7 @@ describe('SidebarToolsCollapse', () => {
       </SidebarToolsCollapse>,
     );
     const btn = screen.getByTestId('sidebar-tools-toggle');
-    expect(btn.textContent).toBe('System');
+    expect(btn.textContent).toBe('Sistema');
     expect(btn.querySelectorAll('svg').length).toBe(2);
     expect(btn.getAttribute('aria-controls')).toBe(
       screen.getByTestId('sidebar-tools-region').getAttribute('id'),

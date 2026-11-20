@@ -6,7 +6,6 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { apiGet, apiPost, type Page } from '@/shared/lib/api';
 import { fetchProjectList } from '@/shared/lib/projectList';
-import { publicAsset } from '@/shared/lib/publicAsset';
 import { useToastStore } from '@/stores/useToastStore';
 import { useProjectContextStore } from '@/stores/useProjectContextStore';
 import { useAuthStore } from '@/stores/useAuthStore';
@@ -36,7 +35,6 @@ import {
   FileText,
   Calendar,
   Upload,
-  ExternalLink,
   AlertTriangle,
   TrendingUp,
   Users,
@@ -48,8 +46,7 @@ import {
   ChevronUp,
   MapPin,
 } from 'lucide-react';
-import { Card, CardHeader, CardContent, Button, Badge, Skeleton, ActivityFeed as CrossModuleActivityFeed, EmptyState, ModuleHelpButton, ModuleGuideButton, PartnerLogoBadge } from '@/shared/ui';
-import { dashboardGuide } from './dashboardGuide';
+import { Card, CardHeader, CardContent, Button, Badge, Skeleton, ActivityFeed as CrossModuleActivityFeed, EmptyState, PartnerLogoBadge } from '@/shared/ui';
 import { pricedPositions, type PositionCounts } from './pricedPositions';
 import { MultiCurrencyTotal } from '@/shared/ui/MultiCurrencyTotal';
 import { WhatsNewCard } from '@/shared/ui/WhatsNewCard';
@@ -2810,61 +2807,11 @@ function DashboardPageInner() {
               ? t('dashboard.layout.done', { defaultValue: 'Done' })
               : t('dashboard.layout.customize', { defaultValue: 'Customize' })}
           </Button>
-          {/* Per-module Tour CTA - launches the Dashboard guided tour. */}
-          <ModuleHelpButton tourId="dashboard" />
-          {/* "How it works" guide - concept walkthrough; CTA starts a new estimate. */}
-          <ModuleGuideButton
-            content={dashboardGuide}
-            onCta={() => {
-              const firstProject = projects?.[0];
-              if (firstProject) {
-                navigate(`/projects/${firstProject.id}/boq/new`);
-              } else {
-                navigate('/projects/new');
-              }
-            }}
-          />
         </div>
       </div>
 
       {/* ─── 2. Hero · row B - thin meta-strip ───────────────────────── */}
       <div className="flex items-center flex-wrap gap-x-4 gap-y-2 animate-stagger-in" style={{ animationDelay: '140ms' }}>
-        {/* DDC attribution - slim inline link with tiny logo */}
-        <a
-          href="https://datadrivenconstruction.io/?utm_source=erp"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="group/ddc inline-flex items-center gap-1.5 text-2xs text-content-tertiary hover:text-content-secondary transition-colors"
-        >
-          <img
-            src={publicAsset('/brand/ddc-logo.webp')}
-            alt="DataDrivenConstruction"
-            className="h-3.5 w-auto opacity-60 group-hover/ddc:opacity-100 transition-opacity"
-          />
-          <span className="hidden sm:inline">
-            {t('dashboard.developed_by_short', { defaultValue: 'by DataDrivenConstruction' })}
-          </span>
-        </a>
-
-        <span aria-hidden className="h-3 w-px bg-border-light" />
-
-        {/* Open-source pill - slimmer (was a heavy gradient card) */}
-        <a
-          href="https://github.com/datadrivenconstruction/OpenConstructionERP"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="group/oss inline-flex items-center gap-2 text-xs font-medium text-content-secondary hover:text-content-primary transition-colors"
-        >
-          <span className="relative flex h-2 w-2 shrink-0">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-semantic-success opacity-75" />
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-semantic-success" />
-          </span>
-          <span>{t('dashboard.open_source_badge', { defaultValue: 'Open-source construction ERP' })}</span>
-          <ExternalLink size={12} className="text-content-quaternary group-hover/oss:text-oe-blue transition-colors" />
-        </a>
-
-        <span aria-hidden className="h-3 w-px bg-border-light" />
-
         {/* System status pills */}
         <SystemStatusSummary
           projects={projects}

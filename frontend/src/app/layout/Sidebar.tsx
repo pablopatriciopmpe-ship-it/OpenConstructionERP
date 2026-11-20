@@ -66,6 +66,7 @@ import { useGlobalSearchStore } from '@/stores/useGlobalSearchStore';
 import { getModuleNavItems, navItemModuleId } from '@/modules/_registry';
 import { isProductNavRoute } from '@/modules/productManifest';
 import { APP_VERSION } from '@/shared/lib/version';
+import { BRAND } from '@/brand';
 import { useSidebarBadges } from '@/shared/hooks/useSidebarBadges';
 import { useHiddenModules } from '@/shared/hooks/useHiddenModules';
 import { useFooterPrefs } from '@/shared/lib/footerPrefs';
@@ -2266,10 +2267,10 @@ export function Sidebar({ onClose }: { onClose?: () => void }) {
           </div>
         ))}
         <div className="flex items-center justify-center gap-1.5 min-w-0 pb-2 pt-1">
-          <span className="text-2xs text-content-tertiary">v{APP_VERSION}</span>
+          <span className="text-2xs text-content-tertiary">{BRAND.name}</span>
           <span className="text-2xs text-content-quaternary/40">·</span>
           <a href="/api/source" target="_blank" rel="noopener noreferrer" className="text-2xs text-content-tertiary hover:text-content-secondary transition-colors">
-            AGPL-3.0
+            {BRAND.sourceLabel}
           </a>
         </div>
         </SidebarToolsCollapse>

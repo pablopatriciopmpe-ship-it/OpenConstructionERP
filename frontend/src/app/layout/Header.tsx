@@ -638,12 +638,12 @@ export function Header({ title, onMenuClick }: HeaderProps) {
             report doesn't have to scan past the marketing CTAs. */}
         {/* Only while the Learn card is hidden from the menu: its way back,
             at every width. */}
-        <LearnTopBarButton />
+        {false && <LearnTopBarButton />}
         {/* Background services: what the platform keeps loaded, at every
             width, because it is the way back to a feature that stopped. */}
         <ProcessesButton />
         <NotificationBell />
-        {!bar.news && <HeaderNewsButton />}
+        {false && !bar.news && <HeaderNewsButton />}
         {/* Building a module is something you do from wherever you noticed the
             platform was missing one, so it lives here rather than in the
             sidebar. Renders nothing for anyone who may not install one.
@@ -651,11 +651,11 @@ export function Header({ title, onMenuClick }: HeaderProps) {
         {/* Shown from 2xl only: at 125% and 150% text size a 1280-1440px bar
             had no room for these three next to the project picker, and the
             right cluster ran off screen. */}
-        {!bar.moduleBuilder && <div className="hidden 2xl:block"><ModuleBuilderButton /></div>}
-        {!bar.supportUs && <div className="hidden 2xl:block"><SupportUsButton /></div>}
-        {!bar.subscribe && <div className="hidden 2xl:block"><SubscribeButton /></div>}
-        {!bar.bugReport && <BugReportMenu />}
-        <HelpMenu />
+        {false && !bar.moduleBuilder && <div className="hidden 2xl:block"><ModuleBuilderButton /></div>}
+        {false && !bar.supportUs && <div className="hidden 2xl:block"><SupportUsButton /></div>}
+        {false && !bar.subscribe && <div className="hidden 2xl:block"><SubscribeButton /></div>}
+        {false && !bar.bugReport && <BugReportMenu />}
+        {false && <HelpMenu />}
 
         {/* Hairline divider between Zone 3 and Zone 4. */}
         <div className="hidden sm:block h-4 w-px bg-border-light/70" aria-hidden />
