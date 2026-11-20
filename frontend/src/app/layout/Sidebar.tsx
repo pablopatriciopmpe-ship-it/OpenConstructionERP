@@ -774,7 +774,7 @@ export function Sidebar({ onClose }: { onClose?: () => void }) {
     const stored = readCollapsedState();
     const initial: Record<string, boolean> = {};
     for (const group of navGroups) {
-      initial[group.id] = stored[group.id] ?? !group.defaultOpen;
+      initial[group.id] = group.id.startsWith("area_") ? true : (stored[group.id] ?? !group.defaultOpen);
     }
     return initial;
   });
@@ -2252,7 +2252,7 @@ export function Sidebar({ onClose }: { onClose?: () => void }) {
               </div>
             )}
             <div className="flex items-center justify-center gap-1.5 min-w-0">
-              <span className="text-2xs text-content-tertiary">v{APP_VERSION}</span>
+              <span className="text-2xs text-content-tertiary">Evolux Obras</span>
               <span className="text-2xs text-content-quaternary/40">·</span>
               <a
                 href="/api/source"
@@ -2260,16 +2260,16 @@ export function Sidebar({ onClose }: { onClose?: () => void }) {
                 rel="noopener noreferrer"
                 className="text-2xs text-content-tertiary hover:text-content-secondary transition-colors"
               >
-                AGPL-3.0
+                Código-fonte (AGPL)
               </a>
             </div>
           </div>
         ))}
         <div className="flex items-center justify-center gap-1.5 min-w-0 pb-2 pt-1">
-          <span className="text-2xs text-content-tertiary">v{APP_VERSION}</span>
+          <span className="text-2xs text-content-tertiary">Evolux Obras</span>
           <span className="text-2xs text-content-quaternary/40">·</span>
           <a href="/api/source" target="_blank" rel="noopener noreferrer" className="text-2xs text-content-tertiary hover:text-content-secondary transition-colors">
-            AGPL-3.0
+            Código-fonte (AGPL)
           </a>
         </div>
         </SidebarToolsCollapse>

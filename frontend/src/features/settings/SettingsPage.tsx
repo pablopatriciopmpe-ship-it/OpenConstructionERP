@@ -26,7 +26,6 @@ import { WorkspaceBrandCard } from './WorkspaceBrandCard';
 import { WorkPrefsCard } from './WorkPrefsCard';
 import { MenuAppearanceCard } from './MenuAppearanceCard';
 import { MenuSizeCard } from './MenuSizeCard';
-import { SidebarFooterCard } from './SidebarFooterCard';
 import { TopBarCard } from './TopBarCard';
 import { FloatingButtonsCard } from './FloatingButtonsCard';
 import { LearningTipsCard } from './LearningTipsCard';
@@ -1079,7 +1078,7 @@ function ThemeScheduleSetting() {
   );
 }
 
-function InterfaceModeCard() {
+function _InterfaceModeCard() {
   const { t } = useTranslation();
   const mode = useViewModeStore((s) => s.mode);
   const setMode = useViewModeStore((s) => s.setMode);
@@ -1631,7 +1630,7 @@ export function SettingsPage() {
     },
   });
 
-  const pwValid = pwForm.current.length >= 8 && pwForm.new_.length >= 8 && pwForm.new_ === pwForm.confirm;
+  const pwValid = Boolean(pwForm.current) && pwForm.new_.length >= 8 && /[A-Za-z]/ .test(pwForm.new_) && /[0-9]/.test(pwForm.new_) && pwForm.new_ === pwForm.confirm;
 
   // ── Tab state with URL sync ──────────────────────────────────────────
   const [searchParams, setSearchParams] = useSearchParams();
@@ -1664,6 +1663,7 @@ export function SettingsPage() {
     () =>
       TABS.filter(
         (tab) =>
+          !["einvoice", "converters", "developer", "modules", "market", "packages"].includes(tab.id) &&
           (tab.id !== 'audit' || canViewAudit) &&
           (tab.id !== 'einvoice' || canEditEInvoice) &&
           (tab.id !== 'identity' || userRole === 'admin'),
@@ -1839,16 +1839,7 @@ export function SettingsPage() {
             })}
           </nav>
 
-          {/* About link */}
-          <div className="hidden lg:block mt-4 px-3 text-center">
-            <Link
-              to="/about"
-              className="inline-flex items-center gap-1 text-xs text-content-tertiary hover:text-oe-blue transition-colors"
-            >
-              {t('settings.about_link', { defaultValue: 'About OpenConstructionERP' })}
-              <ChevronRight size={12} />
-            </Link>
-          </div>
+
         </aside>
 
         {/* ── Tab content ──────────────────────────────────────────── */}
@@ -1894,7 +1885,7 @@ export function SettingsPage() {
               {/* Short cards stack on the left so the tall Style card has a partner column. */}
               <div className="flex min-w-0 flex-col gap-5">
                 <AppearanceCard />
-                <InterfaceModeCard />
+
               </div>
               <WorkModesCard onApplied={() => setModeKey((k) => k + 1)} />
               <AppearanceStyleCard key={`style-${modeKey}`} />
@@ -1904,7 +1895,7 @@ export function SettingsPage() {
               <WorkPrefsCard />
               <TableOptionsCard key={`tables-${modeKey}`} />
               <TopBarCard />
-              <SidebarFooterCard />
+
               <FloatingButtonsCard />
               <LearningTipsCard />
               <NotificationChannelsCard />
@@ -2441,16 +2432,7 @@ export function SettingsPage() {
           )}
           </div>{/* End cards grid */}
 
-          {/* About link — mobile only (desktop has it in sidebar) */}
-          <div className="lg:hidden mt-8 text-center">
-            <Link
-              to="/about"
-              className="inline-flex items-center gap-1 text-sm text-content-tertiary hover:text-oe-blue transition-colors"
-            >
-              {t('settings.about_link', { defaultValue: 'About OpenConstructionERP' })}
-              <ChevronRight size={12} />
-            </Link>
-          </div>
+
         </div>
       </div>
     </div>

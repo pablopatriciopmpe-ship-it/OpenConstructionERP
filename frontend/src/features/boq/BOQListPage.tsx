@@ -725,7 +725,6 @@ export function BOQListPage() {
   // The GAEB Exchange module keeps no sidebar entry of its own, so the way in
   // for someone who has not opened a BOQ yet - the estimator who just received
   // an X83 and has nothing to open - is here (Issue #439).
-  const isGaebExchangeEnabled = useModuleStore((s) => s.isModuleEnabled('gaeb-exchange'));
   // Regional Exchange is the same shape of surface for the other twenty cost
   // standards, and it kept no sidebar entry either (#217 - twenty country rows
   // would swamp the menu). Until this link existed, none of its twenty routes
@@ -982,25 +981,7 @@ export function BOQListPage() {
         more={t('boq.intro_more', { defaultValue: '' }) ? <IntroRichText text={t('boq.intro_more')} /> : undefined}
         links={[
           { label: t('nav.validation', { defaultValue: 'Validation' }), onClick: () => navigate('/validation') },
-          { label: t('nav.finance', { defaultValue: 'Finance' }), onClick: () => navigate('/finance') },
-          { label: t('nav.costs', { defaultValue: 'Cost Database' }), onClick: () => navigate('/costs') },
-          {
-            label: t('nav.cost_explorer', { defaultValue: 'Cost Explorer' }),
-            onClick: () => navigate('/cost-explorer'),
-          },
-          ...(isGaebExchangeEnabled
-            ? [
-                {
-                  label: t('nav.gaeb_exchange', { defaultValue: 'GAEB Exchange' }),
-                  onClick: () =>
-                    navigate(
-                      activeProjectId
-                        ? `/gaeb-exchange?project_id=${encodeURIComponent(activeProjectId)}&tab=import`
-                        : '/gaeb-exchange?tab=import',
-                    ),
-                },
-              ]
-            : []),
+
           // No project_id on this one: the hub picks a country before there is
           // a screen to scope, and each country route reads the project from
           // the same context anyway.
@@ -1014,10 +995,7 @@ export function BOQListPage() {
             : []),
         ]}
       >
-        {t('boq.intro_body', {
-          defaultValue:
-            'List the work items, quantities and unit rates for a project and watch them roll up to a live total. Rates come from the cost database and quantities from BIM or PDF takeoff, and the finished estimate feeds validation, the budget and tender packages.',
-        })}
+        Liste serviços, quantidades e preços unitários para acompanhar o custo da obra.
       </DismissibleInfo>
 
       {/* Projects the register left out because they were archived or

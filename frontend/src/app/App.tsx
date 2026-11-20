@@ -26,7 +26,7 @@ import { rulesTabFromParams } from '@/features/bim/quantityRuleLinks';
 import { NlRuleBuilderPanel } from '@/features/compliance';
 import { useModuleRouteElements } from '@/modules/ModuleRoutes';
 import { DatabaseSetupPage } from '@/features/setup';
-import { BrandLockup, SkeletonTable, ShortcutsDialog, CommandPalette, ToastContainer, GlobalTitleTooltip, DemoReadOnlyDialog, BackgroundInstallBanner, ErrorBoundary, NotFoundPage, ProductTour, OfflineBanner, DesktopPortBanner, PWAInstallPrompt } from '@/shared/ui';
+import { BrandLockup, SkeletonTable, ShortcutsDialog, CommandPalette, ToastContainer, GlobalTitleTooltip, DemoReadOnlyDialog, BackgroundInstallBanner, ErrorBoundary, NotFoundPage, OfflineBanner, DesktopPortBanner, PWAInstallPrompt } from '@/shared/ui';
 import { TableEnhancerHost } from '@/shared/ui/TableEnhancerHost';
 import { ChecksPanel } from '@/shared/ui/ChecksPanel';
 import { AdminOnly } from '@/shared/auth/AdminOnly';
@@ -1335,7 +1335,7 @@ export default function App() {
           `OnboardingTour` component still ships for per-feature
           custom tours (e.g. Pipelines page), but is no longer mounted
           globally. */}
-      {isAuthenticated && <ProductTour />}
+
       <Routes>
         {/* Public share-link landing page — no auth required, no app shell */}
         <Route path="/share/:token" element={<SharePage />} />

@@ -89,7 +89,7 @@ const initial = readStored();
 let currentUser: string | null = null;
 
 export const useViewModeStore = create<ViewModeState>((set, get) => ({
-  mode: initial ?? 'simple',
+  mode: initial ?? 'advanced',
   isAdvanced: initial === 'advanced',
   chosen: initial !== null,
 

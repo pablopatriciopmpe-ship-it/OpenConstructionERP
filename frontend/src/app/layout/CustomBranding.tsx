@@ -129,7 +129,7 @@ export function CustomBranding({ iconified }: CustomBrandingProps) {
         target="_blank"
         rel="noopener noreferrer"
         className="hover:opacity-80 transition-opacity"
-        title="OpenConstructionERP"
+        title="Evolux Obras"
       >
         <Logo size="md" className="!h-[24px] !w-[24px]" />
       </a>
@@ -210,7 +210,7 @@ export function CustomBranding({ iconified }: CustomBrandingProps) {
               target="_blank"
               rel="noopener noreferrer"
               className="ms-2 flex w-fit items-center py-2 hover:opacity-80 transition-opacity"
-              title="OpenConstructionERP"
+              title="Evolux Obras"
             >
               {/* 24 px mark + one-word name; ms-2 puts the mark on the nav icon column. */}
               <BrandLockup size="nav" />
