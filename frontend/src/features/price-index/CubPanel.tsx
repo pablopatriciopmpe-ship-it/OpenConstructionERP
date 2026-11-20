@@ -1025,7 +1025,11 @@ export function CubPanel() {
                         </td>
                         <td className="text-2xs tabular-nums">{row.published_at ?? '—'}</td>
                         <td className="text-center">
-                          {row.verified ? (
+                          {isExample ? (
+                            <Badge variant="neutral" size="sm" title="Valores de exemplo não são objeto de conferência oficial">
+                              {t('price_index.cub_example_unverified', { defaultValue: 'Exemplo, não conferido' })}
+                            </Badge>
+                          ) : row.verified ? (
                             <Badge variant="success" size="sm">
                               <BadgeCheck size={11} className="mr-0.5" aria-hidden />
                               {t('price_index.cub_verified', { defaultValue: 'Checked' })}
@@ -1047,20 +1051,22 @@ export function CubPanel() {
                             >
                               <Pencil size={13} />
                             </button>
-                            <button
-                              type="button"
-                              className="rounded p-1 text-content-tertiary hover:bg-surface-secondary hover:text-content-primary"
-                              title={
-                                row.verified
-                                  ? t('price_index.cub_unverify', { defaultValue: 'Back to draft' })
-                                  : t('price_index.cub_mark_verified', { defaultValue: 'Mark as checked' })
-                              }
-                              onClick={() =>
-                                verifyMutation.mutate({ id: row.id, verified: !row.verified })
-                              }
-                            >
-                              <BadgeCheck size={13} />
-                            </button>
+                            {!isExample && (
+                              <button
+                                type="button"
+                                className="rounded p-1 text-content-tertiary hover:bg-surface-secondary hover:text-content-primary"
+                                title={
+                                  row.verified
+                                    ? t('price_index.cub_unverify', { defaultValue: 'Back to draft' })
+                                    : t('price_index.cub_mark_verified', { defaultValue: 'Mark as checked' })
+                                }
+                                onClick={() =>
+                                  verifyMutation.mutate({ id: row.id, verified: !row.verified })
+                                }
+                              >
+                                <BadgeCheck size={13} />
+                              </button>
+                            )}
                             <button
                               type="button"
                               className="rounded p-1 text-content-tertiary hover:bg-semantic-error-bg hover:text-semantic-error"

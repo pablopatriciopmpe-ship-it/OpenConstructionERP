@@ -35728,6 +35728,7 @@ const resource = {
     "price_index.cub_unverified": "Rascunho",
     "price_index.cub_unverify": "Voltar para rascunho",
     "price_index.cub_verified": "Conferido",
+    "price_index.cub_example_unverified": "Exemplo, não conferido",
     "price_index.cub_verify_failed": "Não foi possível atualizar a conferência",
     "price_index.cub_verify_on_import": "Marcar como conferido",
     "price_index.cub_quick_estimate": "Estimativa rápida",

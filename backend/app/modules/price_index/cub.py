@@ -269,6 +269,8 @@ async def import_cub_rows(
     """
     summary = CubImportSummary()
     for row in rows:
+        is_example = bool(row.notes and ("EXEMPLO" in row.notes.upper() or "DEMO" in row.notes.upper()))
+        row_verify = False if is_example else verify
         stmt = select(CubRate).where(
             CubRate.reference_month == row.reference_month,
             CubRate.uf == row.uf,
@@ -299,20 +301,23 @@ async def import_cub_rows(
                     published_at=row.published_at,
                     imported_by=imported_by,
                     source_hash=digest,
-                    verified=verify,
+                    verified=row_verify,
                     notes=row.notes,
                 )
             )
             summary.created += 1
             continue
         if existing.source_hash == digest:
-            if verify and not existing.verified:
+            if row_verify and not existing.verified:
                 existing.verified = True
+                summary.updated += 1
+            elif not row_verify and existing.verified and is_example:
+                existing.verified = False
                 summary.updated += 1
             else:
                 summary.unchanged += 1
             continue
-        _apply(existing, row, imported_by=imported_by, digest=digest, verify=verify)
+        _apply(existing, row, imported_by=imported_by, digest=digest, verify=row_verify)
         summary.updated += 1
 
     await session.flush()
@@ -489,6 +494,8 @@ async def set_cub_verified(session: AsyncSession, cub_id: Any, verified: bool) -
     row = await session.get(CubRate, cub_id)
     if row is None:
         raise CubNotFoundError("not_found", "CUB row not found")
+    if verified and row.notes and ("EXEMPLO" in row.notes.upper() or "DEMO" in row.notes.upper()):
+        raise CubValidationError("example_unverified", "Valores marcados como exemplo não podem ser marcados como conferidos.")
     row.verified = verified
     await session.flush()
     return row

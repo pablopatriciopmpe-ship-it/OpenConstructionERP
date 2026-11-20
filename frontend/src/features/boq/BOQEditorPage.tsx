@@ -6022,7 +6022,7 @@ export function BOQEditorPage() {
           />
         </div>
       )}
-      {boqId && <BdiPanel boqId={boqId} readOnly={Boolean(boq?.is_locked)} />}
+      {boqId && <BdiPanel boqId={boqId} directCost={directCost} readOnly={Boolean(boq?.is_locked)} />}
 
       {/* ── Cost per m2 benchmark strip ──────────────────────────────────
           Self-hides when the BOQ has no $GFA variable to divide by. */}

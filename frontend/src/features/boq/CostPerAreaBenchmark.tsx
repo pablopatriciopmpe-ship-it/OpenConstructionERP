@@ -272,18 +272,21 @@ export function CostPerAreaBenchmark({
                     : t('boq.cub_below', { defaultValue: 'abaixo' })}
                 </span>
               )}
-              <InfoHint
-                text={`${cubData.attribution}\n\n${t('boq.cub_disclaimer', {
-                  defaultValue:
-                    'O CUB não inclui fundações, elevadores, instalações especiais, projetos e BDI. Comparação direta com o custo direto de execução da obra.',
-                })}`}
-              />
             </div>
           </div>
         )}
 
         <div className="ml-auto">
-          <InfoHint text={helpText} />
+          <InfoHint
+            text={
+              cubData
+                ? `${helpText}\n\n${cubData.attribution}\n\n${t('boq.cub_disclaimer', {
+                    defaultValue:
+                      'O CUB não inclui fundações, elevadores, instalações especiais, projetos e BDI. Comparação direta com o custo direto de execução da obra.',
+                  })}`
+                : helpText
+            }
+          />
         </div>
       </div>
 

@@ -33807,6 +33807,7 @@ const resource = {
     "price_index.cub_unverified": "Draft",
     "price_index.cub_unverify": "Back to draft",
     "price_index.cub_verified": "Checked",
+    "price_index.cub_example_unverified": "Example, unverified",
     "price_index.cub_verify_failed": "Could not update the check",
     "price_index.cub_verify_on_import": "Mark as checked",
     "price_index.cub_quick_estimate": "Quick estimate",
