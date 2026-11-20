@@ -4879,7 +4879,9 @@ async def import_sinapi_file(
             bundle = await asyncio.to_thread(parse_sinapi, path, uf, regime)
         except SinapiFormatError as exc:
             raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_CONTENT, detail=str(exc)) from exc
-    return await import_sinapi(session, bundle)
+    report = await import_sinapi(session, bundle)
+    _invalidate_cost_cache()  # regioes/contagens novas aparecem sem esperar o TTL
+    return report
 
 
 @router.post(

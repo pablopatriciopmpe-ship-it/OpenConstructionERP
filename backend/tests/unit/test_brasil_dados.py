@@ -222,6 +222,58 @@ async def test_import_is_idempotent_and_keeps_regimes_apart(session, tmp_path: P
     assert str(item.price_as_of) == "2026-10-01"
 
 
+@pytest.mark.asyncio
+async def test_sinapi_system_catalogue_is_readable_by_a_plain_user_but_private_ones_are_not(session, tmp_path: Path):
+    """Regressao: o SINAPI ficava em catalogo sem dono e so admin o enxergava."""
+    import uuid
+
+    from app.core import cost_scope
+    from app.modules.costs.models import CostCatalog
+
+    f = tmp_path / "s.xlsx"
+    _make_xlsx(f, {})
+    region = region_for("SP", "desonerado")
+    await import_sinapi(session, parse_sinapi(f, "SP", "desonerado"))  # catalogo de sistema (sem created_by)
+
+    owner, stranger = uuid.uuid4(), uuid.uuid4()  # nenhum dos dois e admin
+    with cost_scope.system_scope():
+        private = CostCatalog(name="Meu catalogo", currency="BRL", source="manual", created_by=owner)
+        session.add(private)
+        await session.flush()
+        session.add(CostItem(code="P1", description="privado", unit="un", rate="1", currency="BRL", source="manual",
+                             region="PRIVADO", catalog_id=private.id))
+        await session.flush()
+
+    async def codes(user, reg):
+        with cost_scope.caller_scope(user):
+            return sorted((await session.execute(select(CostItem.code).where(CostItem.region == reg))).scalars().all())
+
+    # usuario comum, anonimo e leitura compartilhada (cache de regioes) veem o SINAPI de sistema
+    assert await codes(stranger, region) == ["1001", "1002", "9001"]
+    assert await codes(None, region) == ["1001", "1002", "9001"]
+    with cost_scope.shared_scope():
+        assert len((await session.execute(select(CostItem.code).where(CostItem.region == region))).scalars().all()) == 3
+    # catalogo privado de outro usuario continua invisivel; so o dono o ve
+    assert await codes(stranger, "PRIVADO") == []
+    assert await codes(None, "PRIVADO") == []
+    assert await codes(owner, "PRIVADO") == ["P1"]
+    # vetor / leitura por id e permissao de catalogo seguem a mesma regra
+    sinapi_cat = (await session.execute(select(CostCatalog).where(CostCatalog.name.like("SINAPI SP%")))).scalars().first()
+    with cost_scope.caller_scope(stranger):
+        assert await cost_scope.may_read_catalogue(session, sinapi_cat.id) is True
+        assert await cost_scope.may_read_catalogue(session, private.id) is False
+    with cost_scope.caller_scope(stranger):
+        kept = await cost_scope.visible_hits(session, [{"id": str(i)} for i in await _all_ids(session)])
+    assert len(kept) == 3  # 4 ids pedidos: o do catalogo privado alheio cai
+
+
+async def _all_ids(session):
+    from app.core import cost_scope
+
+    with cost_scope.system_scope():
+        return (await session.execute(select(CostItem.id).where(CostItem.region.in_([region_for("SP", "desonerado"), "PRIVADO"])))).scalars().all()
+
+
 # ── Padroes Brasil em projetos novos ───────────────────────────────────────
 def test_product_defaults_fill_only_what_the_caller_left_blank(monkeypatch):
     from app.core.product_defaults import with_product_defaults
