@@ -106,12 +106,12 @@ export type { DigitSystem, SecondaryCalendar };
 const RETIRED_KEYS = ['vatRate', 'defaultRegion', 'defaultStandard'] as const;
 
 const DEFAULTS: Preferences = {
-  currency: 'EUR',
+  currency: 'BRL',
   measurementSystem: 'metric',
   dateFormat: 'auto',
-  numberLocale: 'auto',
+  numberLocale: 'pt-BR',
   digitSystem: 'auto',
-  defaultCurrency: 'EUR',
+  defaultCurrency: 'BRL',
   secondaryCalendar: 'none',
   secondaryCalendarChosen: false,
 };

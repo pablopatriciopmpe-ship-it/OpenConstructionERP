@@ -3156,7 +3156,7 @@ function AdminGrid({
   // while hidden and shows an Eye / EyeOff indicator — the bottom-cluster
   // twin of the per-row editor above.
   return (
-    <ul className="grid grid-cols-2 gap-1">
+    <ul className="oe-admin-grid grid grid-cols-2 gap-1">
       {items.map((item) => {
         const Icon = item.icon;
         const isActive = activeRoute === item.to;

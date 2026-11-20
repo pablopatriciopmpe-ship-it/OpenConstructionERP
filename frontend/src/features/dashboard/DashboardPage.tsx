@@ -955,7 +955,7 @@ function KpiRibbon({
   // Fallback currency for the rare case the rollup has no per-currency
   // buckets yet (no priced BOQs) \u2014 only used to label a zero figure.
   const fallbackCurrency =
-    currencyTotals[0]?.currency ?? projects?.[0]?.currency ?? 'EUR';
+    currencyTotals[0]?.currency ?? projects?.[0]?.currency ?? 'BRL';
 
   // Compact currency formatter using Intl.NumberFormat \u2014 handles every ISO
   // 4217 code natively (BRL, INR, JPY, etc.). For values \u2265 1M we use the
@@ -2959,11 +2959,9 @@ function ProjectsList({ projects }: { projects?: ProjectSummary[] }) {
                 <FolderPlus size={16} strokeWidth={1.75} />
                 {t('dashboard.empty.cta_create', { defaultValue: 'Create project' })}
               </Button>
-              <p className="text-xs text-content-tertiary">
-                {t('dashboard.empty.demo_hint', {
-                  defaultValue: 'Or load a demo project from Settings → Demo data',
-                })}
-              </p>
+              <Button variant="secondary" onClick={() => navigate('/projects/new')}>
+                Criar uma obra para importar DWG, IFC ou PDF
+              </Button>
             </div>
           }
         />

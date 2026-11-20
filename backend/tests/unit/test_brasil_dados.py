@@ -233,10 +233,10 @@ def test_product_defaults_fill_only_what_the_caller_left_blank(monkeypatch):
     assert out.classification_standard == "sinapi"
 
 
-def test_product_defaults_are_off_without_the_switch(monkeypatch):
+def test_product_defaults_are_brasil_without_the_switch(monkeypatch):
     from app.core.product_defaults import with_product_defaults
     from app.modules.projects.schemas import ProjectCreate
 
     monkeypatch.delenv("OE_PRODUCT_DEFAULTS", raising=False)
     out = with_product_defaults(ProjectCreate(name="Obra"))
-    assert (out.currency, out.locale, out.country_code) == ("", "en", None)
+    assert (out.currency, out.locale, out.country_code) == ("BRL", "pt-BR", "BR")

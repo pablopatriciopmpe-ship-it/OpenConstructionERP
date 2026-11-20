@@ -1,8 +1,8 @@
 """Padroes de mercado do produto para projetos NOVOS (edicao Brasil).
 
-Ligado por ``OE_PRODUCT_DEFAULTS=brasil`` (variavel de ambiente do deploy). Sem a
-variavel nada muda: o comportamento "usuario escolhe, sem vies" das demais edicoes
-continua. Valores informados explicitamente pelo chamador sempre vencem.
+Brasil é o padrão desta edição. ``OE_PRODUCT_DEFAULTS=brasil`` também pode ser
+declarado no deploy; outro valor desliga o perfil. Valores informados
+explicitamente pelo chamador sempre vencem.
 """
 
 from __future__ import annotations
@@ -20,7 +20,7 @@ BRASIL: dict[str, Any] = {
 
 
 def active_profile() -> dict[str, Any] | None:
-    return BRASIL if os.environ.get("OE_PRODUCT_DEFAULTS", "").strip().lower() == "brasil" else None
+    return BRASIL if os.environ.get("OE_PRODUCT_DEFAULTS", "brasil").strip().lower() == "brasil" else None
 
 
 def with_product_defaults(data: Any) -> Any:

@@ -1630,7 +1630,7 @@ export function SettingsPage() {
     },
   });
 
-  const pwValid = Boolean(pwForm.current) && pwForm.new_.length >= 8 && /[A-Za-z]/ .test(pwForm.new_) && /[0-9]/.test(pwForm.new_) && pwForm.new_ === pwForm.confirm;
+  const pwValid = Boolean(pwForm.current) && pwForm.new_.length >= 8 && /\p{L}/u.test(pwForm.new_) && /[0-9]/.test(pwForm.new_) && pwForm.new_ !== pwForm.current && pwForm.new_ === pwForm.confirm;
 
   // ── Tab state with URL sync ──────────────────────────────────────────
   const [searchParams, setSearchParams] = useSearchParams();

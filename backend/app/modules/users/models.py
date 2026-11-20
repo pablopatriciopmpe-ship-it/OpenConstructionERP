@@ -98,7 +98,7 @@ class User(Base):
     # server_default stays "EUR" on purpose - changing it would alter the
     # table DDL and require an alembic migration for zero functional gain
     # (ORM inserts always supply the Python-side default).
-    currency_code: Mapped[str] = mapped_column(String(10), nullable=False, default="", server_default="EUR")
+    currency_code: Mapped[str] = mapped_column(String(10), nullable=False, default="BRL", server_default="EUR")
     # Second calendar printed beside the Gregorian date: NULL = never chose (the
     # market decides), "none" = chose no second calendar, "hijri" = Umm al-Qura.
     secondary_calendar: Mapped[str | None] = mapped_column(String(10), nullable=True)

@@ -454,7 +454,7 @@ export function projectCoreForm(
       region: '',
       classification_standard: '',
       currency: defaultCurrency,
-      locale: 'en',
+      locale: 'pt-BR',
     };
   }
   return {

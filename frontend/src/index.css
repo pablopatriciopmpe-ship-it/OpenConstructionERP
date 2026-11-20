@@ -284,6 +284,9 @@ h1, h2, h3, h4, h5, h6 {
 .oe-sidebar .oe-nav-row,
 .oe-sidebar .oe-nav-group > div > button[aria-expanded] { color: #ffffff; }
 .oe-sidebar a[aria-current='page'], [data-sidebar] a[aria-current='page'] { background: var(--brand-selected); color: var(--brand-nav); }
+.oe-sidebar .oe-admin-grid button { background: #ffffff; color: #163953; }
+.oe-sidebar .oe-admin-grid button:hover,
+.oe-sidebar .oe-admin-grid button[aria-current='page'] { background: #DCEEE9; color: #163953; }
 
 /* ── Dark Mode ─────────────────────────────────────────────────────────── */
 
