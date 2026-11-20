@@ -14,7 +14,7 @@
 // Adding a screen: add it to exactly one group. Every consumer picks it up.
 
 import type { LucideIcon } from 'lucide-react';
-import { isProductNavModule } from '@/modules/productManifest';
+import { isProductNavModule, isProductNavRoute } from '@/modules/productManifest';
 
 import {
   Bookmark,
@@ -1057,7 +1057,9 @@ export const navGroups: NavGroup[] = ALL_NAV_GROUPS
   .filter((group) => group.id !== LEARN_GROUP_ID)
   .map((group) => ({
     ...group,
-    items: group.items.filter((item) => !item.moduleKey || isProductNavModule(item.moduleKey)),
+    items: group.items.filter((item) =>
+      isProductNavRoute(item.to) && (!item.moduleKey || isProductNavModule(item.moduleKey)),
+    ),
   }))
   .filter((group) => group.items.length > 0);
 

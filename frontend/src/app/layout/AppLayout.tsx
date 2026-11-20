@@ -32,7 +32,6 @@ import { useOfflineSyncLoop } from '@/shared/lib/offline/useOfflineSync';
 import { usePartnerPackLocale } from '@/shared/hooks/usePartnerPackLocale';
 import { useBrandingStore } from '@/stores/useBrandingStore';
 import { useReviewPromptStore } from '@/stores/useReviewPromptStore';
-import { useGlobalPresenceSocket } from '@/features/global_presence';
 
 interface AppLayoutProps {
   title?: string;
@@ -49,10 +48,6 @@ export function AppLayout({ title, children }: AppLayoutProps) {
 
   const closeSidebar = useCallback(() => setSidebarOpen(false), []);
   const openSidebar = useCallback(() => setSidebarOpen(true), []);
-
-  // Global presence: one WebSocket for the whole session, sends route
-  // updates on navigation and idle/active status on tab visibility.
-  useGlobalPresenceSocket();
 
   // When a partner pack is active, present the app in the pack's language
   // (e.g. French for batimatech-ca). Forces once per activation; the deactivate

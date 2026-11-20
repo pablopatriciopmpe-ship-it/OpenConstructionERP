@@ -105,26 +105,24 @@ beforeEach(() => {
 afterEach(() => cleanup());
 
 describe('the sidebar footer', () => {
-  it('shows every button by default', () => {
+  it('shows product setup tiles without extension links', () => {
     renderSidebar();
     expect(button('Settings')).not.toBeNull();
     expect(button('Users')).not.toBeNull();
     expect(button('Edit menu')).not.toBeNull();
-    expect(button('About')).not.toBeNull();
-    expect(link('GitHub repository')).not.toBeNull();
-    expect(link('Telegram community')).not.toBeNull();
+    expect(link('GitHub repository')).toBeNull();
+    expect(link('Telegram community')).toBeNull();
     expect(screen.getByText(/^v\d/)).toBeTruthy();
   });
 
-  it('drops Edit menu and GitHub the moment they are switched off', () => {
+  it('keeps external extension links disabled', () => {
     renderSidebar();
     act(() => writeFooterPrefs({ ...DEFAULT_FOOTER_PREFS, editMenu: true, github: true }));
     expect(button('Edit menu')).toBeNull();
     expect(link('GitHub repository')).toBeNull();
-    expect(link('Telegram community')).not.toBeNull();
+    expect(link('Telegram community')).toBeNull();
     // The other tiles are untouched.
     expect(button('Settings')).not.toBeNull();
-    expect(button('About')).not.toBeNull();
   });
 
   it('drops Settings, Users and About through the per-user hidden list', () => {
@@ -153,7 +151,7 @@ describe('the sidebar footer', () => {
   it('collapses the icon-only footer too', () => {
     useSidebarCollapseStore.getState().setIconified(true);
     renderSidebar();
-    expect(link('GitHub repository')).not.toBeNull();
+    expect(link('GitHub repository')).toBeNull();
     act(() => writeFooterPrefs({ editMenu: false, github: true, community: true }));
     expect(link('GitHub repository')).toBeNull();
     expect(link('Telegram community')).toBeNull();

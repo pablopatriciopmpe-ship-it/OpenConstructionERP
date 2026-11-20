@@ -57,6 +57,14 @@ import {
   Video,
 } from 'lucide-react';
 
+const PRODUCT_DASHBOARD_WIDGET_IDS = new Set([
+  'continue_work', 'today', 'kpi', 'projects', 'portfolio',
+  'validation_portfolio', 'map', 'bim_coverage', 'next_steps',
+  'upcoming_milestones', 'rfi_turnaround',
+  'inspections_quality', 'punch_quality', 'weather_site', 'labour_cost',
+  'latest_photos',
+]);
+
 export interface DashboardWidgetMeta {
   id: string;
   /** i18n key for the widget name. */
@@ -70,7 +78,7 @@ export interface DashboardWidgetMeta {
   defaultSpan?: number;
 }
 
-export const DASHBOARD_WIDGETS: readonly DashboardWidgetMeta[] = [
+const ALL_DASHBOARD_WIDGETS: readonly DashboardWidgetMeta[] = [
   // "Start here - learn by example" cases gallery. Folded into the registry so
   // it can be hidden or narrowed like any other widget (it used to be pinned
   // full-width and could not be removed). Defaults to full width at the top.
@@ -433,6 +441,10 @@ export const DASHBOARD_WIDGETS: readonly DashboardWidgetMeta[] = [
     defaultSpan: 4,
   },
 ] as const;
+
+/** Dashboard cards are product-scoped just like sidebar routes. */
+export const DASHBOARD_WIDGETS: readonly DashboardWidgetMeta[] =
+  ALL_DASHBOARD_WIDGETS.filter((widget) => PRODUCT_DASHBOARD_WIDGET_IDS.has(widget.id));
 
 export const DASHBOARD_WIDGET_IDS: readonly string[] =
   DASHBOARD_WIDGETS.map((w) => w.id);

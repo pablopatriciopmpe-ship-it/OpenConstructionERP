@@ -28,6 +28,20 @@ export const PRODUCT_NAV_MODULE_IDS = new Set(
   [...PRODUCT_MODULE_IDS].filter((id) => !PRODUCT_INFRA_MODULE_IDS.has(id)),
 );
 
+/** Static sidebar routes shipped by the approved SaaS feature set. */
+export const PRODUCT_NAV_ROUTES = new Set([
+  '/', '/projects', '/files', '/boq', '/templates', '/costs', '/catalog',
+  '/assemblies', '/takeoff?tab=measurements', '/dwg-takeoff', '/bim',
+  '/bim/rules', '/quantities', '/match-elements', '/schedule', '/tasks',
+  '/cost-control', '/5d', '/progress', '/measurement-book', '/full-evm',
+  '/cvr', '/postcalc', '/daily-diary', '/photos', '/field-reports',
+  '/changeorders', '/variations', '/punchlist', '/inspections', '/rfi',
+  '/meetings', '/offers', '/preliminaries', '/allowances', '/price-index',
+  '/waste-factors', '/estimate-checks', '/reports', '/reporting',
+  '/drawing-compare', '/markups', '/quantities', '/resources', '/labor-rates',
+  '/validation', '/notifications', '/teams', '/users', '/settings',
+]);
+
 /** Static nav keys used by catalogue rows whose manifest id differs from its feature id. */
 const PRODUCT_NAV_ALIASES: Record<string, string> = {
   cost_control: '5d',
@@ -42,4 +56,8 @@ export function isProductModule(id: string): boolean {
 export function isProductNavModule(id: string): boolean {
   const resolved = PRODUCT_NAV_ALIASES[id] ?? id;
   return PRODUCT_NAV_MODULE_IDS.has(resolved);
+}
+
+export function isProductNavRoute(route: string): boolean {
+  return PRODUCT_NAV_ROUTES.has(route);
 }
