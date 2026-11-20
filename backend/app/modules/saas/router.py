@@ -167,16 +167,10 @@ async def subscribe(data: SubscribeRequest, session: SessionDep, user_id: Curren
     except Exception:  # noqa: BLE001
         logger.exception("gateway create_subscription failed")
         raise HTTPException(502, "Falha ao criar a assinatura no gateway") from None
-    await SqlBillingStore(session).save(
-        svc_subscription(str(tenant.id), data.plan_code, data.provider, sid)  # pending: acesso só após o webhook
-    )
+    service = BillingService(SqlBillingStore(session), providers_factory())
+    # pendente: acesso só após o webhook; reprocessa webhook que chegou antes deste registro
+    await service.register_subscription(data.provider, str(tenant.id), data.plan_code, sid, data.cycle)
     return {"provider": data.provider, "provider_subscription_id": sid, "status": "pending"}
-
-
-def svc_subscription(tenant_id: str, plan_code: str, provider: str, sid: str):
-    from app.saas_billing.store import Subscription as Sub
-
-    return Sub(tenant_id, plan_code, provider, sid, "pending")
 
 
 @router.post("/subscription/cancel")

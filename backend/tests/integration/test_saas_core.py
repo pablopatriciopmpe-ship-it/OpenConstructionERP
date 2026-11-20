@@ -400,3 +400,87 @@ async def test_planos_publicos_seguem_a_oferta_f8(client):
     assert (plans["start"]["max_users"], plans["start"]["max_projects"], plans["start"]["ai_credits_month"]) == (2, 2, 150)
     assert (plans["pro"]["max_users"], plans["pro"]["max_projects"], plans["pro"]["ai_credits_month"]) == (5, 8, 500)
     assert (plans["enterprise"]["max_users"], plans["enterprise"]["max_projects"], plans["enterprise"]["ai_credits_month"]) == (15, None, 1500)
+
+
+# ── 5. Ajustes da revisão técnica ───────────────────────────────────────────
+
+
+async def test_ciclo_anual_e_preservado_e_entra_no_mrr_anual(client, world):
+    from sqlalchemy import select
+
+    from app.database import async_session_factory
+    from app.modules.saas.models import Subscription
+
+    d = world["d"]
+    r = await client.post(
+        "/api/v1/saas/subscription",
+        json={"plan_code": "pro", "cycle": "YEARLY", "customer_id": "cus_y", "next_due_date": "2026-12-01"},
+        headers=d["headers"],
+    )
+    assert r.status_code == 201, r.text
+    sid = r.json()["provider_subscription_id"]
+    async with async_session_factory() as s:
+        sub = (await s.execute(select(Subscription).where(Subscription.provider_subscription_id == sid))).scalar_one()
+    assert sub.cycle == "YEARLY" and sub.plan_code == "pro"
+    assert (await _hook(client, _event("PAYMENT_CONFIRMED", sid, "evt_y1"))).json()["result"] == "processed"
+    async with async_session_factory() as s:
+        sub = (await s.execute(select(Subscription).where(Subscription.provider_subscription_id == sid))).scalar_one()
+    assert sub.cycle == "YEARLY", "o webhook não pode reescrever o ciclo"
+    ov = (await client.get("/api/v1/saas/master/overview", headers=world["admin"])).json()
+    assert ov["mrr_cents"] >= 35700  # Pro anual = R$ 357,00/mês
+
+
+async def test_webhook_que_chega_antes_do_registro_nao_se_perde(client, world, gateway):
+    """Corrida real: o gateway confirma o pagamento antes de a assinatura ser registrada aqui."""
+    from app.saas_billing.providers.asaas import SANDBOX_URL
+
+    sid = f"sub_race_{uuid.uuid4().hex[:6]}"
+    assert (await _hook(client, _event("PAYMENT_CONFIRMED", sid, f"evt_{sid}"))).json()["result"] == "unknown_subscription"
+    # o evento ficou guardado; ao registrar a assinatura ele é reprocessado
+    from app.database import async_session_factory
+    from app.modules.saas.billing_store import SqlBillingStore
+    from app.modules.saas.router import providers_factory
+    from app.saas_billing.service import BillingService
+
+    c = world["c"]  # cancelada no teste anterior; usa a empresa B? não: usa uma empresa nova abaixo
+    del c, SANDBOX_URL
+    r = await client.post(
+        "/api/v1/saas/master/tenants",
+        json={
+            "legal_name": "Construtora Corrida Ltda",
+            "plan_code": "start",
+            "owner_email": f"corrida-{uuid.uuid4().hex[:6]}@empresa-saas.io",
+            "owner_password": PASSWORD,
+        },
+        headers=world["admin"],
+    )
+    tid = r.json()["id"]
+    async with async_session_factory() as s:
+        svc_ = BillingService(SqlBillingStore(s), providers_factory())
+        await svc_.register_subscription("asaas", tid, "pro", sid, "MONTHLY")
+        await s.commit()
+    tenants = {t["id"]: t for t in (await client.get("/api/v1/saas/master/tenants", headers=world["admin"])).json()}
+    assert tenants[tid]["status"] == "active" and tenants[tid]["plan_code"] == "pro"
+    assert (await _hook(client, _event("PAYMENT_CONFIRMED", sid, f"evt_{sid}"))).json()["result"] == "duplicate"
+
+
+async def test_membership_de_equipe_cruzada_nao_abre_projeto_de_outra_empresa(client, world):
+    """Defesa contra membership velha/cruzada: B entra numa equipe do projeto de A direto no banco."""
+    from sqlalchemy import select
+
+    from app.database import async_session_factory
+    from app.modules.teams.models import Team, TeamMembership
+    from app.modules.users.models import User
+
+    a, b = world["a"], world["b"]
+    async with async_session_factory() as s:
+        uid_b = (await s.execute(select(User.id).where(User.email == b["email"]))).scalar_one()
+        team = Team(project_id=uuid.UUID(a["project_id"]), name="cruzada")
+        s.add(team)
+        await s.flush()
+        s.add(TeamMembership(team_id=team.id, user_id=uid_b, role="member"))
+        await s.commit()
+    assert (await client.get(f"/api/v1/projects/{a['project_id']}", headers=b["headers"])).status_code == 404
+    lb = (await client.get("/api/v1/projects/", headers=b["headers"])).json()
+    lb = lb if isinstance(lb, list) else lb.get("items", [])
+    assert a["project_id"] not in {p["id"] for p in lb}, "a listagem também respeita a empresa"

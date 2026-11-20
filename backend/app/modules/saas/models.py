@@ -82,6 +82,18 @@ class SubscriptionEvent(Base):
     kind: Mapped[str] = mapped_column(String(40), nullable=False, default="")
 
 
+class UnmatchedEvent(Base):
+    """Webhook que chegou antes de a assinatura ser registrada; reprocessado no registro."""
+
+    __tablename__ = "oe_saas_unmatched_event"
+    __table_args__ = (UniqueConstraint("provider", "event_id", name="uq_oe_saas_unmatched_provider_id"),)
+
+    provider: Mapped[str] = mapped_column(String(30), nullable=False)
+    event_id: Mapped[str] = mapped_column(String(200), nullable=False)
+    provider_subscription_id: Mapped[str] = mapped_column(String(100), nullable=False, index=True)
+    kind: Mapped[str] = mapped_column(String(40), nullable=False, default="")
+
+
 class AiUsage(Base):
     __tablename__ = "oe_saas_ai_usage"
 
