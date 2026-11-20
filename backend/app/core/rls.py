@@ -101,6 +101,24 @@ def reset_request_tenant(token: Token[Any]) -> None:
         _request_tenant.reset(token)
 
 
+@contextlib.contextmanager
+def system_scope():
+    """Run the enclosed sessions as trusted system code (RLS bypassed).
+
+    Marks the context as "not a request" again, so transactions that BEGIN
+    inside it keep the connecting role instead of downgrading to ``oe_app``.
+    Only for code that has no tenant of its own and has already authenticated
+    its caller by other means: the payment-gateway webhook (authenticated by the
+    provider's token) and the lookup that resolves a user's own membership.
+    Never wrap request handlers that touch tenant data in this.
+    """
+    token = _request_tenant.set(_UNSET)
+    try:
+        yield
+    finally:
+        reset_request_tenant(token)
+
+
 def current_request_tenant() -> str | None:
     """Return the tenant bound to this context, or None (anonymous/unbound)."""
     value = _request_tenant.get()

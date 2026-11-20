@@ -28,10 +28,13 @@ from app.modules.quote_capture.schemas import (
     QuoteUpdate,
 )
 from app.modules.quote_capture.service import QuoteCaptureService
+from app.modules.saas.guards import COST_QUOTE_CAPTURE, ai_credit_guard
 
 router = APIRouter(tags=["quote_capture"])
 _READ = Depends(RequirePermission("quote_capture.read"))
 _WRITE = Depends(RequirePermission("quote_capture.write"))
+# SaaS: 1 crédito de IA por cotação capturada (402 se a cota da empresa acabou).
+_AI_CREDIT = Depends(ai_credit_guard(COST_QUOTE_CAPTURE, "quote_capture"))
 
 
 async def _load(quote_id: uuid.UUID, session: SessionDep, user_id: str) -> tuple[QuoteCaptureService, CapturedQuote]:
@@ -78,7 +81,7 @@ async def list_quotes(
     return QuoteSummaryListResponse(items=page, total=len(rows), offset=offset, limit=limit)
 
 
-@router.post("/projects/{project_id}/quotes/upload", response_model=QuoteOut, status_code=201, dependencies=[_WRITE])
+@router.post("/projects/{project_id}/quotes/upload", response_model=QuoteOut, status_code=201, dependencies=[_WRITE, _AI_CREDIT])
 async def upload_quote(
     project_id: uuid.UUID,
     session: SessionDep,
@@ -93,7 +96,7 @@ async def upload_quote(
     return await _detail(svc, row)
 
 
-@router.post("/quotes/text", response_model=QuoteOut, status_code=201, dependencies=[_WRITE])
+@router.post("/quotes/text", response_model=QuoteOut, status_code=201, dependencies=[_WRITE, _AI_CREDIT])
 async def create_from_text(data: QuoteTextCreate, session: SessionDep, user_id: CurrentUserId) -> QuoteOut:
     await verify_project_access(data.project_id, user_id, session)
     svc = QuoteCaptureService(session)

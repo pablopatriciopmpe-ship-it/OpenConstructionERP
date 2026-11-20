@@ -105,6 +105,11 @@ class Project(Base):
         nullable=False,
         index=True,
     )
+    # SaaS tenant (empresa) that owns this project. NULL on a non-SaaS install and
+    # for projects of the platform admin. Stamped on insert by the oe_saas hook from
+    # the owner's membership - never from request input - and enforced by
+    # ``verify_project_access`` / ``accessible_project_ids``. Carries the RLS policy.
+    tenant_id: Mapped[str | None] = mapped_column(String(36), nullable=True, index=True)
 
     # ── Country code (Wave 28; migration v3136) ─────────────────────────
     # ISO 3166-1 alpha-2. Drives the CPM calendar engine and the AIA

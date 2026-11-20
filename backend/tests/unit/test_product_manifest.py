@@ -8,7 +8,7 @@ MODULES_DIR = Path(__file__).resolve().parents[2] / "app" / "modules"
 
 
 def test_counts_match_f1_map():
-    assert len(PRODUCT_MODULES) == 58  # 51 MANTER + 7 MANTER-INFRA
+    assert len(PRODUCT_MODULES) == 59  # 51 MANTER + 7 MANTER-INFRA + oe_saas (F5)
 
 
 def test_filter_keeps_order_and_drops_removed():
