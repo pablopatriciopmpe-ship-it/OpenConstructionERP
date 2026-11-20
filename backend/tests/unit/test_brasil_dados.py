@@ -222,6 +222,45 @@ async def test_import_is_idempotent_and_keeps_regimes_apart(session, tmp_path: P
     assert str(item.price_as_of) == "2026-10-01"
 
 
+@pytest.mark.asyncio
+async def test_sinapi_is_shared_so_a_plain_user_can_read_it(session, tmp_path: Path):
+    """Regressao: o SINAPI ficava em catalogo sem dono e so admin o enxergava."""
+    import uuid
+
+    from app.core import cost_scope
+    from app.modules.costs.models import CostCatalog
+
+    f = tmp_path / "s.xlsx"
+    _make_xlsx(f, {})
+    des = parse_sinapi(f, "SP", "desonerado")
+    region = region_for("SP", "desonerado")
+    await import_sinapi(session, des)
+
+    rows = (await session.execute(select(CostItem).where(CostItem.region == region))).scalars().all()
+    assert len(rows) == 3 and all(r.catalog_id is None for r in rows)
+
+    plain_user = uuid.uuid4()  # nao e admin, nao criou catalogo algum
+    with cost_scope.caller_scope(plain_user):
+        seen = (await session.execute(select(CostItem.code).where(CostItem.region == region))).scalars().all()
+    assert sorted(seen) == ["1001", "1002", "9001"]
+
+    # Dado antigo: linha presa a um catalogo sem dono. Reimportar a devolve ao compartilhado.
+    with cost_scope.system_scope():
+        cat = CostCatalog(name="SINAPI SP legado", currency="BRL", source="import")
+        session.add(cat)
+        await session.flush()
+        rows[0].catalog_id = cat.id
+        await session.flush()
+    with cost_scope.caller_scope(plain_user):
+        hidden = (await session.execute(select(CostItem.code).where(CostItem.region == region))).scalars().all()
+    assert len(hidden) == 2  # a linha em catalogo alheio sumiu para o usuario comum
+    again = await import_sinapi(session, des)
+    assert again["updated"] == 1 and again["inserted"] == 0
+    with cost_scope.caller_scope(plain_user):
+        back = (await session.execute(select(CostItem.code).where(CostItem.region == region))).scalars().all()
+    assert len(back) == 3
+
+
 # ── Padroes Brasil em projetos novos ───────────────────────────────────────
 def test_product_defaults_fill_only_what_the_caller_left_blank(monkeypatch):
     from app.core.product_defaults import with_product_defaults
