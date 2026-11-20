@@ -1,0 +1,3 @@
+source_ref=preview/curva-abc
+source_sha=721f2161d4b8c01603ccccda53158b66a8f70f9c
+backend=https://erp-teste.evolux-erp.workers.dev
