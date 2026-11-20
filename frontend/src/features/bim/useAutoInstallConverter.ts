@@ -141,6 +141,11 @@ export function useAutoInstallConverter(
   const installMutation = useMutation({
     mutationFn: (id: string) => installBIMConverter(id),
     onSuccess: (result, id) => {
+      if (result.disabled) {
+        setErrored(false);
+        _autoInstallAttempted.add(id);
+        return;
+      }
       // installBIMConverter resolves only at a terminal stage. ``installed``
       // false here means a real failure (smoke test failed) or a platform
       // that can't auto-install (Linux/macOS apt path) - in both cases the
@@ -158,6 +163,13 @@ export function useAutoInstallConverter(
       queryClient.invalidateQueries({ queryKey: ['bim-converters-version-check'] });
     },
     onError: (_err, id) => {
+      const isDis =
+        (_err as { status?: number })?.status === 403 ||
+        /converter_disabled/i.test((_err as { message?: string })?.message ?? '');
+      if (isDis) {
+        setErrored(false);
+        return;
+      }
       setErrored(true);
       // Allow a future automatic retry after a hard failure.
       _autoInstallAttempted.delete(id);
@@ -180,7 +192,7 @@ export function useAutoInstallConverter(
     // unknown install state.
     if (!data) return;
     if (!converter) return;
-    if (converter.installed) return;
+    if (converter.installed || converter.disabled || converter.health === 'disabled') return;
     // Single-flight + once-per-session guards.
     if (_autoInstallRunning.has(converterId)) return;
     if (_autoInstallAttempted.has(converterId)) return;
@@ -198,6 +210,7 @@ export function useAutoInstallConverter(
 
   const retry = (): void => {
     if (!converterId) return;
+    if (converter?.disabled || converter?.health === 'disabled') return;
     if (_autoInstallRunning.has(converterId)) return;
     setErrored(false);
     _autoInstallAttempted.add(converterId);

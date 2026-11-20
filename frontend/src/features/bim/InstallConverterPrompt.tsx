@@ -72,6 +72,10 @@ export function InstallConverterPrompt({
 
   const converter = data?.converters.find((c) => c.id === converterId);
 
+  if (!open || converter?.disabled || converter?.health === 'disabled') {
+    return null;
+  }
+
   const installMutation = useMutation({
     mutationFn: () => installBIMConverter(converterId),
     onSuccess: (result) => {

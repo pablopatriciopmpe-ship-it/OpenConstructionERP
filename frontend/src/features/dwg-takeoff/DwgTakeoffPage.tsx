@@ -84,7 +84,7 @@ import { useDwgUploadStore } from '@/stores/useDwgUploadStore';
 import { apiGet } from '@/shared/lib/api';
 import { boqApi, normalizePositions, type Position } from '@/features/boq/api';
 import { projectsApi } from '@/features/projects/api';
-import { installBIMConverter } from '@/features/bim/api';
+import { installBIMConverter, fetchBIMConverters } from '@/features/bim/api';
 import { converterPlatformMessage } from '@/features/bim/converterText';
 import { useConverterRanges } from '@/features/bim/useConverterRanges';
 import { ConverterInstallProgressBar } from '@/features/bim/ConverterInstallProgressBar';
@@ -466,6 +466,14 @@ function OfflineReadyBadge({
   const addToast = useToastStore((s) => s.addToast);
   const [showHint, setShowHint] = useState(false);
 
+  const { data: bimConverters } = useQuery({
+    queryKey: ['bim-converters'],
+    queryFn: () => fetchBIMConverters(),
+    staleTime: 60_000,
+  });
+  const dwgConverter = bimConverters?.converters.find((c) => c.converter_id === 'dwg' || c.id === 'dwg');
+  const isDwgDisabled = dwgConverter?.disabled || dwgConverter?.health === 'disabled';
+
   // One-click DDC DWG converter install. Hits the same
   // /v1/takeoff/converters/dwg/install/ endpoint the BIM page uses, then
   // invalidates `dwg-offline-readiness` so the green "Offline Ready" pill
@@ -475,6 +483,9 @@ function OfflineReadyBadge({
     onSuccess: (result) => {
       queryClient.invalidateQueries({ queryKey: ['dwg-offline-readiness'] });
       queryClient.invalidateQueries({ queryKey: ['bim-converters'] });
+      if (result.disabled) {
+        return;
+      }
       if (result.installed) {
         addToast({
           type: 'success',
@@ -509,6 +520,9 @@ function OfflineReadyBadge({
     onError: (error: unknown) => {
       const message =
         error instanceof Error ? error.message : String(error ?? 'Unknown error');
+      if (message.includes('converter_disabled') || message.includes('disabled by policy')) {
+        return;
+      }
       addToast({
         type: 'error',
         title: t('dwg_takeoff.converter_install_error_title', {
@@ -562,15 +576,21 @@ function OfflineReadyBadge({
         title={
           ready
             ? readyTooltip
-            : t('dwg_takeoff.offline_install_tooltip', {
-                defaultValue:
-                  'Install the local DWG converter to enable offline .dwg conversion. DXF files already work.',
-              })
+            : isDwgDisabled
+              ? t('dwg_takeoff.offline_disabled_tooltip', {
+                  defaultValue: 'DWG converter is disabled on this server. DXF files are supported.',
+                })
+              : t('dwg_takeoff.offline_install_tooltip', {
+                  defaultValue:
+                    'Install the local DWG converter to enable offline .dwg conversion. DXF files already work.',
+                })
         }
         aria-label={
           ready
             ? t('dwg_takeoff.offline_ready', { defaultValue: 'Offline Ready' })
-            : t('dwg_takeoff.offline_install', { defaultValue: 'Install converter' })
+            : isDwgDisabled
+              ? t('dwg_takeoff.offline_dxf_only', { defaultValue: 'DXF only' })
+              : t('dwg_takeoff.offline_install', { defaultValue: 'Install converter' })
         }
       >
         {ready ? <Wifi size={12} /> : <WifiOff size={12} />}
@@ -590,7 +610,9 @@ function OfflineReadyBadge({
         </span>
         {ready
           ? t('dwg_takeoff.offline_ready', { defaultValue: 'Offline Ready' })
-          : t('dwg_takeoff.offline_install', { defaultValue: 'Install converter' })}
+          : isDwgDisabled
+            ? t('dwg_takeoff.offline_dxf_only', { defaultValue: 'DXF only' })
+            : t('dwg_takeoff.offline_install', { defaultValue: 'Install converter' })}
       </button>
 
       {showHint && (
@@ -602,7 +624,9 @@ function OfflineReadyBadge({
             <div className="font-semibold text-content-primary">
               {ready
                 ? t('dwg_takeoff.offline_ready', { defaultValue: 'Offline Ready' })
-                : t('dwg_takeoff.offline_install', { defaultValue: 'Install converter' })}
+                : isDwgDisabled
+                  ? t('dwg_takeoff.offline_dxf_only', { defaultValue: 'DXF only' })
+                  : t('dwg_takeoff.offline_install', { defaultValue: 'Install converter' })}
             </div>
             <button
               type="button"
@@ -617,7 +641,15 @@ function OfflineReadyBadge({
           <p className="text-content-secondary leading-relaxed">
             {readiness?.message ?? readyTooltip}
           </p>
-          {converterMissing && (
+          {converterMissing && isDwgDisabled && (
+            <div className="mt-2 rounded-md bg-surface-secondary border border-border-light px-2 py-1.5 text-2xs text-content-secondary">
+              {t('dwg_takeoff.offline_disabled_hint', {
+                defaultValue:
+                  'DWG converter is disabled on this server. Please upload DXF files directly.',
+              })}
+            </div>
+          )}
+          {converterMissing && !isDwgDisabled && (
             <>
               <div className="mt-2 rounded-md bg-semantic-warning/10 border border-semantic-warning/20 px-2 py-1.5 text-2xs text-semantic-warning">
                 {t('dwg_takeoff.offline_install_hint', {
@@ -3456,18 +3488,13 @@ export function DwgTakeoffPage() {
                         <ShieldCheck size={14} className="text-semantic-success shrink-0" />
                         <span className="text-xs text-semantic-success font-medium">
                           {offlineReadiness?.local_only
-                            ? t('common.local_processing', { defaultValue: '100% Local Processing · Your files never leave your computer' })
+                            ? t('common.local_processing', { defaultValue: 'Seus arquivos são processados no servidor do Evolux Obras' })
                             : t('dwg_takeoff.processed_on_your_server', { defaultValue: 'Processed on your {{brandName}} server · never sent to third parties' })}
                         </span>
                         <span className="text-2xs text-semantic-success">|</span>
-                        <a
-                          href="https://github.com/datadrivenconstruction/cad2data-Revit-IFC-DWG-DGN-pipeline-with-conversion-validation-qto"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-2xs text-semantic-success hover:text-semantic-success hover:underline whitespace-nowrap"
-                        >
-                          {t('common.powered_by_cad2data', { defaultValue: 'Powered by {{brandName}} Converters 2.0' })}
-                        </a>
+                        <span className="text-2xs text-semantic-success whitespace-nowrap">
+                          {t('common.powered_by_cad2data', { defaultValue: 'Leitura de IFC: IfcOpenShell (LGPL-3.0)' })}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -6776,9 +6803,20 @@ function InstallDwgConverterCTA({
   const addToast = useToastStore((s) => s.addToast);
   const [unsupportedMessage, setUnsupportedMessage] = useState<string | null>(null);
 
+  const { data: bimConverters } = useQuery({
+    queryKey: ['bim-converters'],
+    queryFn: () => fetchBIMConverters(),
+    staleTime: 60_000,
+  });
+  const dwgConverter = bimConverters?.converters.find((c) => c.converter_id === 'dwg' || c.id === 'dwg');
+  const isDwgDisabled = dwgConverter?.disabled || dwgConverter?.health === 'disabled';
+
   const installMutation = useMutation({
     mutationFn: () => installBIMConverter('dwg'),
     onSuccess: (result) => {
+      if (result.disabled) {
+        return;
+      }
       if (result.installed) {
         addToast({
           type: 'success',
@@ -6803,15 +6841,23 @@ function InstallDwgConverterCTA({
       }
     },
     onError: (err: unknown) => {
+      const msg = err instanceof Error ? err.message : String(err);
+      if (msg.includes('converter_disabled') || msg.includes('disabled by policy')) {
+        return;
+      }
       addToast({
         type: 'error',
         title: t('dwg_takeoff.conv_install_failed', {
           defaultValue: 'Install failed',
         }),
-        message: err instanceof Error ? err.message : String(err),
+        message: msg,
       });
     },
   });
+
+  if (isDwgDisabled) {
+    return null;
+  }
 
   if (unsupportedMessage) {
     return (
