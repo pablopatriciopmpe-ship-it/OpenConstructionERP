@@ -281,7 +281,8 @@ h1, h2, h3, h4, h5, h6 {
   --oe-text-tertiary: #e0e9ef;
   --oe-text-quaternary: #cbdbe5;
 }
-.oe-sidebar .oe-nav-row, .oe-sidebar .oe-nav-group > button { color: #ffffff; }
+.oe-sidebar .oe-nav-row,
+.oe-sidebar .oe-nav-group > div > button[aria-expanded] { color: #ffffff; }
 .oe-sidebar a[aria-current='page'], [data-sidebar] a[aria-current='page'] { background: var(--brand-selected); color: var(--brand-nav); }
 
 /* ── Dark Mode ─────────────────────────────────────────────────────────── */
