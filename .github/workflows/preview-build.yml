@@ -56,6 +56,22 @@ jobs:
           out="$RUNNER_TEMP/publish"
           mkdir -p "$out/frontend"
           cp -r frontend/dist "$out/frontend/dist"
+          python3 - "$out/frontend/vercel.json" <<'PY'
+          import json, os, sys
+          cfg = {
+              "$schema": "https://openapi.vercel.sh/vercel.json",
+              "framework": None,
+              "installCommand": "echo prebuilt",
+              "buildCommand": "echo prebuilt",
+              "outputDirectory": "dist",
+              "routes": [
+                  {"src": "^/api/(.*)$", "dest": os.environ["BACKEND_URL"] + "/api/$1"},
+                  {"handle": "filesystem"},
+                  {"src": "^/(?!api/|assets/|cesium/|pwa/|brand/|favicon|manifest|sw\\.js|workbox-)(.*)$", "dest": "/index.html"},
+              ],
+          }
+          json.dump(cfg, open(sys.argv[1], "w"), indent=2)
+          PY
           printf 'source_ref=%s\nsource_sha=%s\nbackend=%s\n' "$SRC_REF" "$SRC_SHA" "$BACKEND_URL" > "$out/PREVIEW-INFO.txt"
           cd "$out"
           git init -q -b "dist/${SRC_REF//\//-}"
