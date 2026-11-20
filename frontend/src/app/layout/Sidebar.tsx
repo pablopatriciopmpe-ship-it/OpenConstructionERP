@@ -64,7 +64,7 @@ import { useNavPendingStore } from '@/shared/lib/navigationProgress';
 import { useRecentStore } from '@/stores/useRecentStore';
 import { useGlobalSearchStore } from '@/stores/useGlobalSearchStore';
 import { getModuleNavItems, navItemModuleId } from '@/modules/_registry';
-import { RUNTIME_MODULE_ICONS, runtimeModuleRoute, useRuntimeUiEntries } from '@/features/modules/runtimeModules';
+import { isProductNavRoute } from '@/modules/productManifest';
 import { APP_VERSION } from '@/shared/lib/version';
 import { useSidebarBadges } from '@/shared/hooks/useSidebarBadges';
 import { useHiddenModules } from '@/shared/hooks/useHiddenModules';
@@ -102,6 +102,7 @@ import { chordForRoute, chordKey, chordRoutes, gChordPref } from '@/shared/lib/g
 const MenuIconPicker = lazy(() => import('./MenuIconPicker'));
 
 const WIDE_QUERY = '(min-width: 1024px)';
+const SHOW_PRODUCT_EXTENSION_UI = false;
 
 /** True at the `lg` breakpoint and up, where the sidebar is docked. */
 function useWideScreen(): boolean {
@@ -633,7 +634,9 @@ export function Sidebar({ onClose }: { onClose?: () => void }) {
   const workspace = useCompanyWorkspace();
   const workspaceActive = workspace !== null && !isAdvanced;
   const workspaceItems = useMemo(
-    () => (workspaceActive && workspace ? resolveWorkspace(workspace) : []),
+    () => (workspaceActive && workspace
+      ? resolveWorkspace(workspace).filter((item) => isProductNavRoute(item.to))
+      : []),
     [workspaceActive, workspace],
   );
   const workspaceRoutes = useMemo(
@@ -694,7 +697,8 @@ export function Sidebar({ onClose }: { onClose?: () => void }) {
   // query key with the Modules page so a successful toggle there invalidates
   // this query and the sidebar updates immediately. Fail-open: if the fetch
   // errors or is still loading, no route is hidden.
-  const { data: runtimeUiEntries } = useRuntimeUiEntries();
+  // Runtime package entries remain available to the admin module surface, but
+  // are intentionally not queried by the customer sidebar.
   const { data: backendModules } = useQuery({
     queryKey: ['system-modules'],
     queryFn: () => apiGet<BackendModuleState[]>('/v1/modules/'),
@@ -1190,15 +1194,10 @@ export function Sidebar({ onClose }: { onClose?: () => void }) {
         advancedOnly: mi.advancedOnly,
       }));
     // Pages of ZIP-installed modules; the server lists only loaded, enabled ones.
-    const runtimeItems: NavItem[] = (runtimeUiEntries ?? [])
-      .filter((e) => canonicalGroupId(e.group) === group.id)
-      .map((e) => ({
-        labelKey: `module_packages.nav.${e.module}`,
-        defaultLabel: e.label,
-        to: runtimeModuleRoute(e.module),
-        icon: RUNTIME_MODULE_ICONS[e.icon] ?? RUNTIME_MODULE_ICONS.package!,
-      }));
-    return [...group.items, ...dynamicItems, ...runtimeItems];
+    // Runtime ZIP modules are deliberately not part of the SaaS product menu.
+    // Keep the loader and deep routes reversible, but never expose an arbitrary
+    // module package or its developer guide in the customer navigation.
+    return [...group.items, ...dynamicItems].filter((item) => isProductNavRoute(item.to));
   };
 
   // The gates every row passes whatever the mode: module-enabled, admin and
@@ -1999,7 +1998,7 @@ export function Sidebar({ onClose }: { onClose?: () => void }) {
              contributors a clearer first step. When iconified, shrinks
              to a centred icon-only square — the dashed border still
              signals "add something". */}
-        <div className={clsx('pt-2 pb-1', iconified ? 'px-0 flex justify-center' : 'px-3')}>
+        {SHOW_PRODUCT_EXTENSION_UI && <div className={clsx('pt-2 pb-1', iconified ? 'px-0 flex justify-center' : 'px-3')}>
           <NavLink
             to="/modules/developer-guide"
             onClick={onClose}
@@ -2023,7 +2022,7 @@ export function Sidebar({ onClose }: { onClose?: () => void }) {
               </span>
             )}
           </NavLink>
-        </div>
+        </div>}
         {/* Request-a-custom-module CTA — second dashed tile, purple
              accent, opens a popup instead of navigating. The popup
              routes the request to two destinations depending on the
@@ -2036,7 +2035,7 @@ export function Sidebar({ onClose }: { onClose?: () => void }) {
              on purpose: contributors who want to build a module
              themselves use the guide; users who want us to build it
              for them use this dialog. */}
-        <div className={clsx('pt-1 pb-3', iconified ? 'px-0 flex justify-center' : 'px-3')}>
+        {SHOW_PRODUCT_EXTENSION_UI && <div className={clsx('pt-1 pb-3', iconified ? 'px-0 flex justify-center' : 'px-3')}>
           <button
             type="button"
             onClick={() => {
@@ -2073,7 +2072,7 @@ export function Sidebar({ onClose }: { onClose?: () => void }) {
               </span>
             )}
           </button>
-        </div>
+        </div>}
       </nav>
 
       {/* Admin / setup surfaces — rendered as a 2-column button grid
@@ -2157,7 +2156,7 @@ export function Sidebar({ onClose }: { onClose?: () => void }) {
             The GitHub link uses Lucide's Github mark — keeps the row aligned
             with the rest of the sidebar's lucide icons and gives a clear
             visual entry point to the source repo. */}
-        {iconified ? (
+        {SHOW_PRODUCT_EXTENSION_UI && (iconified ? (
           // Icon-only footer: GitHub + Telegram stacked. The expand
           // toggle lives on the floating edge-pill, not down here, so
           // users see only one toggle entry-point — no duplicate UI.
@@ -2259,7 +2258,14 @@ export function Sidebar({ onClose }: { onClose?: () => void }) {
               </a>
             </div>
           </div>
-        )}
+        ))}
+        <div className="flex items-center justify-center gap-1.5 min-w-0 pb-2 pt-1">
+          <span className="text-2xs text-content-tertiary">v{APP_VERSION}</span>
+          <span className="text-2xs text-content-quaternary/40">·</span>
+          <a href="/api/source" target="_blank" rel="noopener noreferrer" className="text-2xs text-content-tertiary hover:text-content-secondary transition-colors">
+            AGPL-3.0
+          </a>
+        </div>
         </SidebarToolsCollapse>
       </div>
       {/* Mounted at the aside root so the dialog escapes any

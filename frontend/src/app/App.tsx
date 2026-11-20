@@ -25,7 +25,6 @@ import { rulesTabFromParams } from '@/features/bim/quantityRuleLinks';
 import { NlRuleBuilderPanel } from '@/features/compliance';
 import { useModuleRouteElements } from '@/modules/ModuleRoutes';
 import { DatabaseSetupPage } from '@/features/setup';
-import { ModuleVideosSlot } from '@/features/videos/ModuleVideosSlot';
 import { BrandLockup, SkeletonTable, ShortcutsDialog, CommandPalette, ToastContainer, GlobalTitleTooltip, DemoReadOnlyDialog, BackgroundInstallBanner, ErrorBoundary, NotFoundPage, ProductTour, OfflineBanner, DesktopPortBanner, PWAInstallPrompt } from '@/shared/ui';
 import { TableEnhancerHost } from '@/shared/ui/TableEnhancerHost';
 import { ChecksPanel } from '@/shared/ui/ChecksPanel';
@@ -49,7 +48,6 @@ import { useKeyboardShortcuts } from '@/shared/hooks/useKeyboardShortcuts';
 import { useTranslation } from 'react-i18next';
 import { ProjectRouteGate } from './ProjectRouteGate';
 import { getLanguageByCode } from './i18n';
-import { initErrorLogger } from '@/shared/lib/errorLogger';
 import { installDesktopExternalLinks } from '@/shared/lib/desktop';
 
 // Lazy-loaded heavy pages — code-split into separate chunks
@@ -796,9 +794,6 @@ const CreateAssemblyPage = lazy(() =>
 const ImportDatabasePage = lazy(() =>
   import('@/features/costs/ImportDatabasePage').then((m) => ({ default: m.ImportDatabasePage }))
 );
-const OnboardingWizard = lazy(() =>
-  import('@/features/onboarding/OnboardingWizard').then((m) => ({ default: m.OnboardingWizard }))
-);
 const LoginPageNext = lazy(() =>
   import('@/features/auth/LoginPageNext').then((m) => ({ default: m.LoginPageNext }))
 );
@@ -1034,11 +1029,6 @@ function AppShell() {
       <ErrorBoundary scope="app">
         <AppLayout title={title}>
           <Suspense fallback={<PageLoadingInline />}>
-            {/* "Videos for this step": renders nothing on a screen with no
-                videos, and a failure in it must never take the page down. */}
-            <ErrorBoundary key={`videos:${location.pathname}`} fallback={null}>
-              <ModuleVideosSlot />
-            </ErrorBoundary>
             <ErrorBoundary key={location.pathname}>
               <PageTitleContext.Provider value={setTitle}>
                 <Outlet />
@@ -1188,9 +1178,6 @@ applyComfort(readComfort());
 // Fire-and-forget — a network failure here is non-fatal; the JWT-decoded role
 // remains available as a fallback.
 useAuthStore.getState().syncRoleFromServer();
-
-// Initialize the anonymized error logger (global handlers for unhandled errors)
-initErrorLogger();
 
 // Inject DDC origin meta tags + subtle console banner. These provide
 // provenance fingerprints: if someone clones the UI and serves it
@@ -1418,10 +1405,8 @@ export default function App() {
         {/* Sign-up confirmation link (emailed, or copied by an admin from Users). */}
         <Route path="/auth/verify-email" element={<VerifyEmailPage />} />
 
-        {/* Onboarding — full-screen, no layout */}
-        <Route path="/onboarding" element={
-          <RequireAuth><Suspense fallback={<LoadingScreen />}><OnboardingWizard /></Suspense></RequireAuth>
-        } />
+        {/* Onboarding is intentionally disabled for the SaaS product. */}
+        <Route path="/onboarding" element={<Navigate to="/" replace />} />
 
         {/* App — all protected, all real pages.  Every route below shares one
             persistent <AppShell/> (sidebar + header mount once); the matched

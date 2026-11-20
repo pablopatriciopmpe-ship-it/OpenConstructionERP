@@ -43,7 +43,6 @@ import { SubscribeButton } from './SubscribeButton';
 import { ProjectJourneyButton } from './ProjectJourney';
 import { useTopBarPrefs } from '@/shared/lib/topBarPrefs';
 import { usePageHeaderSlot } from '@/shared/ui/pageHeaderSlot';
-import { PresenceAvatarStack } from '@/features/global_presence';
 import { getRouteIcon } from './routeIcons';
 import { useIconOverridesVersion } from './menuIcons';
 import { resolveStaleProject } from './staleProject';
@@ -567,7 +566,6 @@ export function Header({ title, onMenuClick }: HeaderProps) {
             opens the whole-platform journey map. First in the cluster so it
             reads as "where am I" ahead of the action buttons. */}
         {!bar.journey && <ProjectJourneyButton />}
-        <PresenceAvatarStack />
         <div className="hidden sm:block h-4 w-px bg-border-light/70" aria-hidden />
 
         {/* ── Zone 2 (Search) ──────────────────────────────────────── */}
