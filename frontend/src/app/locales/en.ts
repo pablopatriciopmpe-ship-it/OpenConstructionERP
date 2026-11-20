@@ -14310,7 +14310,7 @@ const resource = {
     "bim.landing_feat_compare_title": "Model Comparison",
     "bim.landing_feat_extract_desc": "Walls, slabs, columns, beams, MEP, with properties, areas, volumes, and classification.",
     "bim.landing_feat_extract_title": "Element Extraction",
-    "bim.landing_feat_format_desc": "IFC and RVT are read by the {{brandName}} converters. CSV or Excel for pre-converted data.",
+    "bim.landing_feat_format_desc": "IFC (IFC2x3, IFC4, IFC4.3) is read with real 3D geometry. CSV or Excel for pre-converted data. RVT: export to IFC.",
     "bim.landing_feat_format_title": "Format Agnostic",
     "bim.landing_feat_qty_desc": "Define rules to extract area, volume, and length, apply to your entire model at once.",
     "bim.landing_feat_qty_title": "Quantity Maps",
