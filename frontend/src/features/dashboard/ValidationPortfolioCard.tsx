@@ -32,6 +32,7 @@ import clsx from 'clsx';
 import { ArrowRight, ChevronDown, ChevronUp } from 'lucide-react';
 import { Card, CardContent, CardHeader, ErrorState, Skeleton } from '@/shared/ui';
 import { fmtDate } from '@/shared/lib/formatters';
+import { estimateDisplayName } from '@/shared/lib/estimateDisplayName';
 import { useProjectContextStore } from '@/stores/useProjectContextStore';
 import { getNumberLocale } from '@/stores/usePreferencesStore';
 import { ruleSetLabel } from '@/features/validation/ruleSetLabels';
@@ -166,7 +167,7 @@ function EstimateRow({ projectId, estimate }: { projectId: string; estimate: Por
         to={estimateValidationHref(projectId, estimate)}
         className="group flex items-center gap-2 rounded-md px-2 py-1.5 text-xs hover:bg-surface-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-oe-blue/40"
         aria-label={t('dashboard.validation_portfolio.open_estimate', {
-          name: estimate.boq_name,
+          name: estimateDisplayName(estimate.boq_name),
           defaultValue: 'Open the validation of {{name}}',
         })}
       >
@@ -175,7 +176,7 @@ function EstimateRow({ projectId, estimate }: { projectId: string; estimate: Por
           className={clsx('h-2 w-2 shrink-0 rounded-full', toneFor(estimate.state).dot)}
         />
         <span className="min-w-0 flex-1">
-          <span className="block truncate font-medium text-content-primary">{estimate.boq_name}</span>
+          <span className="block truncate font-medium text-content-primary">{estimateDisplayName(estimate.boq_name)}</span>
           <span className="block truncate text-content-tertiary">
             {stateLabel(estimate.state, t)} · {detail}
             {ruleSets ? ` · ${ruleSets}` : ''}

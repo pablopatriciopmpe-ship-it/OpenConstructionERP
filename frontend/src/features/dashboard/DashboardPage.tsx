@@ -49,6 +49,7 @@ import {
 import { Card, CardHeader, CardContent, Button, Badge, Skeleton, ActivityFeed as CrossModuleActivityFeed, EmptyState } from '@/shared/ui';
 import { pricedPositions, type PositionCounts } from './pricedPositions';
 import { MultiCurrencyTotal } from '@/shared/ui/MultiCurrencyTotal';
+import { estimateDisplayName } from '@/shared/lib/estimateDisplayName';
 import { DemoSeedingHint } from '@/features/processes/DemoSeedingHint';
 import { CompactProjectCard } from './components/CompactProjectCard';
 import { type ProjectPin } from './components/DashboardProjectsMap';
@@ -2433,7 +2434,7 @@ function DashboardPageInner() {
           {t('dashboard.continue_work', { defaultValue: 'Resume' })}
         </span>
         <span className="text-sm font-semibold text-content-primary truncate min-w-0">
-          {lastBoq.name}
+          {estimateDisplayName(lastBoq.name)}
         </span>
         {lastBoq.projectName && (
           <>
@@ -2783,7 +2784,7 @@ function DashboardPageInner() {
             }}
             title={
               lastBoq
-                ? t('dashboard.quick_start_resume_hint', { defaultValue: 'Continue your most recent Orçamento: {{name}}', name: lastBoq.name })
+                ? t('dashboard.quick_start_resume_hint', { defaultValue: 'Continue your most recent Orçamento: {{name}}', name: estimateDisplayName(lastBoq.name) })
                 : t('dashboard.quick_start_hint', { defaultValue: 'Jump into an Orçamento - resumes the latest or starts a new one' })
             }
           >
