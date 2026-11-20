@@ -1992,7 +1992,7 @@ export function SettingsPage() {
                         {t('settings.sign_out_title', { defaultValue: 'Sign out of all sessions' })}
                       </p>
                       <p className="text-xs text-content-secondary mt-0.5">
-                        {t('settings.sign_out_desc', { defaultValue: 'You will need to enter your credentials to access OpenConstructionERP again.' })}
+                        {t('settings.sign_out_desc', { defaultValue: 'You will need to enter your credentials to access {{brandName}} again.' })}
                       </p>
                     </div>
                     <Button
@@ -2473,7 +2473,7 @@ function ConverterStatusPanel() {
         title={t('settings.converters_title', { defaultValue: 'Release packages' })}
         subtitle={t('settings.converters_subtitle', {
           defaultValue:
-            'DDC converter release: the installed package and the latest one on GitHub.',
+            '{{brandName}} converter release: the installed package and the latest one on GitHub.',
         })}
         action={
           <button
@@ -2499,7 +2499,7 @@ function ConverterStatusPanel() {
             <p className="text-2xs text-content-tertiary">
               {t('settings.converters_source_desc', {
                 defaultValue:
-                  'Converters for Revit® (RVT), IFC and DWG, published by DataDrivenConstruction.',
+                  'Converters for Revit® (RVT), IFC and DWG, published by {{brandName}}.',
               })}
             </p>
           </div>

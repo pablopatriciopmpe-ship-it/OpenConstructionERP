@@ -1095,7 +1095,7 @@ export function QuantitiesPage() {
               </div>
               <p className="mt-0.5 text-xs text-content-quaternary">
                 {t('quantities.converters_author', {
-                  defaultValue: 'DDC Community · Open Source · Free',
+                  defaultValue: '{{brandName}} Community · Open Source · Free',
                 })}
               </p>
             </div>

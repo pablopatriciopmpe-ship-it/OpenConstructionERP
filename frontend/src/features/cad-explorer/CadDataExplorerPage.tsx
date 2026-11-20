@@ -4056,7 +4056,7 @@ export function CadDataExplorerPage() {
                         rel="noopener noreferrer"
                         className="text-2xs text-emerald-600/80 dark:text-emerald-400/70 hover:text-emerald-700 dark:hover:text-emerald-300 hover:underline whitespace-nowrap"
                       >
-                        {t('common.powered_by_cad2data', { defaultValue: 'Powered by DDC Converters 2.0' })}
+                        {t('common.powered_by_cad2data', { defaultValue: 'Powered by {{brandName}} Converters 2.0' })}
                       </a>
                     </div>
                   </div>

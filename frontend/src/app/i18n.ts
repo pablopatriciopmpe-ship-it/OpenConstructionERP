@@ -1,6 +1,7 @@
 // DDC-CWICR-OE: DataDrivenConstruction · OpenConstructionERP
 // Copyright (c) 2026 Artem Boiko / DataDrivenConstruction
 import i18n from 'i18next';
+import { BRAND } from '@/brand';
 import { initReactI18next } from 'react-i18next';
 import { useTranslation as useI18nTranslation } from 'react-i18next';
 
@@ -643,6 +644,7 @@ i18n
     nsSeparator: false,
     interpolation: {
       escapeValue: false,
+      defaultVariables: { brandName: BRAND.name },
     },
     react: {
       useSuspense: false,

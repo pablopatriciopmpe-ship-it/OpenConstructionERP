@@ -1281,7 +1281,7 @@ function ImportDialog({
                           <div className="space-y-1.5">
                             <p>{t('import.cad_converter_missing', { defaultValue: 'CAD converter not installed.' })}</p>
                             <p className="text-xs text-semantic-error">
-                              Download DDC converters from{' '}
+                              Baixe os conversores em{' '}
                               <a
                                 href="https://github.com/datadrivenconstruction/ddc-community-toolkit/releases"
                                 target="_blank"
@@ -1338,7 +1338,7 @@ function ImportDialog({
                     {t('import.cad_elements_count', { defaultValue: '{{count}} CAD elements', count: result.cad_elements })}
                   </span>
                   <span className="text-oe-blue/60">
-                    {t('import.cad_extracted', { defaultValue: 'extracted from .{{format}} file via DDC converter', format: result.cad_format })}
+                    {t('import.cad_extracted', { defaultValue: 'extracted from .{{format}} file via {{brandName}} converter', format: result.cad_format })}
                   </span>
                 </div>
               )}

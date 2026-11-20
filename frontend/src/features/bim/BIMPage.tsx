@@ -497,12 +497,12 @@ function ConverterVersionBadge({
   const source = typeof metadata.converter_source === 'string' ? metadata.converter_source : null;
   const tooltip = source
     ? t('bim.converter_version_tooltip', {
-        defaultValue: 'Processed with DDC converter v{{version}} (source: {{source}})',
+        defaultValue: 'Processed with {{brandName}} converter v{{version}} (source: {{source}})',
         version,
         source,
       })
     : t('bim.converter_version_tooltip_no_source', {
-        defaultValue: 'Processed with DDC converter v{{version}}',
+        defaultValue: 'Processed with {{brandName}} converter v{{version}}',
         version,
       });
   return (
@@ -514,7 +514,7 @@ function ConverterVersionBadge({
       <span className="inline-block w-1 h-1 rounded-full bg-semantic-success" />
       <span>
         {t('bim.converter_version_label', {
-          defaultValue: 'DDC v{{version}}',
+          defaultValue: '{{brandName}} v{{version}}',
           version,
         })}
       </span>
@@ -1442,7 +1442,7 @@ function NonReadyOverlay({ model, onUploadConverted, onDelete, onRetry, onInstal
     && (errorCode === 'ddc_not_found' || !!backendMessage)
       ? t('bim.overlay_converter_unavailable_calm', {
           defaultValue:
-            "We couldn't convert this {{format}} file. The CAD converter (DDC Converters 2.0) isn't available in this environment - it's an optional, separate install. Add it, then retry the conversion.",
+            "We couldn't convert this {{format}} file. The CAD converter ({{brandName}} Converters 2.0) isn't available in this environment - it's an optional, separate install. Add it, then retry the conversion.",
           format: fmt || 'CAD',
         })
       : null;
@@ -1957,7 +1957,7 @@ function LandingPage({ projectId, onUploadComplete: _onUploadComplete, breadcrum
                       rel="noopener noreferrer"
                       className="text-2xs text-semantic-success hover:text-semantic-success hover:underline whitespace-nowrap"
                     >
-                      {t('common.powered_by_cad2data', { defaultValue: 'Powered by DDC Converters 2.0' })}
+                      {t('common.powered_by_cad2data', { defaultValue: 'Powered by {{brandName}} Converters 2.0' })}
                     </a>
                   </div>
                 </div>

@@ -2451,7 +2451,7 @@ const BimLinkPopover = forwardRef<
                                   ? 'text-semantic-success'
                                   : 'text-content-tertiary italic'
                             }`}
-                            title={source === 'parquet' ? 'From Parquet row (DDC export)' : source === 'prop' ? 'From element properties' : 'From element quantities'}
+                            title={source === 'parquet' ? 'From Parquet row (converter export)' : source === 'prop' ? 'From element properties' : 'From element quantities'}
                           >
                             {paramLabel}
                           </span>

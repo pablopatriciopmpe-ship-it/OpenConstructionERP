@@ -969,7 +969,7 @@ function CollapsedConverterPill({
         : health === 'unknown'
           ? t('bim.converter_pill_unknown', { defaultValue: 'Installed (verify pending)' })
           : hasFallback
-            ? t('bim.converter_pill_fallback', { defaultValue: 'Works without DDC (fallback parser)' })
+            ? t('bim.converter_pill_fallback', { defaultValue: 'Works without {{brandName}} (fallback parser)' })
             : t('bim.converter_pill_missing', { defaultValue: 'Not installed' });
   return (
     <span
@@ -1098,7 +1098,7 @@ function ConverterRow({
         pillTone =
           'bg-semantic-success-bg text-semantic-success border-semantic-success/30';
         pillText = t('bim.converter_row_fallback', {
-          defaultValue: 'Works without DDC (fallback)',
+          defaultValue: 'Works without {{brandName}} (fallback)',
         });
       } else {
         icon = (
@@ -1170,7 +1170,7 @@ function ConverterRow({
               versionEntry?.installed_sha
                 ? t('bim.converter_sha_tooltip', {
                     defaultValue:
-                      'Installed package SHA-256: {{sha}}. Compared with the package this version installs from the DDC converter release.',
+                      'Installed package SHA-256: {{sha}}. Compared with the package this version installs from the {{brandName}} converter release.',
                     sha: versionEntry.installed_sha,
                   })
                 : undefined
@@ -1269,7 +1269,7 @@ function ConverterRow({
             <p className="text-2xs text-semantic-success">
               {t('bim.converter_row_fallback_msg', {
                 defaultValue:
-                  'IFC files are parsed by a built-in fallback. Install the DDC binary to upgrade placeholder boxes to real meshes.',
+                  'IFC files are parsed by a built-in fallback. Install the {{brandName}} binary to upgrade placeholder boxes to real meshes.',
               })}
             </p>
           )}

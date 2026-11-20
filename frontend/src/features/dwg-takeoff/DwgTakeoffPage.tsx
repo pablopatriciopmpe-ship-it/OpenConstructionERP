@@ -545,7 +545,7 @@ function OfflineReadyBadge({
       })
     : t('dwg_takeoff.offline_ready_tooltip_server', {
         defaultValue:
-          'Conversions run on your OpenConstructionERP server and are never sent to third parties.',
+          'Conversions run on your {{brandName}} server and are never sent to third parties.',
       });
 
   return (
@@ -3457,7 +3457,7 @@ export function DwgTakeoffPage() {
                         <span className="text-xs text-semantic-success font-medium">
                           {offlineReadiness?.local_only
                             ? t('common.local_processing', { defaultValue: '100% Local Processing · Your files never leave your computer' })
-                            : t('dwg_takeoff.processed_on_your_server', { defaultValue: 'Processed on your OpenConstructionERP server · never sent to third parties' })}
+                            : t('dwg_takeoff.processed_on_your_server', { defaultValue: 'Processed on your {{brandName}} server · never sent to third parties' })}
                         </span>
                         <span className="text-2xs text-semantic-success">|</span>
                         <a
@@ -3466,7 +3466,7 @@ export function DwgTakeoffPage() {
                           rel="noopener noreferrer"
                           className="text-2xs text-semantic-success hover:text-semantic-success hover:underline whitespace-nowrap"
                         >
-                          {t('common.powered_by_cad2data', { defaultValue: 'Powered by DDC Converters 2.0' })}
+                          {t('common.powered_by_cad2data', { defaultValue: 'Powered by {{brandName}} Converters 2.0' })}
                         </a>
                       </div>
                     </div>
@@ -6917,7 +6917,7 @@ function ConversionErrorCard({
               {isMissingConverter
                 ? t('dwg_takeoff.conv_missing_message', {
                     defaultValue:
-                      'OpenConstructionERP needs the DDC DWG converter to read DWG files. Install it once - works for every DWG you upload after.',
+                      '{{brandName}} needs the {{brandName}} DWG converter to read DWG files. Install it once - works for every DWG you upload after.',
                   })
                 : shownMessage ||
                   t('dwg_takeoff.conv_error_default', {
@@ -7110,7 +7110,7 @@ function NeedsConversionCard({
             <p className="text-xs text-content-secondary mt-3 leading-relaxed">
               {t('dwg_takeoff.needs_conv_message', {
                 defaultValue:
-                  'DWG is an open format and we open it directly once the DDC converter is set up. This drawing has not been converted yet, and the converter is not installed on this server. Install it once and every DWG you open after will render here automatically. DXF files render without any converter.',
+                  'DWG is an open format and we open it directly once the {{brandName}} converter is set up. This drawing has not been converted yet, and the converter is not installed on this server. Install it once and every DWG you open after will render here automatically. DXF files render without any converter.',
               })}
             </p>
 

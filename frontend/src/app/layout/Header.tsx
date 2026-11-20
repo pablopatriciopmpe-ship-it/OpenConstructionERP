@@ -38,7 +38,6 @@ import { APP_VERSION, APP_BUILD_FINGERPRINT } from '@/shared/lib/version';
 import { useToastStore } from '@/stores/useToastStore';
 import { useI18nReady } from '@/shared/lib/useI18nReady';
 import { isTauri, openAppInBrowser, openLink } from '@/shared/lib/desktop';
-import { SupportUsButton } from './SupportUsButton';
 import { SubscribeButton } from './SubscribeButton';
 import { ProjectJourneyButton } from './ProjectJourney';
 import { useTopBarPrefs } from '@/shared/lib/topBarPrefs';
@@ -652,9 +651,7 @@ export function Header({ title, onMenuClick }: HeaderProps) {
             had no room for these three next to the project picker, and the
             right cluster ran off screen. */}
         {!bar.moduleBuilder && <div className="hidden 2xl:block"><ModuleBuilderButton /></div>}
-        {!bar.supportUs && <div className="hidden 2xl:block"><SupportUsButton /></div>}
         {!bar.subscribe && <div className="hidden 2xl:block"><SubscribeButton /></div>}
-        {!bar.bugReport && <BugReportMenu />}
         <HelpMenu />
 
         {/* Hairline divider between Zone 3 and Zone 4. */}
