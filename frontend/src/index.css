@@ -17,8 +17,6 @@
 :root {
   --brand-nav: #163953;
   --brand-action: #156D61;
-  --brand-action-hover: #10594F;
-  --brand-action-active: #0D4D44;
   --brand-canvas: #F6F6EF;
   --brand-surface: #FFFFFF;
   --brand-muted: #465C69;
@@ -37,10 +35,10 @@
   --__rev-c: "4443432d4357494352";
   --__lc-rev: 0x4f452d3236;
   /* Brand */
-  --oe-blue: #0071e3;
-  --oe-blue-hover: #0077ed;
-  --oe-blue-active: #006edb;
-  --oe-blue-dark: #005bb5;
+  --oe-blue: #156D61;
+  --oe-blue-hover: #10594F;
+  --oe-blue-active: #0C483F;
+  --oe-blue-dark: #10594F;
   /* Theme-aware blue intended for use as TEXT on tinted/lifted surfaces.
      Pairs with --oe-blue-subtle and the semantic-info pills.
      WCAG-AA contrast fix 2026-05-27 (sequel to v5.3.0): the v5.3.0 wave
@@ -52,7 +50,7 @@
        Light  #005bb5 → 7.4:1 on #fff, 7.0:1 on #f0f7ff
        Dark   #93c5fd → 7.9:1 on #1e2130, 8.4:1 on #1a1d2b, 7.8:1 on
                         flattened bg-oe-blue-subtle (rgba 0.15 over bg) */
-  --oe-blue-text: #005bb5;
+  --oe-blue-text: #156D61;
   /* WCAG-AA contrast fix 2026-05-27: was #e8f2fe (4.15:1 against
      text-oe-blue #0071e3 — fails AA for normal text). Lightened to
      #f0f7ff so the Apple-Blue brand colour passes AA on the pill
@@ -66,7 +64,7 @@
      the build - the class rendered nothing (found 2026-06-06, reported
      as "info blocks have no background"). MUST stay in sync with the
      hex values above/below. */
-  --oe-blue-ch: 0 113 227;
+  --oe-blue-ch: 21 109 97;
   /* Text on a solid accent fill. White in light mode; dark mode accents are
      light tints, so the ink flips to the page colour to keep AA. */
   --oe-on-accent: #ffffff;
@@ -276,11 +274,16 @@ h1, h2, h3, h4, h5, h6 {
 /* Evolux Obras surfaces keep the existing utility API but give the main
    application the paper/surface contrast from the approved design tokens. */
 .oe-app-shell, [data-app-shell] { background: var(--brand-canvas); }
-.oe-sidebar, [data-sidebar] { background: var(--brand-nav); }
+.oe-sidebar, [data-sidebar] {
+  background: var(--brand-nav);
+  --oe-text-primary: #ffffff;
+  --oe-text-secondary: #ffffff;
+  --oe-text-tertiary: #e0e9ef;
+  --oe-text-quaternary: #cbdbe5;
+}
+.oe-sidebar .oe-nav-row,
+.oe-sidebar .oe-nav-group > div > button[aria-expanded] { color: #ffffff; }
 .oe-sidebar a[aria-current='page'], [data-sidebar] a[aria-current='page'] { background: var(--brand-selected); color: var(--brand-nav); }
-aside.oe-sidebar .oe-nav-row:not([data-active]) { color: #d6e3e8; }
-aside.oe-sidebar .oe-nav-row:not([data-active]):hover { color: #ffffff; background: rgb(255 255 255 / 10%); }
-aside.oe-sidebar .oe-nav-group > div > button > span { color: #c1d6dd; }
 
 /* ── Dark Mode ─────────────────────────────────────────────────────────── */
 

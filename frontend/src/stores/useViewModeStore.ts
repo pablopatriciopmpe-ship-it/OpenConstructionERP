@@ -21,7 +21,7 @@
  *      applied through `applyDefault`, which writes nothing anywhere. A default
  *      that got written would turn into a "choice" on the next load, which is
  *      how a fresh profile used to be locked into Simple.
- *   4. `advanced`, until any of the above answers.
+ *   4. `simple`, until any of the above answers.
  */
 
 import { create } from 'zustand';
@@ -90,7 +90,7 @@ let currentUser: string | null = null;
 
 export const useViewModeStore = create<ViewModeState>((set, get) => ({
   mode: initial ?? 'advanced',
-  isAdvanced: initial !== 'simple',
+  isAdvanced: initial === 'advanced',
   chosen: initial !== null,
 
   setMode: (mode: ViewMode) => {

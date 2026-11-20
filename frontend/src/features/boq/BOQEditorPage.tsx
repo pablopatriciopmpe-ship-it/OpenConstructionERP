@@ -8,7 +8,7 @@ import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { useUnitsSystem } from '@/features/market/api';
 // lucide-react icons used by sub-components (BOQToolbar, BOQGrid, etc.) — none needed directly here
 import { Database, Download, ExternalLink, X, Sparkles, AlertTriangle as WarnTriangle, Lock, Copy, Wallet, Keyboard, GitCompare, RefreshCw, ShieldCheck, FlaskConical, Send, Percent, CheckCircle, ArrowLeft, LayoutList, SlidersHorizontal, LayoutTemplate, Layers } from 'lucide-react';
-import { Button, Badge, Breadcrumb, ConfirmDialog, DismissibleInfo, PageHeader } from '@/shared/ui';
+import { Button, Badge, Breadcrumb, ModuleHelpButton, ModuleGuideButton, ConfirmDialog, DismissibleInfo, IntroRichText, PageHeader } from '@/shared/ui';
 import { useConfirm } from '@/shared/hooks/useConfirm';
 import { useProgressStore } from '@/shared/ui/GlobalProgress';
 import { activeLanguageTag, apiGet, apiPost, apiPatch, triggerDownload, extractErrorMessageFromBody } from '@/shared/lib/api';
@@ -120,6 +120,7 @@ import { EstimateCheckBadge } from '@/features/estimate-checks/EstimateCheckBadg
 import { SeenOnBadge } from '@/features/lessons-learned/SeenOnBadge';
 import type { TenderPackageRef } from './api';
 import { BOQSheetMode, SheetModeToggle, useSheetMode } from './sheet/SheetMode';
+import { boqGuide } from './boqGuide';
 import { isTextEntryElement, resolveBoqShortcut } from './boqShortcuts';
 // evaluateFormula used in BOQGrid, not directly here
 // import { evaluateFormula } from './grid/cellEditors';
@@ -5563,6 +5564,17 @@ export function BOQEditorPage() {
                 {t('cost_plan.open_button', { defaultValue: 'Cost plan' })}
               </Button>
             )}
+            {/* Per-module Tour CTA — launches the BOQ-specific guided tour
+                via the registered TOUR_REGISTRY entry, independent of any
+                global / first-login tour state. The Guide button sits in the
+                same cluster: Tour walks the live UI, Guide explains the
+                concepts and the data-entry flow. Its closing CTA opens the
+                Add position flow. */}
+            <ModuleHelpButton tourId="boq" />
+            <ModuleGuideButton
+              content={boqGuide}
+              onCta={() => handleAddPosition()}
+            />
           </>
         }
       />
@@ -5575,13 +5587,34 @@ export function BOQEditorPage() {
         storageKey="boq-editor"
         className="mb-4"
         title={t('boq_editor.intro_title', { defaultValue: 'Edit the estimate without losing the thread' })}
+        more={t('boq_editor.intro_more', { defaultValue: '' }) ? <IntroRichText text={t('boq_editor.intro_more')} /> : undefined}
         links={[
-          { label: 'Composições', onClick: () => navigate('/assemblies') },
-          { label: 'Catálogo de custos', onClick: () => navigate('/costs') },
-          { label: 'Validação', onClick: () => navigate('/validation') },
+          { label: t('nav.assemblies', { defaultValue: 'Assemblies' }), onClick: () => navigate('/assemblies') },
+          { label: t('nav.costs', { defaultValue: 'Cost Database' }), onClick: () => navigate('/costs') },
+          {
+            label: t('nav.cost_explorer', { defaultValue: 'Cost Explorer' }),
+            onClick: () => navigate('/cost-explorer'),
+          },
+          { label: t('nav.validation', { defaultValue: 'Validation' }), onClick: () => navigate('/validation') },
+          // CONN-83 — outbound AI affordances. Draft a fresh set of positions
+          // with the AI Quick Estimate, or ask the Cost Advisor about rates
+          // while pricing. The Quick Estimate save dialog already defaults to
+          // the globally active project, so no project param is emitted here.
+          // The advisor consumes a ?q= prefill separately under its own batch.
+          {
+            label: t('boq.draft_with_ai', { defaultValue: 'Draft positions with AI' }),
+            onClick: () => navigate('/ai-estimate'),
+          },
+          {
+            label: t('boq.ask_cost_advisor', { defaultValue: 'Ask the Cost Advisor' }),
+            onClick: () => navigate('/advisor'),
+          },
         ]}
       >
-        Adicione serviços, quantitativos e preços. O total é recalculado automaticamente.
+        {t('boq_editor.intro_body', {
+          defaultValue:
+            'This is the working grid where you add, renumber and price positions in a hierarchy, paste from Excel, apply assemblies and link rows to cost-database items or BIM elements. Changes recompute the total instantly and stay available to validation and the cost rollup.',
+        })}
       </DismissibleInfo>
 
       {/* ── Title row ─────────────────────────────────────────────────── */}

@@ -186,7 +186,7 @@ describe('finishing the wizard as a general contractor', () => {
     );
   });
 
-  it('lands in Advanced mode with the full product catalogue, without claiming a mode choice', async () => {
+  it('lands in Simple mode on the workspace, with the profile saved and no mode claimed', async () => {
     const client = renderFinish('general_contractor');
     // No profile before Finish, so the stale record shows no workspace yet.
     expect(screen.queryByTestId('sidebar-workspace')).toBeNull();
@@ -195,7 +195,7 @@ describe('finishing the wizard as a general contractor', () => {
     fireEvent.click(screen.getByRole('button', { name: /Start working/ }));
 
     await waitFor(() => expect(screen.getByTestId('location').textContent).toBe('/'));
-    expect(useViewModeStore.getState().mode).toBe('advanced');
+    expect(useViewModeStore.getState().mode).toBe('simple');
     // A default, not a choice: nothing stored here or on the server.
     expect(useViewModeStore.getState().chosen).toBe(false);
     expect(localStorage.getItem('oe_view_mode')).toBeNull();
@@ -208,8 +208,14 @@ describe('finishing the wizard as a general contractor', () => {
 
     // The menu that was already on screen follows at once: the answer went
     // into the shared cache entry, and the menu did not have to ask again.
-    expect(screen.getByTestId('app-sidebar').querySelector('a[href="/schedule"]')).toBeTruthy();
-    expect(screen.getByTestId('app-sidebar').querySelector('a[href="/inbox"]')).toBeNull();
+    expect(workspaceHrefs().slice(0, 6)).toEqual([
+      '/',
+      '/inbox',
+      '/projects',
+      '/boq',
+      '/finance?tab=budgets',
+      '/contracts',
+    ]);
     expect(onboardingReads()).toBe(1);
     expect(localStorage.getItem('oe_company_type')).toBe('general_contractor');
     // The dashboard's first-run check reads the same entry, so it sees the

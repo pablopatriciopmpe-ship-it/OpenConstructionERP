@@ -9,7 +9,7 @@ import {
   Search, ArrowUpDown, GitCompareArrows, X, Loader2,
   CalendarDays, LayoutGrid, List, LayoutTemplate,
 } from 'lucide-react';
-import { Card, Badge, EmptyState, Skeleton, Button, Breadcrumb, FileTypeChips, DismissibleInfo, RecoveryCard } from '@/shared/ui';
+import { Card, Badge, EmptyState, Skeleton, Button, Breadcrumb, FileTypeChips, DismissibleInfo, IntroRichText, RecoveryCard } from '@/shared/ui';
 import { PageHeader } from '@/shared/ui/PageHeader';
 import { DateDisplay } from '@/shared/ui/DateDisplay';
 import { apiGet } from '@/shared/lib/api';
@@ -730,6 +730,7 @@ export function BOQListPage() {
   // would swamp the menu). Until this link existed, none of its twenty routes
   // was reachable by clicking anywhere in the app; the module's hub page picks
   // the country and hands over to the route that was already there.
+  const isRegionalExchangeEnabled = useModuleStore((s) => s.isModuleEnabled('regional-exchange'));
   const seedDemoPresence = usePresenceStore((s) => s.seedDemoPresence);
   useEffect(() => {
     if (isCollabEnabled && allBoqs && allBoqs.length > 0) {
@@ -977,12 +978,24 @@ export function BOQListPage() {
       <DismissibleInfo
         storageKey="boq"
         title={t('boq.intro_title', { defaultValue: 'Every work item priced and totalled' })}
+        more={t('boq.intro_more', { defaultValue: '' }) ? <IntroRichText text={t('boq.intro_more')} /> : undefined}
         links={[
-          { label: 'Validação', onClick: () => navigate('/validation') },
-          { label: 'Catálogo de custos', onClick: () => navigate('/costs') },
+          { label: t('nav.validation', { defaultValue: 'Validation' }), onClick: () => navigate('/validation') },
+
+          // No project_id on this one: the hub picks a country before there is
+          // a screen to scope, and each country route reads the project from
+          // the same context anyway.
+          ...(isRegionalExchangeEnabled
+            ? [
+                {
+                  label: t('boq.preset_regional', { defaultValue: 'Regional standards' }),
+                  onClick: () => navigate('/regional-exchange'),
+                },
+              ]
+            : []),
         ]}
       >
-        Liste serviços, quantitativos e preços unitários para acompanhar o total do orçamento.
+        Liste serviços, quantidades e preços unitários para acompanhar o custo da obra.
       </DismissibleInfo>
 
       {/* Projects the register left out because they were archived or

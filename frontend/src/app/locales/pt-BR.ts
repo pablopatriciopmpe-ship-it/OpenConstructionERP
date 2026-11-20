@@ -38769,7 +38769,7 @@ const resource = {
     "settings.members_you": "Você",
     "settings.new_password": "Nova senha",
     "settings.password_changed": "Senha alterada com sucesso",
-    "settings.password_min_hint": "Mínimo 8 caracteres",
+    "settings.password_min_hint": "Mínimo 8 caracteres, incluindo letra e número",
     "settings.passwords_mismatch": "As senhas não correspondem",
     "settings.role_label": "Função",
     "settings.sign_out_desc": "Você precisará digitar suas credenciais para acessar OpenConstructionERP novamente.",

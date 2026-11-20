@@ -44,10 +44,10 @@ export function SidebarToolsCollapse({ iconified, forceOpen = false, children }:
   const [storedOpen, toggle] = useSidebarToolsOpen();
   const open = storedOpen || forceOpen;
   const regionId = useId();
-  const label = t('sidebar.tools_short', { defaultValue: 'Sistema' });
+  const label = t('sidebar.tools_short', { defaultValue: 'System' });
   const action = open
-    ? t('sidebar.tools_collapse', { defaultValue: 'Recolher configurações e ferramentas' })
-    : t('sidebar.tools_expand', { defaultValue: 'Expandir configurações e ferramentas' });
+    ? t('sidebar.tools_collapse', { defaultValue: 'Collapse settings & tools' })
+    : t('sidebar.tools_expand', { defaultValue: 'Expand settings & tools' });
 
   return (
     <>

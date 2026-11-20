@@ -18,8 +18,8 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 // radius (pills are for chips and badges only), and no hover scaling.
 const variantStyles: Record<ButtonVariant, string> = {
   primary: clsx(
-    'bg-[var(--brand-action)] text-white',
-    'hover:bg-[var(--brand-action-hover)] active:bg-[var(--brand-action-active)]',
+    'bg-oe-blue text-content-inverse',
+    'hover:bg-oe-blue-hover active:bg-oe-blue-active',
     'shadow-xs',
     'border border-transparent',
   ),

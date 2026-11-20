@@ -46,10 +46,9 @@ import {
   ChevronUp,
   MapPin,
 } from 'lucide-react';
-import { Card, CardHeader, CardContent, Button, Badge, Skeleton, ActivityFeed as CrossModuleActivityFeed, EmptyState, PartnerLogoBadge } from '@/shared/ui';
+import { Card, CardHeader, CardContent, Button, Badge, Skeleton, ActivityFeed as CrossModuleActivityFeed, EmptyState } from '@/shared/ui';
 import { pricedPositions, type PositionCounts } from './pricedPositions';
 import { MultiCurrencyTotal } from '@/shared/ui/MultiCurrencyTotal';
-import { WhatsNewCard } from '@/shared/ui/WhatsNewCard';
 import { DemoSeedingHint } from '@/features/processes/DemoSeedingHint';
 import { CompactProjectCard } from './components/CompactProjectCard';
 import { type ProjectPin } from './components/DashboardProjectsMap';
@@ -2706,12 +2705,12 @@ function DashboardPageInner() {
       {/* Partner co-brand strip - only renders when a partner pack is
           active (env OE_PARTNER_PACK or first installed). Dismissable
           per session; reappears on next browser launch. */}
-      <PartnerLogoBadge variant="dashboard" />
+
       {/* "What's new in vX.Y.Z" release-notes card. Self-gates on a
           localStorage `oe_whats_new_seen_<version>` flag so it only
           appears once per release per browser. Sits above the hero so
           the user sees release highlights before the dashboard hero. */}
-      <WhatsNewCard />
+
       {/* First start: the demo projects are still installing in the
           background, so an empty project list here is temporary. */}
       <DemoSeedingHint />
@@ -2807,12 +2806,16 @@ function DashboardPageInner() {
               ? t('dashboard.layout.done', { defaultValue: 'Done' })
               : t('dashboard.layout.customize', { defaultValue: 'Customize' })}
           </Button>
+          {/* Per-module Tour CTA - launches the Dashboard guided tour. */}
+
+          {/* "How it works" guide - concept walkthrough; CTA starts a new estimate. */}
+
         </div>
       </div>
 
       {/* ─── 2. Hero · row B - thin meta-strip ───────────────────────── */}
       <div className="flex items-center flex-wrap gap-x-4 gap-y-2 animate-stagger-in" style={{ animationDelay: '140ms' }}>
-        {/* System status pills */}
+         {/* System status pills */}
         <SystemStatusSummary
           projects={projects}
           boqCount={boqSummary?.active_boqs}

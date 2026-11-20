@@ -26,7 +26,6 @@ import { WorkspaceBrandCard } from './WorkspaceBrandCard';
 import { WorkPrefsCard } from './WorkPrefsCard';
 import { MenuAppearanceCard } from './MenuAppearanceCard';
 import { MenuSizeCard } from './MenuSizeCard';
-import { SidebarFooterCard } from './SidebarFooterCard';
 import { TopBarCard } from './TopBarCard';
 import { FloatingButtonsCard } from './FloatingButtonsCard';
 import { LearningTipsCard } from './LearningTipsCard';
@@ -73,12 +72,13 @@ import {
   Boxes,
   Database,
 } from 'lucide-react';
-import { Card, CardHeader, CardContent, CardFooter, Button, Badge, InfoHint, Skeleton, Breadcrumb, DismissibleInfo, ConfirmDialog, CountryFlag } from '@/shared/ui';
+import { Card, CardHeader, CardContent, CardFooter, Button, Badge, InfoHint, Skeleton, Breadcrumb, DismissibleInfo, IntroRichText, ConfirmDialog, ModuleGuideButton, CountryFlag } from '@/shared/ui';
 import { PageHeader } from '@/shared/ui/PageHeader';
+import { settingsGuide } from './settingsGuide';
 import { useTabKeyboardNav } from '@/shared/hooks/useTabKeyboardNav';
 import { DashboardLayoutManager } from '@/features/dashboard/DashboardLayoutManager';
 import { UpdateInlineNotice } from '@/shared/ui/UpdateChecker';
-import { apiGet, apiPatch, apiPost, apiPut, apiDelete, ApiError } from '@/shared/lib/api';
+import { apiGet, apiPatch, apiPost, apiPut, apiDelete } from '@/shared/lib/api';
 import { SUPPORTED_LANGUAGES } from '@/app/i18n';
 import { sortLanguagesByName } from '@/shared/lib/languageOrder';
 import { useAuthStore } from '@/stores/useAuthStore';
@@ -1078,7 +1078,7 @@ function ThemeScheduleSetting() {
   );
 }
 
-function InterfaceModeCard() {
+function _InterfaceModeCard() {
   const { t } = useTranslation();
   const mode = useViewModeStore((s) => s.mode);
   const setMode = useViewModeStore((s) => s.setMode);
@@ -1626,23 +1626,11 @@ export function SettingsPage() {
       addToast({ type: 'success', title: t('settings.password_changed', { defaultValue: 'Password changed successfully' }) });
     },
     onError: (error: Error) => {
-      const detail = error.message.toLowerCase();
-      const message = /current password|incorrect password|invalid password|senha atual/.test(detail)
-        ? 'Senha atual incorreta.'
-        : /common|comum/.test(detail)
-          ? 'A nova senha é muito comum. Escolha outra.'
-          : /letter|digit|character|weak|strength|differ/.test(detail)
-            ? 'A nova senha deve ter pelo menos 8 caracteres, uma letra e um número, e ser diferente da atual.'
-            : error instanceof ApiError && error.status === 422
-              ? 'Confira os dados da senha e tente novamente.'
-              : 'Não foi possível alterar a senha. Tente novamente.';
-      addToast({ type: 'error', title: 'Erro ao alterar senha', message });
+      addToast({ type: 'error', title: t('toasts.error', { defaultValue: 'Error' }), message: error.message });
     },
   });
 
-  const pwValid = pwForm.current.length >= 8 && pwForm.new_.length >= 8 &&
-    /\p{L}/u.test(pwForm.new_) && /\d/.test(pwForm.new_) &&
-    pwForm.new_ !== pwForm.current && pwForm.new_ === pwForm.confirm;
+  const pwValid = Boolean(pwForm.current) && pwForm.new_.length >= 8 && /[A-Za-z]/ .test(pwForm.new_) && /[0-9]/.test(pwForm.new_) && pwForm.new_ === pwForm.confirm;
 
   // ── Tab state with URL sync ──────────────────────────────────────────
   const [searchParams, setSearchParams] = useSearchParams();
@@ -1675,7 +1663,7 @@ export function SettingsPage() {
     () =>
       TABS.filter(
         (tab) =>
-          !(['einvoice', 'converters', 'ai', 'integrations', 'developer', 'packages', 'modules', 'identity', 'advanced'] as SettingsTab[]).includes(tab.id) &&
+          !["einvoice", "converters", "developer", "modules", "market", "packages"].includes(tab.id) &&
           (tab.id !== 'audit' || canViewAudit) &&
           (tab.id !== 'einvoice' || canEditEInvoice) &&
           (tab.id !== 'identity' || userRole === 'admin'),
@@ -1739,17 +1727,36 @@ export function SettingsPage() {
         className="animate-card-in"
         srTitle={t('nav.settings', 'Settings')}
         subtitle={t('settings.subtitle', { defaultValue: 'Manage your account and preferences' })}
+        actions={<ModuleGuideButton content={settingsGuide} />}
       />
 
       {/* Canonical module intro — pain-named, copy from MODULE_INTRO_COPY. */}
       <DismissibleInfo
         storageKey="settings"
-        title="Configurações da sua equipe"
+        title={t('settings.intro_title', {
+          defaultValue: 'Set the platform up once for your team',
+        })}
+        more={
+          t('settings.intro_more', { defaultValue: '' })
+            ? <IntroRichText text={t('settings.intro_more')} />
+            : undefined
+        }
         links={[
-          { label: 'Conta', onClick: () => navigate('/settings?tab=account') },
+          {
+            label: t('nav.setup_databases', { defaultValue: 'Databases & Resources' }),
+            onClick: () => navigate('/setup/databases'),
+          },
+          {
+            label: t('nav.integrations', { defaultValue: 'Integrations' }),
+            onClick: () => navigate('/integrations'),
+          },
+          { label: t('nav.modules', { defaultValue: 'Modules' }), onClick: () => navigate('/modules') },
         ]}
       >
-        Ajuste sua conta, preferências e os dados da equipe.
+        {t('settings.intro_body', {
+          defaultValue:
+            'Connect an AI provider key, choose language, timezone and number formats, manage DDC converter versions, and wire integrations like Slack, Teams, Telegram and webhooks from one place. The Advanced tab holds backup, restore and the database setup wizard, so the choices made here flow into every module for this workspace.',
+        })}
       </DismissibleInfo>
 
       {/* ── Two-column layout: sidebar nav + content ──────────────────── */}
@@ -1832,7 +1839,7 @@ export function SettingsPage() {
             })}
           </nav>
 
-          <a href="https://github.com/pablopatriciopmpe-ship-it/OpenConstructionERP" target="_blank" rel="noopener noreferrer" className="hidden lg:block mt-4 px-3 text-center text-xs text-content-tertiary hover:underline">Código-fonte (AGPL)</a>
+
         </aside>
 
         {/* ── Tab content ──────────────────────────────────────────── */}
@@ -1878,7 +1885,7 @@ export function SettingsPage() {
               {/* Short cards stack on the left so the tall Style card has a partner column. */}
               <div className="flex min-w-0 flex-col gap-5">
                 <AppearanceCard />
-                <InterfaceModeCard />
+
               </div>
               <WorkModesCard onApplied={() => setModeKey((k) => k + 1)} />
               <AppearanceStyleCard key={`style-${modeKey}`} />
@@ -1888,7 +1895,7 @@ export function SettingsPage() {
               <WorkPrefsCard />
               <TableOptionsCard key={`tables-${modeKey}`} />
               <TopBarCard />
-              <SidebarFooterCard />
+
               <FloatingButtonsCard />
               <LearningTipsCard />
               <NotificationChannelsCard />
@@ -1919,7 +1926,7 @@ export function SettingsPage() {
               <Card className="lg:col-span-2">
                 <CardHeader
                   title={t('settings.change_password_title', { defaultValue: 'Change Password' })}
-                  subtitle="Use pelo menos 8 caracteres, incluindo uma letra e um número. Evite senhas comuns."
+                  subtitle={t('settings.change_password_subtitle', { defaultValue: 'Update your account password. Minimum 8 characters.' })}
                 />
                 <CardContent>
                   {showPwFields ? (
@@ -1940,7 +1947,6 @@ export function SettingsPage() {
                           id="pw-current"
                           type="password"
                           autoComplete="current-password"
-                          required
                           className="oe-input"
                           value={pwForm.current}
                           onChange={(e) => setPwForm((f) => ({ ...f, current: e.target.value }))}
@@ -1954,7 +1960,6 @@ export function SettingsPage() {
                           id="pw-new"
                           type="password"
                           autoComplete="new-password"
-                          required
                           className="oe-input"
                           placeholder={t('settings.password_min_hint', { defaultValue: 'Minimum 8 characters' })}
                           value={pwForm.new_}
@@ -1972,14 +1977,10 @@ export function SettingsPage() {
                           id="pw-confirm"
                           type="password"
                           autoComplete="new-password"
-                          required
                           className="oe-input"
                           value={pwForm.confirm}
                           onChange={(e) => setPwForm((f) => ({ ...f, confirm: e.target.value }))}
                         />
-                        {pwForm.new_ && (!/\p{L}/u.test(pwForm.new_) || !/\d/.test(pwForm.new_) || pwForm.new_ === pwForm.current) && (
-                          <p className="mt-1 text-xs text-semantic-error">A nova senha precisa ter letra e número e ser diferente da atual.</p>
-                        )}
                         {pwForm.confirm && pwForm.new_ !== pwForm.confirm && (
                           <p className="mt-1 text-xs text-semantic-error">
                             {t('settings.passwords_mismatch', { defaultValue: 'Passwords do not match' })}
@@ -2021,7 +2022,7 @@ export function SettingsPage() {
                         {t('settings.sign_out_title', { defaultValue: 'Sign out of all sessions' })}
                       </p>
                       <p className="text-xs text-content-secondary mt-0.5">
-                        Você precisará entrar novamente para acessar o sistema.
+                        {t('settings.sign_out_desc', { defaultValue: 'You will need to enter your credentials to access OpenConstructionERP again.' })}
                       </p>
                     </div>
                     <Button
@@ -2431,7 +2432,7 @@ export function SettingsPage() {
           )}
           </div>{/* End cards grid */}
 
-          <a href="https://github.com/pablopatriciopmpe-ship-it/OpenConstructionERP" target="_blank" rel="noopener noreferrer" className="lg:hidden block mt-8 text-center text-sm text-content-tertiary hover:underline">Código-fonte (AGPL)</a>
+
         </div>
       </div>
     </div>

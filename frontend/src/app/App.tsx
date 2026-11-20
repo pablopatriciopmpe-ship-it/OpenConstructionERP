@@ -1335,6 +1335,7 @@ export default function App() {
           `OnboardingTour` component still ships for per-feature
           custom tours (e.g. Pipelines page), but is no longer mounted
           globally. */}
+
       <Routes>
         {/* Public share-link landing page — no auth required, no app shell */}
         <Route path="/share/:token" element={<SharePage />} />

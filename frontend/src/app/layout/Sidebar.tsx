@@ -66,7 +66,6 @@ import { useGlobalSearchStore } from '@/stores/useGlobalSearchStore';
 import { getModuleNavItems, navItemModuleId } from '@/modules/_registry';
 import { isProductNavRoute } from '@/modules/productManifest';
 import { APP_VERSION } from '@/shared/lib/version';
-import { BRAND } from '@/brand';
 import { useSidebarBadges } from '@/shared/hooks/useSidebarBadges';
 import { useHiddenModules } from '@/shared/hooks/useHiddenModules';
 import { useFooterPrefs } from '@/shared/lib/footerPrefs';
@@ -775,7 +774,7 @@ export function Sidebar({ onClose }: { onClose?: () => void }) {
     const stored = readCollapsedState();
     const initial: Record<string, boolean> = {};
     for (const group of navGroups) {
-      initial[group.id] = stored[group.id] ?? !group.defaultOpen;
+      initial[group.id] = group.id.startsWith("area_") ? true : (stored[group.id] ?? !group.defaultOpen);
     }
     return initial;
   });
@@ -1144,6 +1143,7 @@ export function Sidebar({ onClose }: { onClose?: () => void }) {
     if (!activeRoute) return;
     const groupId = GROUP_ID_BY_ROUTE[activeRoute];
     if (!groupId) return;
+    if (groupId.startsWith('area_')) return;
     setCollapsed((prev) => (prev[groupId] ? { ...prev, [groupId]: false } : prev));
     // A screen reached from search or a link that lives under "More modules"
     // opens it, for the same reason: the user sees where they are.
@@ -1923,7 +1923,7 @@ export function Sidebar({ onClose }: { onClose?: () => void }) {
              offers in total. Updates automatically as modules are enabled /
              disabled or hidden / shown. Iconified mode shows a compact
              "shown/total" so the number is never lost. */}
-        <div className="hidden" aria-hidden="true">
+        <div className={clsx('pt-2 pb-0.5', iconified ? 'px-1' : 'px-3')}>
           <div
             className={clsx(
               'flex items-center justify-center rounded-lg bg-surface-secondary/40 text-content-secondary',
@@ -2253,7 +2253,7 @@ export function Sidebar({ onClose }: { onClose?: () => void }) {
               </div>
             )}
             <div className="flex items-center justify-center gap-1.5 min-w-0">
-              <span className="text-2xs text-content-tertiary">v{APP_VERSION}</span>
+              <span className="text-2xs text-content-tertiary">Evolux Obras</span>
               <span className="text-2xs text-content-quaternary/40">·</span>
               <a
                 href="/api/source"
@@ -2261,16 +2261,16 @@ export function Sidebar({ onClose }: { onClose?: () => void }) {
                 rel="noopener noreferrer"
                 className="text-2xs text-content-tertiary hover:text-content-secondary transition-colors"
               >
-                AGPL-3.0
+                Código-fonte (AGPL)
               </a>
             </div>
           </div>
         ))}
         <div className="flex items-center justify-center gap-1.5 min-w-0 pb-2 pt-1">
-          <span className="text-2xs text-content-tertiary">{BRAND.name}</span>
+          <span className="text-2xs text-content-tertiary">Evolux Obras</span>
           <span className="text-2xs text-content-quaternary/40">·</span>
           <a href="/api/source" target="_blank" rel="noopener noreferrer" className="text-2xs text-content-tertiary hover:text-content-secondary transition-colors">
-            {BRAND.sourceLabel}
+            Código-fonte (AGPL)
           </a>
         </div>
         </SidebarToolsCollapse>
