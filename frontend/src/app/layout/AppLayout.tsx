@@ -31,6 +31,7 @@ import { useOfflineSync } from '@/shared/hooks/useOnlineStatus';
 import { useOfflineSyncLoop } from '@/shared/lib/offline/useOfflineSync';
 import { usePartnerPackLocale } from '@/shared/hooks/usePartnerPackLocale';
 import { useBrandingStore } from '@/stores/useBrandingStore';
+import { BRAND } from '@/brand';
 import { useReviewPromptStore } from '@/stores/useReviewPromptStore';
 
 interface AppLayoutProps {
@@ -56,7 +57,7 @@ export function AppLayout({ title, children }: AppLayoutProps) {
 
   // When the user has white-labelled the workspace with their own company
   // name, the browser tab follows the same brand as the sidebar so the whole
-  // experience reads as "their" tool. Falls back to OpenConstructionERP.
+  // experience reads as "their" tool. Falls back to the product brand.
   const brandName = useBrandingStore((s) => (s.companyName.trim() ? s.companyName.trim() : null));
 
   // Count today towards "distinct days the app was opened". This has to run
@@ -76,7 +77,7 @@ export function AppLayout({ title, children }: AppLayoutProps) {
     // page heading uses, so the tab also follows the active language.
     const key = resolvePageTitleKey(title);
     const translated = title ? (key ? t(key, { defaultValue: title }) : title) : null;
-    const suffix = brandName ?? 'OpenConstructionERP';
+    const suffix = brandName ?? BRAND.name;
     document.title = translated ? `${translated} | ${suffix}` : suffix;
     // i18n.language in deps so the tab re-translates on a language switch.
   }, [title, t, i18n.language, brandName]);

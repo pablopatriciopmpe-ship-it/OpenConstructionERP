@@ -15,6 +15,19 @@
 /* Apple-inspired. Clean, spacious, precise. */
 
 :root {
+  --brand-nav: #163953;
+  --brand-action: #156D61;
+  --brand-canvas: #F6F6EF;
+  --brand-surface: #FFFFFF;
+  --brand-muted: #465C69;
+  --brand-line: #CED8D5;
+  --brand-focus: #156D61;
+  --brand-selected: #DCEEE9;
+  --brand-radius-control: 6px;
+  --brand-radius-panel: 10px;
+  --brand-shadow-menu: 0 6px 20px rgb(22 57 83 / 14%);
+  --oe-font-sans: Barlow, Arial, sans-serif;
+  --oe-font-display: 'Barlow Semi Condensed', Barlow, Arial, sans-serif;
   /* DDC-CWICR-OE */
   --ddc-sig: "44444332d435749435222";
   --ddc-origin: "datadrivenconstruction.io";
@@ -247,6 +260,22 @@
      either mode, 0px when closed or full screen. Same writer. */
   --oe-ai-dock-widget-offset: 0px;
 }
+
+body {
+  background: var(--brand-canvas);
+  color: var(--brand-nav);
+  font-family: var(--oe-font-sans);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--oe-font-display);
+}
+
+/* Evolux Obras surfaces keep the existing utility API but give the main
+   application the paper/surface contrast from the approved design tokens. */
+.oe-app-shell, [data-app-shell] { background: var(--brand-canvas); }
+.oe-sidebar, [data-sidebar] { background: var(--brand-nav); }
+.oe-sidebar a[aria-current='page'], [data-sidebar] a[aria-current='page'] { background: var(--brand-selected); color: var(--brand-nav); }
 
 /* ── Dark Mode ─────────────────────────────────────────────────────────── */
 

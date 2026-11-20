@@ -2,6 +2,7 @@
 // Copyright (c) 2026 Artem Boiko / DataDrivenConstruction
 import clsx from 'clsx';
 import { publicAsset } from '../lib/publicAsset';
+import { BRAND } from '@/brand';
 
 type LogoSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
@@ -27,32 +28,15 @@ const sizeMap: Record<LogoSize, string> = {
 };
 
 
-/** OpenConstructionERP mark, rendered from the unmodified brand-kit SVGs. */
-export function Logo({ size = 'md', animate = false, tone = 'auto', className }: LogoProps) {
+/** Evolux Obras mark from the single product brand file. */
+export function Logo({ size = 'md', animate = false, tone: _tone = 'auto', className }: LogoProps) {
   const img = 'block h-full w-full select-none';
   return (
     <span
       className={clsx(sizeMap[size], 'relative inline-block shrink-0', animate && 'animate-fade-in', className)}
       data-testid="oe-logo-mark"
     >
-      {tone !== 'dark' && (
-        <img
-          src={publicAsset('/brand/erp/erp-mark-light.svg')}
-          alt=""
-          aria-hidden
-          draggable={false}
-          className={clsx(img, tone === 'auto' && 'dark:hidden')}
-        />
-      )}
-      {tone !== 'light' && (
-        <img
-          src={publicAsset('/brand/erp/erp-mark-dark.svg')}
-          alt=""
-          aria-hidden
-          draggable={false}
-          className={clsx(img, tone === 'auto' && 'hidden dark:block')}
-        />
-      )}
+      <img src={publicAsset(BRAND.symbol)} alt="" aria-hidden draggable={false} className={img} />
     </span>
   );
 }
@@ -71,15 +55,14 @@ const textSizeMap: Record<LogoSize, string> = {
 // only applies where installed locally; otherwise the app's Inter stack is used.
 const WORDMARK_FONT = "Onest, var(--oe-font-sans)";
 
-/** "OpenConstruction" regular + "ERP" bold, as HTML text so it follows the app font stack. */
+/** Product wordmark, kept in sync with the brand module. */
 export function Wordmark({ size = 'md', className }: { size?: LogoSize; className?: string }) {
   return (
     <span
       className={clsx(textSizeMap[size], 'whitespace-nowrap leading-none text-content-primary', className)}
       style={{ fontFamily: WORDMARK_FONT }}
     >
-      <span className="font-normal">OpenConstruction</span>
-      <span className="font-semibold">ERP</span>
+      <span className="font-semibold">{BRAND.name}</span>
     </span>
   );
 }
@@ -98,7 +81,7 @@ export function LogoWithText({ size = 'md', animate, tone, className }: LogoWith
     <span
       className={clsx('inline-flex items-center', gap, className)}
       role="img"
-      aria-label="OpenConstructionERP"
+      aria-label={BRAND.name}
     >
       <Logo size={size} animate={animate} tone={tone} />
       <Wordmark size={size} />
@@ -127,21 +110,20 @@ const LOCKUP = {
 } as const;
 
 /**
- * Product lockup for app chrome: kit mark plus the name as ONE word,
- * "OpenConstructionERP", Onest medium, "ERP" in brand blue (founder 13.11).
+ * Product lockup for app chrome, sourced from the provisional brand module.
  * Sizes are absolute so the root font scale never inflates the brand.
  */
 export function BrandLockup({ size = 'nav', animate, className }: { size?: keyof typeof LOCKUP; animate?: boolean; className?: string }) {
   const s = LOCKUP[size];
   return (
-    <span className={clsx('inline-flex items-center', s.gap, className)} role="img" aria-label="OpenConstructionERP" style={{ ['--oe-lockup-mark' as string]: s.mark }}>
+    <span className={clsx('inline-flex items-center', s.gap, className)} role="img" aria-label={BRAND.name} style={{ ['--oe-lockup-mark' as string]: s.mark }}>
       <Logo animate={animate} className="!h-[var(--oe-lockup-mark)] !w-[var(--oe-lockup-mark)]" />
       <span
         aria-hidden
         className="whitespace-nowrap font-medium leading-none tracking-tight text-content-primary"
         style={{ fontFamily: WORDMARK_FONT, fontSize: s.text }}
       >
-        OpenConstruction<span className="text-oe-blue">ERP</span>
+        {BRAND.name}
       </span>
     </span>
   );

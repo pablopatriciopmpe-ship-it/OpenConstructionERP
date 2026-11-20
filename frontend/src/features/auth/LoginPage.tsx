@@ -4,7 +4,7 @@ import { useState, useRef, useEffect, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import {
-  Eye, EyeOff, Mail, Lock, Globe, ChevronDown, X, Github, Users, ArrowUpRight, Pencil,
+  Eye, EyeOff, Mail, Lock, Globe, ChevronDown, X, Pencil,
   ShieldCheck, Zap, Brain, Info,
   FileSpreadsheet, CalendarClock, TrendingUp, Boxes, Database,
   BarChart3, Upload, FileCheck,
@@ -33,6 +33,7 @@ import { SUPPORTED_LANGUAGES } from '@/app/i18n';
 import { sortLanguagesByName } from '@/shared/lib/languageOrder';
 import { useThemeStore } from '@/stores/useThemeStore';
 import { beginOidcLogin } from './oidcPkce';
+import { BRAND } from '@/brand';
 
 /* Segmented theme switch (Light / Dark / System) for the login page. */
 function ThemeSwitch() {
@@ -731,7 +732,7 @@ export function LoginPage() {
             <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" className="opacity-40"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
             <a href="/api/source" target="_blank" rel="noopener noreferrer" className="hover:text-content-tertiary transition-colors">AGPL-3.0</a>
             <span className="opacity-30">&middot;</span>
-            <a href="https://OpenConstructionERP.com" target="_blank" rel="noopener noreferrer" className="hover:text-content-tertiary transition-colors">OpenConstructionERP.com</a>
+            <span>{BRAND.name}</span>
           </div>
         </div>
       </div>
@@ -782,7 +783,7 @@ export function LoginPage() {
                       {brandName}
                     </span>
                   )}
-                  {/* "by OpenConstructionERP" - subordinate attribution that
+                  {/* Product attribution remains subordinate to the tenant brand;
                       stays visible (AGPL-3.0). Mirrors CustomBranding.tsx. */}
                   <span
                     className="mt-2 block text-2xs leading-none text-content-tertiary"
@@ -790,8 +791,7 @@ export function LoginPage() {
                   >
                     by{' '}
                     <span className="font-semibold tracking-tight">
-                      Open<span className="text-oe-blue/80">Construction</span>
-                      <span className="text-content-quaternary">ERP</span>
+                      {BRAND.name}
                     </span>
                   </span>
                 </div>
@@ -802,7 +802,7 @@ export function LoginPage() {
                     className="text-2xl font-medium text-content-primary whitespace-nowrap"
                     style={{ fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif", letterSpacing: '-0.02em' }}
                   >
-                    Open<span className="text-oe-blue">Construction</span><span className="text-content-quaternary">ERP</span>
+                    {BRAND.name}
                   </span>
                 </div>
               )}
@@ -1042,65 +1042,10 @@ export function LoginPage() {
           </div>
           )}
 
-          {/* GitHub + Community - two primary entry points for the
-              open-source project (replaces the old single "Learn more"
-              link). Premium two-line cards with a tinted icon badge:
-              graphite for the source repo, oe-blue gradient for the
-              community hub. Mirrors the page's login-glass-pro language. */}
           <ClassicAuthFooter />
-          <div className="oe-auth-standard-only mt-4 grid grid-cols-2 gap-3 animate-stagger-in" style={{ animationDelay: '520ms' }}>
-            <a
-              href="https://github.com/datadrivenconstruction/OpenConstructionERP"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={`${t('login.github', { defaultValue: 'GitHub' })} - ${t('login.github_sub', { defaultValue: 'Source code' })}`}
-              className="group relative flex items-center gap-3 overflow-hidden rounded-xl border border-border-light/70 dark:border-white/15 bg-white/75 dark:bg-white/[0.07] backdrop-blur-sm px-3.5 py-3 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-white/90 dark:hover:bg-white/[0.12] dark:hover:border-white/25 hover:border-content-primary/25 hover:shadow-lg"
-            >
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-content-primary/[0.06] dark:bg-white/10 text-content-primary transition-colors group-hover:bg-content-primary/10 dark:group-hover:bg-white/15">
-                <Github size={17} strokeWidth={1.9} />
-              </span>
-              <span className="min-w-0 flex-1 leading-tight">
-                <span className="block text-sm font-semibold text-content-primary">
-                  {t('login.github', { defaultValue: 'GitHub' })}
-                </span>
-                <span className="block truncate text-2xs text-content-tertiary dark:text-content-secondary">
-                  {t('login.github_sub', { defaultValue: 'Source code' })}
-                </span>
-              </span>
-              <ArrowUpRight
-                size={16}
-                className="shrink-0 text-content-quaternary dark:text-content-tertiary transition-all duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-content-secondary"
-              />
-            </a>
-            <a
-              href="https://t.me/datadrivenconstruction"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={`${t('login.community', { defaultValue: 'Community' })} - ${t('login.community_sub', { defaultValue: 'Get help & discuss' })}`}
-              className="group relative flex items-center gap-3 overflow-hidden rounded-xl border border-border-light/70 dark:border-white/15 bg-white/75 dark:bg-white/[0.07] backdrop-blur-sm px-3.5 py-3 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-white/90 dark:hover:bg-white/[0.12] dark:hover:border-white/25 hover:border-content-primary/25 hover:shadow-lg"
-            >
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-content-primary/[0.06] dark:bg-white/10 text-content-primary transition-colors group-hover:bg-content-primary/10 dark:group-hover:bg-white/15">
-                <Users size={17} strokeWidth={1.9} />
-              </span>
-              <span className="min-w-0 flex-1 leading-tight">
-                <span className="block text-sm font-semibold text-content-primary">
-                  {t('login.community', { defaultValue: 'Community' })}
-                </span>
-                <span className="block truncate text-2xs text-content-tertiary dark:text-content-secondary">
-                  {t('login.community_sub', { defaultValue: 'Get help & discuss' })}
-                </span>
-              </span>
-              <ArrowUpRight
-                size={16}
-                className="shrink-0 text-content-quaternary dark:text-content-tertiary transition-all duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-content-secondary"
-              />
-            </a>
-          </div>
           <div className="lg:hidden mt-2 text-center text-2xs text-content-quaternary">
             <div className="flex items-center justify-center gap-3">
-              <a href="https://OpenConstructionERP.com" target="_blank" rel="noopener noreferrer" className="hover:text-content-secondary transition-colors">OpenConstructionERP.com</a>
-              <span>·</span>
-              <a href="https://github.com/datadrivenconstruction/OpenConstructionERP" target="_blank" rel="noopener noreferrer" className="hover:text-content-secondary transition-colors">GitHub</a>
+              <span>{BRAND.name}</span>
             </div>
           </div>
           {/* Running build version - always visible so it's obvious which
@@ -1132,13 +1077,13 @@ export function LoginPage() {
             <div className="px-6 pt-5 pb-4 border-b border-border-light clear-both">
               <LogoWithText size="sm" className="mb-3" />
               <h3 className="oe-section-title mb-2">
-                {t('about.title', 'Professional construction cost estimation - free and open source')}
+                {t('about.title', `${BRAND.name} — orçamento e acompanhamento de obras`)}
               </h3>
               <p className="text-sm text-content-secondary leading-relaxed">
-                {t('about.intro', 'OpenConstructionERP is a modern platform for construction cost management. It covers the full estimation workflow - from creating a bill of quantities to tendering and bid comparison. Designed for professionals worldwide, it supports international standards and works in 24 languages.')}
+                {t('about.intro', `${BRAND.name} organiza orçamento, acompanhamento e campo em um único espaço de trabalho para construtoras brasileiras.`)}
               </p>
               <p className="mt-2 text-sm text-content-secondary leading-relaxed">
-                {t('about.intro2', 'Unlike traditional commercial solutions, OpenConstructionERP runs entirely on your computer. Your project data never leaves your machine - you have full ownership and control. The source code is open and auditable, so you always know exactly what the software does.')}
+                {t('about.intro2', 'Dados, decisões e evidências ficam organizados por obra, com exportação e código-fonte disponível sob AGPL.')}
               </p>
             </div>
 
@@ -1181,7 +1126,7 @@ export function LoginPage() {
               </h3>
               <div className="space-y-2 text-sm text-content-secondary leading-relaxed">
                 <p>{t('about.why_1', 'Construction cost data is one of the most valuable assets a company owns. With proprietary software, your data is often locked inside formats you cannot control. If the vendor raises prices, changes terms, or discontinues the product - you may lose access to years of work.')}</p>
-                <p>{t('about.why_2', 'OpenConstructionERP takes a different approach. Your data is stored in open formats (SQLite, JSON, CSV) on your own hardware. You can export everything at any time. The source code is publicly auditable under AGPL-3.0, so there are no hidden data transfers, no telemetry, and no surprises.')}</p>
+                <p>{t('about.why_2', `${BRAND.name} mantém seus dados em formatos abertos e oferece o código-fonte sob AGPL-3.0.`)}</p>
                 <p>{t('about.why_3', 'The platform is modular - install only what you need. Community modules extend functionality without bloating the core. And because it runs locally, it works offline and performs fast even with large projects.')}</p>
               </div>
             </div>
@@ -1192,7 +1137,7 @@ export function LoginPage() {
                 {t('about.who_title', 'Who is it for')}
               </h3>
               <p className="text-sm text-content-secondary leading-relaxed mb-3">
-                {t('about.who_desc', 'OpenConstructionERP is designed for anyone involved in construction cost management - whether you work on residential projects or large-scale infrastructure, in-house or as a consultant.')}
+                {t('about.who_desc', `${BRAND.name} foi feito para orçamentistas, gestores, equipes de campo e construtoras.`)}
               </p>
               <div className="flex flex-wrap gap-1.5">
                 {[
@@ -1240,16 +1185,14 @@ export function LoginPage() {
                 {t('about.ai_title', 'About AI features')}
               </h3>
               <p className="text-sm text-content-secondary leading-relaxed">
-                {t('about.ai_desc', 'OpenConstructionERP includes optional AI-powered tools - quick estimation from text descriptions, smart cost suggestions, and BOQ chat assistant. These features require an API key from a provider of your choice (Anthropic, OpenAI, Google). AI is always opt-in: it only activates when you configure it, and you decide what data to send. Without an API key, all other features work fully offline.')}
+                {t('about.ai_desc', 'Recursos assistidos são opcionais e só funcionam quando configurados pela equipe; o fluxo principal continua sob seu controle.')}
               </p>
             </div>
 
             {/* Footer */}
             <div className="px-6 py-4 border-t border-border-light flex items-center justify-between">
               <div className="flex items-center gap-3 text-2xs text-content-quaternary">
-                <a href="/api/source" target="_blank" rel="noopener noreferrer" className="hover:text-content-secondary transition-colors">AGPL-3.0</a>
-                <a href="https://OpenConstructionERP.com" target="_blank" rel="noopener noreferrer" className="hover:text-content-secondary transition-colors">OpenConstructionERP.com</a>
-                <a href="https://github.com/datadrivenconstruction/OpenConstructionERP" target="_blank" rel="noopener noreferrer" className="hover:text-content-secondary transition-colors">GitHub</a>
+                <a href="/api/source" target="_blank" rel="noopener noreferrer" className="hover:text-content-secondary transition-colors">{BRAND.sourceLabel}</a>
               </div>
               <Button variant="primary" size="sm" onClick={() => setShowInfo(false)}>
                 {t('about.close', 'Got it')}

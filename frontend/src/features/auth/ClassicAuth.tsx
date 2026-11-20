@@ -9,6 +9,7 @@
 import { useTranslation } from 'react-i18next';
 import { APP_VERSION } from '@/shared/lib/version';
 import { useBrandingStore } from '@/stores/useBrandingStore';
+import { BRAND } from '@/brand';
 
 export function ClassicAuthAside() {
   const { t } = useTranslation();
@@ -38,17 +39,11 @@ export function ClassicAuthFooter() {
     <footer className="oe-auth-classic-only oe-auth-footer">
       <span className="tabular-nums">v{APP_VERSION}</span>
       <span aria-hidden>·</span>
-      <a href="https://openconstructionerp.com/docs" target="_blank" rel="noopener noreferrer">
-        {t('auth_classic.docs', { defaultValue: 'Docs' })}
-      </a>
-      <span aria-hidden>·</span>
       <a href="/api/health" target="_blank" rel="noopener noreferrer">
         {t('auth_classic.status', { defaultValue: 'Status' })}
       </a>
       <span aria-hidden>·</span>
-      <a href="https://openconstructionerp.com/privacy" target="_blank" rel="noopener noreferrer">
-        {t('auth_classic.privacy', { defaultValue: 'Privacy' })}
-      </a>
+      <a href="/api/source" target="_blank" rel="noopener noreferrer">{BRAND.sourceLabel}</a>
       {operator && (
         <>
           <span aria-hidden>·</span>
