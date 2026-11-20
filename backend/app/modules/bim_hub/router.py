@@ -1866,6 +1866,14 @@ async def _process_cad_in_background(
                         "geometry_quality",
                         result.get("geometry_type", "unknown"),
                     ),
+                    # Real-geometry engine (IfcOpenShell) and how many of the
+                    # imported elements got a real mesh (the rest are data-only
+                    # elements: IFC gives them no Representation).
+                    **{
+                        k: result[k]
+                        for k in ("geometry_engine", "geometry_engine_version", "elements_with_geometry", "triangle_count")
+                        if result.get(k) is not None
+                    },
                     # DDC converter version stamp - drives the "Processed
                     # with DDC v{X}" badge on the BIM model card and the
                     # /about page. Both keys are optional: missing values
