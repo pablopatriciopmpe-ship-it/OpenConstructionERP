@@ -1143,6 +1143,7 @@ export function Sidebar({ onClose }: { onClose?: () => void }) {
     if (!activeRoute) return;
     const groupId = GROUP_ID_BY_ROUTE[activeRoute];
     if (!groupId) return;
+    if (groupId.startsWith('area_')) return;
     setCollapsed((prev) => (prev[groupId] ? { ...prev, [groupId]: false } : prev));
     // A screen reached from search or a link that lives under "More modules"
     // opens it, for the same reason: the user sees where they are.

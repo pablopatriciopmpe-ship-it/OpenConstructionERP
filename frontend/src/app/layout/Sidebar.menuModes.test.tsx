@@ -23,8 +23,8 @@ vi.mock('@/shared/lib/api', async () => {
 // are not what these tests read, so any string will do.
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
-    t: (key: string, opts?: { defaultValue?: unknown }) =>
-      typeof opts?.defaultValue === 'string' ? opts.defaultValue : key,
+    t: (key: string, opts?: { defaultValue?: unknown; label?: string }) =>
+      (typeof opts?.defaultValue === 'string' ? opts.defaultValue : key).replace('{{label}}', opts?.label ?? ''),
     i18n: { language: 'en', changeLanguage: vi.fn() },
   }),
   Trans: ({ children }: { children: ReactNode }) => children,
@@ -94,7 +94,7 @@ describe('sidebar work modes', () => {
   });
   afterEach(() => cleanup());
 
-  it('switching to Site manager shows only its rows, and More opens the rest', async () => {
+  it('switching to Site manager keeps product areas collapsed until expanded', async () => {
     renderSidebar();
     fireEvent.change(screen.getByTestId('menu-mode-select'), { target: { value: 'site_manager' } });
     const mode = await screen.findByTestId('sidebar-mode');
@@ -103,7 +103,28 @@ describe('sidebar work modes', () => {
     for (const h of hrefs) expect(DEFAULT_MODE_ITEMS.site_manager).toContain(h);
     expect(within(nav()).getAllByRole('link').map((a) => a.getAttribute('href'))).not.toContain('/boq');
     fireEvent.click(screen.getByTestId('sidebar-more-modules'));
-    await waitFor(() => expect(within(nav()).getAllByRole('link').length).toBeGreaterThan(hrefs.length + 20));
+    const budget = within(nav()).getByRole('button', { name: /Orçamento/ });
+    expect(budget.getAttribute('aria-expanded')).toBe('false');
+    fireEvent.click(budget);
+    expect(within(nav()).getAllByRole('link').map((a) => a.getAttribute('href'))).toContain('/boq');
+  });
+
+  it('expanding Acompanhamento and Campo exposes every maintained destination', async () => {
+    renderSidebar();
+    const areas = ['Visão geral', 'Projetos e quantitativos', 'Orçamento', 'Acompanhamento', 'Campo'];
+    for (const name of areas) {
+      expect(within(nav()).getByRole('button', { name: new RegExp(name) }).getAttribute('aria-expanded')).toBe('false');
+    }
+    for (const name of ['Acompanhamento', 'Campo']) {
+      fireEvent.click(within(nav()).getByRole('button', { name: new RegExp(name) }));
+    }
+    const destinations = within(nav()).getAllByRole('link').map((a) => a.getAttribute('href'));
+    for (const route of [
+      '/schedule', '/progress', '/measurement-book', '/changeorders', '/variations',
+      '/full-evm', '/cost-control', '/5d', '/cvr', '/postcalc', '/eac',
+      '/daily-diary', '/field-reports', '/photos', '/punchlist', '/inspections',
+      '/rfi', '/meetings', '/tasks',
+    ]) expect(destinations).toContain(route);
   });
 
   it('a user group renders its rows at the top, and reset removes it', async () => {
