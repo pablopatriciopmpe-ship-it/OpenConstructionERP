@@ -62,7 +62,33 @@ from sqlalchemy.ext.asyncio import AsyncSession
 logger = logging.getLogger(__name__)
 
 
+async def _same_company(session: AsyncSession, project_id: uuid.UUID, user_id: uuid.UUID) -> bool:
+    """SaaS: project and user belong to the same company (both without one on a non-SaaS build)."""
+    try:
+        from app.modules.saas.access import project_in_callers_tenant
+    except ImportError:
+        return True
+    from app.modules.projects.models import Project
+
+    tenant = (await session.execute(select(Project.tenant_id).where(Project.id == project_id))).scalar_one_or_none()
+    return await project_in_callers_tenant(session, tenant, user_id)
+
+
 async def is_project_member(
+    session: AsyncSession,
+    project_id: uuid.UUID,
+    user_id: uuid.UUID,
+) -> bool:
+    """Team/entity membership of the project, and only within the user's own company (SaaS)."""
+    try:
+        return await _is_member_unscoped(session, project_id, user_id) and await _same_company(
+            session, project_id, user_id
+        )
+    except Exception:  # noqa: BLE001 - cannot prove it -> not a member
+        return False
+
+
+async def _is_member_unscoped(
     session: AsyncSession,
     project_id: uuid.UUID,
     user_id: uuid.UUID,
@@ -124,7 +150,24 @@ def member_project_ids_subquery(user_id: uuid.UUID, *, live_only: bool = False):
 
     from app.modules.legal_entities.access import entity_project_ids_select
 
-    return union(stmt, entity_project_ids_select(user_id, live_only=live_only)).scalar_subquery()
+    reached = union(stmt, entity_project_ids_select(user_id, live_only=live_only)).subquery()
+    from sqlalchemy import String, cast, func
+
+    from app.modules.projects.models import Project as _Project
+
+    try:
+        from app.modules.saas.models import TenantMember
+    except ImportError:  # build without the SaaS module: single-tenant behaviour
+        return select(reached.c[0]).scalar_subquery()
+    # SaaS: a team/entity row never reaches a project of ANOTHER company than the user's
+    # (defence against a stale or cross-tenant membership). Same rule as verify_project_access.
+    mine = select(cast(TenantMember.tenant_id, String)).where(TenantMember.user_id == user_id).scalar_subquery()
+    same_company = (
+        select(reached.c[0])
+        .join(_Project, _Project.id == reached.c[0])
+        .where(func.coalesce(_Project.tenant_id, "") == func.coalesce(mine, ""))
+    )
+    return same_company.scalar_subquery()
 
 
 # ── Record-level restriction ─────────────────────────────────────────────────

@@ -9,7 +9,7 @@ from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.modules.saas.models import Subscription as SubRow
-from app.modules.saas.models import SubscriptionEvent, Tenant
+from app.modules.saas.models import SubscriptionEvent, Tenant, UnmatchedEvent
 from app.saas_billing.store import Subscription
 
 _TENANT_STATUS = {"active": "active", "past_due": "past_due", "canceled": "canceled"}
@@ -42,7 +42,7 @@ class SqlBillingStore:
         ).scalar_one_or_none()
         if row is None:
             return None
-        return Subscription(str(row.tenant_id), row.plan_code, row.provider, row.provider_subscription_id, row.status)
+        return Subscription(str(row.tenant_id), row.plan_code, row.provider, row.provider_subscription_id, row.status, row.cycle)
 
     async def save(self, sub: Subscription) -> None:
         tid = uuid.UUID(sub.tenant_id)
@@ -59,10 +59,11 @@ class SqlBillingStore:
                     provider=sub.provider,
                     provider_subscription_id=sub.provider_subscription_id,
                     status=sub.status,
+                    cycle=sub.cycle,
                 )
             )
         else:
-            row.status, row.plan_code = sub.status, sub.plan_code
+            row.status, row.plan_code, row.cycle = sub.status, sub.plan_code, sub.cycle
         await self.session.flush()
         new_status = _TENANT_STATUS.get(sub.status)
         if new_status:  # pending não mexe na empresa (continua em trial)
@@ -70,3 +71,25 @@ class SqlBillingStore:
             if new_status == "active":
                 values["plan_code"] = sub.plan_code
             await self.session.execute(update(Tenant).where(Tenant.id == tid).values(**values))
+
+    async def stash_unmatched(self, provider: str, event_id: str, sid: str, kind: str) -> None:
+        await self.session.execute(
+            pg_insert(UnmatchedEvent)
+            .values(id=uuid.uuid4(), provider=provider, event_id=event_id, provider_subscription_id=sid, kind=kind)
+            .on_conflict_do_nothing(constraint="uq_oe_saas_unmatched_provider_id")
+        )
+
+    async def pop_unmatched(self, provider: str, sid: str) -> list[tuple[str, str]]:
+        rows = (
+            await self.session.execute(
+                select(UnmatchedEvent)
+                .where(UnmatchedEvent.provider == provider, UnmatchedEvent.provider_subscription_id == sid)
+                .order_by(UnmatchedEvent.created_at)
+                .with_for_update()
+            )
+        ).scalars().all()
+        out = [(r.event_id, r.kind) for r in rows]
+        for r in rows:
+            await self.session.delete(r)
+        await self.session.flush()
+        return out

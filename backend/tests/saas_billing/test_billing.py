@@ -86,3 +86,11 @@ def test_limites_f8():
 def test_somente_sandbox():
     with pytest.raises(ValueError):
         AsaasSandboxProvider(api_key="x", base_url="https://api.asaas.com/v3")
+
+
+def test_evento_antes_da_assinatura_e_reprocessado_no_registro(env):
+    svc, store, c = env
+    assert _post(c, "PAYMENT_CONFIRMED", "evt_early").json()["result"] == "unknown_subscription"
+    sub = asyncio.run(svc.register_subscription("asaas", "tenant-A", "pro", "sub_1", "YEARLY"))
+    assert store.subs[("asaas", "sub_1")].status == "active" and sub.cycle == "YEARLY"
+    assert _post(c, "PAYMENT_CONFIRMED", "evt_early").json()["result"] == "duplicate"
