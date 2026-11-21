@@ -48,6 +48,7 @@ import { STAGE_META } from '@/features/cases/stages';
 import { ROLE_META } from '@/features/cases/roles';
 import { RoleAvatar } from '@/features/cases/RoleAvatar';
 import type { LifecycleStage, ProfessionalRole } from '@/features/cases/types';
+import { SHOW_GUIDED_CASES } from '@/features/cases/casesConfig';
 import type { AcademyVideo, ResultFamily } from './academyTypes';
 import {
   CATALOG,
@@ -909,9 +910,11 @@ function Library({ labels, filters, setFilter, clearFilters, onOpen, patchParams
             <button type="button" onClick={clearFilters} className="rounded-lg border border-border-light px-3 py-1.5 text-xs font-medium hover:border-oe-blue/40">
               {t('common.clear_filters', { defaultValue: 'Clear filters' })}
             </button>
-            <Link to="/cases" className="rounded-lg bg-oe-blue px-3 py-1.5 text-xs font-semibold text-white hover:bg-oe-blue-hover">
-              {t('videos.cases_cta_button', { defaultValue: 'Open Cases' })}
-            </Link>
+            {SHOW_GUIDED_CASES && (
+              <Link to="/cases" className="rounded-lg bg-oe-blue px-3 py-1.5 text-xs font-semibold text-white hover:bg-oe-blue-hover">
+                {t('videos.cases_cta_button', { defaultValue: 'Open Cases' })}
+              </Link>
+            )}
           </div>
         </div>
       ) : view === 'moments' ? (
@@ -983,6 +986,9 @@ function HintsRestore() {
 }
 
 function CasesCta() {
+  if (!SHOW_GUIDED_CASES) {
+    return null;
+  }
   const { t } = useTranslation();
   return (
     <div className="flex flex-col gap-3 rounded-2xl border border-border-light bg-surface-secondary/40 p-5 sm:flex-row sm:items-center">

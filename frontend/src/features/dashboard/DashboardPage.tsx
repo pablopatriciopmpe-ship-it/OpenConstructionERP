@@ -145,6 +145,7 @@ const DashboardCasesCard = lazy(() =>
 const DashboardMarketCasesCard = lazy(() =>
   import('./DashboardMarketCasesCard').then((m) => ({ default: m.DashboardMarketCasesCard })),
 );
+import { SHOW_GUIDED_CASES } from '@/features/cases/casesConfig';
 const AccountingSyncCard = lazy(() =>
   import('@/features/accounting-sync/AccountingSyncCard').then((m) => ({ default: m.AccountingSyncCard })),
 );
@@ -2646,7 +2647,7 @@ function DashboardPageInner() {
     // stands in meanwhile rather than a card that flips.
     // Wrapped in a collapsible shell with localStorage persistence so users
     // can fold the card when it takes too much vertical space on the dashboard.
-    cases_market: (
+    cases_market: SHOW_GUIDED_CASES ? (
       <div className="rounded-xl border border-border-light bg-surface-primary/70 overflow-hidden">
         <button
           type="button"
@@ -2672,7 +2673,7 @@ function DashboardPageInner() {
         </button>
         {marketCasesExpanded && <DashboardMarketCasesCard />}
       </div>
-    ),
+    ) : null,
 
     latest_photos: <LatestSitePhotosCard />,
   };

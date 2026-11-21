@@ -21,6 +21,7 @@ import clsx from 'clsx';
 
 import { Button } from '@/shared/ui/Button';
 import { playbooksForRoute } from './playbookModules';
+import { SHOW_GUIDED_CASES } from './casesConfig';
 
 const MAX_SHOWN = 6;
 
@@ -30,6 +31,10 @@ export interface ModuleCasesButtonProps {
 }
 
 export function ModuleCasesButton({ className }: ModuleCasesButtonProps) {
+  if (!SHOW_GUIDED_CASES) {
+    return null;
+  }
+
   const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();

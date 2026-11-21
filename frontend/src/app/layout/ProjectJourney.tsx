@@ -29,6 +29,7 @@ import {
 import { useModuleStore } from '@/stores/useModuleStore';
 import { videoCountForRoute, videoRouteFor } from '@/features/videos/videoRoutes';
 import type { Playbook } from '@/features/cases/types';
+import { SHOW_GUIDED_CASES } from '@/features/cases/casesConfig';
 
 // The case registry eagerly bundles ~85 playbook data files, so it is loaded
 // LAZILY (dynamic import when the panel opens) to keep it out of the always-on
@@ -284,14 +285,16 @@ function ProjectJourneyPanel({
             </div>
             <div className="flex shrink-0 items-center gap-2">
               {/* One clear route from the map into the guided case library. */}
-              <button
-                type="button"
-                onClick={() => go('/cases')}
-                className="hidden h-8 shrink-0 items-center gap-1.5 rounded-lg border border-border bg-surface-primary px-3 text-xs font-medium text-content-primary transition-colors hover:bg-surface-secondary focus:outline-none focus-visible:ring-2 focus-visible:ring-oe-blue/60 sm:inline-flex"
-              >
-                <GraduationCap size={14} strokeWidth={2} className="text-oe-blue" aria-hidden />
-                {t('journey.browse_cases', { defaultValue: 'Browse cases' })}
-              </button>
+              {SHOW_GUIDED_CASES && (
+                <button
+                  type="button"
+                  onClick={() => go('/cases')}
+                  className="hidden h-8 shrink-0 items-center gap-1.5 rounded-lg border border-border bg-surface-primary px-3 text-xs font-medium text-content-primary transition-colors hover:bg-surface-secondary focus:outline-none focus-visible:ring-2 focus-visible:ring-oe-blue/60 sm:inline-flex"
+                >
+                  <GraduationCap size={14} strokeWidth={2} className="text-oe-blue" aria-hidden />
+                  {t('journey.browse_cases', { defaultValue: 'Browse cases' })}
+                </button>
+              )}
               <button
                 ref={closeRef}
                 type="button"
@@ -579,14 +582,16 @@ function ProjectJourneyPanel({
           </section>
 
           {/* The cases link moves into the scroll on a phone, where the header has no room. */}
-          <button
-            type="button"
-            onClick={() => go('/cases')}
-            className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-border bg-surface-primary px-3 text-xs font-medium text-content-primary transition-colors hover:bg-surface-secondary focus:outline-none focus-visible:ring-2 focus-visible:ring-oe-blue/60 sm:hidden"
-          >
-            <GraduationCap size={14} strokeWidth={2} className="text-oe-blue" aria-hidden />
-            {t('journey.browse_cases', { defaultValue: 'Browse cases' })}
-          </button>
+          {SHOW_GUIDED_CASES && (
+            <button
+              type="button"
+              onClick={() => go('/cases')}
+              className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-border bg-surface-primary px-3 text-xs font-medium text-content-primary transition-colors hover:bg-surface-secondary focus:outline-none focus-visible:ring-2 focus-visible:ring-oe-blue/60 sm:hidden"
+            >
+              <GraduationCap size={14} strokeWidth={2} className="text-oe-blue" aria-hidden />
+              {t('journey.browse_cases', { defaultValue: 'Browse cases' })}
+            </button>
+          )}
         </div>
       </div>
       {videoRoutes && (
@@ -650,6 +655,10 @@ function CasesPill({
   cases: Playbook[];
   onOpenCase: (id: string) => void;
 }) {
+  if (!SHOW_GUIDED_CASES) {
+    return null;
+  }
+
   const { t } = useTranslation();
   const count = cases.length;
 
