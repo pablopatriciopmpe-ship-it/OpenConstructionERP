@@ -1549,9 +1549,9 @@ export function buildDashboardSuggestions(
   items.push({
     id: 'explore-templates',
     icon: <FileSpreadsheet size={20} strokeWidth={1.75} />,
-    title: t('dashboard.next_templates', { defaultValue: 'Explore Project Templates' }),
-    description: t('dashboard.next_templates_desc', { defaultValue: 'Start fast with pre-built construction templates and standard cost models.' }),
-    actionLabel: t('dashboard.next_templates_action', { defaultValue: 'Open Templates' }),
+    title: t('dashboard.next_templates', { defaultValue: 'Explore modelos de projeto' }),
+    description: t('dashboard.next_templates_desc', { defaultValue: 'Comece rápido com modelos prontos de obra e custos padrão.' }),
+    actionLabel: t('dashboard.next_templates_action', { defaultValue: 'Abrir Modelos' }),
     url: '/templates',
   });
 

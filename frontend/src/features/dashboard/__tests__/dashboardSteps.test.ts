@@ -7,6 +7,7 @@ import {
   buildDashboardSuggestions,
 } from '../DashboardPage';
 import { navGroups } from '@/app/layout/navCatalog';
+import ptBrLocale from '@/app/locales/pt-BR';
 
 describe('dashboard suggestions and onboarding allowlist', () => {
   const visibleRoutes = new Set(navGroups.flatMap((group) => group.items.map((item) => item.to)));
@@ -116,6 +117,46 @@ describe('dashboard suggestions and onboarding allowlist', () => {
         expect(bare === pruned || bare.startsWith(pruned + '/')).toBe(false);
       }
       expect(isAllowedDashboardUrl(target, visibleRoutes)).toBe(true);
+    }
+  });
+
+  it('requires all dashboard suggestion cards to have valid pt-BR translation keys and no missing text', () => {
+    const ptBr = ptBrLocale.translation;
+    const missingKeys: string[] = [];
+
+    const requestedKeys = new Set<string>();
+    const trackingT = (key: string, opts?: { defaultValue?: string }) => {
+      requestedKeys.add(key);
+      if (!ptBr[key]) {
+        missingKeys.push(key);
+        return opts?.defaultValue ?? key;
+      }
+      return ptBr[key];
+    };
+
+    const allScenarios = [
+      { name: 'empty state', opts: { projects: [], boqs: [], schedules: [] } },
+      { name: 'has project no boq', opts: { projects: [{ id: 'p1' } as any], boqs: [], schedules: [] } },
+      { name: 'has boq no pos', opts: { projects: [{ id: 'p1' } as any], boqs: [{ id: 'b1', hasPositions: false } as any], schedules: [] } },
+      { name: 'has pos no rates', opts: { projects: [{ id: 'p1' } as any], boqs: [{ id: 'b1', hasPositions: true, hasPricedPositions: false } as any], schedules: [] } },
+      { name: 'has rates no schedule', opts: { projects: [{ id: 'p1' } as any], boqs: [{ id: 'b1', hasPositions: true, hasPricedPositions: true } as any], schedules: [] } },
+      { name: 'all configured', opts: { projects: [{ id: 'p1' } as any], boqs: [{ id: 'b1', hasPositions: true, hasPricedPositions: true } as any], schedules: [{ id: 's1' } as any] } },
+    ];
+
+    for (const { opts } of allScenarios) {
+      const suggestions = buildDashboardSuggestions(opts, trackingT);
+      for (const s of suggestions) {
+        expect(s.title).toBeTruthy();
+        expect(s.description).toBeTruthy();
+        expect(s.actionLabel).toBeTruthy();
+      }
+    }
+
+    expect(requestedKeys.size).toBeGreaterThan(0);
+    expect(missingKeys).toEqual([]);
+    for (const key of requestedKeys) {
+      expect(ptBr[key], `Translation for key "${key}" in pt-BR must be defined and non-empty`).toBeTruthy();
+      expect(ptBr[key].toLowerCase()).not.toContain('gaeb');
     }
   });
 });
