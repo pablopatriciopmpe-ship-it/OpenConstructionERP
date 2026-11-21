@@ -243,7 +243,11 @@ class OfferService:
     async def settings(self) -> OfferSettings:
         return await self.repo.settings()
 
-    async def next_number(self, pattern: str | None = None) -> str:
+    async def next_number(self, pattern: str | None = None, *, lock: bool = False) -> str:
+        """The next free number of the company. ``lock``: hold the company's numbering lock until the
+        transaction ends, so the offer that takes this number is inserted before anyone else reads."""
+        if lock:
+            await self.repo.lock_numbering()
         cfg = await self.settings()
         pat = pattern or cfg.number_pattern
         year = date.today().year
@@ -480,7 +484,7 @@ class OfferService:
             project_id=project.id,
             boq_id=data.boq_id,
             group_id=uuid.uuid4(),
-            number=await self.next_number(),
+            number=await self.next_number(lock=True),
             revision="A",
             status="draft",
             contact_id=contact_id,
