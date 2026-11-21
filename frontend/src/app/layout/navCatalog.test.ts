@@ -16,7 +16,7 @@ import { describe, expect, it } from 'vitest';
 import { navGroups } from './navCatalog';
 import { getRouteIcon } from './routeIcons';
 import { MODULE_REGISTRY } from '@/modules/_registry';
-import { CORE_ACTIONS, buildNavActions } from '@/app/actions/coreActions';
+import { CORE_ACTIONS, buildNavActions, isPrunedAction } from '@/app/actions/coreActions';
 
 describe('the screen catalogue and the route-icon map', () => {
   it('agree on the icon for every screen the menu offers', () => {
@@ -169,8 +169,8 @@ describe('the screen catalogue and the routes that mount those screens', () => {
       ...MODULE_REGISTRY.flatMap((m) => (m.actions ?? []).map((a) => ({ ...a, moduleKey: a.moduleKey ?? m.id }))),
     ];
 
-    const prunedRoutes = ['/5d', '/finance', '/tendering', '/contacts'];
-    const prunedModules = ['5d', 'costmodel', 'finance', 'tendering', 'contacts', 'oe_costmodel', 'oe_finance', 'oe_tendering', 'oe_contacts'];
+    const prunedRoutes = ['/5d', '/finance', '/tendering', '/contacts', '/gaeb-exchange'];
+    const prunedModules = ['5d', 'costmodel', 'finance', 'tendering', 'contacts', 'oe_costmodel', 'oe_finance', 'oe_tendering', 'oe_contacts', 'gaeb-exchange', 'gaeb', 'oe_gaeb'];
 
     const violations: string[] = [];
     for (const action of allActions) {
@@ -185,5 +185,10 @@ describe('the screen catalogue and the routes that mount those screens', () => {
       }
     }
     expect(violations).toEqual([]);
+
+    // GAEB import action must be explicitly identified as pruned
+    const gaebAction = MODULE_REGISTRY.find((m) => m.id === 'gaeb-exchange')?.actions?.find((a) => a.id === 'gaeb.import');
+    expect(gaebAction).toBeDefined();
+    expect(isPrunedAction(gaebAction!)).toBe(true);
   });
 });

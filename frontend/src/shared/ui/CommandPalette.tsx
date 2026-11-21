@@ -447,11 +447,24 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
     // Global search results (from backend API), grouped by module.
     if (globalResults.length > 0) {
       const moduleGroups = new Map<string, PaletteRow[]>();
-      const prunedModules = new Set(['finance', 'tendering', 'contacts', '5d', 'costmodel', 'oe_finance', 'oe_tendering', 'oe_contacts', 'oe_costmodel']);
+      const prunedModules = new Set([
+        'finance',
+        'tendering',
+        'contacts',
+        '5d',
+        'costmodel',
+        'oe_finance',
+        'oe_tendering',
+        'oe_contacts',
+        'oe_costmodel',
+        'gaeb',
+        'gaeb-exchange',
+        'oe_gaeb',
+      ]);
       for (const gr of globalResults) {
         if (!gr.url) continue;
         const mod = (gr.module ?? '').toLowerCase();
-        if (prunedModules.has(mod) || /^\/(finance|tendering|contacts|5d)(\/|$|\?)/i.test(gr.url)) continue;
+        if (prunedModules.has(mod) || /^\/(finance|tendering|contacts|5d|gaeb-exchange)(\/|$|\?)/i.test(gr.url)) continue;
         if (!moduleGroups.has(gr.module)) moduleGroups.set(gr.module, []);
         moduleGroups.get(gr.module)!.push({
           kind: 'link',

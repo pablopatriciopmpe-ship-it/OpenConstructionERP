@@ -19,7 +19,7 @@ import {
   formatShortcut,
   normalizeShortcut,
 } from '../shortcuts';
-import { CORE_ACTIONS, buildNavActions, navActionId } from '@/app/actions/coreActions';
+import { CORE_ACTIONS, buildNavActions, navActionId, isPrunedAction } from '@/app/actions/coreActions';
 import { MODULE_REGISTRY } from '@/modules/_registry';
 
 const a = (id: string, extra: Partial<PaletteAction> = {}): PaletteAction => ({
@@ -99,7 +99,7 @@ describe('action registry', () => {
       ...buildNavActions(),
       ...MODULE_REGISTRY.flatMap((m) => m.actions ?? []),
     ];
-    const pruned = ['/5d', '/finance', '/tendering', '/contacts'];
+    const pruned = ['/5d', '/finance', '/tendering', '/contacts', '/gaeb-exchange'];
     for (const action of all) {
       if (action.path) {
         for (const p of pruned) {
@@ -109,6 +109,18 @@ describe('action registry', () => {
         }
       }
     }
+  });
+
+  it('filters out gaeb.import and pruned module actions via isPrunedAction', () => {
+    expect(isPrunedAction({ id: 'gaeb.import' })).toBe(true);
+    expect(isPrunedAction({ id: 'gaeb.export' })).toBe(true);
+    expect(isPrunedAction({ id: 'contacts.add' })).toBe(true);
+    expect(isPrunedAction({ id: 'finance.overview' })).toBe(true);
+    expect(isPrunedAction({ id: 'tendering.rfq' })).toBe(true);
+    expect(isPrunedAction({ id: 'custom', path: '/gaeb-exchange' })).toBe(true);
+    expect(isPrunedAction({ id: 'custom', path: '/contacts' })).toBe(true);
+    expect(isPrunedAction({ id: 'custom', path: '/5d' })).toBe(true);
+    expect(isPrunedAction({ id: 'boq.new', path: '/boq' })).toBe(false);
   });
 });
 

@@ -48,6 +48,7 @@ import {
 } from 'lucide-react';
 import { Card, CardHeader, CardContent, Button, Badge, Skeleton, ActivityFeed as CrossModuleActivityFeed, EmptyState } from '@/shared/ui';
 import { pricedPositions, type PositionCounts } from './pricedPositions';
+import { navGroups } from '@/app/layout/navCatalog';
 import { MultiCurrencyTotal } from '@/shared/ui/MultiCurrencyTotal';
 import { estimateDisplayName } from '@/shared/lib/estimateDisplayName';
 import { DemoSeedingHint } from '@/features/processes/DemoSeedingHint';
@@ -1424,13 +1425,157 @@ function TodaySnapshot({ cards }: { cards?: ProjectCardMetrics[] }) {
 
 /* ── Next Steps (context-aware suggestions) ───────────────────────────── */
 
-interface NextStepSuggestion {
+export const PRUNED_DASHBOARD_ROUTES = new Set([
+  '/contacts',
+  '/5d',
+  '/finance',
+  '/tendering',
+  '/gaeb-exchange',
+]);
+
+export function isAllowedDashboardUrl(url: string, visibleRoutes: Set<string>): boolean {
+  const bare = url.split(/[?#]/)[0]!;
+  for (const pruned of PRUNED_DASHBOARD_ROUTES) {
+    if (bare === pruned || bare.startsWith(pruned + '/')) {
+      return false;
+    }
+  }
+  const root = '/' + (bare.split('/').filter(Boolean)[0] ?? '');
+  return (
+    visibleRoutes.has(bare) ||
+    visibleRoutes.has(root) ||
+    bare.startsWith('/projects/') ||
+    bare.startsWith('/boq/') ||
+    bare === '/costs/import' ||
+    bare === '/projects/new' ||
+    bare === '/settings'
+  );
+}
+
+export interface NextStepSuggestion {
   id: string;
   icon: React.ReactNode;
   title: string;
   description: string;
   actionLabel: string;
   url: string;
+}
+
+export function buildDashboardSuggestions(
+  opts: {
+    projects?: ProjectSummary[];
+    boqs?: BOQWithTotal[];
+    schedules?: ScheduleSummary[];
+    allContacts?: number;
+  },
+  t: (key: string, opts?: { defaultValue?: string }) => string,
+): NextStepSuggestion[] {
+  const { projects, boqs, schedules } = opts;
+  const items: NextStepSuggestion[] = [];
+
+  const hasProjects = Boolean(projects && projects.length > 0);
+  const hasBoqs = Boolean(boqs && boqs.length > 0);
+  const hasPositions = Boolean(boqs && boqs.some((b) => b.hasPositions));
+  const hasRates = Boolean(boqs && boqs.some((b) => b.hasPricedPositions));
+  const hasSchedules = Boolean(schedules && schedules.length > 0);
+
+  // If no BOQ -- suggest creating one
+  if (hasProjects && !hasBoqs) {
+    items.push({
+      id: 'create-boq',
+      icon: <FileSpreadsheet size={20} strokeWidth={1.75} />,
+      title: t('dashboard.next_create_boq', { defaultValue: 'Create your first Bill of Quantities' }),
+      description: t('dashboard.next_create_boq_desc', { defaultValue: 'A Planilha orçamentária is the foundation of your Orçamento. Add sections and positions to start building your cost breakdown.' }),
+      actionLabel: t('dashboard.next_create_boq_action', { defaultValue: 'Create Planilha orçamentária' }),
+      url: `/projects/${projects![0]!.id}`,
+    });
+  }
+
+  // If BOQ has no positions -- suggest adding them
+  if (hasBoqs && !hasPositions) {
+    const firstBoq = boqs!.find((b) => !b.hasPositions) ?? boqs![0];
+    items.push({
+      id: 'add-positions',
+      icon: <FileText size={20} strokeWidth={1.75} />,
+      title: t('dashboard.next_add_positions', { defaultValue: 'Add positions to your Orçamento' }),
+      description: t('dashboard.next_add_positions_desc', { defaultValue: 'Your Planilha orçamentária is empty. Add trade sections and work item positions with quantities and unit descriptions.' }),
+      actionLabel: t('dashboard.next_add_positions_action', { defaultValue: 'Open Planilha orçamentária Editor' }),
+      url: `/boq/${firstBoq!.id}`,
+    });
+  }
+
+  // If positions have no rates -- suggest importing cost database
+  if (hasPositions && !hasRates) {
+    items.push({
+      id: 'import-costs',
+      icon: <Database size={20} strokeWidth={1.75} />,
+      title: t('dashboard.next_import_costs', { defaultValue: 'Import Banco de custos to auto-fill rates' }),
+      description: t('dashboard.next_import_costs_desc', { defaultValue: 'Load regional pricing data with 55,000+ items to automatically match unit rates to your Planilha orçamentária positions.' }),
+      actionLabel: t('dashboard.next_import_costs_action', { defaultValue: 'Import Database' }),
+      url: '/costs/import',
+    });
+  }
+
+  // If BOQ has rates but not validated -- suggest validation
+  if (hasRates) {
+    items.push({
+      id: 'run-validation',
+      icon: <ShieldCheck size={20} strokeWidth={1.75} />,
+      title: t('dashboard.next_validate', { defaultValue: 'Run validation to check quality' }),
+      description: t('dashboard.next_validate_desc', { defaultValue: 'Check your Orçamento for missing quantities, zero prices, duplicates, and compliance with industry standards.' }),
+      actionLabel: t('dashboard.next_validate_action', { defaultValue: 'Run Validation' }),
+      url: '/validation',
+    });
+  }
+
+  // If no schedule -- suggest creating one
+  if (hasProjects && !hasSchedules) {
+    items.push({
+      id: 'create-schedule',
+      icon: <Calendar size={20} strokeWidth={1.75} />,
+      title: t('dashboard.next_create_schedule', { defaultValue: 'Create a project Cronograma' }),
+      description: t('dashboard.next_create_schedule_desc', { defaultValue: 'Plan your project timeline with activities, dependencies, and milestones. The Gantt chart updates automatically.' }),
+      actionLabel: t('dashboard.next_create_schedule_action', { defaultValue: 'Go to Cronograma' }),
+      url: '/schedule',
+    });
+  }
+
+  // Note: 'add-contacts' (/contacts) is permanently removed as contacts is hidden infrastructure.
+
+  // Evergreen filler - always-on suggestions added at the END so they
+  // only surface when the conditional state-aware ones leave space.
+  // Guarantees the 3-card grid stays visually complete regardless of
+  // the user's setup.
+  items.push({
+    id: 'explore-templates',
+    icon: <FileSpreadsheet size={20} strokeWidth={1.75} />,
+    title: t('dashboard.next_templates', { defaultValue: 'Explore Project Templates' }),
+    description: t('dashboard.next_templates_desc', { defaultValue: 'Start fast with pre-built construction templates and standard cost models.' }),
+    actionLabel: t('dashboard.next_templates_action', { defaultValue: 'Open Templates' }),
+    url: '/templates',
+  });
+
+  items.push({
+    id: 'upload-cad',
+    icon: <Layers size={20} strokeWidth={1.75} />,
+    title: t('dashboard.next_upload_cad', { defaultValue: 'Upload a CAD or BIM model' }),
+    description: t('dashboard.next_upload_cad_desc', { defaultValue: 'Drop a RVT, IFC or DWG file, the converter extracts quantities and matches elements to cost positions.' }),
+    actionLabel: t('dashboard.next_upload_cad_action', { defaultValue: 'Open BIM' }),
+    url: '/bim',
+  });
+
+  items.push({
+    id: 'explore-costs',
+    icon: <Database size={20} strokeWidth={1.75} />,
+    title: t('dashboard.next_explore_costs', { defaultValue: 'Explore the Banco de custos' }),
+    description: t('dashboard.next_explore_costs_desc', { defaultValue: 'Browse 55,000+ regional unit rates with semantic search across regional cost databases.' }),
+    actionLabel: t('dashboard.next_explore_costs_action', { defaultValue: 'Open Costs' }),
+    url: '/costs',
+  });
+
+  const visibleRoutes = new Set(navGroups.flatMap((group) => group.items.map((item) => item.to)));
+  const allowed = items.filter((item) => isAllowedDashboardUrl(item.url, visibleRoutes));
+  return allowed.slice(0, 3);
 }
 
 function NextSteps({
@@ -1447,122 +1592,10 @@ function NextSteps({
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const suggestions = useMemo(() => {
-    const items: NextStepSuggestion[] = [];
-
-    const hasProjects = Boolean(projects && projects.length > 0);
-    const hasBoqs = Boolean(boqs && boqs.length > 0);
-    const hasPositions = Boolean(boqs && boqs.some((b) => b.hasPositions));
-    const hasRates = Boolean(boqs && boqs.some((b) => b.hasPricedPositions));
-    const hasSchedules = Boolean(schedules && schedules.length > 0);
-    const hasContacts = Boolean(allContacts && allContacts > 0);
-
-    // If no BOQ -- suggest creating one
-    if (hasProjects && !hasBoqs) {
-      items.push({
-        id: 'create-boq',
-        icon: <FileSpreadsheet size={20} strokeWidth={1.75} />,
-        title: t('dashboard.next_create_boq', { defaultValue: 'Create your first Bill of Quantities' }),
-        description: t('dashboard.next_create_boq_desc', { defaultValue: 'A Planilha orçamentária is the foundation of your Orçamento. Add sections and positions to start building your cost breakdown.' }),
-        actionLabel: t('dashboard.next_create_boq_action', { defaultValue: 'Create Planilha orçamentária' }),
-        url: `/projects/${projects![0]!.id}`,
-      });
-    }
-
-    // If BOQ has no positions -- suggest adding them
-    if (hasBoqs && !hasPositions) {
-      const firstBoq = boqs!.find((b) => !b.hasPositions) ?? boqs![0];
-      items.push({
-        id: 'add-positions',
-        icon: <FileText size={20} strokeWidth={1.75} />,
-        title: t('dashboard.next_add_positions', { defaultValue: 'Add positions to your Orçamento' }),
-        description: t('dashboard.next_add_positions_desc', { defaultValue: 'Your Planilha orçamentária is empty. Add trade sections and work item positions with quantities and unit descriptions.' }),
-        actionLabel: t('dashboard.next_add_positions_action', { defaultValue: 'Open Planilha orçamentária Editor' }),
-        url: `/boq/${firstBoq!.id}`,
-      });
-    }
-
-    // If positions have no rates -- suggest importing cost database
-    if (hasPositions && !hasRates) {
-      items.push({
-        id: 'import-costs',
-        icon: <Database size={20} strokeWidth={1.75} />,
-        title: t('dashboard.next_import_costs', { defaultValue: 'Import Banco de custos to auto-fill rates' }),
-        description: t('dashboard.next_import_costs_desc', { defaultValue: 'Load regional pricing data with 55,000+ items to automatically match unit rates to your Planilha orçamentária positions.' }),
-        actionLabel: t('dashboard.next_import_costs_action', { defaultValue: 'Import Database' }),
-        url: '/costs/import',
-      });
-    }
-
-    // If BOQ has rates but not validated -- suggest validation
-    if (hasRates) {
-      items.push({
-        id: 'run-validation',
-        icon: <ShieldCheck size={20} strokeWidth={1.75} />,
-        title: t('dashboard.next_validate', { defaultValue: 'Run validation to check quality' }),
-        description: t('dashboard.next_validate_desc', { defaultValue: 'Check your Orçamento for missing quantities, zero prices, duplicates, and compliance with industry standards.' }),
-        actionLabel: t('dashboard.next_validate_action', { defaultValue: 'Run Validation' }),
-        url: '/validation',
-      });
-    }
-
-    // If no schedule -- suggest creating one
-    if (hasProjects && !hasSchedules) {
-      items.push({
-        id: 'create-schedule',
-        icon: <Calendar size={20} strokeWidth={1.75} />,
-        title: t('dashboard.next_create_schedule', { defaultValue: 'Create a project Cronograma' }),
-        description: t('dashboard.next_create_schedule_desc', { defaultValue: 'Plan your project timeline with activities, dependencies, and milestones. The Gantt chart updates automatically.' }),
-        actionLabel: t('dashboard.next_create_schedule_action', { defaultValue: 'Go to Cronograma' }),
-        url: '/schedule',
-      });
-    }
-
-    // If no contacts -- suggest adding them
-    if (!hasContacts) {
-      items.push({
-        id: 'add-contacts',
-        icon: <Users size={20} strokeWidth={1.75} />,
-        title: t('dashboard.next_add_contacts', { defaultValue: 'Add your team contacts' }),
-        description: t('dashboard.next_add_contacts_desc', { defaultValue: 'Store clients, subcontractors, and suppliers in your contacts directory. Import from CSV or add manually.' }),
-        actionLabel: t('dashboard.next_add_contacts_action', { defaultValue: 'Add Contacts' }),
-        url: '/contacts',
-      });
-    }
-
-    // Evergreen filler - always-on suggestions added at the END so they
-    // only surface when the conditional state-aware ones leave space.
-    // Guarantees the 3-card grid stays visually complete regardless of
-    // the user's setup. (Added 2026-05-11.)
-    items.push({
-      id: 'try-ai-estimate',
-      icon: <Sparkles size={20} strokeWidth={1.75} />,
-      title: t('dashboard.next_ai_estimate', { defaultValue: 'Try the IA Quick Orçamento' }),
-      description: t('dashboard.next_ai_estimate_desc', { defaultValue: 'Describe a project in plain language and get a draft Planilha orçamentária in seconds - review, adjust, and ship.' }),
-      actionLabel: t('dashboard.next_ai_estimate_action', { defaultValue: 'Open IA Orçamento' }),
-      url: '/ai-estimate',
-    });
-
-    items.push({
-      id: 'upload-cad',
-      icon: <Layers size={20} strokeWidth={1.75} />,
-      title: t('dashboard.next_upload_cad', { defaultValue: 'Upload a CAD or BIM model' }),
-      description: t('dashboard.next_upload_cad_desc', { defaultValue: 'Drop a RVT, IFC or DWG file, the converter extracts quantities and matches elements to cost positions.' }),
-      actionLabel: t('dashboard.next_upload_cad_action', { defaultValue: 'Open BIM' }),
-      url: '/bim',
-    });
-
-    items.push({
-      id: 'explore-costs',
-      icon: <Database size={20} strokeWidth={1.75} />,
-      title: t('dashboard.next_explore_costs', { defaultValue: 'Explore the Banco de custos' }),
-      description: t('dashboard.next_explore_costs_desc', { defaultValue: 'Browse 55,000+ regional unit rates with semantic search across CWICR / GAEB sources.' }),
-      actionLabel: t('dashboard.next_explore_costs_action', { defaultValue: 'Open Costs' }),
-      url: '/costs',
-    });
-
-    return items.slice(0, 3);
-  }, [projects, boqs, schedules, allContacts, t]);
+  const suggestions = useMemo(
+    () => buildDashboardSuggestions({ projects, boqs, schedules, allContacts }, t),
+    [projects, boqs, schedules, allContacts, t],
+  );
 
   if (suggestions.length === 0) return null;
 
@@ -2351,6 +2384,7 @@ function DashboardPageInner() {
       apiGet<Page<{ id: string }>>('/v1/contacts/?limit=1').catch(
         () => ({ items: [], total: 0, offset: 0, limit: 1 }) as Page<{ id: string }>,
       ),
+    enabled: false,
     retry: false,
     staleTime: 60_000,
   });

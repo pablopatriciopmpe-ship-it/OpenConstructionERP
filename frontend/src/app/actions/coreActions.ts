@@ -48,6 +48,7 @@ export const PRUNED_NAV_ROUTES = new Set([
   '/finance',
   '/tendering',
   '/contacts',
+  '/gaeb-exchange',
 ]);
 
 export const PRUNED_MODULE_IDS = new Set([
@@ -60,6 +61,9 @@ export const PRUNED_MODULE_IDS = new Set([
   'oe_tendering',
   'contacts',
   'oe_contacts',
+  'gaeb-exchange',
+  'gaeb',
+  'oe_gaeb',
 ]);
 
 export function isPrunedActionPath(path?: string | null): boolean {
@@ -82,8 +86,9 @@ export function isPrunedModuleKey(moduleKey?: string | null, path?: string | nul
 export function isPrunedAction(action: PaletteAction): boolean {
   if (action.path && isPrunedActionPath(action.path)) return true;
   if (action.moduleKey && isPrunedModuleKey(action.moduleKey, action.path)) return true;
+  if (action.id === 'gaeb.import' || action.id.startsWith('gaeb.')) return true;
   const prefix = action.id.split('.')[0]?.toLowerCase();
-  if (prefix && (prefix === 'finance' || prefix === 'tendering' || prefix === 'contacts')) return true;
+  if (prefix && (prefix === 'finance' || prefix === 'tendering' || prefix === 'contacts' || prefix === 'gaeb')) return true;
   return false;
 }
 
