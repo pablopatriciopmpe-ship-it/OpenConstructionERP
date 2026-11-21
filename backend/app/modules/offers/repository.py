@@ -23,11 +23,13 @@ class OfferRepository:
         return list((await self.session.execute(stmt)).scalars().all())
 
     async def list_page(
-        self, project_id: uuid.UUID, boq_id: uuid.UUID | None, *, offset: int, limit: int
+        self, project_id: uuid.UUID, boq_id: uuid.UUID | None, *, status: str | None = None, offset: int, limit: int
     ) -> tuple[list[Offer], int]:
         cond = [Offer.project_id == project_id]
         if boq_id is not None:
             cond.append(Offer.boq_id == boq_id)
+        if status:
+            cond.append(Offer.status == status)
         total = (await self.session.execute(select(func.count()).select_from(Offer).where(*cond))).scalar_one()
         stmt = select(Offer).where(*cond).order_by(Offer.created_at.desc()).offset(offset).limit(limit)
         return list((await self.session.execute(stmt)).scalars().all()), int(total)

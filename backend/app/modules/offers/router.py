@@ -83,12 +83,13 @@ async def list_offers(
     user_id: CurrentUserId,
     project_id: uuid.UUID,
     boq_id: uuid.UUID | None = None,
+    status: str | None = Query(None, description="Filter offers by status"),
     offset: int = Query(0, ge=0),
     limit: int = Query(50, ge=1, le=500),
 ) -> OffersListResponse:
     await verify_project_access(project_id, user_id, session)
     service = OfferService(session)
-    rows, total = await service.repo.list_page(project_id, boq_id, offset=offset, limit=limit)
+    rows, total = await service.repo.list_page(project_id, boq_id, status=status, offset=offset, limit=limit)
     return OffersListResponse(items=[await service._summary(r) for r in rows], total=total, offset=offset, limit=limit)
 
 
@@ -211,26 +212,55 @@ async def validate_offer(offer_id: uuid.UUID, session: SessionDep, user_id: Curr
 
 
 @router.get("/{offer_id}/preview", response_model=PreviewResponse, dependencies=[_READ])
-async def preview_offer(offer_id: uuid.UUID, session: SessionDep, user_id: CurrentUserId) -> PreviewResponse:
+async def preview_offer(
+    offer_id: uuid.UUID,
+    session: SessionDep,
+    user_id: CurrentUserId,
+    mode: str = Query("analytic", description="analytic or synthetic"),
+) -> PreviewResponse:
     service, offer = await _load(session, user_id, offer_id)
-    pdf_bytes, pages = await service.render(offer)
+    pdf_bytes, pages = await service.render(offer, mode=mode)
     return PreviewResponse(
         pdf_base64=base64.b64encode(pdf_bytes).decode("ascii"),
         page_count=pages,
-        filename=f"{offer.number}-{offer.revision}.pdf",
+        filename=f"{offer.number}-{offer.revision}-{mode}.pdf",
     )
 
 
 @router.get("/{offer_id}/pdf", dependencies=[_READ])
-async def download_pdf(offer_id: uuid.UUID, session: SessionDep, user_id: CurrentUserId) -> Response:
+async def download_pdf(
+    offer_id: uuid.UUID,
+    session: SessionDep,
+    user_id: CurrentUserId,
+    mode: str = Query("analytic", description="analytic or synthetic"),
+) -> Response:
     service, offer = await _load(session, user_id, offer_id)
-    pdf_bytes, _ = await service.render(offer)
+    pdf_bytes, _ = await service.render(offer, mode=mode)
     return Response(
         content=pdf_bytes,
         media_type="application/pdf",
         headers={
-            "Content-Disposition": f'attachment; filename="{offer.number}-{offer.revision}.pdf"',
+            "Content-Disposition": f'attachment; filename="{offer.number}-{offer.revision}-{mode}.pdf"',
             "Content-Language": pdf_language(offer.locale),
+        },
+    )
+
+
+@router.get("/{offer_id}/excel", dependencies=[_READ])
+async def download_excel(
+    offer_id: uuid.UUID,
+    session: SessionDep,
+    user_id: CurrentUserId,
+    mode: str = Query("analytic", description="analytic or synthetic"),
+) -> Response:
+    service, offer = await _load(session, user_id, offer_id)
+    excel_bytes = await service.render_excel(offer, mode=mode)
+    return Response(
+        content=excel_bytes,
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        headers={
+            "Content-Disposition": f'attachment; filename="{offer.number}-{offer.revision}-{mode}.xlsx"',
+            "Content-Language": "pt-BR",
         },
     )
 

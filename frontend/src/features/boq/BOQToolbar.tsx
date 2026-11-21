@@ -584,6 +584,85 @@ export function BOQToolbar({
                       {t('boq.export_curva_abc', { defaultValue: 'Curva ABC (Excel / PDF)' })}
                     </button>
                   )}
+                  <div className="border-t border-border-light my-1" />
+                  <div className="px-3 py-1.5 text-[10px] font-semibold text-content-tertiary uppercase tracking-wider">
+                    {t('boq.commercial_reports', { defaultValue: 'Relatórios Comerciais (Obra Certa)' })}
+                  </div>
+                  <div className="grid grid-cols-2 gap-1 px-2 py-1 bg-surface-secondary/30 rounded-lg mx-1 my-0.5">
+                    <button
+                      role="menuitem"
+                      onClick={() => handleExportItem('commercial:synthetic:excel')}
+                      className="flex items-center gap-1.5 px-2 py-1.5 text-xs text-content-primary hover:bg-surface-secondary rounded transition-colors"
+                      title="Planilha Sintética em Excel"
+                    >
+                      <FileSpreadsheet size={13} className="text-emerald-600 shrink-0" />
+                      <span>Sintética (XLS)</span>
+                    </button>
+                    <button
+                      role="menuitem"
+                      onClick={() => handleExportItem('commercial:synthetic:pdf')}
+                      className="flex items-center gap-1.5 px-2 py-1.5 text-xs text-content-primary hover:bg-surface-secondary rounded transition-colors"
+                      title="Planilha Sintética em PDF"
+                    >
+                      <FileDown size={13} className="text-[#156D61] shrink-0" />
+                      <span>Sintética (PDF)</span>
+                    </button>
+                    <button
+                      role="menuitem"
+                      onClick={() => handleExportItem('commercial:material-labor:excel')}
+                      className="flex items-center gap-1.5 px-2 py-1.5 text-xs text-content-primary hover:bg-surface-secondary rounded transition-colors"
+                      title="Quantitativo Material x Mão de Obra em Excel"
+                    >
+                      <FileSpreadsheet size={13} className="text-emerald-600 shrink-0" />
+                      <span>Mat x MO (XLS)</span>
+                    </button>
+                    <button
+                      role="menuitem"
+                      onClick={() => handleExportItem('commercial:material-labor:pdf')}
+                      className="flex items-center gap-1.5 px-2 py-1.5 text-xs text-content-primary hover:bg-surface-secondary rounded transition-colors"
+                      title="Quantitativo Material x Mão de Obra em PDF"
+                    >
+                      <FileDown size={13} className="text-[#156D61] shrink-0" />
+                      <span>Mat x MO (PDF)</span>
+                    </button>
+                    <button
+                      role="menuitem"
+                      onClick={() => handleExportItem('commercial:labor-service:excel')}
+                      className="flex items-center gap-1.5 px-2 py-1.5 text-xs text-content-primary hover:bg-surface-secondary rounded transition-colors"
+                      title="Mão de Obra por Serviço (Custo/m²) em Excel"
+                    >
+                      <FileSpreadsheet size={13} className="text-emerald-600 shrink-0" />
+                      <span>MO/Serviço (XLS)</span>
+                    </button>
+                    <button
+                      role="menuitem"
+                      onClick={() => handleExportItem('commercial:labor-service:pdf')}
+                      className="flex items-center gap-1.5 px-2 py-1.5 text-xs text-content-primary hover:bg-surface-secondary rounded transition-colors"
+                      title="Mão de Obra por Serviço (Custo/m²) em PDF"
+                    >
+                      <FileDown size={13} className="text-[#156D61] shrink-0" />
+                      <span>MO/Serviço (PDF)</span>
+                    </button>
+                    <button
+                      role="menuitem"
+                      onClick={() => handleExportItem('commercial:sinapi:excel')}
+                      className="flex items-center gap-1.5 px-2 py-1.5 text-xs text-content-primary hover:bg-surface-secondary rounded transition-colors"
+                      title="Planilha SINAPI com Códigos em Excel"
+                    >
+                      <FileSpreadsheet size={13} className="text-emerald-600 shrink-0" />
+                      <span>SINAPI (XLS)</span>
+                    </button>
+                    <button
+                      role="menuitem"
+                      onClick={() => handleExportItem('commercial:sinapi:pdf')}
+                      className="flex items-center gap-1.5 px-2 py-1.5 text-xs text-content-primary hover:bg-surface-secondary rounded transition-colors"
+                      title="Planilha SINAPI com Códigos em PDF"
+                    >
+                      <FileDown size={13} className="text-[#156D61] shrink-0" />
+                      <span>SINAPI (PDF)</span>
+                    </button>
+                  </div>
+                  <div className="border-t border-border-light my-1" />
                   <button role="menuitem" onClick={() => handleExportItem('excel')} className="flex w-full items-center gap-2 px-3 py-2.5 text-sm text-content-primary hover:bg-surface-secondary transition-colors">
                     <FileSpreadsheet size={16} className="text-content-tertiary" />
                     {t('boq.export_format_excel', { defaultValue: 'Excel (.xlsx)' })}

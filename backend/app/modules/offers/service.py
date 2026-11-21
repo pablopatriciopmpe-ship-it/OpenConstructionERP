@@ -457,6 +457,9 @@ class OfferService:
             valid_until=pricing.valid_until(today, days),
             payment_days=payment_days if payment_days is not None else FALLBACK_PAYMENT_DAYS,
             contact_person=await self._user_person(user_id),
+            licence_number="",
+            execution_period=cfg.default_execution_period or (pack.get("texts", {}).get("execution_period", {}).get(locale) or "90 dias corridos"),
+            payment_details=cfg.default_payment_details or "",
             markup_presentation=cfg.markup_presentation or "spread",
             options=self._default_options(pack, kind),
             texts=await self._pick_texts(project.id, pack, locale),
@@ -493,8 +496,19 @@ class OfferService:
 
     async def update(self, offer_id: uuid.UUID, data: OfferUpdate) -> Offer:
         offer = await self.get(offer_id)
-        self._assert_editable(offer)
         patch = data.model_dump(exclude_unset=True, mode="python")
+        if "status" in patch and patch["status"] is not None:
+            offer.status = patch.pop("status")
+        if patch:
+            self._assert_editable(offer)
+        if "customer" in patch and patch["customer"] is not None:
+            merged = dict(offer.customer or {})
+            merged.update(patch.pop("customer"))
+            offer.customer = merged
+        if "execution_period" in patch and patch["execution_period"] is not None:
+            offer.execution_period = str(patch.pop("execution_period"))
+        if "payment_details" in patch and patch["payment_details"] is not None:
+            offer.payment_details = str(patch.pop("payment_details"))
         if "contact_id" in patch:
             project = await self._project(offer.project_id)
             pack = pack_mod.pack_for(project.country_code, project.subdivision_code)
@@ -649,8 +663,9 @@ class OfferService:
             "site_same_as_billing", "issue_date", "valid_until", "currency", "tax_mode", "tax_rate",
             "markup_presentation", "options", "lines", "totals", "texts", "schedule", "instalments",
             "licence_number", "retention_percent", "advance_security", "payment_days", "contract_id",
+            "execution_period", "payment_details",
         )  # fmt: skip
-        return {c: getattr(offer, c) for c in cols}
+        return {c: getattr(offer, c, None) for c in cols}
 
     async def _snapshot(self, offer: Offer) -> dict[str, Any]:
         from app.modules.offers import pdf as offer_pdf
@@ -887,10 +902,13 @@ class OfferService:
     # -- output ------------------------------------------------------------------------------
 
     async def _summary(self, offer: Offer) -> OfferSummary:
+        cust = offer.customer or {}
+        wa = str(cust.get("whatsapp") or cust.get("phone") or "")
         return OfferSummary(
             id=offer.id, project_id=offer.project_id, boq_id=offer.boq_id, number=offer.number, revision=offer.revision,
-            status=offer.status, customer_name=str((offer.customer or {}).get("name") or ""), currency=offer.currency,
+            status=offer.status, customer_name=str(cust.get("name") or ""), customer_whatsapp=wa, currency=offer.currency,
             gross=str((offer.totals or {}).get("gross", "0")), valid_until=offer.valid_until, issue_date=offer.issue_date,
+            title=offer.title or "Proposta Comercial",
         )  # fmt: skip
 
     async def response(self, offer: Offer) -> OfferResponse:
@@ -902,7 +920,7 @@ class OfferService:
         out.editable = offer.status == "draft"
         return out
 
-    async def render(self, offer: Offer) -> tuple[bytes, int]:
+    async def render(self, offer: Offer, mode: str = "analytic") -> tuple[bytes, int]:
         """The PDF of the stored record. Drafts and previews carry the DRAFT watermark; a sent offer never does."""
         from app.modules.offers import pdf as offer_pdf
 
@@ -915,10 +933,31 @@ class OfferService:
                 "contact_person": offer.contact_person, "project_name": project.name, "pack": pack,
                 "home_country": project.country_code or "", "validity_days": offer.validity_days,
                 "payment_days": offer.payment_days, "tax_label": offer.tax_label, "licence_number": offer.licence_number,
+                "execution_period": getattr(offer, "execution_period", "") or (offer.texts or {}).get("execution_period", {}).get("body", ""),
+                "payment_details": getattr(offer, "payment_details", "") or (offer.texts or {}).get("payment_details", {}).get("body", ""),
             }
         )  # fmt: skip
         basis = await self._exclusions(offer)
-        return offer_pdf.render_offer(data, exclusions=basis, draft=offer.status == "draft")
+        return offer_pdf.render_offer(data, exclusions=basis, draft=offer.status == "draft", mode=mode)
+
+    async def render_excel(self, offer: Offer, mode: str = "analytic") -> bytes:
+        """The Excel export of the stored record with company letterhead."""
+        from app.modules.offers.excel import render_offer_excel
+
+        project = await self._project(offer.project_id)
+        pack = pack_mod.pack_for(project.country_code, project.subdivision_code)
+        data = self._dict(offer)
+        data.update(
+            {
+                "title": offer.title, "locale": offer.locale, "reference": offer.reference,
+                "contact_person": offer.contact_person, "project_name": project.name, "pack": pack,
+                "home_country": project.country_code or "", "validity_days": offer.validity_days,
+                "payment_days": offer.payment_days, "tax_label": offer.tax_label, "licence_number": offer.licence_number,
+                "execution_period": getattr(offer, "execution_period", "") or (offer.texts or {}).get("execution_period", {}).get("body", ""),
+                "payment_details": getattr(offer, "payment_details", "") or (offer.texts or {}).get("payment_details", {}).get("body", ""),
+            }
+        )  # fmt: skip
+        return render_offer_excel(data, mode=mode)
 
     async def _exclusions(self, offer: Offer) -> dict[str, list[str]]:
         """Exclusions and assumptions come from the estimate basis, never from a second list."""

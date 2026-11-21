@@ -5770,6 +5770,7 @@ async def export_boq_excel(
         description="Fold markups into the unit rates (sale rates); only non-embedded lines such as tax stay visible. "
         "Omitted: the bill's own export_embed_markups setting decides.",
     ),
+    report_type: str = Query("standard", description="standard | material_labor | labor_service | sinapi | synthetic"),
 ) -> StreamingResponse:
     """Export BOQ positions as an Excel (xlsx) file with formatting.
 
@@ -5784,15 +5785,74 @@ async def export_boq_excel(
     # IDOR guard: scope the export to the project owner/member, matching
     # every other BOQ read endpoint.
     await _verify_boq_owner(session, boq_id, _user_id, payload)
-    built = await _build_excel_export(session, service, boq_id, embed_markups)
+    built = await _build_excel_export(session, service, boq_id, embed_markups, report_type=report_type)
     return await _export_response(session, service, boq_id, built, _user_id)
 
 
 async def _build_excel_export(
-    session: Any, service: BOQService, boq_id: uuid.UUID, embed_markups: bool | None
+    session: Any, service: BOQService, boq_id: uuid.UUID, embed_markups: bool | None, report_type: str = "standard"
 ) -> _BuiltExport:
     """The Excel export of a bill, built in memory (route and fidelity check share it)."""
     from app.modules.boq.embedding import embed_enabled, embed_positions
+    from app.modules.boq import commercial_exports
+
+    boq_data = await service.get_boq_with_positions(boq_id)
+    boq_obj = await service.get_boq(boq_id)
+    structured_data = await service.get_boq_structured_for_export(boq_id, False)
+    if embed_markups if embed_markups is not None else embed_enabled(structured_data.metadata):
+        embedded, plan = await service.embed_markups_in_export(structured_data)
+        structured_data = embedded.payload
+        boq_data.positions = embed_positions(boq_data.positions, plan)
+
+    from app.modules.projects.repository import ProjectRepository
+
+    project = await ProjectRepository(session).get_by_id(boq_data.project_id)
+    project_line = _project_line(project)
+
+    if report_type == "material_labor":
+        xlsx = await asyncio.to_thread(commercial_exports.render_material_labor_xlsx, boq_data, project_line)
+        return _BuiltExport(
+            content=xlsx,
+            filename=f"{boq_data.name} - Material x Mao de Obra.xlsx",
+            media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            structured=structured_data,
+            format_id="excel",
+            project_id=boq_data.project_id,
+            headers={"Content-Language": "pt-BR"},
+        )
+    elif report_type == "labor_service":
+        xlsx = await asyncio.to_thread(commercial_exports.render_labor_service_xlsx, boq_data, project_line)
+        return _BuiltExport(
+            content=xlsx,
+            filename=f"{boq_data.name} - Mao de Obra por Servico.xlsx",
+            media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            structured=structured_data,
+            format_id="excel",
+            project_id=boq_data.project_id,
+            headers={"Content-Language": "pt-BR"},
+        )
+    elif report_type == "sinapi":
+        xlsx = await asyncio.to_thread(commercial_exports.render_sinapi_xlsx, boq_data, project_line)
+        return _BuiltExport(
+            content=xlsx,
+            filename=f"{boq_data.name} - Planilha SINAPI.xlsx",
+            media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            structured=structured_data,
+            format_id="excel",
+            project_id=boq_data.project_id,
+            headers={"Content-Language": "pt-BR"},
+        )
+    elif report_type == "synthetic":
+        xlsx = await asyncio.to_thread(commercial_exports.render_synthetic_xlsx, boq_data, project_line)
+        return _BuiltExport(
+            content=xlsx,
+            filename=f"{boq_data.name} - Orcamento Sintetico.xlsx",
+            media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            structured=structured_data,
+            format_id="excel",
+            project_id=boq_data.project_id,
+            headers={"Content-Language": "pt-BR"},
+        )
 
     boq_data = await service.get_boq_with_positions(boq_id)
     boq_obj = await service.get_boq(boq_id)
@@ -5898,6 +5958,7 @@ async def export_boq_pdf(
         description="Fold markups into the unit rates (sale rates); only non-embedded lines such as tax stay visible. "
         "Omitted: the bill's own export_embed_markups setting decides.",
     ),
+    report_type: str = Query("standard", description="standard | material_labor | labor_service | sinapi | synthetic"),
 ) -> StreamingResponse:
     """Export BOQ as a professional PDF cost estimate report.
 
@@ -5936,6 +5997,39 @@ async def export_boq_pdf(
     await _verify_boq_owner(session, boq_id, _user_id, payload)
     boq_data = await service.get_boq_structured_for_export(boq_id, embed_markups)
     await _stamp_drawing_refs(session, boq_data)
+
+    project_repo = ProjectRepository(session)
+    project = await project_repo.get_by_id(boq_data.project_id)
+    if project is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Project not found for this BOQ",
+        )
+
+    # ── Commercial report dispatch ──────────────────────────────────────────
+    if report_type in ("material_labor", "labor_service", "sinapi", "synthetic"):
+        from app.modules.boq import commercial_exports
+        from app.core.content_disposition import content_disposition
+
+        project_line = f"{project.name} · {project.project_code}" if project.project_code else project.name
+        if report_type == "material_labor":
+            c_pdf = await asyncio.to_thread(commercial_exports.render_material_labor_pdf, boq_data, project_line)
+            c_fn = f"{boq_data.name} - Material x Mao de Obra.pdf"
+        elif report_type == "labor_service":
+            c_pdf = await asyncio.to_thread(commercial_exports.render_labor_service_pdf, boq_data, project_line)
+            c_fn = f"{boq_data.name} - Mao de Obra por Servico.pdf"
+        elif report_type == "sinapi":
+            c_pdf = await asyncio.to_thread(commercial_exports.render_sinapi_pdf, boq_data, project_line)
+            c_fn = f"{boq_data.name} - Planilha SINAPI.pdf"
+        else:
+            c_pdf = await asyncio.to_thread(commercial_exports.render_synthetic_pdf, boq_data, project_line)
+            c_fn = f"{boq_data.name} - Orcamento Sintetico.pdf"
+
+        return StreamingResponse(
+            io.BytesIO(c_pdf),
+            media_type="application/pdf",
+            headers={"Content-Disposition": content_disposition(c_fn, "attachment")},
+        )
     # The subtotals in ``boq_data`` were rolled up in the project's base
     # currency with this FX table; each printed line is converted with it too,
     # or a foreign-currency line prints a figure its section subtotal does not
@@ -6063,6 +6157,118 @@ async def export_boq_pdf(
             # they were typed.
             "Content-Language": pdf_language(_locale),
         },
+    )
+
+
+@router.get(
+    "/boqs/{boq_id}/export/material-labor",
+    summary="Export Quantitativo Material x Mão de Obra (Excel/PDF)",
+    dependencies=[Depends(RequirePermission("boq.export"))],
+)
+@router.get(
+    "/boqs/{boq_id}/export/material-labor/",
+    summary="Export Quantitativo Material x Mão de Obra (Excel/PDF)",
+    dependencies=[Depends(RequirePermission("boq.export"))],
+)
+async def export_material_labor(
+    boq_id: uuid.UUID,
+    _user_id: CurrentUserId,
+    payload: CurrentUserPayload,
+    session: SessionDep,
+    service: BOQService = Depends(_get_service),
+    format: str = Query("excel", description="excel | pdf"),
+    embed_markups: bool | None = Query(None),
+) -> StreamingResponse:
+    if format == "pdf":
+        return await export_boq_pdf(
+            boq_id, _user_id, payload, session, service, embed_markups=embed_markups, report_type="material_labor"
+        )
+    return await export_boq_excel(
+        boq_id, _user_id, payload, session, service, embed_markups=embed_markups, report_type="material_labor"
+    )
+
+
+@router.get(
+    "/boqs/{boq_id}/export/labor-service",
+    summary="Export Mão de Obra por Serviço com Custo/m² (Excel/PDF)",
+    dependencies=[Depends(RequirePermission("boq.export"))],
+)
+@router.get(
+    "/boqs/{boq_id}/export/labor-service/",
+    summary="Export Mão de Obra por Serviço com Custo/m² (Excel/PDF)",
+    dependencies=[Depends(RequirePermission("boq.export"))],
+)
+async def export_labor_service(
+    boq_id: uuid.UUID,
+    _user_id: CurrentUserId,
+    payload: CurrentUserPayload,
+    session: SessionDep,
+    service: BOQService = Depends(_get_service),
+    format: str = Query("excel", description="excel | pdf"),
+    embed_markups: bool | None = Query(None),
+) -> StreamingResponse:
+    if format == "pdf":
+        return await export_boq_pdf(
+            boq_id, _user_id, payload, session, service, embed_markups=embed_markups, report_type="labor_service"
+        )
+    return await export_boq_excel(
+        boq_id, _user_id, payload, session, service, embed_markups=embed_markups, report_type="labor_service"
+    )
+
+
+@router.get(
+    "/boqs/{boq_id}/export/sinapi",
+    summary="Export Planilha SINAPI com Códigos (Excel/PDF)",
+    dependencies=[Depends(RequirePermission("boq.export"))],
+)
+@router.get(
+    "/boqs/{boq_id}/export/sinapi/",
+    summary="Export Planilha SINAPI com Códigos (Excel/PDF)",
+    dependencies=[Depends(RequirePermission("boq.export"))],
+)
+async def export_sinapi(
+    boq_id: uuid.UUID,
+    _user_id: CurrentUserId,
+    payload: CurrentUserPayload,
+    session: SessionDep,
+    service: BOQService = Depends(_get_service),
+    format: str = Query("excel", description="excel | pdf"),
+    embed_markups: bool | None = Query(None),
+) -> StreamingResponse:
+    if format == "pdf":
+        return await export_boq_pdf(
+            boq_id, _user_id, payload, session, service, embed_markups=embed_markups, report_type="sinapi"
+        )
+    return await export_boq_excel(
+        boq_id, _user_id, payload, session, service, embed_markups=embed_markups, report_type="sinapi"
+    )
+
+
+@router.get(
+    "/boqs/{boq_id}/export/synthetic",
+    summary="Export Orçamento Sintético por Etapas (Excel/PDF)",
+    dependencies=[Depends(RequirePermission("boq.export"))],
+)
+@router.get(
+    "/boqs/{boq_id}/export/synthetic/",
+    summary="Export Orçamento Sintético por Etapas (Excel/PDF)",
+    dependencies=[Depends(RequirePermission("boq.export"))],
+)
+async def export_synthetic(
+    boq_id: uuid.UUID,
+    _user_id: CurrentUserId,
+    payload: CurrentUserPayload,
+    session: SessionDep,
+    service: BOQService = Depends(_get_service),
+    format: str = Query("excel", description="excel | pdf"),
+    embed_markups: bool | None = Query(None),
+) -> StreamingResponse:
+    if format == "pdf":
+        return await export_boq_pdf(
+            boq_id, _user_id, payload, session, service, embed_markups=embed_markups, report_type="synthetic"
+        )
+    return await export_boq_excel(
+        boq_id, _user_id, payload, session, service, embed_markups=embed_markups, report_type="synthetic"
     )
 
 

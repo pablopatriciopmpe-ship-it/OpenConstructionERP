@@ -65,17 +65,85 @@ _DEFAULTS = {
     "offer_completion": "On completion",
     "offer_days_after": "{days} days after {event}",
     "offer_page_of": "Page {page} of {total}",
+    "offer_execution_period": "Execution period",
+    "offer_payment_terms": "Payment terms",
+    "offer_payment_details": "Payment details (PIX / Bank)",
+    "offer_notes": "Notes",
+    "offer_conditions": "General conditions",
+    "offer_warranty": "Warranty",
+    "offer_whatsapp": "WhatsApp",
+    "offer_subtotal_col": "Subtotal",
+}
+
+_PT_DEFAULTS = {
+    "offer_item": "Item",
+    "offer_description": "Descrição",
+    "offer_qty": "Qtd.",
+    "offer_unit": "Un.",
+    "offer_unit_price": "Preço unitário",
+    "offer_total": "Total",
+    "offer_page": "Página",
+    "offer_optional": "Opcional",
+    "offer_alternative": "Alternativa a {ref}",
+    "offer_provisional": "Verba provisória",
+    "offer_lump_sum": "Preço global",
+    "offer_daywork": "Diária",
+    "offer_by_others": "por terceiros",
+    "offer_not_included": "Não incluído no total",
+    "offer_schedule": "Cronograma de Pagamento",
+    "offer_instalment": "Parcela",
+    "offer_percent": "%",
+    "offer_amount": "Líquido",
+    "offer_gross": "Bruto",
+    "offer_due": "Vencimento",
+    "offer_acceptance": "Aceite da Proposta",
+    "offer_accepted_on": "Data do Aceite",
+    "offer_signature": "Assinatura do Cliente / De acordo",
+    "offer_number": "Proposta nº",
+    "offer_date": "Data",
+    "offer_valid_until": "Válida até",
+    "offer_reference": "Referência",
+    "offer_project": "Obra",
+    "offer_site": "Local da Obra",
+    "offer_contact": "Contato",
+    "offer_licence": "Registro Profissional",
+    "offer_subtotal": "Subtotal {name}",
+    "offer_subtotal_col": "Subtotal",
+    "offer_net_total": "Total Líquido",
+    "offer_tax_on": "{label} {rate}% sobre {base}",
+    "offer_exclusions": "O que não está incluso",
+    "offer_assumptions": "Premissas",
+    "offer_preliminaries": "Serviços preliminares",
+    "offer_draft": "RASCUNHO",
+    "offer_attn": "A/C",
+    "offer_reverse_charge": "Imposto devido pelo destinatário",
+    "offer_tax_exempt": "Isento de imposto",
+    "offer_signing": "Na assinatura",
+    "offer_completion": "Na conclusão",
+    "offer_days_after": "{days} dias após {event}",
+    "offer_page_of": "Página {page} de {total}",
+    "offer_execution_period": "Prazo de Execução",
+    "offer_payment_terms": "Condições de Pagamento",
+    "offer_payment_details": "Dados para Pagamento (PIX / Conta)",
+    "offer_notes": "Observações",
+    "offer_conditions": "Condições Gerais",
+    "offer_warranty": "Garantia",
+    "offer_whatsapp": "WhatsApp",
 }
 
 
 def _labels(locale: str) -> dict[str, str]:
+    loc = (locale or "en").lower()
+    base = {**_DEFAULTS}
+    if loc.startswith("pt"):
+        base.update(_PT_DEFAULTS)
     try:
         from app.modules.boq.pdf_export import _get_pdf_labels
 
         found = _get_pdf_labels(locale or "en")
     except Exception:  # noqa: BLE001 - labels fall back to English rather than losing the document
         found = {}
-    return {**_DEFAULTS, **{k: v for k, v in found.items() if k.startswith("offer_")}}
+    return {**base, **{k: v for k, v in found.items() if k.startswith("offer_")}}
 
 
 def is_rtl(locale: str) -> bool:
@@ -130,7 +198,7 @@ def _body_paras(text: str, style: Any) -> list[Any]:
 
 
 def render_offer(
-    data: dict[str, Any], *, exclusions: dict[str, list[str]] | None = None, draft: bool = False
+    data: dict[str, Any], *, exclusions: dict[str, list[str]] | None = None, draft: bool = False, mode: str = "analytic"
 ) -> tuple[bytes, int]:
     """Render the offer record to PDF bytes. Returns ``(pdf, page_count)``."""
     from reportlab.lib import colors
@@ -214,6 +282,13 @@ def render_offer(
         )
     if data.get("licence_number"):
         meta_rows.append((labels["offer_licence"], data["licence_number"]))
+    exec_p = str(data.get("execution_period") or (data.get("texts", {}).get("execution_period", {}) or {}).get("body") or "")
+    if exec_p:
+        meta_rows.append((labels.get("offer_execution_period", "Prazo de execução"), exec_p))
+    cust_data = data.get("customer") or {}
+    cust_wa = str(cust_data.get("whatsapp") or cust_data.get("phone") or "")
+    if cust_wa:
+        meta_rows.append((labels.get("offer_whatsapp", "WhatsApp"), cust_wa))
     meta = Table(
         [[_para(k, small), _para(v, cell)] for k, v in meta_rows],
         colWidths=[26 * MM, None],
@@ -250,7 +325,14 @@ def render_offer(
     story.append(Spacer(1, 6 * MM))
 
     # -- title, project, intro (no amounts on page one)
-    story.append(_para(data.get("title") or "", title_style))
+    raw_title = str(data.get("title") or "")
+    if mode == "synthetic" and "sint" not in raw_title.lower():
+        title_str = f"{raw_title} (Sintética)" if raw_title else "Proposta Comercial Sintética"
+    elif mode == "analytic" and "anal" not in raw_title.lower() and raw_title:
+        title_str = f"{raw_title} (Analítica)"
+    else:
+        title_str = raw_title or "Proposta Comercial"
+    story.append(_para(title_str, title_style))
     project_line = data.get("project_name") or ""
     site = data.get("site_address") or {}
     if project_line:
@@ -273,106 +355,152 @@ def render_offer(
     lines = data.get("lines") or []
     totals = data.get("totals") or {}
     subtotals = totals.get("section_subtotals") or {}
-    cols = [
-        labels["offer_item"],
-        labels["offer_description"],
-        labels["offer_qty"],
-        labels["offer_unit"],
-        labels["offer_unit_price"],
-        labels["offer_total"],
-    ]
-    rows: list[list[Any]] = [[_para(c, head) for c in cols]]
-    styles_cmds: list[tuple[Any, ...]] = []
-    open_section: dict[str, Any] | None = None
 
-    def close_section() -> None:
-        nonlocal open_section
-        if open_section is None:
-            return
-        amount = subtotals.get(open_section["ordinal"])
-        if amount not in (None, "") and Decimal(str(amount)) != 0:
-            name = open_section["description"] or open_section["ordinal"]
-            rows.append(
-                [
-                    "",
-                    _para(labels["offer_subtotal"].format(name=name), cell, bold=True),
-                    "",
-                    "",
-                    "",
+    if mode == "synthetic":
+        cols = [
+            labels["offer_item"],
+            labels["offer_description"],
+            labels.get("offer_subtotal_col", "Subtotal"),
+            labels["offer_percent"],
+        ]
+        rows = [[_para(c, head) for c in cols]]
+        styles_cmds = []
+        gross_val = Decimal(str(totals.get("gross") or totals.get("net") or "1"))
+        for ln in lines:
+            if ln.get("kind") == "section":
+                ord_ = ln.get("ordinal", "")
+                desc_ = ln.get("description", "") or ord_
+                amount = subtotals.get(ord_) or ln.get("total") or "0"
+                amt_d = Decimal(str(amount or "0"))
+                pct_str = f"{(float(amt_d / gross_val) * 100):.1f}%" if gross_val > 0 else "0.0%"
+                rows.append([
+                    _para(ord_, cell, bold=True),
+                    _para(desc_, cell, bold=True),
                     _para(_fmt_money(amount, locale), cell_r, bold=True),
+                    _para(pct_str, cell_r, bold=True),
+                ])
+                styles_cmds.append(("LINEBELOW", (0, len(rows) - 1), (-1, len(rows) - 1), 0.25, colors.HexColor("#dddddd")))
+        widths = [20 * MM, None, 32 * MM, 20 * MM]
+        widths[1] = frame_w - sum(w for w in widths if w)
+        table_rows = [list(reversed(r)) for r in rows] if rtl else rows
+        if rtl:
+            widths = list(reversed(widths))
+        items = Table(table_rows, colWidths=widths, repeatRows=1, splitByRow=1)
+        items.setStyle(
+            TableStyle(
+                [
+                    ("BACKGROUND", (0, 0), (-1, 0), accent),
+                    ("VALIGN", (0, 0), (-1, -1), "TOP"),
+                    ("TOPPADDING", (0, 0), (-1, -1), 3),
+                    ("BOTTOMPADDING", (0, 0), (-1, -1), 3),
+                    ("LEFTPADDING", (0, 0), (-1, -1), 3),
+                    ("RIGHTPADDING", (0, 0), (-1, -1), 3),
+                    *styles_cmds,
                 ]
             )
-            styles_cmds.append(("LINEABOVE", (0, len(rows) - 1), (-1, len(rows) - 1), 0.4, muted))
-        open_section = None
-
-    for ln in lines:
-        if ln.get("kind") == "section":
-            close_section()
-            open_section = ln
-            title = f"{ln.get('ordinal', '')} {ln.get('description', '')}".strip()
-            if ln.get("ordinal") == "M" and ln.get("description"):
-                title = ln["description"]
-            rows.append([_para(title, cell, bold=True), "", "", "", "", ""])
-            idx = len(rows) - 1
-            styles_cmds += [
-                ("SPAN", (0, idx), (-1, idx)),
-                ("BACKGROUND", (0, idx), (-1, idx), colors.HexColor("#eef2f7")),
-            ]
-            continue
-        role = ln.get("role") or "base"
-        desc = str(ln.get("description") or "")
-        tag = ""
-        if role == "optional":
-            tag = labels["offer_optional"]
-        elif role == "alternative":
-            tag = labels["offer_alternative"].format(ref=ln.get("alternative_of") or "")
-        elif role == "provisional_sum":
-            tag = labels["offer_provisional"]
-        elif role == "daywork_rate":
-            tag = labels["offer_daywork"]
-        if ln.get("by_others"):
-            tag = f"{tag}, {labels['offer_by_others']}" if tag else labels["offer_by_others"]
-        total = _fmt_money(ln.get("total"), locale)
-        if role in ("optional", "alternative") and total:
-            total = f"({total})"
-        unit = labels["offer_lump_sum"] if role == "lump_sum" else str(ln.get("unit") or "")
-        cell_desc = [_para(desc, cell)]
-        if tag:
-            cell_desc.append(_para(tag, style("OfferTag", 7.5, textColor=muted)))
-        qty = "" if role == "lump_sum" else _fmt_money(ln.get("quantity"), locale)
-        rows.append(
-            [
-                _para(ln.get("ordinal"), cell),
-                cell_desc,
-                _para(qty, cell_r),
-                _para(unit, cell),
-                _para(_fmt_money(ln.get("unit_rate"), locale), cell_r),
-                _para(total, cell_r),
-            ]
         )
-    close_section()
+        story.append(items)
+    else:
+        cols = [
+            labels["offer_item"],
+            labels["offer_description"],
+            labels["offer_qty"],
+            labels["offer_unit"],
+            labels["offer_unit_price"],
+            labels["offer_total"],
+        ]
+        rows: list[list[Any]] = [[_para(c, head) for c in cols]]
+        styles_cmds: list[tuple[Any, ...]] = []
+        open_section: dict[str, Any] | None = None
 
-    widths = [16 * MM, None, 20 * MM, 14 * MM, 24 * MM, 26 * MM]
-    widths[1] = frame_w - sum(w for w in widths if w)
-    table_rows = [list(reversed(r)) for r in rows] if rtl else rows
-    if rtl:
-        widths = list(reversed(widths))
-    items = Table(table_rows, colWidths=widths, repeatRows=1, splitByRow=1)
-    items.setStyle(
-        TableStyle(
-            [
-                ("BACKGROUND", (0, 0), (-1, 0), accent),
-                ("VALIGN", (0, 0), (-1, -1), "TOP"),
-                ("LINEBELOW", (0, 1), (-1, -1), 0.25, colors.HexColor("#dddddd")),
-                ("TOPPADDING", (0, 0), (-1, -1), 2.5),
-                ("BOTTOMPADDING", (0, 0), (-1, -1), 2.5),
-                ("LEFTPADDING", (0, 0), (-1, -1), 3),
-                ("RIGHTPADDING", (0, 0), (-1, -1), 3),
-                *styles_cmds,
-            ]
+        def close_section() -> None:
+            nonlocal open_section
+            if open_section is None:
+                return
+            amount = subtotals.get(open_section["ordinal"])
+            if amount not in (None, "") and Decimal(str(amount)) != 0:
+                name = open_section["description"] or open_section["ordinal"]
+                rows.append(
+                    [
+                        "",
+                        _para(labels["offer_subtotal"].format(name=name), cell, bold=True),
+                        "",
+                        "",
+                        "",
+                        _para(_fmt_money(amount, locale), cell_r, bold=True),
+                    ]
+                )
+                styles_cmds.append(("LINEABOVE", (0, len(rows) - 1), (-1, len(rows) - 1), 0.4, muted))
+            open_section = None
+
+        for ln in lines:
+            if ln.get("kind") == "section":
+                close_section()
+                open_section = ln
+                title = f"{ln.get('ordinal', '')} {ln.get('description', '')}".strip()
+                if ln.get("ordinal") == "M" and ln.get("description"):
+                    title = ln["description"]
+                rows.append([_para(title, cell, bold=True), "", "", "", "", ""])
+                idx = len(rows) - 1
+                styles_cmds += [
+                    ("SPAN", (0, idx), (-1, idx)),
+                    ("BACKGROUND", (0, idx), (-1, idx), colors.HexColor("#eef2f7")),
+                ]
+                continue
+            role = ln.get("role") or "base"
+            desc = str(ln.get("description") or "")
+            tag = ""
+            if role == "optional":
+                tag = labels["offer_optional"]
+            elif role == "alternative":
+                tag = labels["offer_alternative"].format(ref=ln.get("alternative_of") or "")
+            elif role == "provisional_sum":
+                tag = labels["offer_provisional"]
+            elif role == "daywork_rate":
+                tag = labels["offer_daywork"]
+            if ln.get("by_others"):
+                tag = f"{tag}, {labels['offer_by_others']}" if tag else labels["offer_by_others"]
+            total = _fmt_money(ln.get("total"), locale)
+            if role in ("optional", "alternative") and total:
+                total = f"({total})"
+            unit = labels["offer_lump_sum"] if role == "lump_sum" else str(ln.get("unit") or "")
+            cell_desc = [_para(desc, cell)]
+            if tag:
+                cell_desc.append(_para(tag, style("OfferTag", 7.5, textColor=muted)))
+            qty = "" if role == "lump_sum" else _fmt_money(ln.get("quantity"), locale)
+            rows.append(
+                [
+                    _para(ln.get("ordinal"), cell),
+                    cell_desc,
+                    _para(qty, cell_r),
+                    _para(unit, cell),
+                    _para(_fmt_money(ln.get("unit_rate"), locale), cell_r),
+                    _para(total, cell_r),
+                ]
+            )
+        close_section()
+
+        widths = [16 * MM, None, 20 * MM, 14 * MM, 24 * MM, 26 * MM]
+        widths[1] = frame_w - sum(w for w in widths if w)
+        table_rows = [list(reversed(r)) for r in rows] if rtl else rows
+        if rtl:
+            widths = list(reversed(widths))
+        items = Table(table_rows, colWidths=widths, repeatRows=1, splitByRow=1)
+        items.setStyle(
+            TableStyle(
+                [
+                    ("BACKGROUND", (0, 0), (-1, 0), accent),
+                    ("VALIGN", (0, 0), (-1, -1), "TOP"),
+                    ("LINEBELOW", (0, 1), (-1, -1), 0.25, colors.HexColor("#dddddd")),
+                    ("TOPPADDING", (0, 0), (-1, -1), 2.5),
+                    ("BOTTOMPADDING", (0, 0), (-1, -1), 2.5),
+                    ("LEFTPADDING", (0, 0), (-1, -1), 3),
+                    ("RIGHTPADDING", (0, 0), (-1, -1), 3),
+                    *styles_cmds,
+                ]
+            )
         )
-    )
-    story.append(items)
+        story.append(items)
 
     # -- summary
     story.append(Spacer(1, 5 * MM))
@@ -383,10 +511,10 @@ def render_offer(
         ]
     ]
     tax_label = str(data.get("tax_label") or "")
-    mode = str(data.get("tax_mode") or "standard")
-    if mode == "reverse_charge":
+    tax_mode = str(data.get("tax_mode") or "standard")
+    if tax_mode == "reverse_charge":
         summary_rows.append([_para(labels["offer_reverse_charge"], cell), ""])
-    elif mode == "exempt":
+    elif tax_mode == "exempt":
         summary_rows.append([_para(labels["offer_tax_exempt"], cell), ""])
     else:
         for grp in totals.get("tax_groups") or []:
@@ -484,18 +612,32 @@ def render_offer(
         story.append(sched)
 
     # -- terms
-    for heading_key, kind in (
-        ("", "payment_terms"),
-        ("", "validity"),
-        ("", "conditions"),
-        ("", "warranty"),
+    terms_headings = (
+        ("offer_execution_period", "execution_period"),
+        ("offer_payment_terms", "payment_terms"),
+        ("offer_payment_details", "payment_details"),
+        ("offer_exclusions", "exclusions"),
+        ("offer_notes", "notes"),
+        ("offer_validity", "validity"),
+        ("offer_conditions", "conditions"),
+        ("offer_warranty", "warranty"),
         ("", "closing"),
         ("", "legal_notice"),
-    ):
-        chunk = _body_paras(text_of(kind), small if kind == "legal_notice" else body)
-        if chunk:
-            story.append(Spacer(1, 3 * MM))
-            story.extend(chunk)
+    )
+    for heading_key, kind in terms_headings:
+        chunk_text = text_of(kind)
+        if kind == "execution_period" and not chunk_text and data.get("execution_period"):
+            chunk_text = str(data["execution_period"])
+        if kind == "payment_details" and not chunk_text and data.get("payment_details"):
+            chunk_text = str(data["payment_details"])
+        if chunk_text:
+            if heading_key and labels.get(heading_key):
+                story.append(_para(labels[heading_key], h2))
+            chunk = _body_paras(chunk_text, small if kind == "legal_notice" else body)
+            if chunk:
+                story.extend(chunk)
+                story.append(Spacer(1, 2.5 * MM))
+
     ex = exclusions or {}
     for key, label in (("exclusions", "offer_exclusions"), ("assumptions", "offer_assumptions")):
         if ex.get(key):
@@ -503,10 +645,25 @@ def render_offer(
             story.extend(_para(f"- {item}", body) for item in ex[key])
 
     # -- acceptance, kept whole
+    customer_dict = data.get("customer") or {}
+    cust_display_name = str(customer_dict.get("name") or "")
+    cust_display_wa = str(customer_dict.get("whatsapp") or customer_dict.get("phone") or "")
     sign = Table(
-        [[_para(labels["offer_accepted_on"], small), _para(labels["offer_signature"], small)], ["", ""]],
-        colWidths=[frame_w * 0.3, frame_w * 0.6],
-        rowHeights=[None, 16 * MM],
+        [
+            [_para(labels["offer_accepted_on"], small), _para(labels["offer_signature"], small)],
+            ["", ""],
+            [
+                _para("Data: ____ / ____ / ________", cell),
+                _para(
+                    f"<b>{cust_display_name}</b>"
+                    + (f" · WhatsApp: {cust_display_wa}" if cust_display_wa else "")
+                    + "<br/><font color='#666666' size='7.5'>De acordo com os valores, condições e escopo desta proposta comercial.</font>",
+                    cell,
+                ),
+            ],
+        ],
+        colWidths=[frame_w * 0.35, frame_w * 0.65],
+        rowHeights=[None, 14 * MM, None],
     )
     sign.setStyle(
         TableStyle(

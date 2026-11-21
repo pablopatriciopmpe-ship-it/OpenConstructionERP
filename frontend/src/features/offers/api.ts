@@ -8,9 +8,32 @@ import type { ScheduleRow } from './schedule';
 
 export type OfferStatus = 'draft' | 'sent' | 'accepted' | 'declined' | 'expired' | 'superseded';
 export type OfferSection = 'customer' | 'details' | 'items' | 'schedule' | 'texts' | 'layout';
-export type TextKind = 'intro' | 'payment_terms' | 'validity' | 'conditions' | 'warranty' | 'closing' | 'legal_notice';
+export type TextKind =
+  | 'intro'
+  | 'payment_terms'
+  | 'validity'
+  | 'conditions'
+  | 'warranty'
+  | 'closing'
+  | 'legal_notice'
+  | 'exclusions'
+  | 'notes'
+  | 'payment_details'
+  | 'execution_period';
 
-export const TEXT_KINDS: TextKind[] = ['intro', 'payment_terms', 'validity', 'conditions', 'warranty', 'closing', 'legal_notice'];
+export const TEXT_KINDS: TextKind[] = [
+  'intro',
+  'payment_terms',
+  'validity',
+  'conditions',
+  'warranty',
+  'closing',
+  'legal_notice',
+  'exclusions',
+  'notes',
+  'payment_details',
+  'execution_period',
+];
 
 export interface OfferSummary {
   id: string;
@@ -20,6 +43,8 @@ export interface OfferSummary {
   revision: string;
   status: OfferStatus;
   customer_name: string;
+  customer_whatsapp?: string | null;
+  title?: string | null;
   currency: string;
   gross: string;
   valid_until: string | null;
@@ -81,7 +106,7 @@ export interface Offer {
   status: OfferStatus;
   contact_id: string | null;
   customer_kind: 'private' | 'business';
-  customer: Record<string, unknown> & { name?: string };
+  customer: Record<string, unknown> & { name?: string; whatsapp?: string; email?: string; phone?: string };
   site_same_as_billing: boolean;
   locale: string;
   title: string;
@@ -93,6 +118,8 @@ export interface Offer {
   validity_days: number | null;
   valid_until: string | null;
   payment_days: number | null;
+  execution_period?: string | null;
+  payment_details?: string | null;
   reference: string;
   markup_presentation: 'spread' | 'lines' | 'section';
   totals: OfferTotals;
@@ -128,9 +155,28 @@ export interface OfferValidation {
 export type OfferPatch = Partial<
   Pick<
     Offer,
-    'number' | 'issue_date' | 'valid_until' | 'validity_days' | 'payment_days' | 'reference' | 'locale' | 'title'
-    | 'customer_kind' | 'markup_presentation' | 'site_same_as_billing' | 'retention_percent' | 'advance_security'
-  > & { contact_id: string | null; texts: Record<string, Pick<TextEntry, 'source' | 'body' | 'block_id'>>; instalments: ScheduleRow[] }
+    | 'number'
+    | 'issue_date'
+    | 'valid_until'
+    | 'validity_days'
+    | 'payment_days'
+    | 'reference'
+    | 'locale'
+    | 'title'
+    | 'customer_kind'
+    | 'markup_presentation'
+    | 'site_same_as_billing'
+    | 'retention_percent'
+    | 'advance_security'
+    | 'execution_period'
+    | 'payment_details'
+  > & {
+    contact_id: string | null;
+    customer?: Record<string, unknown>;
+    status?: OfferStatus;
+    texts: Record<string, Pick<TextEntry, 'source' | 'body' | 'block_id'>>;
+    instalments: ScheduleRow[];
+  }
 >;
 
 export function useOfferContext(projectId: string | undefined, boqId: string | undefined) {
@@ -267,6 +313,10 @@ export interface OfferSettings {
   schedule_templates: { name: string; rows: ScheduleRow[] }[];
   default_schedule: string;
   next_number: string;
+  default_execution_period?: string | null;
+  default_payment_details?: string | null;
+  default_exclusions?: string | null;
+  default_notes?: string | null;
 }
 
 /** The page envelope every offers list answers with. */
@@ -339,14 +389,38 @@ export function useRestoreTexts() {
   });
 }
 
-export async function fetchProjectOffers(projectId: string): Promise<OfferSummary[]> {
-  return (await apiGet<Page<OfferSummary>>(`/v1/offers/?project_id=${projectId}&limit=500`)).items;
+export async function fetchProjectOffers(projectId: string, status?: string): Promise<OfferSummary[]> {
+  const qs = new URLSearchParams({ project_id: projectId, limit: '500' });
+  if (status && status !== 'all') qs.set('status', status);
+  return (await apiGet<Page<OfferSummary>>(`/v1/offers/?${qs.toString()}`)).items;
 }
 
-export function useProjectOffers(projectId: string | undefined) {
+export function useProjectOffers(projectId: string | undefined, status?: string) {
   return useQuery({
-    queryKey: ['offers', 'project', projectId],
-    queryFn: () => fetchProjectOffers(projectId as string),
+    queryKey: ['offers', 'project', projectId, status],
+    queryFn: () => fetchProjectOffers(projectId as string, status),
     enabled: !!projectId,
   });
+}
+
+export async function fetchAllOffers(status?: string, projectId?: string): Promise<OfferSummary[]> {
+  const qs = new URLSearchParams({ limit: '500' });
+  if (projectId) qs.set('project_id', projectId);
+  if (status && status !== 'all') qs.set('status', status);
+  return (await apiGet<Page<OfferSummary>>(`/v1/offers/?${qs.toString()}`)).items;
+}
+
+export function useAllOffers(status?: string, projectId?: string) {
+  return useQuery({
+    queryKey: ['offers', 'list', status, projectId],
+    queryFn: () => fetchAllOffers(status, projectId),
+  });
+}
+
+export function offerPdfUrl(offerId: string, mode: 'analytic' | 'synthetic' = 'analytic'): string {
+  return `/api/v1/offers/${encodeURIComponent(offerId)}/pdf?mode=${mode}`;
+}
+
+export function offerExcelUrl(offerId: string, mode: 'analytic' | 'synthetic' = 'analytic'): string {
+  return `/api/v1/offers/${encodeURIComponent(offerId)}/excel?mode=${mode}`;
 }
