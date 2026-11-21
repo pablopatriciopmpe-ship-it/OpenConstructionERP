@@ -51,6 +51,7 @@ import { useTranslation } from 'react-i18next';
 import { ProjectRouteGate } from './ProjectRouteGate';
 import { getLanguageByCode } from './i18n';
 import { installDesktopExternalLinks } from '@/shared/lib/desktop';
+import { SHOW_GUIDED_CASES, SHOW_VIDEOS } from '@/features/cases/casesConfig';
 
 // Lazy-loaded heavy pages — code-split into separate chunks
 const BOQEditorPage = lazy(() =>
@@ -1761,16 +1762,16 @@ export default function App() {
             and the form has no business loading for the ones who do not.
             /cases/new is declared before the stepper for readability only -
             the router ranks a static segment above a dynamic one regardless. */}
-        <Route path="/videos" element={<P title="Videos"><VideosPage /></P>} />
-        <Route path="/courses" element={<P title="Courses and guides"><CoursesPage /></P>} />
+        <Route path="/videos" element={SHOW_VIDEOS ? <P title="Videos"><VideosPage /></P> : <Navigate to="/" replace />} />
+        <Route path="/courses" element={SHOW_VIDEOS ? <P title="Courses and guides"><CoursesPage /></P> : <Navigate to="/" replace />} />
         <Route path="/packs" element={<P title="Packs"><PacksPage /></P>} />
         <Route path="/packs/focus" element={<P title="Packs"><PackFocusPage /></P>} />
         <Route path="/packs/:slug" element={<P title="Packs"><PackDetailPage /></P>} />
         <Route path="/onboarding/demo" element={<P title="Demo projects"><DemoChooserPage /></P>} />
-        <Route path="/cases" element={<P title="Cases"><CasesPage /></P>} />
-        <Route path="/cases/new" element={<P title="Cases"><CaseEditorPage /></P>} />
-        <Route path="/cases/:playbookId/edit" element={<P title="Cases"><CaseEditorPage /></P>} />
-        <Route path="/cases/:playbookId" element={<P title="Cases"><CasesPage /></P>} />
+        <Route path="/cases" element={SHOW_GUIDED_CASES ? <P title="Cases"><CasesPage /></P> : <Navigate to="/" replace />} />
+        <Route path="/cases/new" element={SHOW_GUIDED_CASES ? <P title="Cases"><CaseEditorPage /></P> : <Navigate to="/" replace />} />
+        <Route path="/cases/:playbookId/edit" element={SHOW_GUIDED_CASES ? <P title="Cases"><CaseEditorPage /></P> : <Navigate to="/" replace />} />
+        <Route path="/cases/:playbookId" element={SHOW_GUIDED_CASES ? <P title="Cases"><CasesPage /></P> : <Navigate to="/" replace />} />
         {/* Inside track - backers-only early-look panel (donation perk):
             recent releases (reused from the /about changelog) + a short
             coming-next list. Gated client-side by a supporter access code

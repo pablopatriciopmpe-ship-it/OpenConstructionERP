@@ -8,12 +8,13 @@
 import { lazy, Suspense } from 'react';
 import type { VideoHintTopic } from './videoHints';
 import { useVideoHintsStore } from './videoRoutes';
+import { SHOW_VIDEOS } from '@/features/cases/casesConfig';
 
 const VideoHintButton = lazy(() => import('./VideoHintButton'));
 
 export function VideoHint({ topic, className }: { topic: VideoHintTopic; className?: string }) {
   const off = useVideoHintsStore((s) => s.off);
-  if (off) return null;
+  if (!SHOW_VIDEOS || off) return null;
   return (
     <Suspense fallback={null}>
       <VideoHintButton topic={topic} className={className} />

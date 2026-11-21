@@ -54,6 +54,7 @@ import {
 import { askAi } from '@/shared/lib/actions/askAi';
 import { openLink } from '@/shared/lib/desktop';
 import { useVideosStore } from '@/features/videos/useVideosStore';
+import { SHOW_VIDEOS } from '@/features/cases/casesConfig';
 import { useProjectContextStore } from '@/stores/useProjectContextStore';
 
 registerAppActions();
@@ -178,7 +179,7 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
     if (marketChoice !== 'auto') return { language, market: marketChoice };
     return { language, market: projects.find((p) => p.id === activeProjectId)?.country_code?.toUpperCase() ?? null };
   }, [i18n.language, marketChoice, projects, activeProjectId]);
-  const wantsAcademy = open && !academy && query.trim().length >= 2;
+  const wantsAcademy = SHOW_VIDEOS && open && !academy && query.trim().length >= 2;
   useEffect(() => {
     if (!wantsAcademy) return;
     let cancelled = false;
@@ -491,7 +492,7 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
     }
 
     // Courses and guides: only for a typed query, at most three, never a nag.
-    const courseRows = academy ? academy.paletteItems(trimmed, academyReader, lang) : [];
+    const courseRows = SHOW_VIDEOS && academy ? academy.paletteItems(trimmed, academyReader, lang) : [];
     if (courseRows.length > 0) {
       groups.push({
         title: t('nav.courses', { defaultValue: 'Courses and guides' }),

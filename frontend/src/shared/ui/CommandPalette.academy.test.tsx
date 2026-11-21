@@ -11,6 +11,11 @@ import { MemoryRouter } from 'react-router-dom';
 vi.mock('@/features/projects/api', () => ({ projectsApi: { list: () => Promise.resolve([]) } }));
 vi.mock('@/features/boq/api', () => ({ boqApi: { list: () => Promise.resolve([]) } }));
 vi.mock('@/shared/lib/api', () => ({ apiGet: () => Promise.resolve({ hits: [] }) }));
+vi.mock('@/features/cases/casesConfig', () => ({
+  SHOW_VIDEOS: true,
+  SHOW_GUIDED_CASES: true,
+  SHOW_PROJECT_JOURNEY: true,
+}));
 const openLink = vi.fn();
 vi.mock('@/shared/lib/desktop', async (orig) => ({
   ...(await orig<typeof import('@/shared/lib/desktop')>()),

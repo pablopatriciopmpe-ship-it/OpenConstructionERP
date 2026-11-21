@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import { Card, CardHeader, CardContent } from '@/shared/ui';
 import { useTopBarPrefs, writeTopBarPrefs, type TopBarItem } from '@/shared/lib/topBarPrefs';
+import { SHOW_PROJECT_JOURNEY } from '@/features/cases/casesConfig';
 
 interface Row {
   id: TopBarItem;
@@ -45,7 +46,7 @@ export function TopBarCard() {
     { id: 'bugReport', icon: Bug, label: t('settings.topbar_bug', { defaultValue: 'Report a problem' }) },
     { id: 'language', icon: Languages, label: t('settings.topbar_language', { defaultValue: 'Language' }) },
     { id: 'theme', icon: SunMoon, label: t('settings.topbar_theme', { defaultValue: 'Theme' }) },
-  ];
+  ].filter((r) => SHOW_PROJECT_JOURNEY || r.id !== 'journey');
 
   return (
     <Card>

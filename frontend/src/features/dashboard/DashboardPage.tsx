@@ -2424,7 +2424,7 @@ function DashboardPageInner() {
   //    Conditional widgets resolve to `null` (and contribute nothing) just
   //    as they did when they were inline. */
   const widgetNodes: Record<string, ReactNode> = {
-    cases_learn: <DashboardCasesCard />,
+    cases_learn: SHOW_GUIDED_CASES ? <DashboardCasesCard /> : null,
     continue_work: lastBoq ? (
       <button
         type="button"

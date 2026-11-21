@@ -26,10 +26,12 @@ DEFAULT_ORIG_BASELINE = '/var/lib/openbot/OpenBot/Shared/evolux-saas-orcamento/i
 
 PLACEHOLDER_RE = re.compile(r'\{\{([a-zA-Z0-9_]+)\}\}')
 TAG_RE = re.compile(r'<([a-zA-Z0-9_-]+)[^>]*>')
+JS_TEMPLATE_RE = re.compile(r'\$\{[^}]+\}')
 
 def load_json_files(pattern):
     files = sorted(glob.glob(pattern))
     translations = {}
+    total_entries = 0
     for fpath in files:
         with open(fpath, 'r', encoding='utf-8') as f:
             data = json.load(f)
@@ -38,10 +40,12 @@ def load_json_files(pattern):
                 for k, v in data.items():
                     if isinstance(v, dict):
                         for sub_k, sub_v in v.items():
+                            total_entries += 1
                             translations[sub_k] = str(sub_v)
                     else:
+                        total_entries += 1
                         translations[k] = str(v)
-    return files, translations
+    return files, translations, total_entries
 
 def load_english_baseline(baseline_path):
     if not os.path.exists(baseline_path):
@@ -73,13 +77,19 @@ def validate_placeholders_and_tags(key, en_text, pt_text):
         if missing_tags:
             warnings.append(f"Chave '{key}': tags HTML ausentes em pt-BR: {missing_tags}")
 
+    js_templates = JS_TEMPLATE_RE.findall(pt_text)
+    if js_templates:
+        warnings.append(f"Chave '{key}': sintaxe template JS ${{...}} detectada (use {{{{...}}}}): {js_templates}")
+
     return warnings
 
 def escape_ts_string(s):
-    # Escape backslashes, double quotes, and format line breaks
+    # Normalize literal escape sequences from JSON source strings so they do not become double-escaped
+    s = s.replace('\\r\\n', '\n').replace('\\n', '\n').replace('\\t', '\t').replace('\\r', '\r').replace('\\"', '"')
+    # Escape backslashes, double quotes, and control whitespace for single-line TS string literals
     s = s.replace('\\', '\\\\')
     s = s.replace('"', '\\"')
-    s = s.replace('\r\n', '\\n').replace('\r', '\\n').replace('\n', '\\n')
+    s = s.replace('\r\n', '\\n').replace('\r', '\\n').replace('\n', '\\n').replace('\t', '\\t')
     return s
 
 def apply_translations_to_pt_br(pt_br_path, new_translations, en_baseline):
@@ -137,11 +147,11 @@ def main():
     parser.add_argument('--apply', action='store_true', help="Grava alterações diretamente em pt-BR.ts (padrão é dry-run)")
     args = parser.parse_args()
 
-    files, translations = load_json_files(args.pattern)
+    files, translations, total_entries = load_json_files(args.pattern)
     print(f"Arquivos encontrados ({len(files)}):")
     for f in files:
         print(f"  - {f}")
-    print(f"Total de chaves traduzidas carregadas: {len(translations)}")
+    print(f"Total de entradas lidas dos arquivos: {total_entries} (chaves únicas: {len(translations)})")
 
     en_baseline = load_english_baseline(args.baseline)
     print(f"Total de chaves carregadas do baseline em inglês: {len(en_baseline)}")

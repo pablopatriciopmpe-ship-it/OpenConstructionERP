@@ -18,6 +18,7 @@ import { GraduationCap } from 'lucide-react';
 
 import { Button } from './Button';
 import { ModuleGuide, type ModuleGuideContent } from './ModuleGuide';
+import { SHOW_GUIDED_CASES } from '@/features/cases/casesConfig';
 
 // Lazy: the pill indexes every playbook, which must not ride in the entry chunk.
 const ModuleCasesButton = lazy(() =>
@@ -56,9 +57,11 @@ export function ModuleGuideButton({
           How-it-works button. It is route-derived and self-hides when no
           playbook touches the current module, so it costs nothing on pages
           without cases. */}
-      <Suspense fallback={null}>
-        <ModuleCasesButton />
-      </Suspense>
+      {SHOW_GUIDED_CASES && (
+        <Suspense fallback={null}>
+          <ModuleCasesButton />
+        </Suspense>
+      )}
       {/* The re-open control for a collapsed info block used to sit here, and
           now lives in the top bar beside the module name (founder 2026-08-07).
           It is not rendered in both places: two controls for one action drift

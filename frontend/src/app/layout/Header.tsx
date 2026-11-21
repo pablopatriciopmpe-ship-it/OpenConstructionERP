@@ -40,7 +40,7 @@ import { useI18nReady } from '@/shared/lib/useI18nReady';
 import { isTauri, openAppInBrowser, openLink } from '@/shared/lib/desktop';
 import { SubscribeButton } from './SubscribeButton';
 import { ProjectJourneyButton } from './ProjectJourney';
-import { SHOW_PROJECT_JOURNEY } from '@/features/cases/casesConfig';
+import { SHOW_PROJECT_JOURNEY, SHOW_VIDEOS } from '@/features/cases/casesConfig';
 import { useTopBarPrefs } from '@/shared/lib/topBarPrefs';
 import { usePageHeaderSlot } from '@/shared/ui/pageHeaderSlot';
 import { getRouteIcon } from './routeIcons';
@@ -1174,19 +1174,23 @@ function HelpMenu() {
           role="menu"
           className="absolute right-0 top-full mt-1.5 w-60 rounded-xl border border-border-light bg-surface-elevated shadow-lg animate-scale-in py-1 z-dropdown"
         >
-          <button
-            type="button"
-            role="menuitem"
-            onClick={() => {
-              setOpen(false);
-              navigate('/courses');
-            }}
-            className="flex w-full items-center gap-2 px-3 py-2 text-sm text-content-primary hover:bg-surface-secondary transition-colors"
-          >
-            <GraduationCap size={14} className="text-oe-blue shrink-0" />
-            <span className="flex-1 text-left">{t('nav.courses', { defaultValue: 'Courses and guides' })}</span>
-          </button>
-          <div className="my-1 border-t border-border-light" role="separator" />
+          {SHOW_VIDEOS && (
+            <>
+              <button
+                type="button"
+                role="menuitem"
+                onClick={() => {
+                  setOpen(false);
+                  navigate('/courses');
+                }}
+                className="flex w-full items-center gap-2 px-3 py-2 text-sm text-content-primary hover:bg-surface-secondary transition-colors"
+              >
+                <GraduationCap size={14} className="text-oe-blue shrink-0" />
+                <span className="flex-1 text-left">{t('nav.courses', { defaultValue: 'Courses and guides' })}</span>
+              </button>
+              <div className="my-1 border-t border-border-light" role="separator" />
+            </>
+          )}
 
           {/* External resources. Documentation points at the official docs
               site so users land on the maintained guides, not the raw repo. */}
@@ -1202,19 +1206,21 @@ function HelpMenu() {
             <span className="flex-1">{t('nav.docs', { defaultValue: 'Documentation' })}</span>
             <ExternalLink size={12} className="text-content-quaternary shrink-0" />
           </a>
-          <a
-            role="menuitem"
-            href="https://openconstructionacademy.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={() => setOpen(false)}
-            data-testid="help-menu-academy"
-            className="flex w-full items-center gap-2.5 px-3 py-2 text-sm text-content-primary hover:bg-surface-secondary transition-colors"
-          >
-            <AcademyMark className="h-3.5 w-3.5" />
-            <span className="flex-1">{t('nav.academy', { defaultValue: 'Academy' })}</span>
-            <ExternalLink size={11} className="text-content-quaternary shrink-0" />
-          </a>
+          {SHOW_VIDEOS && (
+            <a
+              role="menuitem"
+              href="https://openconstructionacademy.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => setOpen(false)}
+              data-testid="help-menu-academy"
+              className="flex w-full items-center gap-2.5 px-3 py-2 text-sm text-content-primary hover:bg-surface-secondary transition-colors"
+            >
+              <AcademyMark className="h-3.5 w-3.5" />
+              <span className="flex-1">{t('nav.academy', { defaultValue: 'Academy' })}</span>
+              <ExternalLink size={11} className="text-content-quaternary shrink-0" />
+            </a>
+          )}
           <a
             role="menuitem"
             href="https://github.com/datadrivenconstruction/OpenConstructionERP"
