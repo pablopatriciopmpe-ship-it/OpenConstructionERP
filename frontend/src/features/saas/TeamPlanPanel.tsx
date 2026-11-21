@@ -209,7 +209,10 @@ function errorText(e: unknown): string {
   return getErrorMessage(e);
 }
 
-/** Painel de equipe e plano da empresa; sem empresa (instalação não-SaaS) mostra o ``fallback``. */
+/**
+ * Painel de equipe e plano da empresa. Sem empresa (instalação não-SaaS) mostra o ``fallback``;
+ * com empresa NÃO mostra o painel antigo, que lista todos os usuários da instalação.
+ */
 export function TeamPlanPanel({ fallback }: { fallback?: ReactNode }) {
   const meQ = useQuery({ queryKey: ['saas', 'me'], queryFn: saasApi.me, retry: false, staleTime: 15_000 });
   if (meQ.isLoading) return null;
@@ -218,7 +221,6 @@ export function TeamPlanPanel({ fallback }: { fallback?: ReactNode }) {
     <div className="space-y-4" data-testid="team-plan-panel">
       <PlanCard me={meQ.data} />
       <MembersCard me={meQ.data} />
-      {fallback}
     </div>
   );
 }

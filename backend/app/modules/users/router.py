@@ -1759,6 +1759,21 @@ async def admin_create_user(
     return UserResponse.model_validate(user)
 
 
+async def _company_user_scope(service: UserService, viewer_id: str, payload: dict) -> "set[uuid.UUID] | None":
+    """Users a manager may see: only their own company's team in the SaaS, everyone otherwise.
+
+    ``None`` = no restriction (platform admin, or a caller with no company: non-SaaS install).
+    Without this a company manager could list every other company's users and e-mails.
+    """
+    if str(payload.get("role", "")).lower() == "admin":
+        return None
+    try:
+        from app.modules.saas.access import visible_user_ids
+    except ImportError:  # SaaS module pruned from this build
+        return None
+    return await visible_user_ids(service.session, viewer_id)
+
+
 @router.get(
     "/",
     response_model=list[UserResponse],
@@ -1766,6 +1781,7 @@ async def admin_create_user(
 )
 async def list_users(
     viewer_id: CurrentUserId,
+    payload: CurrentUserPayload,
     service: UserService = Depends(_get_service),
     offset: int = Query(default=0, ge=0),
     # Directory/assignee pickers load the full active-user list in one call,
@@ -1785,7 +1801,8 @@ async def list_users(
     real users who signed up to try the product. The caller's own row stays
     real.
     """
-    users, _ = await service.list_users(offset=offset, limit=limit, is_active=is_active)
+    scope = await _company_user_scope(service, viewer_id, payload)
+    users, _ = await service.list_users(offset=offset, limit=limit, is_active=is_active, only_ids=scope)
     return [redact_model(UserResponse.model_validate(u), subject_id=u.id, viewer_id=viewer_id) for u in users]
 
 
@@ -1797,6 +1814,7 @@ async def list_users(
 async def get_user(
     user_id: uuid.UUID,
     viewer_id: CurrentUserId,
+    payload: CurrentUserPayload,
     service: UserService = Depends(_get_service),
 ) -> UserResponse:
     """Get user by ID (admin/manager only).
@@ -1804,6 +1822,9 @@ async def get_user(
     Redacted in demo mode exactly like the list, so fetching one record by id
     is not a way around the list's privacy.
     """
+    scope = await _company_user_scope(service, viewer_id, payload)
+    if scope is not None and user_id not in scope:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
     user = await service.get_user(user_id)
     return redact_model(UserResponse.model_validate(user), subject_id=user.id, viewer_id=viewer_id)
 

@@ -27,3 +27,12 @@ async def project_in_callers_tenant(session: AsyncSession, project_tenant: str |
     """True se projeto e usuário estão na mesma empresa (ou ambos sem empresa)."""
     mine = await caller_tenant(session, user_id)
     return (project_tenant or None) == (mine or None)
+
+
+async def visible_user_ids(session: AsyncSession, user_id: uuid.UUID | str) -> set[uuid.UUID] | None:
+    """Ids dos usuários da empresa do chamador (inclui ele). ``None`` se o chamador não tem empresa."""
+    tenant = await caller_tenant(session, user_id)
+    if tenant is None:
+        return None
+    rows = await session.execute(select(TenantMember.user_id).where(TenantMember.tenant_id == uuid.UUID(tenant)))
+    return {r[0] for r in rows.all()}

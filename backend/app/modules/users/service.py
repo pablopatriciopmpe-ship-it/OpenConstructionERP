@@ -1555,9 +1555,10 @@ class UserService:
         offset: int = 0,
         limit: int = 50,
         is_active: bool | None = None,
+        only_ids: "set[uuid.UUID] | None" = None,
     ) -> tuple[list[User], int]:
-        """List users with pagination."""
-        return await self.user_repo.list_all(offset=offset, limit=limit, is_active=is_active)
+        """List users with pagination (``only_ids`` narrows the directory to one company's team)."""
+        return await self.user_repo.list_all(offset=offset, limit=limit, is_active=is_active, only_ids=only_ids)
 
     # ── Self-service erasure (GDPR Art. 17) ────────────────────────────
 

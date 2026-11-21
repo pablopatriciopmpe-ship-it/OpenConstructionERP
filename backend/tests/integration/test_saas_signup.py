@@ -394,7 +394,7 @@ async def test_excluir_empresa_com_assinatura_ativa_exige_confirmacao(client, ad
 # ── 5. Isolamento entre empresas de autocadastro ────────────────────────────
 
 
-async def test_empresas_de_autocadastro_nao_veem_os_dados_uma_da_outra(client):
+async def test_empresas_de_autocadastro_nao_veem_os_dados_uma_da_outra(client, admin):
     a, b = await _signup(client), await _signup(client)
     pa, pb = await _new_project(client, a["headers"]), await _new_project(client, b["headers"])
     assert pa.status_code == 201 and pb.status_code == 201
@@ -406,3 +406,11 @@ async def test_empresas_de_autocadastro_nao_veem_os_dados_uma_da_outra(client):
     assert [m["email"] for m in (await client.get("/api/v1/saas/members", headers=a["headers"])).json()] == [a["email"]]
     # exclusão de A não afeta B
     assert (await client.get(f"/api/v1/projects/{pb.json()['id']}", headers=b["headers"])).status_code == 200
+    # diretório de usuários: o gerente de A só enxerga a própria equipe (nunca e-mails de outras empresas)
+    listed = (await client.get("/api/v1/users/?limit=500", headers=a["headers"])).json()
+    assert [u["email"] for u in listed] == [a["email"]]
+    assert (await client.get(f"/api/v1/users/{b['owner_user_id']}", headers=a["headers"])).status_code == 404
+    assert (await client.get(f"/api/v1/users/{a['owner_user_id']}", headers=a["headers"])).status_code == 200
+    # o dono da plataforma (admin global) segue vendo todos
+    everyone = {u["email"] for u in (await client.get("/api/v1/users/?limit=500", headers=admin)).json()}
+    assert {a["email"], b["email"]} <= everyone
