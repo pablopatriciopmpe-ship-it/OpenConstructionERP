@@ -1,0 +1,3 @@
+source_ref=preview/v03-cadastro
+source_sha=efc0fa4b6ad381cfa4649e401a0b6e841878229d
+backend=https://erp-teste.evolux-erp.workers.dev
