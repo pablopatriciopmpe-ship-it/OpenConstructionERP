@@ -133,6 +133,7 @@ import {
   type DocumentItem,
 } from '@/features/documents/api';
 import { PublishRecordModal } from '@/features/record-publishing/PublishRecordModal';
+import { PeriodReportModal } from './PeriodReportModal';
 import { InsightsPanel, InsightsToggleButton, useModuleInsights } from '@/features/insights';
 import { buildDailyDiaryInsights } from './dailyDiaryInsights';
 import { fmtList } from '@/shared/lib/formatters';
@@ -265,6 +266,7 @@ export function DailyDiaryPage() {
   // today; empty string means "use today" (the header / FAB entry points).
   const [createDate, setCreateDate] = useState<string>('');
   const [signOpen, setSignOpen] = useState(false);
+  const [periodReportOpen, setPeriodReportOpen] = useState(false);
 
   const openCreate = (date?: string) => {
     setCreateDate(date ?? '');
@@ -413,6 +415,20 @@ export function DailyDiaryPage() {
             <InsightsToggleButton open={insights.open} onClick={insights.toggle} />
             <RunAgentButton agent="daily_reporter" inputs={{ date: new Date().toISOString().slice(0, 10) }} />
             <ModuleGuideButton content={dailyDiaryGuide} />
+            <Button
+              variant="secondary"
+              size="sm"
+              icon={<FileText size={14} />}
+              onClick={() => setPeriodReportOpen(true)}
+              disabled={!projectId}
+              className="min-h-[44px]"
+              title={t('daily_diary.period_report', {
+                defaultValue: 'Relatório do período',
+              })}
+              data-testid="daily-diary-period-report-button"
+            >
+              {t('daily_diary.period_report', { defaultValue: 'Relatório do período' })}
+            </Button>
             <Button
               variant="secondary"
               size="sm"
@@ -644,6 +660,13 @@ export function DailyDiaryPage() {
         <SignDiaryModal
           diaryId={activeDiary.id}
           onClose={() => setSignOpen(false)}
+        />
+      )}
+      {periodReportOpen && projectId && (
+        <PeriodReportModal
+          isOpen={periodReportOpen}
+          onClose={() => setPeriodReportOpen(false)}
+          projectId={projectId}
         />
       )}
 

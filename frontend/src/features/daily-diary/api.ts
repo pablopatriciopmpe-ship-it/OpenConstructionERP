@@ -568,3 +568,98 @@ export function listArchiveSignatures(
     )}`,
   );
 }
+
+/* ── Period Report (v0.4) ───────────────────────────────────────────────── */
+
+export interface PeriodReportPreviewParams {
+  project_id: string;
+  date_from: string;
+  date_to: string;
+  audience?: 'client' | 'internal';
+  include_photos?: boolean;
+  include_punchlist?: boolean;
+  include_inspections?: boolean;
+  include_tasks?: boolean;
+  use_ai?: boolean;
+}
+
+export interface PeriodReportStats {
+  days_logged: number;
+  entries_count: number;
+  photos_count: number;
+  avg_workforce: number;
+  rain_days: number;
+  punchlist_opened: number;
+  punchlist_closed: number;
+  inspections_count: number;
+  tasks_completed: number;
+}
+
+export interface PeriodReportDayEntry {
+  type: string;
+  title: string;
+  description?: string | null;
+}
+
+export interface PeriodReportDay {
+  date: string;
+  notes?: string | null;
+  workforce: number;
+  weather: Record<string, unknown>;
+  entries: PeriodReportDayEntry[];
+  photos_count: number;
+}
+
+export interface PeriodReportPhoto {
+  id: string;
+  source: 'daily_diary' | 'photos';
+  url: string;
+  date: string;
+  caption?: string | null;
+  category?: string | null;
+  selected: boolean;
+}
+
+export interface PeriodReportPreviewResponse {
+  project_name: string;
+  period_label: string;
+  stats: PeriodReportStats;
+  days: PeriodReportDay[];
+  photos: PeriodReportPhoto[];
+  executive_summary: string;
+  highlights: string[];
+  attention_points: string[];
+  next_steps: string[];
+  whatsapp_text: string;
+  ai_used: boolean;
+  ai_notice?: string | null;
+}
+
+export interface PeriodReportPdfParams {
+  project_id: string;
+  date_from: string;
+  date_to: string;
+  title?: string;
+  executive_summary: string;
+  highlights?: string[];
+  attention_points?: string[];
+  next_steps?: string[];
+  selected_photo_ids?: string[];
+  include_daily_log?: boolean;
+  locale?: string;
+}
+
+export function previewPeriodReport(data: PeriodReportPreviewParams): Promise<PeriodReportPreviewResponse> {
+  return apiPost<PeriodReportPreviewResponse>('/v1/daily-diary/period-report/preview', data);
+}
+
+export async function downloadPeriodReportPdf(data: PeriodReportPdfParams): Promise<void> {
+  return downloadWithAuth('/v1/daily-diary/period-report/pdf', {
+    method: 'POST',
+    body: JSON.stringify(data),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    defaultFilename: `relatorio-obra-${data.date_from}-a-${data.date_to}.pdf`,
+  });
+}
