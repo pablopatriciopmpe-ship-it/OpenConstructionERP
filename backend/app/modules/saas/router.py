@@ -27,6 +27,7 @@ from app.modules.saas.billing_store import SqlBillingStore
 from app.modules.saas.models import (
     GLOBAL_ROLE_FOR_MEMBER,
     AiUsage,
+    CompanyProfile,
     MasterAudit,
     Subscription,
     Tenant,
@@ -174,6 +175,68 @@ async def my_tenant(session: SessionDep, user_id: CurrentUserId) -> dict:
         },
         "usage": await svc.usage(session, tenant),
     }
+
+
+# ── Perfil da empresa (por tenant) ─────────────────────────────────────────
+
+
+def _company_view(tenant: Tenant, stored: dict | None) -> dict:
+    from app.core.company_profile import DEFAULT_COMPANY_PROFILE, sanitise
+
+    profile = {**DEFAULT_COMPANY_PROFILE, **sanitise(stored or {})}
+    # "efetivo": o que um documento imprime. Cai na razão social e no CNPJ do cadastro quando o perfil está vazio.
+    effective = {
+        **profile,
+        "legal_name": profile["legal_name"] or tenant.legal_name,
+        "tax_number": profile["tax_number"] or (tenant.cnpj or ""),
+    }
+    return {
+        "tenant": {"id": str(tenant.id), "legal_name": tenant.legal_name, "cnpj": tenant.cnpj},
+        "profile": profile,
+        "effective": effective,
+    }
+
+
+async def _profile_row(session, tenant_id: uuid.UUID) -> CompanyProfile | None:
+    return (await session.execute(select(CompanyProfile).where(CompanyProfile.tenant_id == tenant_id))).scalar_one_or_none()
+
+
+@router.get("/company")
+async def get_company_profile(session: SessionDep, user_id: CurrentUserId) -> dict:
+    """Perfil da empresa do usuário (qualquer papel lê). Campos: logo, razão social, endereço, contato, registros."""
+    member = await svc.get_membership(session, user_id)
+    if member is None:
+        raise HTTPException(404, "Usuário não pertence a uma empresa")
+    tenant = (await session.execute(select(Tenant).where(Tenant.id == member.tenant_id))).scalar_one()
+    row = await _profile_row(session, tenant.id)
+    return _company_view(tenant, row.profile if row else None)
+
+
+@router.put("/company")
+async def put_company_profile(data: dict, session: SessionDep, user_id: CurrentUserId) -> dict:
+    """Grava o perfil (dono/admin). Mesmas chaves e limites do perfil global; campo inválido é descartado."""
+    from app.core.company_profile import sanitise
+
+    tenant, _ = await _tenant_admin(session, user_id)
+    clean = sanitise(data)
+    row = await _profile_row(session, tenant.id)
+    if row is None:
+        session.add(CompanyProfile(tenant_id=tenant.id, profile=clean))
+    else:
+        row.profile = clean
+    await session.flush()
+    return _company_view(tenant, clean)
+
+
+@router.delete("/company")
+async def reset_company_profile(session: SessionDep, user_id: CurrentUserId) -> dict:
+    """Limpa o perfil (inclui o logo). Razão social e CNPJ do cadastro não mudam."""
+    tenant, _ = await _tenant_admin(session, user_id)
+    row = await _profile_row(session, tenant.id)
+    if row is not None:
+        row.profile = {}
+        await session.flush()
+    return _company_view(tenant, None)
 
 
 @router.get("/members")

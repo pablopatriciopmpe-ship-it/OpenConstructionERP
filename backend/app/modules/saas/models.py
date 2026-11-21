@@ -8,6 +8,7 @@ Tabelas:
     oe_saas_ai_usage            - razão de consumo de créditos de IA
     oe_saas_master_audit        - ações do painel master (dono do SaaS)
     oe_saas_signup_confirmation - confirmação de e-mail do cadastro público (só com SMTP)
+    oe_saas_company_profile     - perfil da empresa por tenant (timbrado, contato, endereço, logo)
 
 As tabelas que carregam ``tenant_id`` entram automaticamente na política de RLS
 (``app.core.rls_setup``). ``oe_saas_tenant`` usa ``id`` como chave da empresa, e o
@@ -19,7 +20,7 @@ from __future__ import annotations
 import uuid
 from datetime import datetime
 
-from sqlalchemy import DateTime, ForeignKey, Integer, String, Text, UniqueConstraint
+from sqlalchemy import JSON, DateTime, ForeignKey, Integer, String, Text, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.database import GUID, Base
@@ -116,6 +117,24 @@ class AiUsage(Base):
     credits: Mapped[int] = mapped_column(Integer, nullable=False)
     kind: Mapped[str] = mapped_column(String(40), nullable=False, default="")
     source: Mapped[str] = mapped_column(String(10), nullable=False, default="plan")  # plan | topup
+
+
+class CompanyProfile(Base):
+    """Perfil da empresa por tenant (papel timbrado, contato, endereço e logo).
+
+    Substitui o ``company_profile.json`` GLOBAL (um por instalação, gravável só pelo admin da
+    plataforma). As chaves e a validação são as mesmas de ``app.core.company_profile``
+    (``sanitise``), então os consumidores de PDF leem o mesmo formato. Razão social e CNPJ
+    oficiais continuam em ``Tenant`` (o CNPJ é único e validado no cadastro).
+    """
+
+    __tablename__ = "oe_saas_company_profile"
+    __table_args__ = (UniqueConstraint("tenant_id", name="uq_oe_saas_company_profile_tenant"),)
+
+    tenant_id: Mapped[uuid.UUID] = mapped_column(
+        GUID(), ForeignKey("oe_saas_tenant.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    profile: Mapped[dict] = mapped_column(JSON, nullable=False, default=dict)
 
 
 class SignupConfirmation(Base):

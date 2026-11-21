@@ -7,7 +7,8 @@ as materializa onde faltarem e acrescenta, de forma idempotente:
 
 * ``oe_saas_tenant``: ``ai_trial_cap``, ``terms_accepted_at``, ``terms_version``, ``deleted_at``,
   ``deleted_by`` (exclusão lógica, reversível) e índice em ``deleted_at``;
-* ``oe_saas_signup_confirmation``: confirmação de e-mail do cadastro público.
+* ``oe_saas_signup_confirmation``: confirmação de e-mail do cadastro público;
+* ``oe_saas_company_profile``: perfil da empresa por tenant (timbrado, contato, endereço, logo).
 
 Revision ID: vsaas02_signup
 Revises: vcub01_cub_rates
@@ -28,6 +29,7 @@ depends_on: str | Sequence[str] | None = None
 
 _TENANT = "oe_saas_tenant"
 _CONF = "oe_saas_signup_confirmation"
+_PROFILE = "oe_saas_company_profile"
 _NEW_TENANT_COLUMNS: tuple[tuple[str, sa.types.TypeEngine], ...] = (
     ("ai_trial_cap", sa.Integer()),
     ("terms_accepted_at", sa.DateTime(timezone=True)),
@@ -63,8 +65,9 @@ def upgrade() -> None:
 def downgrade() -> None:
     bind = op.get_bind()
     insp = sa.inspect(bind)
-    if _CONF in insp.get_table_names():
-        op.drop_table(_CONF)
+    for table in (_CONF, _PROFILE):
+        if table in insp.get_table_names():
+            op.drop_table(table)
     if "ix_oe_saas_tenant_deleted_at" in {i["name"] for i in insp.get_indexes(_TENANT)}:
         op.drop_index("ix_oe_saas_tenant_deleted_at", table_name=_TENANT)
     existing = {c["name"] for c in sa.inspect(bind).get_columns(_TENANT)}
