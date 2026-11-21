@@ -29,8 +29,8 @@ import {
   offerPdfUrl,
   offerExcelUrl,
 } from './api';
-import { Button } from '@/shared/components/ui/Button';
-import { Card } from '@/shared/components/ui/Card';
+import { Button } from '@/shared/ui/Button';
+import { Card } from '@/shared/ui/Card';
 import { formatCurrency } from '@/shared/lib/format';
 
 type FilterTab = 'all' | 'draft' | 'sent' | 'accepted' | 'declined';
