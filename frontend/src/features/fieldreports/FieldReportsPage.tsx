@@ -75,8 +75,6 @@ import {
   importFieldReportsFile,
   exportFieldReports,
   downloadFieldReportsTemplate,
-  fetchWeather,
-  weatherConditionFromDescription,
   REPORT_TYPES,
   WEATHER_CONDITIONS,
 } from './api';
@@ -1477,10 +1475,6 @@ function ReportModal({
   const [signatureBy, setSignatureBy] = useState(seed.signatureBy);
   const [signatureData, setSignatureData] = useState<string | null>(seed.signatureData);
 
-  // Weather auto-fetch (uses the existing GET /weather/ endpoint via the
-  // browser geolocation API; the endpoint needs OPENWEATHERMAP_API_KEY).
-  const [weatherBusy, setWeatherBusy] = useState(false);
-
   // Template state. Existing reports carry their template id + filled
   // values inside metadata (the report table itself is untouched).
   const reportMeta = (report?.metadata ?? {}) as Record<string, unknown>;
@@ -1534,96 +1528,6 @@ function ReportModal({
     },
     [],
   );
-
-  const handleFetchWeather = useCallback(() => {
-    if (!('geolocation' in navigator)) {
-      addToast({
-        type: 'error',
-        title: t('common.error', { defaultValue: 'Error' }),
-        message: t('fieldreports.geo_unsupported', {
-          defaultValue: 'Geolocation is not available in this browser.',
-        }),
-      });
-      return;
-    }
-    setWeatherBusy(true);
-    navigator.geolocation.getCurrentPosition(
-      async (pos) => {
-        try {
-          const wx = await fetchWeather(pos.coords.latitude, pos.coords.longitude);
-          if (!wx.available) {
-            addToast({
-              type: 'info',
-              title: t('fieldreports.weather', { defaultValue: 'Weather Conditions' }),
-              message:
-                wx.error ||
-                t('fieldreports.weather_unavailable', {
-                  defaultValue: 'Live weather is not configured on this server.',
-                }),
-            });
-            return;
-          }
-          setWeatherCondition(weatherConditionFromDescription(wx.description, wx.icon));
-          if (wx.temperature_c != null) {
-            const displayTemp = isImperial ? cToF(wx.temperature_c) : Math.round(wx.temperature_c);
-            setTemperatureDisplay(String(displayTemp));
-          }
-          if (wx.humidity_pct != null) setHumidity(String(Math.round(wx.humidity_pct)));
-          if (wx.wind_speed_ms != null) {
-            if (isImperial) {
-              const mph = Math.round(wx.wind_speed_ms * 2.237);
-              setWindSpeed(`${mph} mph${wx.wind_direction ? ` ${wx.wind_direction}` : ''}`);
-            } else {
-              const kmh = Math.round(wx.wind_speed_ms * 3.6);
-              setWindSpeed(`${kmh} km/h${wx.wind_direction ? ` ${wx.wind_direction}` : ''}`);
-            }
-          }
-          if (wx.precipitation_mm != null && wx.precipitation_mm > 0) {
-            if (isImperial) {
-              const inches = fmtFixed(wx.precipitation_mm / 25.4, 2);
-              setPrecipitation(`${inches} in`);
-            } else {
-              setPrecipitation(`${wx.precipitation_mm} mm`);
-            }
-          }
-          addToast({
-            type: 'success',
-            title: '',
-            message: t('fieldreports.weather_filled', {
-              defaultValue: 'Weather filled from current location',
-            }),
-          });
-        } catch (err: unknown) {
-          addToast({
-            type: 'error',
-            title: t('common.error', { defaultValue: 'Error' }),
-            message:
-              err instanceof Error
-                ? err.message
-                : t('fieldreports.weather_fetch_failed', { defaultValue: 'Weather fetch failed' }),
-          });
-        } finally {
-          setWeatherBusy(false);
-        }
-      },
-      (geoErr) => {
-        setWeatherBusy(false);
-        addToast({
-          type: 'error',
-          title: t('common.error', { defaultValue: 'Error' }),
-          message:
-            geoErr.code === geoErr.PERMISSION_DENIED
-              ? t('fieldreports.geo_denied', {
-                  defaultValue: 'Location permission denied. Enter weather manually below.',
-                })
-              : t('fieldreports.geo_failed', {
-                  defaultValue: 'Could not determine your location. Enter weather manually below.',
-                }),
-        });
-      },
-      { timeout: 10000, maximumAge: 600000 },
-    );
-  }, [addToast, t]);
 
   const handleSave = useCallback(() => {
     // Enforce required template fields so the template "required" flag is
@@ -1987,32 +1891,6 @@ function ReportModal({
         title={t('fieldreports.weather', { defaultValue: 'Weather Conditions' })}
         columns={2}
       >
-        <WideModalField
-          label={t('fieldreports.weather', { defaultValue: 'Weather Conditions' })}
-          span={2}
-          className="sm:[&>label]:hidden"
-        >
-          <div className="flex flex-wrap items-center gap-2">
-            <button
-              type="button"
-              onClick={handleFetchWeather}
-              disabled={weatherBusy}
-              className="flex items-center gap-1.5 rounded-lg border border-border-light px-3 py-1.5 text-sm text-content-secondary hover:bg-surface-secondary disabled:opacity-50 transition-colors"
-            >
-              {weatherBusy ? (
-                <Loader2 size={14} className="animate-spin" />
-              ) : (
-                <CloudSun size={14} />
-              )}
-              {t('fieldreports.fetch_weather', { defaultValue: 'Fetch current weather' })}
-            </button>
-            <span className="text-xs text-content-tertiary">
-              {t('fieldreports.fetch_weather_hint', {
-                defaultValue: 'Uses your current location; falls back to manual entry below.',
-              })}
-            </span>
-          </div>
-        </WideModalField>
         <WideModalField label={t('fieldreports.condition', { defaultValue: 'Condition' })}>
           <select
             value={weatherCondition}

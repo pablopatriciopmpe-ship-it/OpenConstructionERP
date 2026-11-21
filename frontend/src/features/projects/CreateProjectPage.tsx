@@ -10,7 +10,7 @@ import { legalEntitiesApi } from '@/features/legal-entities/api';
 import { ProjectCompanyFields, type ProjectCompanyValue } from '@/features/legal-entities/ProjectCompanyFields';
 import { useNavigate } from 'react-router-dom';
 import {
-  X, FolderPlus, AlertTriangle, MapPin, Map as MapIcon, CloudSun,
+  X, FolderPlus, AlertTriangle, MapPin,
   Check, ChevronLeft, ChevronRight, ChevronDown, Layers, Wand2, Zap,
   ArrowRight, Plus, Globe, Hash, CalendarDays, FileText,
 } from 'lucide-react';
@@ -635,11 +635,6 @@ export function CreateProjectModal({
   // reveal every optional parameter.
   const [optionalOpen, setOptionalOpen] = useState(true);
   const [showAllOptional, setShowAllOptional] = useState(false);
-
-  const mapEnabled = useWidgetSettingsStore((s) => s.projectMapEnabled);
-  const weatherEnabled = useWidgetSettingsStore((s) => s.projectWeatherEnabled);
-  const toggleMap = useWidgetSettingsStore((s) => s.toggleProjectMap);
-  const toggleWeather = useWidgetSettingsStore((s) => s.toggleProjectWeather);
 
   // Restore focus to the trigger element (the page's "New project"
   // button) whenever the wizard actually closes — wraps every close
@@ -1670,7 +1665,7 @@ export function CreateProjectModal({
                         {t('projects.address', { defaultValue: 'Site address' })}
                       </p>
                       <p className="text-2xs text-content-tertiary">
-                        {t('projects.address_hint', { defaultValue: 'Optional - enables the location map and weather forecast' })}
+                        {t('projects.address_hint', { defaultValue: 'Optional - project site location' })}
                       </p>
                     </div>
                   </div>
@@ -1688,21 +1683,6 @@ export function CreateProjectModal({
                     <input type="text" value={addressCity} onChange={(e) => setAddressCity(e.target.value)} aria-label={t('projects.address_city', { defaultValue: 'City' })} placeholder={t('projects.address_city', { defaultValue: 'City' })} className="oe-input oe-input-lg" />
                     <input type="text" value={addressCountry} onChange={(e) => setAddressCountry(e.target.value)} aria-label={t('projects.address_country', { defaultValue: 'Country' })} placeholder={t('projects.address_country', { defaultValue: 'Country' })} className="oe-input oe-input-lg" />
                     <input type="text" value={addressPostal} onChange={(e) => setAddressPostal(e.target.value)} aria-label={t('projects.address_postal', { defaultValue: 'Postal code' })} placeholder={t('projects.address_postal', { defaultValue: 'Postal code' })} className="oe-input oe-input-lg" />
-                  </div>
-                  <div className="flex items-center gap-4 pt-1 border-t border-border-light/60 mt-1">
-                    <span className="text-xs text-content-tertiary">
-                      {t('projects.widgets_for_project', { defaultValue: 'Show on this project:' })}
-                    </span>
-                    <label className="inline-flex items-center gap-1.5 text-xs text-content-primary cursor-pointer">
-                      <input type="checkbox" checked={mapEnabled} onChange={toggleMap} className="h-3.5 w-3.5 rounded border-border accent-oe-blue" />
-                      <MapIcon size={12} className="text-oe-blue" />
-                      {t('widget_settings.map', { defaultValue: 'Map' })}
-                    </label>
-                    <label className="inline-flex items-center gap-1.5 text-xs text-content-primary cursor-pointer">
-                      <input type="checkbox" checked={weatherEnabled} onChange={toggleWeather} className="h-3.5 w-3.5 rounded border-border accent-oe-blue" />
-                      <CloudSun size={12} className="text-oe-blue" />
-                      {t('widget_settings.weather', { defaultValue: 'Weather' })}
-                    </label>
                   </div>
                 </div>
 
@@ -2131,7 +2111,7 @@ export function CreateProjectModal({
                     {t('projects.address', { defaultValue: 'Site address' })}
                   </label>
                   <span className="text-2xs text-content-quaternary">
-                    {t('projects.address_hint', { defaultValue: 'Optional - enables the location map and weather forecast' })}
+                    {t('projects.address_hint', { defaultValue: 'Optional - project site location' })}
                   </span>
                 </div>
                 {/* Address autocomplete (all-on-one variant) — same
@@ -2147,21 +2127,6 @@ export function CreateProjectModal({
                   <input type="text" value={addressCity} onChange={(e) => setAddressCity(e.target.value)} placeholder={t('projects.address_city', { defaultValue: 'City' })} className="oe-input oe-input-lg" />
                   <input type="text" value={addressCountry} onChange={(e) => setAddressCountry(e.target.value)} placeholder={t('projects.address_country', { defaultValue: 'Country' })} className="oe-input oe-input-lg" />
                   <input type="text" value={addressPostal} onChange={(e) => setAddressPostal(e.target.value)} placeholder={t('projects.address_postal', { defaultValue: 'Postal code' })} className="oe-input oe-input-lg" />
-                </div>
-                <div className="flex items-center gap-4 pt-1 border-t border-border-light/60 mt-2">
-                  <span className="text-xs text-content-tertiary">
-                    {t('projects.widgets_for_project', { defaultValue: 'Show on this project:' })}
-                  </span>
-                  <label className="inline-flex items-center gap-1.5 text-xs text-content-primary cursor-pointer">
-                    <input type="checkbox" checked={mapEnabled} onChange={toggleMap} className="h-3.5 w-3.5 rounded border-border accent-oe-blue" />
-                    <MapIcon size={12} className="text-oe-blue" />
-                    {t('widget_settings.map', { defaultValue: 'Map' })}
-                  </label>
-                  <label className="inline-flex items-center gap-1.5 text-xs text-content-primary cursor-pointer">
-                    <input type="checkbox" checked={weatherEnabled} onChange={toggleWeather} className="h-3.5 w-3.5 rounded border-border accent-oe-blue" />
-                    <CloudSun size={12} className="text-oe-blue" />
-                    {t('widget_settings.weather', { defaultValue: 'Weather' })}
-                  </label>
                 </div>
               </div>
 

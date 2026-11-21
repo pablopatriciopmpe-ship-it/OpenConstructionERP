@@ -24,8 +24,8 @@ describe('dashboard sets', () => {
     const { order, hidden } = dashboardSetLayout(site, DASHBOARD_WIDGET_IDS);
     expect(order.slice(0, site.widgets.length)).toEqual([...site.widgets]);
     expect([...order].sort()).toEqual([...DASHBOARD_WIDGET_IDS].sort());
-    expect(hidden).not.toContain('on_site_now');
-    expect(hidden).toContain('finance_summary');
+    expect(hidden).not.toContain('punch_quality');
+    expect(hidden).toContain('portfolio');
   });
 
   it('skips ids the registry no longer has', () => {
@@ -42,8 +42,8 @@ describe('dashboard sets', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Site manager' }));
     const s = useDashboardLayoutStore.getState();
     expect(s.order[0]).toBe('today');
-    expect(s.hidden).toContain('finance_summary');
-    expect(s.hidden).not.toContain('weather_site');
+    expect(s.hidden).toContain('portfolio');
+    expect(s.hidden).not.toContain('punch_quality');
     fireEvent.click(screen.getByRole('button', { name: 'Reset to default' }));
     expect(useDashboardLayoutStore.getState().order).toEqual([]);
   });

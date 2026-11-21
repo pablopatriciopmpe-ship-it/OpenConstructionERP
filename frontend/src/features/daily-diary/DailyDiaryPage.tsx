@@ -14,7 +14,6 @@ import {
   Lock,
   LockOpen,
   Cloud,
-  CloudDownload,
   Camera,
   Plane,
   Scan,
@@ -87,7 +86,6 @@ import {
   unlockDiary,
   archiveDiary,
   weatherToday,
-  fetchWeather,
   createWeather,
   listEntries,
   createEntry,
@@ -1097,30 +1095,6 @@ function TodayTab({
     enabled: !!diaryId,
   });
 
-  const fetchWeatherMut = useMutation({
-    mutationFn: (args: { lat: number; lng: number }) =>
-      fetchWeather({
-        project_id: projectId,
-        target_date: diaryDate as string,
-        lat: args.lat,
-        lng: args.lng,
-        persist: true,
-      }),
-    onSuccess: (res) => {
-      qc.invalidateQueries({ queryKey: ['daily-diary', 'weather'] });
-      qc.invalidateQueries({ queryKey: ['daily-diary', 'completeness'] });
-      addToast({
-        type: res.fetched ? 'success' : 'warning',
-        title: res.fetched
-          ? t('daily_diary.weather_fetched', { defaultValue: 'Weather fetched from Open-Meteo' })
-          : t('daily_diary.weather_unavailable', {
-              defaultValue: 'No weather data available for that date.',
-            }),
-      });
-    },
-    onError: (err) => addToast({ type: 'error', title: getErrorMessage(err) }),
-  });
-
   const unlockMut = useMutation({
     mutationFn: (id: string) => unlockDiary(id),
     onSuccess: () => {
@@ -1146,20 +1120,6 @@ function TodayTab({
     onError: (err) => addToast({ type: 'error', title: getErrorMessage(err) }),
     onSettled: () => confirmCtx.setLoading(false),
   });
-
-  const handleFetchWeather = () => {
-    if (!projectCoords) {
-      addToast({
-        type: 'error',
-        title: t('daily_diary.weather_no_coords', {
-          defaultValue:
-            'This project has no map location yet. Set the project address to auto-fetch weather, or add a reading manually.',
-        }),
-      });
-      return;
-    }
-    fetchWeatherMut.mutate(projectCoords);
-  };
 
   const handleUnlock = async () => {
     if (!diary) return;
@@ -1435,8 +1395,6 @@ function TodayTab({
           weather={latestWeather}
           loading={weatherQ.isLoading}
           sealed={sealed}
-          fetching={fetchWeatherMut.isPending}
-          onFetch={handleFetchWeather}
           onAddManual={() => setWeatherOpen(true)}
         />
         <Card padding="md" className="xl:col-span-2">
@@ -1761,15 +1719,11 @@ function WeatherCard({
   weather,
   loading,
   sealed,
-  fetching,
-  onFetch,
   onAddManual,
 }: {
   weather: WeatherRecord | undefined;
   loading: boolean;
   sealed: boolean;
-  fetching: boolean;
-  onFetch: () => void;
   onAddManual: () => void;
 }) {
   const { t } = useTranslation();
@@ -1783,20 +1737,6 @@ function WeatherCard({
         </h3>
         {!sealed && (
           <div className="ml-auto flex items-center gap-1">
-            <Button
-              variant="ghost"
-              size="sm"
-              icon={<CloudDownload size={14} />}
-              onClick={onFetch}
-              loading={fetching}
-              data-testid="daily-diary-fetch-weather"
-              title={t('daily_diary.fetch_weather_hint', {
-                defaultValue:
-                  'Pull the day’s real weather from Open-Meteo for the project location.',
-              })}
-            >
-              {t('daily_diary.fetch_weather', { defaultValue: 'Fetch' })}
-            </Button>
             <Button
               variant="ghost"
               size="sm"

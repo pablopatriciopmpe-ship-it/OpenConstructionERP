@@ -11,11 +11,11 @@ import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useOpenProject } from './useOpenProject';
 import {
   FolderPlus, FolderOpen, ArrowRight, MoreHorizontal, Copy, Trash2, Archive, ArchiveRestore, ExternalLink,
-  Search, ArrowUpDown, Star, Map as MapIcon, CloudSun,
+  Search, ArrowUpDown, Star,
   Building2, DollarSign, Euro, PoundSterling, Globe2, MapPin, Layers, AlertTriangle,
 } from 'lucide-react';
 import { formatDistanceToNowStrict, isValid as isValidDate, parseISO } from 'date-fns';
-import { Button, Card, Badge, EmptyState, Skeleton, SkeletonGrid, Breadcrumb, ProjectMap, ProjectWeather, FileTypeChips, ConfirmDialog, ModuleGuideButton, RecoveryCard, type LatLng } from '@/shared/ui';
+import { Button, Card, Badge, EmptyState, Skeleton, SkeletonGrid, Breadcrumb, FileTypeChips, ConfirmDialog, ModuleGuideButton, RecoveryCard } from '@/shared/ui';
 import { PageHeader } from '@/shared/ui/PageHeader';
 import { DismissibleInfo, IntroRichText } from '@/shared/ui/DismissibleInfo';
 import { useWidgetSettingsStore } from '@/stores/useWidgetSettingsStore';
@@ -991,9 +991,6 @@ export function ProjectsPage() {
                 </button>
               ))}
             </div>
-
-            {/* Widget toggles — map + weather */}
-            <WidgetToggles />
           </div>
         </Card>
       )}
@@ -1390,13 +1387,6 @@ export function ProjectCard({
   })();
 
   const isArchived = project.status === 'archived';
-  const mapEnabled = useWidgetSettingsStore((s) => s.projectMapEnabled);
-  const weatherEnabled = useWidgetSettingsStore((s) => s.projectWeatherEnabled);
-  const [cardCoords, setCardCoords] = useState<LatLng | null>(
-    project.address?.lat && project.address?.lng
-      ? { lat: project.address.lat, lng: project.address.lng }
-      : null,
-  );
 
   return (
     <Card
@@ -1415,46 +1405,6 @@ export function ProjectCard({
       // answers 404 for it. Its card offers Restore instead.
       onClick={isArchived ? undefined : () => void openProject(project.id, project.name)}
     >
-      {mapEnabled && !isArchived && (
-        <div className="relative min-h-24" onClick={(e) => e.stopPropagation()}>
-          <ProjectMap
-            variant="card"
-            lat={project.address?.lat ?? null}
-            lng={project.address?.lng ?? null}
-            address={project.address?.street}
-            city={project.address?.city}
-            country={project.address?.country}
-            label={[project.address?.city, project.address?.country]
-              .filter(Boolean)
-              .join(', ')}
-            className="rounded-none border-none"
-            onResolved={setCardCoords}
-          />
-          {/* Geo Hub overlay CTA — only when coords are resolved so we
-              never ship a deeplink to an unanchored project. Sits over
-              the map (top-right) with a glass pill so the underlying
-              tiles remain visible. */}
-          {cardCoords && (
-            <Link
-              to={`/projects/${project.id}/geo`}
-              onClick={(e) => e.stopPropagation()}
-              className="absolute top-2 right-2 z-10 inline-flex items-center gap-1 rounded-full border border-white/40 bg-white/85 px-2.5 py-1 text-2xs font-semibold text-oe-blue shadow-sm backdrop-blur-md transition-all hover:bg-white hover:shadow-md hover:scale-[1.03] focus:outline-none focus-visible:ring-2 focus-visible:ring-oe-blue/60 dark:text-sky-300"
-              title={t('projects.card.fly_to_on_map', {
-                defaultValue: 'Fly camera to {{name}} on the globe',
-                name: project.name,
-              })}
-              aria-label={t('projects.card.fly_to_on_map', {
-                defaultValue: 'Fly camera to {{name}} on the globe',
-                name: project.name,
-              })}
-              data-testid="project-card-view-on-map"
-            >
-              <Globe2 size={12} strokeWidth={2.25} />
-              {t('projects.card.view_on_map', { defaultValue: 'On map' })}
-            </Link>
-          )}
-        </div>
-      )}
       <div className="p-4">
         <div className="flex items-start justify-between gap-3">
           <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-sm font-semibold ring-1 ring-inset ring-white/40 dark:ring-white/5 ${getRegionAvatarClass(project.region)}`}>
@@ -1670,28 +1620,6 @@ export function ProjectCard({
               {project.address.city}
             </span>
           )}
-          {/* Inline fallback: when the map widget is OFF we still want a
-              discoverable jump-to-Geo affordance on geo-anchored projects.
-              Hidden when the overlay version is already shown above. */}
-          {!mapEnabled && cardCoords && !isArchived && (
-            <Link
-              to={`/projects/${project.id}/geo`}
-              onClick={(e) => e.stopPropagation()}
-              className="inline-flex items-center gap-1 rounded-full border border-oe-blue/30 bg-oe-blue-subtle px-2 py-0.5 text-2xs font-semibold text-oe-blue-text transition-all hover:bg-oe-blue hover:text-white hover:shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-oe-blue/60"
-              title={t('projects.card.fly_to_on_map', {
-                defaultValue: 'Fly camera to {{name}} on the globe',
-                name: project.name,
-              })}
-              aria-label={t('projects.card.fly_to_on_map', {
-                defaultValue: 'Fly camera to {{name}} on the globe',
-                name: project.name,
-              })}
-              data-testid="project-card-view-on-map-inline"
-            >
-              <Globe2 size={12} strokeWidth={2.25} />
-              {t('projects.card.view_on_map', { defaultValue: 'On map' })}
-            </Link>
-          )}
           {fileTypes && fileTypes.length > 0 && (
             <div className="ml-auto">
               <FileTypeChips fileTypes={fileTypes} size="md" />
@@ -1719,15 +1647,6 @@ export function ProjectCard({
         </div>
       )}
       <div className="border-t border-border-light px-5 py-3">
-        {weatherEnabled && cardCoords && (
-          <div className="mb-2" onClick={(e) => e.stopPropagation()}>
-            <ProjectWeather
-              variant="summary"
-              lat={cardCoords.lat}
-              lng={cardCoords.lng}
-            />
-          </div>
-        )}
         <div className="flex items-center justify-between gap-2">
           <div className="flex flex-wrap items-center gap-1.5">
             {relativeModified && (
@@ -1767,51 +1686,6 @@ export function ProjectCard({
         </div>
       </div>
     </Card>
-  );
-}
-
-/**
- * WidgetToggles — inline on/off switches for the map + weather widgets.
- *
- * Lives in the filters toolbar next to sort.  State is persisted via
- * `useWidgetSettingsStore`, so the choice sticks across reloads without
- * a server round-trip.
- */
-function WidgetToggles() {
-  const { t } = useTranslation();
-  const mapEnabled = useWidgetSettingsStore((s) => s.projectMapEnabled);
-  const weatherEnabled = useWidgetSettingsStore((s) => s.projectWeatherEnabled);
-  const toggleMap = useWidgetSettingsStore((s) => s.toggleProjectMap);
-  const toggleWeather = useWidgetSettingsStore((s) => s.toggleProjectWeather);
-
-  const btn = (active: boolean) =>
-    `flex items-center gap-1 rounded-md px-2 py-1.5 text-2xs font-medium transition-colors ${
-      active
-        ? 'bg-oe-blue-subtle text-oe-blue-text'
-        : 'text-content-tertiary hover:text-content-secondary hover:bg-surface-secondary'
-    }`;
-
-  return (
-    <div className="flex items-center gap-1 shrink-0 border-l border-border-light pl-2 ml-1">
-      <button
-        type="button"
-        onClick={toggleMap}
-        className={btn(mapEnabled)}
-        title={t('widget_settings.toggle_map', { defaultValue: 'Toggle project map' })}
-      >
-        <MapIcon size={12} />
-        {t('widget_settings.map', { defaultValue: 'Map' })}
-      </button>
-      <button
-        type="button"
-        onClick={toggleWeather}
-        className={btn(weatherEnabled)}
-        title={t('widget_settings.toggle_weather', { defaultValue: 'Toggle weather forecast' })}
-      >
-        <CloudSun size={12} />
-        {t('widget_settings.weather', { defaultValue: 'Weather' })}
-      </button>
-    </div>
   );
 }
 

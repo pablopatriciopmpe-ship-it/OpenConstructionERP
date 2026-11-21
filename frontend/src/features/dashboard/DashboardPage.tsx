@@ -52,8 +52,8 @@ import { MultiCurrencyTotal } from '@/shared/ui/MultiCurrencyTotal';
 import { estimateDisplayName } from '@/shared/lib/estimateDisplayName';
 import { DemoSeedingHint } from '@/features/processes/DemoSeedingHint';
 import { CompactProjectCard } from './components/CompactProjectCard';
-import { type ProjectPin } from './components/DashboardProjectsMap';
 import { DateDisplay } from '@/shared/ui/DateDisplay';
+import { isProductModule } from '@/modules/productManifest';
 import { DashboardLayoutManager } from './DashboardLayoutManager';
 import { DASHBOARD_WIDGET_IDS, DASHBOARD_WIDGET_BY_ID } from './widgetRegistry';
 import {
@@ -92,15 +92,6 @@ const FinanceSummaryCard = lazy(() =>
 const EstimateResourceCard = lazy(() =>
   import('./EstimateResourceCard').then((m) => ({ default: m.EstimateResourceCard })),
 );
-const DashboardProjectsMap = lazy(() =>
-  import('./components/DashboardProjectsMap').then((m) => ({ default: m.DashboardProjectsMap })),
-);
-const DashboardSitesPanel = lazy(() =>
-  import('./components/DashboardSitesPanel').then((m) => ({ default: m.DashboardSitesPanel })),
-);
-const WeatherSiteWidget = lazy(() =>
-  import('./components/NewWidgets').then((m) => ({ default: m.WeatherSiteWidget })),
-);
 const OperationsSnapshotCard = lazy(() =>
   import('./components/OperationsSnapshotCard').then((m) => ({
     default: m.OperationsSnapshotCard,
@@ -108,9 +99,6 @@ const OperationsSnapshotCard = lazy(() =>
 );
 const LatestSitePhotosCard = lazy(() =>
   import('./components/LatestSitePhotosCard').then((m) => ({ default: m.LatestSitePhotosCard })),
-);
-const LabourCostWidget = lazy(() =>
-  import('./LabourCostWidget').then((m) => ({ default: m.LabourCostWidget })),
 );
 const UpcomingMilestonesCard = lazy(() =>
   import('./UpcomingMilestonesCard').then((m) => ({ default: m.UpcomingMilestonesCard })),
@@ -184,8 +172,6 @@ const WIDGET_NULL_FALLBACK = new Set<string>([
   'accounting_sync',
   'on_site_now',
   'wip_summary',
-  'weather_site',
-  'labour_cost',
   'latest_photos',
 ]);
 
@@ -2402,20 +2388,6 @@ function DashboardPageInner() {
   //    in the user's saved order (`resolvedWidgets`), skipping hidden ones.
   //    Conditional widgets resolve to `null` (and contribute nothing) just
   //    as they did when they were inline. */
-  // Shared marker list for the map + the sites/weather side panel (built
-  // once so both columns show the same projects). Capped at 30 to keep the
-  // map readable and the per-site weather fan-out bounded.
-  const mapPins: ProjectPin[] = (projects ?? []).slice(0, 30).map((p) => ({
-    id: p.id,
-    name: p.name,
-    region: p.region,
-    lat: p.address?.lat ?? null,
-    lng: p.address?.lng ?? null,
-    address: p.address?.street ?? null,
-    city: p.address?.city ?? null,
-    country: p.address?.country ?? null,
-  }));
-
   const widgetNodes: Record<string, ReactNode> = {
     cases_learn: <DashboardCasesCard />,
     continue_work: lastBoq ? (
@@ -2532,30 +2504,7 @@ function DashboardPageInner() {
     validation_portfolio: <ValidationPortfolioCard />,
 
     // Hides itself without a connection; the status read is workspace-wide.
-    accounting_sync: <AccountingSyncCard />,
-
-    map:
-      projects && projects.length > 0 ? (
-        <div className="animate-card-in" style={{ animationDelay: '220ms' }}>
-          <div className="rounded-xl border border-border-light bg-surface-primary/70 p-3">
-            <div className="mb-2.5 flex items-center gap-2">
-              <MapPin size={16} className="text-oe-blue" />
-              <h3 className="text-sm font-semibold text-content-primary">
-                {t('dashboard.map_section_title', {
-                  defaultValue: 'Project locations & weather',
-                })}
-              </h3>
-            </div>
-            {/* Map (left) and sites list (right) share one fixed-height row on
-                desktop so the two columns always line up; both children fill it
-                (map via h-full, panel via its own h-full + internal scroll). */}
-            <div className="grid grid-cols-1 gap-3 lg:h-[19rem] lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
-              <DashboardProjectsMap className="lg:h-full" projects={mapPins} />
-              <DashboardSitesPanel projects={mapPins} />
-            </div>
-          </div>
-        </div>
-      ) : null,
+    accounting_sync: isProductModule('accounting_sync') ? <AccountingSyncCard /> : null,
 
     bim_coverage: <BIMCoverageCard />,
 
@@ -2638,15 +2587,15 @@ function DashboardPageInner() {
     //    empty cards on a fresh install.
     upcoming_milestones: <UpcomingMilestonesCard />,
     rfi_turnaround: <RfiTurnaroundCard />,
-    submittals_pending: <SubmittalsPendingCard />,
+    submittals_pending: isProductModule('submittals') ? <SubmittalsPendingCard /> : null,
     inspections_quality: <InspectionsQualityCard />,
     punch_quality: <PunchListQualityCard />,
-    guarantees_summary: <GuaranteesSummaryCard />,
-    carbon_budget: <CarbonBudgetCard />,
-    on_site_now: <OnSiteNowCard />,
-    wip_summary: <WipSummaryCard />,
-    fleet_utilisation: <FleetUtilisationCard />,
-    sensor_alerts: <SensorAlertsCard />,
+    guarantees_summary: isProductModule('contracts') ? <GuaranteesSummaryCard /> : null,
+    carbon_budget: isProductModule('sustainability') ? <CarbonBudgetCard /> : null,
+    on_site_now: isProductModule('field_clock') ? <OnSiteNowCard /> : null,
+    wip_summary: isProductModule('wip_report') ? <WipSummaryCard /> : null,
+    fleet_utilisation: isProductModule('equipment') ? <FleetUtilisationCard /> : null,
+    sensor_alerts: isProductModule('site_sensors') ? <SensorAlertsCard /> : null,
 
     // Never in WIDGET_NULL_FALLBACK: unlike the delivery cards above, this one
     // always resolves to something. A deployment with no pack applied is the
@@ -2691,8 +2640,6 @@ function DashboardPageInner() {
       </div>
     ),
 
-    weather_site: <WeatherSiteWidget projects={projects} />,
-    labour_cost: <LabourCostWidget />,
     latest_photos: <LatestSitePhotosCard />,
   };
 

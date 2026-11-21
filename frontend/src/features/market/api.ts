@@ -54,9 +54,35 @@ export interface MarketScope {
 
 export const MARKET_QUERY_KEY = ['market-scope'] as const;
 
-export function fetchMarketScope(projectId?: string | null): Promise<MarketScope> {
+export const DEFAULT_MARKET_SCOPE: MarketScope = {
+  profile: {
+    primary: null,
+    extra_markets: [],
+    company_type: null,
+    standards: { classification: '', measurement: '', contract_family: '', tax_profile: '', units: '' },
+    keep_modules: [],
+  },
+  derived: true,
+  markets: [],
+  expanded_markets: [],
+  all_markets: true,
+  hidden_modules: [],
+  module_markets: {},
+  packs: [],
+  units_system: 'metric',
+  standards: {},
+  options: { standards: [], contract_forms: [] },
+  rule_sets: [],
+  can_edit: false,
+};
+
+export async function fetchMarketScope(projectId?: string | null): Promise<MarketScope> {
   const qs = projectId ? `?project_id=${encodeURIComponent(projectId)}` : '';
-  return apiGet<MarketScope>(`/v1/market/${qs}`);
+  try {
+    return await apiGet<MarketScope>(`/v1/market/${qs}`);
+  } catch {
+    return DEFAULT_MARKET_SCOPE;
+  }
 }
 
 export function saveMarketProfile(profile: MarketProfile): Promise<MarketScope> {
@@ -70,6 +96,7 @@ export function useMarketScope(enabled = true, projectId?: string | null) {
     queryFn: () => fetchMarketScope(projectId),
     enabled,
     staleTime: 60 * 1000,
+    retry: false,
   });
 }
 

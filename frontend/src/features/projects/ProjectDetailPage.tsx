@@ -56,7 +56,7 @@ import {
 } from 'lucide-react';
 import {
   Button, Card, CardHeader, CardContent, Badge, Skeleton, EmptyState, Breadcrumb,
-  PageHeader, ProjectMap, ProjectWeather,
+  PageHeader,
 } from '@/shared/ui';
 import { DismissibleInfo } from '@/shared/ui/DismissibleInfo';
 import { ProjectLayoutManager } from './ProjectLayoutManager';
@@ -707,192 +707,8 @@ function ProjectPhaseRibbon({ phase }: { phase: string | null }) {
  * on a stand-in default: a map pointing at 0,0 or at some capital city is a
  * wrong answer wearing a right answer's face.
  */
-function ProjectLocationPanel({ project }: { project: Project }) {
-  const { t } = useTranslation();
-  const mapEnabled = useWidgetSettingsStore((s) => s.projectMapEnabled);
-  const weatherEnabled = useWidgetSettingsStore((s) => s.projectWeatherEnabled);
-  const queryClient = useQueryClient();
-  // A stored coordinate counts only when it is a real number. Zero is a valid
-  // longitude (Greenwich) and a valid latitude (the equator), so a truthiness
-  // test drops sites that sit on either line, and it drops them halfway: the
-  // map still plots the point while the weather half sees no location at all.
-  const storedLat = project.address?.lat;
-  const storedLng = project.address?.lng;
-  const storedPoint =
-    typeof storedLat === 'number' &&
-    Number.isFinite(storedLat) &&
-    typeof storedLng === 'number' &&
-    Number.isFinite(storedLng)
-      ? { lat: storedLat, lng: storedLng }
-      : null;
-
-  const [resolved, setResolved] = useState<{ lat: number; lng: number } | null>(storedPoint);
-
-  // Persist the resolved lat/lng back to the project so subsequent
-  // renders (and other users of the same project) don't re-hit
-  // Nominatim.  Only fires when we have an address but no stored
-  // coords yet, and stops after the first successful write.
-  const [persisted, setPersisted] = useState(storedPoint !== null);
-  const persistCoords = useMutation({
-    mutationFn: (coords: { lat: number; lng: number }) =>
-      apiPatch(`/v1/projects/${project.id}`, {
-        address: {
-          ...(project.address ?? {}),
-          lat: coords.lat,
-          lng: coords.lng,
-          coord_source: 'client_geocode',
-          coord_at: new Date().toISOString(),
-        },
-      }),
-    onSuccess: () => {
-      setPersisted(true);
-      queryClient.invalidateQueries({ queryKey: ['project', project.id] });
-      queryClient.invalidateQueries({ queryKey: ['projects'] });
-    },
-  });
-
-  // A large gap between the saved point and the server geocode: let the user pick.
-  const conflict = project.address?.coord_conflict ?? null;
-  const useConflictPoint = useMutation({
-    mutationFn: () =>
-      apiPatch(`/v1/projects/${project.id}`, {
-        address: {
-          ...(project.address ?? {}),
-          lat: conflict?.lat,
-          lng: conflict?.lng,
-          coord_source: 'user_pick',
-          coord_at: new Date().toISOString(),
-          coord_conflict: null,
-        },
-      }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['project', project.id] });
-      queryClient.invalidateQueries({ queryKey: ['projects'] });
-    },
-  });
-  const keepCurrentPoint = useMutation({
-    mutationFn: () =>
-      apiPatch(`/v1/projects/${project.id}`, {
-        address: {
-          ...(project.address ?? {}),
-          coord_source: 'user_pick',
-          coord_at: new Date().toISOString(),
-          coord_conflict: null,
-        },
-      }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['project', project.id] });
-      queryClient.invalidateQueries({ queryKey: ['projects'] });
-    },
-  });
-
-  const hasAddress = !!(
-    project.address &&
-    (project.address.street || project.address.city || project.address.country)
-  );
-  const hasCoords = storedPoint !== null;
-
-  if (!mapEnabled && !weatherEnabled) return null;
-
-  if (!hasAddress && !hasCoords) {
-    // Weather needs a point, so it stays hidden here; the empty state is the
-    // map's alone, and with the map widget off there is nothing left to show.
-    if (!mapEnabled) return null;
-    return (
-      <div className="flex items-center gap-3 rounded-lg border border-dashed border-border-medium p-3 text-sm text-content-secondary">
-        <MapPin size={16} className="shrink-0 text-content-tertiary" />
-        <span>{t('projects.map_no_location', { defaultValue: 'No location set' })}</span>
-      </div>
-    );
-  }
-
-  const addressLabel = [
-    project.address?.street,
-    project.address?.city,
-    project.address?.country,
-  ]
-    .filter(Boolean)
-    .join(', ');
-
-  const handleResolved = (coords: { lat: number; lng: number }) => {
-    setResolved(coords);
-    if (!persisted && !persistCoords.isPending) {
-      persistCoords.mutate(coords);
-    }
-  };
-
-  return (
-    <>
-    {mapEnabled && conflict && (
-      <div
-        role="alert"
-        className="mb-3 flex flex-wrap items-center gap-3 rounded-lg border border-semantic-warning/40 bg-semantic-warning-bg p-3 text-sm text-content-primary"
-      >
-        <span className="min-w-0 flex-1">
-          {t('projects.location_conflict', {
-            defaultValue:
-              'The saved map point and the geocoded address are about {{km}} km apart. Which location is right?',
-            km: Math.round(conflict.distance_km),
-          })}
-        </span>
-        <button
-          type="button"
-          onClick={() => useConflictPoint.mutate()}
-          disabled={useConflictPoint.isPending || keepCurrentPoint.isPending}
-          className="rounded-md bg-oe-blue px-3 py-1.5 text-xs font-medium text-white disabled:opacity-60"
-        >
-          {t('projects.location_use_this', { defaultValue: 'Use this location' })}
-        </button>
-        <button
-          type="button"
-          onClick={() => keepCurrentPoint.mutate()}
-          disabled={useConflictPoint.isPending || keepCurrentPoint.isPending}
-          className="rounded-md border border-border-medium px-3 py-1.5 text-xs font-medium disabled:opacity-60"
-        >
-          {t('projects.location_keep_current', { defaultValue: 'Keep current' })}
-        </button>
-      </div>
-    )}
-    <div
-      className={clsx(
-        'grid gap-3 items-stretch',
-        mapEnabled && weatherEnabled
-          ? 'grid-cols-1 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]'
-          : 'grid-cols-1',
-      )}
-    >
-      {mapEnabled && (
-        <ProjectMap
-          variant="detail"
-          lat={project.address?.lat ?? null}
-          lng={project.address?.lng ?? null}
-          address={project.address?.street}
-          city={project.address?.city}
-          country={project.address?.country}
-          label={addressLabel}
-          onResolved={handleResolved}
-          className={clsx(
-            // When weather is also visible, let the grid stretch the map
-            // to match the (now 3-row) weather block. When the map is
-            // shown alone, fall back to a fixed height so it doesn't
-            // collapse to zero.
-            //
-            // That fallback only reaches the element because ProjectMap
-            // stands its own ``h-full`` default down when this prop states a
-            // height. For a while it did not, both class names went out
-            // together, the stylesheet order picked ``h-full``, and this map
-            // was 2px tall against an auto-height parent while looking
-            // correct in the JSX. Do not reintroduce a default alongside it.
-            weatherEnabled ? 'h-full min-h-[20rem]' : 'h-[32rem]',
-          )}
-        />
-      )}
-      {weatherEnabled && (
-        <ProjectWeather lat={resolved?.lat} lng={resolved?.lng} />
-      )}
-    </div>
-    </>
-  );
+function ProjectLocationPanel(_props: { project: Project }) {
+  return null;
 }
 
 function ProjectHealthBar({
@@ -2359,11 +2175,6 @@ export function ProjectDetailPage() {
         <ProjectHealthBar projectId={projectId!} boqs={boqs} boqDetails={boqDetails} />
       )}
       </div>
-      )}
-
-      {!isWidgetHidden('location') && (
-        /* ── Location map + weather (toggleable in widget settings) ───── */
-        <ProjectLocationPanel project={project} />
       )}
 
       {!isWidgetHidden('phase-ribbon') && (

@@ -59,9 +59,9 @@ import {
 
 const PRODUCT_DASHBOARD_WIDGET_IDS = new Set([
   'continue_work', 'today', 'kpi', 'projects', 'portfolio',
-  'validation_portfolio', 'map', 'bim_coverage', 'next_steps',
+  'validation_portfolio', 'bim_coverage', 'next_steps',
   'upcoming_milestones', 'rfi_turnaround',
-  'inspections_quality', 'punch_quality', 'weather_site', 'labour_cost',
+  'inspections_quality', 'punch_quality',
   'latest_photos',
 ]);
 

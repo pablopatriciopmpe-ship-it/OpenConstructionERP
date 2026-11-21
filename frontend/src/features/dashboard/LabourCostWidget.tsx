@@ -16,6 +16,7 @@
 
 import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
+import { isProductModule } from '@/modules/productManifest';
 import { Card, CardContent, CardHeader } from '@/shared/ui';
 import { useProjectContextStore } from '@/stores/useProjectContextStore';
 import { fetchLabourCost } from '@/features/payroll/api';
@@ -39,6 +40,7 @@ function money(value: number, currency?: string): string {
 }
 
 export function LabourCostWidget() {
+  if (!isProductModule('payroll')) return null;
   const { t } = useTranslation();
   const projectId = useProjectContextStore((s) => s.activeProjectId) ?? '';
   // The rollup is payroll data (payroll.read, manager and above). Below that

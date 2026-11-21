@@ -18,9 +18,9 @@ export const DASHBOARD_SETS: readonly DashboardSet[] = [
     labelKey: 'dashboard.layout.set_site',
     labelDefault: 'Site manager',
     widgets: [
-      'today', 'continue_work', 'on_site_now', 'weather_site', 'inbox', 'punch_quality',
-      'inspections_quality', 'rfi_turnaround', 'submittals_pending', 'upcoming_milestones',
-      'latest_photos', 'quick_upload', 'activity',
+      'today', 'continue_work', 'punch_quality',
+      'inspections_quality', 'rfi_turnaround', 'upcoming_milestones',
+      'latest_photos',
     ],
   },
   {
@@ -28,8 +28,8 @@ export const DASHBOARD_SETS: readonly DashboardSet[] = [
     labelKey: 'dashboard.layout.set_estimator',
     labelDefault: 'Estimator',
     widgets: [
-      'continue_work', 'projects', 'estimate_resources', 'kpi', 'validation_portfolio',
-      'finance_summary', 'bim_coverage', 'quick_upload', 'regional_pack',
+      'continue_work', 'projects', 'kpi', 'validation_portfolio',
+      'bim_coverage',
     ],
   },
   {
@@ -37,8 +37,8 @@ export const DASHBOARD_SETS: readonly DashboardSet[] = [
     labelKey: 'dashboard.layout.set_manager',
     labelDefault: 'Project manager',
     widgets: [
-      'today', 'kpi', 'finance_summary', 'portfolio', 'operations_snapshot', 'upcoming_milestones',
-      'rfi_turnaround', 'analytics', 'map', 'activity',
+      'today', 'kpi', 'portfolio', 'upcoming_milestones',
+      'rfi_turnaround',
     ],
   },
 ];

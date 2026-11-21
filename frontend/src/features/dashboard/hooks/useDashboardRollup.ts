@@ -28,8 +28,7 @@ export type DashboardWidgetId =
   | 'hse_scorecard'
   | 'procurement_pipeline'
   | 'budget_variance'
-  | 'change_orders'
-  | 'weather_site';
+  | 'change_orders';
 
 /* ── Per-widget payload types (mirror backend schemas.py) ─────────────── */
 
@@ -257,7 +256,7 @@ export interface WidgetPayloadMap {
   procurement_pipeline: ProcurementPipelinePayload;
   budget_variance: BudgetVariancePayload;
   change_orders: ChangeOrdersPayload;
-  weather_site: WeatherSitePayload;
+  weather_site?: WeatherSitePayload;
 }
 
 const ALL_WIDGETS: DashboardWidgetId[] = [
@@ -270,7 +269,6 @@ const ALL_WIDGETS: DashboardWidgetId[] = [
   'procurement_pipeline',
   'budget_variance',
   'change_orders',
-  'weather_site',
 ];
 
 export interface UseDashboardRollupOptions {
