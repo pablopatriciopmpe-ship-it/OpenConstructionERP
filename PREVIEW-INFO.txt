@@ -1,0 +1,3 @@
+source_ref=preview/v03-acabamento
+source_sha=82238831e3c05b308eadd5fb1ec204dbcc096f2c
+backend=https://erp-teste.evolux-erp.workers.dev
