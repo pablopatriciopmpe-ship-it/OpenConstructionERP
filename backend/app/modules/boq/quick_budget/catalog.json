@@ -1,0 +1,1252 @@
+{
+ "version": "2026-11",
+ "description": "Catálogo curado de serviços típicos do Orçamento rápido. Cada serviço aponta para uma composição SINAPI real (código CAIXA); serviços sem código exigem preço informado.",
+ "sinapi_reference_month": "2026-10",
+ "categories": [
+  {
+   "id": "mobilizacao",
+   "label": "Mobilização"
+  },
+  {
+   "id": "demolicao",
+   "label": "Demolição"
+  },
+  {
+   "id": "contrapiso",
+   "label": "Contrapiso"
+  },
+  {
+   "id": "construcao",
+   "label": "Construção"
+  },
+  {
+   "id": "telhado",
+   "label": "Telhado"
+  },
+  {
+   "id": "loucas_metais",
+   "label": "Louças e metais"
+  },
+  {
+   "id": "eletrica",
+   "label": "Elétrica"
+  },
+  {
+   "id": "hidraulica",
+   "label": "Hidráulica"
+  },
+  {
+   "id": "climatizacao",
+   "label": "Climatização"
+  },
+  {
+   "id": "forro",
+   "label": "Forro"
+  },
+  {
+   "id": "iluminacao",
+   "label": "Iluminação"
+  },
+  {
+   "id": "pintura",
+   "label": "Pintura"
+  },
+  {
+   "id": "impermeabilizacao",
+   "label": "Impermeabilização"
+  },
+  {
+   "id": "revestimentos",
+   "label": "Revestimentos"
+  },
+  {
+   "id": "esquadrias",
+   "label": "Esquadrias"
+  },
+  {
+   "id": "reboco",
+   "label": "Reboco"
+  },
+  {
+   "id": "fachada",
+   "label": "Fachada"
+  },
+  {
+   "id": "areas_externas",
+   "label": "Áreas externas"
+  },
+  {
+   "id": "servicos_finais",
+   "label": "Serviços finais"
+  },
+  {
+   "id": "piscina",
+   "label": "Piscina"
+  }
+ ],
+ "services": [
+  {
+   "id": "tapume_compensado",
+   "category": "mobilizacao",
+   "label": "Tapume de compensado de madeira",
+   "sinapi": "98458",
+   "unit": "M2",
+   "for": [
+    "casa_nova",
+    "comercial",
+    "reforma"
+   ],
+   "note": ""
+  },
+  {
+   "id": "locacao_obra_gabarito",
+   "category": "mobilizacao",
+   "label": "Locação convencional da obra (gabarito de tábuas)",
+   "sinapi": "105009",
+   "unit": "M",
+   "for": [
+    "casa_nova",
+    "comercial"
+   ],
+   "note": ""
+  },
+  {
+   "id": "container_obra",
+   "category": "mobilizacao",
+   "label": "Instalação de contêiner / módulo de obra (mecanizada)",
+   "sinapi": "105115",
+   "unit": "UN",
+   "for": [
+    "casa_nova",
+    "comercial"
+   ],
+   "note": ""
+  },
+  {
+   "id": "demol_alvenaria",
+   "category": "demolicao",
+   "label": "Demolição manual de alvenaria de bloco furado",
+   "sinapi": "97622",
+   "unit": "M3",
+   "for": [
+    "casa_nova",
+    "comercial",
+    "reforma"
+   ],
+   "note": ""
+  },
+  {
+   "id": "demol_revest_ceramico",
+   "category": "demolicao",
+   "label": "Demolição de revestimento cerâmico (manual)",
+   "sinapi": "97633",
+   "unit": "M2",
+   "for": [
+    "casa_nova",
+    "comercial",
+    "reforma"
+   ],
+   "note": ""
+  },
+  {
+   "id": "demol_argamassa",
+   "category": "demolicao",
+   "label": "Demolição de argamassa / reboco (manual)",
+   "sinapi": "97631",
+   "unit": "M2",
+   "for": [
+    "casa_nova",
+    "comercial",
+    "reforma"
+   ],
+   "note": ""
+  },
+  {
+   "id": "demol_piso_concreto",
+   "category": "demolicao",
+   "label": "Demolição de piso de concreto simples (manual)",
+   "sinapi": "104789",
+   "unit": "M3",
+   "for": [
+    "casa_nova",
+    "comercial",
+    "reforma"
+   ],
+   "note": ""
+  },
+  {
+   "id": "demol_rodape_ceramico",
+   "category": "demolicao",
+   "label": "Demolição de rodapé cerâmico",
+   "sinapi": "97632",
+   "unit": "M",
+   "for": [
+    "casa_nova",
+    "comercial",
+    "reforma"
+   ],
+   "note": ""
+  },
+  {
+   "id": "remocao_entulho",
+   "category": "demolicao",
+   "label": "Remoção de entulho classe A (alvenaria, concreto, cerâmica)",
+   "sinapi": "106122",
+   "unit": "M3",
+   "for": [
+    "casa_nova",
+    "comercial",
+    "reforma"
+   ],
+   "note": ""
+  },
+  {
+   "id": "contrapiso_seco",
+   "category": "contrapiso",
+   "label": "Contrapiso em argamassa 1:4, área seca sobre laje (aderido)",
+   "sinapi": "87640",
+   "unit": "M2",
+   "for": [
+    "casa_nova",
+    "comercial",
+    "reforma"
+   ],
+   "note": ""
+  },
+  {
+   "id": "contrapiso_membrana",
+   "category": "contrapiso",
+   "label": "Contrapiso com membrana cimentícia",
+   "sinapi": "106792",
+   "unit": "M2",
+   "for": [
+    "casa_nova",
+    "comercial",
+    "reforma"
+   ],
+   "note": ""
+  },
+  {
+   "id": "lastro_concreto",
+   "category": "contrapiso",
+   "label": "Lastro de concreto magro, 5 cm",
+   "sinapi": "95241",
+   "unit": "M2",
+   "for": [
+    "casa_nova",
+    "comercial"
+   ],
+   "note": ""
+  },
+  {
+   "id": "piso_cimentado",
+   "category": "contrapiso",
+   "label": "Piso cimentado liso, 2 cm",
+   "sinapi": "98679",
+   "unit": "M2",
+   "for": [
+    "casa_nova",
+    "comercial",
+    "reforma"
+   ],
+   "note": ""
+  },
+  {
+   "id": "alvenaria_ceramica_14",
+   "category": "construcao",
+   "label": "Alvenaria de vedação, bloco cerâmico 14x19x29 cm",
+   "sinapi": "103360",
+   "unit": "M2",
+   "for": [
+    "casa_nova",
+    "comercial"
+   ],
+   "note": ""
+  },
+  {
+   "id": "alvenaria_ceramica_9",
+   "category": "construcao",
+   "label": "Alvenaria de vedação, bloco cerâmico 9x14x19 cm",
+   "sinapi": "103332",
+   "unit": "M2",
+   "for": [
+    "casa_nova",
+    "comercial",
+    "reforma"
+   ],
+   "note": ""
+  },
+  {
+   "id": "contraverga_concreto",
+   "category": "construcao",
+   "label": "Contraverga/verga moldada in loco, 15 cm",
+   "sinapi": "105029",
+   "unit": "M",
+   "for": [
+    "casa_nova",
+    "comercial",
+    "reforma"
+   ],
+   "note": ""
+  },
+  {
+   "id": "laje_premoldada_eps",
+   "category": "construcao",
+   "label": "Laje pré-moldada unidirecional com EPS",
+   "sinapi": "101959",
+   "unit": "M2",
+   "for": [
+    "casa_nova",
+    "comercial"
+   ],
+   "note": ""
+  },
+  {
+   "id": "drywall_parede",
+   "category": "construcao",
+   "label": "Parede de drywall (chapas de gesso, estrutura metálica)",
+   "sinapi": "96361",
+   "unit": "M2",
+   "for": [
+    "casa_nova",
+    "comercial",
+    "reforma"
+   ],
+   "note": ""
+  },
+  {
+   "id": "trama_aco_telha_ceramica",
+   "category": "telhado",
+   "label": "Trama de aço (ripas e caibros) para telha cerâmica",
+   "sinapi": "92575",
+   "unit": "M2",
+   "for": [
+    "casa_nova",
+    "comercial"
+   ],
+   "note": ""
+  },
+  {
+   "id": "telhamento_colonial",
+   "category": "telhado",
+   "label": "Telhamento com telha cerâmica capa-canal colonial",
+   "sinapi": "94201",
+   "unit": "M2",
+   "for": [
+    "casa_nova",
+    "comercial"
+   ],
+   "note": ""
+  },
+  {
+   "id": "telhamento_portuguesa",
+   "category": "telhado",
+   "label": "Telhamento com telha cerâmica de encaixe portuguesa",
+   "sinapi": "94195",
+   "unit": "M2",
+   "for": [
+    "casa_nova",
+    "comercial"
+   ],
+   "note": ""
+  },
+  {
+   "id": "cumeeira_ceramica",
+   "category": "telhado",
+   "label": "Cumeeira para telha cerâmica",
+   "sinapi": "94221",
+   "unit": "M",
+   "for": [
+    "casa_nova",
+    "comercial"
+   ],
+   "note": ""
+  },
+  {
+   "id": "calha_aco_galvanizado",
+   "category": "telhado",
+   "label": "Calha em chapa de aço galvanizado (33 cm)",
+   "sinapi": "94227",
+   "unit": "M",
+   "for": [
+    "casa_nova",
+    "comercial",
+    "reforma"
+   ],
+   "note": ""
+  },
+  {
+   "id": "bacia_caixa_acoplada",
+   "category": "loucas_metais",
+   "label": "Bacia sanitária com caixa acoplada, louça branca",
+   "sinapi": "86888",
+   "unit": "UN",
+   "for": [
+    "casa_nova",
+    "comercial",
+    "reforma"
+   ],
+   "note": ""
+  },
+  {
+   "id": "lavatorio_coluna",
+   "category": "loucas_metais",
+   "label": "Lavatório de louça branca com coluna",
+   "sinapi": "86903",
+   "unit": "UN",
+   "for": [
+    "casa_nova",
+    "comercial",
+    "reforma"
+   ],
+   "note": ""
+  },
+  {
+   "id": "misturador_lavatorio",
+   "category": "loucas_metais",
+   "label": "Misturador de mesa para lavatório",
+   "sinapi": "86905",
+   "unit": "UN",
+   "for": [
+    "casa_nova",
+    "comercial",
+    "reforma"
+   ],
+   "note": ""
+  },
+  {
+   "id": "chuveiro_eletrico",
+   "category": "loucas_metais",
+   "label": "Chuveiro elétrico comum",
+   "sinapi": "100860",
+   "unit": "UN",
+   "for": [
+    "casa_nova",
+    "comercial",
+    "reforma"
+   ],
+   "note": ""
+  },
+  {
+   "id": "pia_cozinha_inox",
+   "category": "loucas_metais",
+   "label": "Pia de aço inox com 1 cuba",
+   "sinapi": "106772",
+   "unit": "UN",
+   "for": [
+    "casa_nova",
+    "comercial",
+    "reforma"
+   ],
+   "note": ""
+  },
+  {
+   "id": "torneira_cozinha",
+   "category": "loucas_metais",
+   "label": "Torneira de parede para pia de cozinha",
+   "sinapi": "86910",
+   "unit": "UN",
+   "for": [
+    "casa_nova",
+    "comercial",
+    "reforma"
+   ],
+   "note": ""
+  },
+  {
+   "id": "tanque_louca",
+   "category": "loucas_metais",
+   "label": "Tanque de louça branca com coluna",
+   "sinapi": "86872",
+   "unit": "UN",
+   "for": [
+    "casa_nova",
+    "comercial",
+    "reforma"
+   ],
+   "note": ""
+  },
+  {
+   "id": "bancada_granito_lavatorio",
+   "category": "loucas_metais",
+   "label": "Bancada de granito para lavatório (0,50 x 0,60 m)",
+   "sinapi": "86895",
+   "unit": "UN",
+   "for": [
+    "casa_nova",
+    "comercial",
+    "reforma"
+   ],
+   "note": ""
+  },
+  {
+   "id": "tomada_baixa_10a",
+   "category": "eletrica",
+   "label": "Tomada baixa de embutir 2P+T 10 A (com suporte e placa)",
+   "sinapi": "92000",
+   "unit": "UN",
+   "for": [
+    "casa_nova",
+    "comercial",
+    "reforma"
+   ],
+   "note": ""
+  },
+  {
+   "id": "interruptor_simples",
+   "category": "eletrica",
+   "label": "Interruptor simples 10 A (com suporte e placa)",
+   "sinapi": "91953",
+   "unit": "UN",
+   "for": [
+    "casa_nova",
+    "comercial",
+    "reforma"
+   ],
+   "note": ""
+  },
+  {
+   "id": "cabo_cobre_2_5",
+   "category": "eletrica",
+   "label": "Cabo de cobre flexível 2,5 mm²",
+   "sinapi": "91926",
+   "unit": "M",
+   "for": [
+    "casa_nova",
+    "comercial",
+    "reforma"
+   ],
+   "note": ""
+  },
+  {
+   "id": "eletroduto_flexivel_20",
+   "category": "eletrica",
+   "label": "Eletroduto flexível corrugado 1/2\" em parede",
+   "sinapi": "91852",
+   "unit": "M",
+   "for": [
+    "casa_nova",
+    "comercial",
+    "reforma"
+   ],
+   "note": ""
+  },
+  {
+   "id": "quadro_distribuicao_6",
+   "category": "eletrica",
+   "label": "Quadro de distribuição em PVC de embutir, 6 disjuntores",
+   "sinapi": "101876",
+   "unit": "UN",
+   "for": [
+    "casa_nova",
+    "comercial",
+    "reforma"
+   ],
+   "note": ""
+  },
+  {
+   "id": "tubo_agua_pvc_25",
+   "category": "hidraulica",
+   "label": "Tubo de PVC soldável 25 mm (ramal de água)",
+   "sinapi": "89402",
+   "unit": "M",
+   "for": [
+    "casa_nova",
+    "comercial",
+    "reforma"
+   ],
+   "note": ""
+  },
+  {
+   "id": "registro_pressao_3_4",
+   "category": "hidraulica",
+   "label": "Registro de pressão bruto 3/4\" (latão)",
+   "sinapi": "89351",
+   "unit": "UN",
+   "for": [
+    "casa_nova",
+    "comercial",
+    "reforma"
+   ],
+   "note": ""
+  },
+  {
+   "id": "tubo_esgoto_100",
+   "category": "hidraulica",
+   "label": "Tubo de esgoto PVC DN 100 (ramal)",
+   "sinapi": "89714",
+   "unit": "M",
+   "for": [
+    "casa_nova",
+    "comercial",
+    "reforma"
+   ],
+   "note": ""
+  },
+  {
+   "id": "caixa_sifonada_100",
+   "category": "hidraulica",
+   "label": "Caixa sifonada PVC 100 x 100 x 50 mm",
+   "sinapi": "89707",
+   "unit": "UN",
+   "for": [
+    "casa_nova",
+    "comercial",
+    "reforma"
+   ],
+   "note": ""
+  },
+  {
+   "id": "ralo_sifonado_100",
+   "category": "hidraulica",
+   "label": "Ralo sifonado PVC 100 x 40 mm",
+   "sinapi": "89709",
+   "unit": "UN",
+   "for": [
+    "casa_nova",
+    "comercial",
+    "reforma"
+   ],
+   "note": ""
+  },
+  {
+   "id": "caixa_dagua_1000",
+   "category": "hidraulica",
+   "label": "Caixa d'água de polietileno 1.000 L",
+   "sinapi": "102607",
+   "unit": "UN",
+   "for": [
+    "casa_nova",
+    "comercial",
+    "reforma"
+   ],
+   "note": ""
+  },
+  {
+   "id": "split_9000",
+   "category": "climatizacao",
+   "label": "Ar-condicionado split inverter hi-wall 9.000 BTU/h",
+   "sinapi": "103244",
+   "unit": "UN",
+   "for": [
+    "casa_nova",
+    "comercial",
+    "reforma"
+   ],
+   "note": ""
+  },
+  {
+   "id": "split_12000",
+   "category": "climatizacao",
+   "label": "Ar-condicionado split inverter hi-wall 12.000 BTU/h",
+   "sinapi": "103247",
+   "unit": "UN",
+   "for": [
+    "casa_nova",
+    "comercial",
+    "reforma"
+   ],
+   "note": ""
+  },
+  {
+   "id": "split_18000",
+   "category": "climatizacao",
+   "label": "Ar-condicionado split inverter hi-wall 18.000 BTU/h",
+   "sinapi": "103250",
+   "unit": "UN",
+   "for": [
+    "casa_nova",
+    "comercial",
+    "reforma"
+   ],
+   "note": ""
+  },
+  {
+   "id": "forro_drywall_residencial",
+   "category": "forro",
+   "label": "Forro de drywall residencial",
+   "sinapi": "96110",
+   "unit": "M2",
+   "for": [
+    "casa_nova",
+    "comercial",
+    "reforma"
+   ],
+   "note": ""
+  },
+  {
+   "id": "forro_fibra_mineral",
+   "category": "forro",
+   "label": "Forro de fibra mineral (comercial)",
+   "sinapi": "104757",
+   "unit": "M2",
+   "for": [
+    "comercial",
+    "reforma"
+   ],
+   "note": ""
+  },
+  {
+   "id": "sanca_gesso",
+   "category": "forro",
+   "label": "Sanca de gesso montada na obra",
+   "sinapi": "99054",
+   "unit": "M2",
+   "for": [
+    "casa_nova",
+    "comercial",
+    "reforma"
+   ],
+   "note": ""
+  },
+  {
+   "id": "plafon_led",
+   "category": "iluminacao",
+   "label": "Luminária plafon circular de sobrepor, LED 12/13 W",
+   "sinapi": "103782",
+   "unit": "UN",
+   "for": [
+    "casa_nova",
+    "comercial",
+    "reforma"
+   ],
+   "note": ""
+  },
+  {
+   "id": "lampada_led_10w",
+   "category": "iluminacao",
+   "label": "Lâmpada LED 10 W (E27)",
+   "sinapi": "97610",
+   "unit": "UN",
+   "for": [
+    "casa_nova",
+    "comercial",
+    "reforma"
+   ],
+   "note": ""
+  },
+  {
+   "id": "arandela_led",
+   "category": "iluminacao",
+   "label": "Luminária arandela meia-lua com LED 6 W",
+   "sinapi": "97605",
+   "unit": "UN",
+   "for": [
+    "casa_nova",
+    "comercial",
+    "reforma"
+   ],
+   "note": ""
+  },
+  {
+   "id": "luminaria_emergencia",
+   "category": "iluminacao",
+   "label": "Luminária de emergência LED",
+   "sinapi": "97599",
+   "unit": "UN",
+   "for": [
+    "comercial",
+    "reforma"
+   ],
+   "note": ""
+  },
+  {
+   "id": "pintura_parede_economica",
+   "category": "pintura",
+   "label": "Pintura látex acrílica econômica em paredes (2 demãos)",
+   "sinapi": "104641",
+   "unit": "M2",
+   "for": [
+    "casa_nova",
+    "comercial",
+    "reforma"
+   ],
+   "note": ""
+  },
+  {
+   "id": "pintura_parede_premium",
+   "category": "pintura",
+   "label": "Pintura látex acrílica premium em paredes (2 demãos)",
+   "sinapi": "88489",
+   "unit": "M2",
+   "for": [
+    "casa_nova",
+    "comercial",
+    "reforma"
+   ],
+   "note": ""
+  },
+  {
+   "id": "pintura_teto_premium",
+   "category": "pintura",
+   "label": "Pintura látex acrílica premium em teto (2 demãos)",
+   "sinapi": "88488",
+   "unit": "M2",
+   "for": [
+    "casa_nova",
+    "comercial",
+    "reforma"
+   ],
+   "note": ""
+  },
+  {
+   "id": "massa_latex_parede_2",
+   "category": "pintura",
+   "label": "Emassamento com massa látex em parede (2 demãos)",
+   "sinapi": "88497",
+   "unit": "M2",
+   "for": [
+    "casa_nova",
+    "comercial",
+    "reforma"
+   ],
+   "note": ""
+  },
+  {
+   "id": "fundo_selador_parede",
+   "category": "pintura",
+   "label": "Fundo selador acrílico em parede",
+   "sinapi": "88485",
+   "unit": "M2",
+   "for": [
+    "casa_nova",
+    "comercial",
+    "reforma"
+   ],
+   "note": ""
+  },
+  {
+   "id": "pintura_piso_acrilica",
+   "category": "pintura",
+   "label": "Pintura de piso com tinta acrílica (2 demãos)",
+   "sinapi": "102491",
+   "unit": "M2",
+   "for": [
+    "casa_nova",
+    "comercial",
+    "reforma"
+   ],
+   "note": ""
+  },
+  {
+   "id": "imperm_membrana_acrilica",
+   "category": "impermeabilizacao",
+   "label": "Impermeabilização com membrana acrílica (3 demãos)",
+   "sinapi": "98554",
+   "unit": "M2",
+   "for": [
+    "casa_nova",
+    "comercial",
+    "reforma"
+   ],
+   "note": ""
+  },
+  {
+   "id": "imperm_manta_asfaltica",
+   "category": "impermeabilizacao",
+   "label": "Impermeabilização com manta asfáltica (1 camada)",
+   "sinapi": "98546",
+   "unit": "M2",
+   "for": [
+    "casa_nova",
+    "comercial",
+    "reforma"
+   ],
+   "note": ""
+  },
+  {
+   "id": "imperm_argamassa_polimerica",
+   "category": "impermeabilizacao",
+   "label": "Impermeabilização com argamassa polimérica (3 demãos)",
+   "sinapi": "98555",
+   "unit": "M2",
+   "for": [
+    "casa_nova",
+    "comercial",
+    "reforma"
+   ],
+   "note": ""
+  },
+  {
+   "id": "protecao_mecanica_3cm",
+   "category": "impermeabilizacao",
+   "label": "Proteção mecânica de superfície horizontal, e = 3 cm",
+   "sinapi": "98565",
+   "unit": "M2",
+   "for": [
+    "casa_nova",
+    "comercial",
+    "reforma"
+   ],
+   "note": ""
+  },
+  {
+   "id": "revest_ceramico_parede_25x35",
+   "category": "revestimentos",
+   "label": "Revestimento cerâmico de parede interna 25x35 cm",
+   "sinapi": "87271",
+   "unit": "M2",
+   "for": [
+    "casa_nova",
+    "comercial",
+    "reforma"
+   ],
+   "note": ""
+  },
+  {
+   "id": "revest_ceramico_piso_45",
+   "category": "revestimentos",
+   "label": "Revestimento cerâmico de piso 45x45 cm (ambiente < 5 m²)",
+   "sinapi": "87249",
+   "unit": "M2",
+   "for": [
+    "casa_nova",
+    "comercial",
+    "reforma"
+   ],
+   "note": ""
+  },
+  {
+   "id": "revest_ceramico_piso_60",
+   "category": "revestimentos",
+   "label": "Revestimento cerâmico de piso 60x60 cm (ambiente < 5 m²)",
+   "sinapi": "87255",
+   "unit": "M2",
+   "for": [
+    "casa_nova",
+    "comercial",
+    "reforma"
+   ],
+   "note": ""
+  },
+  {
+   "id": "rodape_ceramico_45",
+   "category": "revestimentos",
+   "label": "Rodapé cerâmico 7 cm, placas 45x45",
+   "sinapi": "88649",
+   "unit": "M",
+   "for": [
+    "casa_nova",
+    "comercial",
+    "reforma"
+   ],
+   "note": ""
+  },
+  {
+   "id": "gesso_parede_05",
+   "category": "revestimentos",
+   "label": "Gesso desempenado em parede, 0,5 cm",
+   "sinapi": "87418",
+   "unit": "M2",
+   "for": [
+    "casa_nova",
+    "comercial",
+    "reforma"
+   ],
+   "note": ""
+  },
+  {
+   "id": "janela_aluminio_correr_2f",
+   "category": "esquadrias",
+   "label": "Janela de alumínio de correr, 2 folhas (vidro incluso)",
+   "sinapi": "94570",
+   "unit": "M2",
+   "for": [
+    "casa_nova",
+    "comercial",
+    "reforma"
+   ],
+   "note": ""
+  },
+  {
+   "id": "janela_aluminio_maxim_ar",
+   "category": "esquadrias",
+   "label": "Janela de alumínio maxim-ar (vidro incluso)",
+   "sinapi": "94569",
+   "unit": "M2",
+   "for": [
+    "casa_nova",
+    "comercial",
+    "reforma"
+   ],
+   "note": ""
+  },
+  {
+   "id": "porta_madeira_semioca",
+   "category": "esquadrias",
+   "label": "Porta de madeira semi-oca 80x210 cm (com dobradiças)",
+   "sinapi": "91297",
+   "unit": "UN",
+   "for": [
+    "casa_nova",
+    "comercial",
+    "reforma"
+   ],
+   "note": ""
+  },
+  {
+   "id": "batente_porta_madeira",
+   "category": "esquadrias",
+   "label": "Batente de porta de madeira, padrão médio",
+   "sinapi": "90801",
+   "unit": "UN",
+   "for": [
+    "casa_nova",
+    "comercial",
+    "reforma"
+   ],
+   "note": ""
+  },
+  {
+   "id": "fechadura_banheiro",
+   "category": "esquadrias",
+   "label": "Fechadura de embutir para porta de banheiro",
+   "sinapi": "90831",
+   "unit": "UN",
+   "for": [
+    "casa_nova",
+    "comercial",
+    "reforma"
+   ],
+   "note": ""
+  },
+  {
+   "id": "chapisco_interno",
+   "category": "reboco",
+   "label": "Chapisco interno, traço 1:3, betoneira",
+   "sinapi": "87879",
+   "unit": "M2",
+   "for": [
+    "casa_nova",
+    "comercial",
+    "reforma"
+   ],
+   "note": ""
+  },
+  {
+   "id": "emboco_interno",
+   "category": "reboco",
+   "label": "Emboço em argamassa 1:2:8 em parede interna",
+   "sinapi": "87550",
+   "unit": "M2",
+   "for": [
+    "casa_nova",
+    "comercial",
+    "reforma"
+   ],
+   "note": ""
+  },
+  {
+   "id": "massa_unica_externa",
+   "category": "reboco",
+   "label": "Emboço/massa única externa em argamassa industrializada",
+   "sinapi": "87795",
+   "unit": "M2",
+   "for": [
+    "casa_nova",
+    "comercial",
+    "reforma"
+   ],
+   "note": ""
+  },
+  {
+   "id": "chapisco_fachada",
+   "category": "fachada",
+   "label": "Chapisco de fachada (sem vãos)",
+   "sinapi": "87894",
+   "unit": "M2",
+   "for": [
+    "casa_nova",
+    "comercial",
+    "reforma"
+   ],
+   "note": ""
+  },
+  {
+   "id": "fachada_textura_acrilica",
+   "category": "fachada",
+   "label": "Pintura texturizada acrílica em parede externa de casa (1 cor)",
+   "sinapi": "88423",
+   "unit": "M2",
+   "for": [
+    "casa_nova",
+    "comercial"
+   ],
+   "note": ""
+  },
+  {
+   "id": "fachada_monocapa",
+   "category": "fachada",
+   "label": "Revestimento decorativo monocamada em fachada",
+   "sinapi": "87839",
+   "unit": "M2",
+   "for": [
+    "casa_nova",
+    "comercial",
+    "reforma"
+   ],
+   "note": ""
+  },
+  {
+   "id": "revest_externo_gres",
+   "category": "fachada",
+   "label": "Revestimento cerâmico externo (grês/semigrês)",
+   "sinapi": "104589",
+   "unit": "M2",
+   "for": [
+    "casa_nova",
+    "comercial",
+    "reforma"
+   ],
+   "note": ""
+  },
+  {
+   "id": "passeio_concreto",
+   "category": "areas_externas",
+   "label": "Passeio / piso de concreto usinado",
+   "sinapi": "94993",
+   "unit": "M2",
+   "for": [
+    "casa_nova",
+    "comercial"
+   ],
+   "note": ""
+  },
+  {
+   "id": "piso_intertravado_6",
+   "category": "areas_externas",
+   "label": "Pavimento intertravado, bloco 16 faces, 6 cm",
+   "sinapi": "92403",
+   "unit": "M2",
+   "for": [
+    "casa_nova",
+    "comercial"
+   ],
+   "note": ""
+  },
+  {
+   "id": "grama_esmeralda",
+   "category": "areas_externas",
+   "label": "Plantio de grama esmeralda em placas",
+   "sinapi": "103946",
+   "unit": "M2",
+   "for": [
+    "casa_nova",
+    "comercial"
+   ],
+   "note": ""
+  },
+  {
+   "id": "cerca_moirao",
+   "category": "areas_externas",
+   "label": "Cerca com mourões de concreto, H = 2,30 m",
+   "sinapi": "101193",
+   "unit": "M",
+   "for": [
+    "casa_nova",
+    "comercial"
+   ],
+   "note": ""
+  },
+  {
+   "id": "plantio_arbusto",
+   "category": "areas_externas",
+   "label": "Plantio de arbusto ou cerca viva",
+   "sinapi": "98509",
+   "unit": "UN",
+   "for": [
+    "casa_nova",
+    "comercial"
+   ],
+   "note": ""
+  },
+  {
+   "id": "limpeza_piso_ceramico",
+   "category": "servicos_finais",
+   "label": "Limpeza de piso cerâmico com pano úmido",
+   "sinapi": "99803",
+   "unit": "M2",
+   "for": [
+    "casa_nova",
+    "comercial",
+    "reforma"
+   ],
+   "note": ""
+  },
+  {
+   "id": "limpeza_janela_vidro",
+   "category": "servicos_finais",
+   "label": "Limpeza de janela de vidro com caixilho",
+   "sinapi": "99821",
+   "unit": "M2",
+   "for": [
+    "casa_nova",
+    "comercial",
+    "reforma"
+   ],
+   "note": ""
+  },
+  {
+   "id": "limpeza_bacia",
+   "category": "servicos_finais",
+   "label": "Limpeza de bacia sanitária e metais",
+   "sinapi": "99818",
+   "unit": "UN",
+   "for": [
+    "casa_nova",
+    "comercial",
+    "reforma"
+   ],
+   "note": ""
+  },
+  {
+   "id": "limpeza_revest_parede",
+   "category": "servicos_finais",
+   "label": "Limpeza de revestimento cerâmico em parede",
+   "sinapi": "99806",
+   "unit": "M2",
+   "for": [
+    "casa_nova",
+    "comercial",
+    "reforma"
+   ],
+   "note": ""
+  },
+  {
+   "id": "piscina_imperm_membrana",
+   "category": "piscina",
+   "label": "Piscina: impermeabilização com membrana acrílica (3 demãos)",
+   "sinapi": "98554",
+   "unit": "M2",
+   "for": [
+    "casa_nova",
+    "comercial"
+   ],
+   "note": "Parcela de impermeabilização; SINAPI não tem composição de piscina completa."
+  },
+  {
+   "id": "piscina_pastilha",
+   "category": "piscina",
+   "label": "Piscina: revestimento em pastilha de porcelana 5x5 cm",
+   "sinapi": "87245",
+   "unit": "M2",
+   "for": [
+    "casa_nova",
+    "comercial"
+   ],
+   "note": "Aplicação de pastilha; escavação, estrutura e casa de máquinas não têm composição SINAPI."
+  },
+  {
+   "id": "piscina_equipamento_manual",
+   "category": "piscina",
+   "label": "Piscina: casa de máquinas e filtragem (preço informado pelo usuário)",
+   "sinapi": null,
+   "unit": "VB",
+   "for": [
+    "casa_nova",
+    "comercial"
+   ],
+   "note": "Sem composição SINAPI: o usuário informa o preço unitário."
+  }
+ ]
+}
