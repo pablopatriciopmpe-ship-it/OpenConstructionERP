@@ -7,6 +7,7 @@ Tabelas:
     oe_saas_subscription_event  - eventos de webhook já processados (idempotência)
     oe_saas_ai_usage            - razão de consumo de créditos de IA
     oe_saas_master_audit        - ações do painel master (dono do SaaS)
+    oe_saas_signup_confirmation - confirmação de e-mail do cadastro público (só com SMTP)
 
 As tabelas que carregam ``tenant_id`` entram automaticamente na política de RLS
 (``app.core.rls_setup``). ``oe_saas_tenant`` usa ``id`` como chave da empresa, e o
@@ -41,6 +42,16 @@ class Tenant(Base):
     trial_ends_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     # Créditos avulsos (pacotes de recarga). Somam à cota mensal do plano.
     ai_topup_credits: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    # Teto de créditos de IA DURANTE o trial (F8 §6.1: 30). ``None`` = sem teto (empresa criada
+    # pelo painel master). Deixa de valer quando a assinatura fica ativa.
+    ai_trial_cap: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    # Aceite dos termos no cadastro público (data/versão), para prova de consentimento.
+    terms_accepted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    terms_version: Mapped[str | None] = mapped_column(String(20), nullable=True)
+    # Exclusão lógica: reversível, só o painel master altera. Não apaga linha nenhuma; o status
+    # anterior fica intacto, então restaurar devolve a empresa exatamente como estava.
+    deleted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True, index=True)
+    deleted_by: Mapped[uuid.UUID | None] = mapped_column(GUID(), nullable=True)
 
 
 class TenantMember(Base):
@@ -105,6 +116,28 @@ class AiUsage(Base):
     credits: Mapped[int] = mapped_column(Integer, nullable=False)
     kind: Mapped[str] = mapped_column(String(40), nullable=False, default="")
     source: Mapped[str] = mapped_column(String(10), nullable=False, default="plan")  # plan | topup
+
+
+class SignupConfirmation(Base):
+    """Confirmação de e-mail do cadastro público.
+
+    Sem ``tenant_id`` de propósito: a linha nasce e é consumida por rotas anônimas (cadastro e
+    link de confirmação), e uma coluna ``tenant_id`` entraria na política de RLS por empresa.
+    ``delivery``: ``emailed`` (SMTP configurado; conta aguarda o link), ``pending_no_smtp``
+    (sem SMTP: conta ativa, confirmação pendente registrada) ou ``pending_send_failed``.
+    """
+
+    __tablename__ = "oe_saas_signup_confirmation"
+    __table_args__ = (UniqueConstraint("user_id", name="uq_oe_saas_signup_conf_user"),)
+
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        GUID(), ForeignKey("oe_users_user.id", ondelete="CASCADE"), nullable=False
+    )
+    tenant_ref: Mapped[uuid.UUID] = mapped_column(GUID(), nullable=False)
+    token_hash: Mapped[str] = mapped_column(String(64), nullable=False, index=True)
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    confirmed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    delivery: Mapped[str] = mapped_column(String(24), nullable=False, default="pending_no_smtp")
 
 
 class MasterAudit(Base):
