@@ -35991,7 +35991,7 @@ const resource = {
     "quick_budget.col_unit": "Un",
     "quick_budget.col_qty": "Qtd",
     "quick_budget.col_price": "Preço unit.",
-    "quick_budget.col_material": "Material (un)",
+    "quick_budget.col_material": "Material e equip. (un)",
     "quick_budget.col_labor": "Mão de obra (un)",
     "quick_budget.col_total": "Total",
     "quick_budget.total_material": "Material e equipamentos",

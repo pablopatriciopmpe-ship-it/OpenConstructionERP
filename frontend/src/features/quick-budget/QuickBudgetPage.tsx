@@ -294,7 +294,7 @@ export function QuickBudgetPage() {
   ];
 
   return (
-    <div className="space-y-5" data-testid="quick-budget-page">
+    <div className="space-y-5 pb-24" data-testid="quick-budget-page">
       <div>
         <h1 className="text-2xl font-semibold text-content-primary">
           {t('quick_budget.title', { defaultValue: 'Orçamento rápido' })}
@@ -813,7 +813,7 @@ export function QuickBudgetPage() {
                         <th className="px-2">{t('quick_budget.col_unit', { defaultValue: 'Un' })}</th>
                         <th className="px-2 text-right">{t('quick_budget.col_qty', { defaultValue: 'Qtd' })}</th>
                         <th className="px-2 text-right">{t('quick_budget.col_price', { defaultValue: 'Preço unit.' })}</th>
-                        <th className="px-2 text-right">{t('quick_budget.col_material', { defaultValue: 'Material (un)' })}</th>
+                        <th className="px-2 text-right">{t('quick_budget.col_material', { defaultValue: 'Material e equip. (un)' })}</th>
                         <th className="px-2 text-right">{t('quick_budget.col_labor', { defaultValue: 'Mão de obra (un)' })}</th>
                         <th className="pl-2 text-right">{t('quick_budget.col_total', { defaultValue: 'Total' })}</th>
                       </tr>
