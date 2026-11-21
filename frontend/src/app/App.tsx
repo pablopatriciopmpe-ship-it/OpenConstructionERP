@@ -804,6 +804,9 @@ const OidcCallbackPage = lazy(() =>
 const QuickEstimatePage = lazy(() =>
   import('@/features/ai/QuickEstimatePage').then((m) => ({ default: m.QuickEstimatePage }))
 );
+const QuickBudgetPage = lazy(() =>
+  import('@/features/quick-budget').then((m) => ({ default: m.QuickBudgetPage }))
+);
 const AiEstimatorPage = lazy(() =>
   import('@/features/ai-estimator/AiEstimatorPage').then((m) => ({ default: m.AiEstimatorPage }))
 );
@@ -1427,6 +1430,7 @@ export default function App() {
           }
         />
 
+        <Route path="/orcamento-rapido" element={<P title="Orçamento rápido"><QuickBudgetPage /></P>} />
         <Route path="/ai-estimate" element={<P title="AI Quick Estimate"><QuickEstimatePage /></P>} />
         <Route path="/ai-estimator" element={<P title="AI Estimate Builder"><AiEstimatorPage /></P>} />
         <Route path="/ai-agents" element={<P title="AI Agents"><AgentsPage /></P>} />
