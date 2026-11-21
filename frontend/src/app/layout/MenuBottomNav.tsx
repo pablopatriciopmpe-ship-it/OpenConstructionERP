@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
 import { Menu } from 'lucide-react';
 import { navGroups, type NavItem } from './navCatalog';
+import { isProductNavRoute } from '@/modules/productManifest';
 import { DEFAULT_MODE_ITEMS, modeItems } from './menuLayout';
 import { useMenuLayoutStore } from './useMenuLayoutStore';
 
@@ -16,7 +17,7 @@ const BOTTOM_COUNT = 4;
 
 export function bottomNavRoutes(modeRoutes: string[] | null, pinned: readonly string[] = []): string[] {
   const source = [...pinned, ...(modeRoutes ?? DEFAULT_MODE_ITEMS.manager)];
-  return [...new Set(source)].filter((r) => BY_ROUTE[r]).slice(0, BOTTOM_COUNT);
+  return [...new Set(source)].filter((r) => BY_ROUTE[r] && isProductNavRoute(r)).slice(0, BOTTOM_COUNT);
 }
 
 export function MenuBottomNav({ onMore }: { onMore: () => void }) {

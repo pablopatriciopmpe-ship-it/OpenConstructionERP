@@ -24,7 +24,8 @@ export function PhotoUploadDropzone({ projectId, target, compact, onUploaded }: 
   const { t } = useTranslation();
   const qc = useQueryClient();
   const addToast = useToastStore((s) => s.addToast);
-  const input = useRef<HTMLInputElement | null>(null);
+  const cameraInputRef = useRef<HTMLInputElement | null>(null);
+  const galleryInputRef = useRef<HTMLInputElement | null>(null);
   const [over, setOver] = useState(false);
   const [category, setCategory] = useState<string>('site');
   const [tagText, setTagText] = useState('');
@@ -77,13 +78,24 @@ export function PhotoUploadDropzone({ projectId, target, compact, onUploaded }: 
       } ${compact ? 'px-3 py-2' : 'flex-wrap px-4 py-3'}`}
     >
       <input
-        ref={input}
+        ref={cameraInputRef}
         type="file"
         accept="image/*"
         capture="environment"
+        className="hidden"
+        data-testid="photo-upload-camera-input"
+        onChange={(e) => {
+          send(e.target.files);
+          e.target.value = '';
+        }}
+      />
+      <input
+        ref={galleryInputRef}
+        type="file"
+        accept="image/*"
         multiple
         className="hidden"
-        data-testid="photo-upload-input"
+        data-testid="photo-upload-gallery-input"
         onChange={(e) => {
           send(e.target.files);
           e.target.value = '';
@@ -123,9 +135,29 @@ export function PhotoUploadDropzone({ projectId, target, compact, onUploaded }: 
           <span className="w-full text-2xs text-content-tertiary">{t('photos.batch_meta_hint')}</span>
         </div>
       )}
-      <Button size="sm" className="ml-auto" disabled={upload.isPending} onClick={() => input.current?.click()}>
-        {t('photoArchive.upload.pick')}
-      </Button>
+      <div className="ml-auto flex items-center gap-2">
+        <Button
+          size="sm"
+          className="min-h-[44px]"
+          disabled={upload.isPending}
+          data-testid="photo-upload-camera-button"
+          onClick={() => cameraInputRef.current?.click()}
+          icon={<Camera size={14} />}
+        >
+          {t('photoArchive.upload.take_photo', { defaultValue: 'Tirar foto' })}
+        </Button>
+        <Button
+          variant="secondary"
+          size="sm"
+          className="min-h-[44px]"
+          disabled={upload.isPending}
+          data-testid="photo-upload-gallery-button"
+          onClick={() => galleryInputRef.current?.click()}
+          icon={<Upload size={14} />}
+        >
+          {t('photoArchive.upload.choose_gallery', { defaultValue: 'Escolher da galeria' })}
+        </Button>
+      </div>
     </div>
   );
 }

@@ -17,6 +17,7 @@ import { useTranslation } from 'react-i18next';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   Paperclip,
+  Camera,
   Image as ImageIcon,
   FileText,
   Loader2,
@@ -222,7 +223,8 @@ export function ReportAttachments({
   const qc = useQueryClient();
   const addToast = useToastStore((s) => s.addToast);
   const docInputRef = useRef<HTMLInputElement>(null);
-  const photoInputRef = useRef<HTMLInputElement>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
+  const galleryInputRef = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
   const [showExistingPicker, setShowExistingPicker] = useState(false);
 
@@ -335,7 +337,18 @@ export function ReportAttachments({
         <div className="w-full space-y-3">
           <div className="flex flex-wrap items-center gap-2">
             <input
-              ref={photoInputRef}
+              ref={cameraInputRef}
+              type="file"
+              accept="image/*"
+              capture="environment"
+              className="hidden"
+              onChange={(e) => {
+                void handleFiles(e.target.files, true);
+                e.target.value = '';
+              }}
+            />
+            <input
+              ref={galleryInputRef}
               type="file"
               accept="image/*"
               multiple
@@ -358,15 +371,24 @@ export function ReportAttachments({
             <button
               type="button"
               disabled={busy}
-              onClick={() => photoInputRef.current?.click()}
-              className="flex items-center gap-1.5 rounded-lg border border-border-light px-3 py-1.5 text-sm text-content-secondary hover:bg-surface-secondary disabled:opacity-50 transition-colors"
+              onClick={() => cameraInputRef.current?.click()}
+              className="flex min-h-[44px] items-center gap-1.5 rounded-lg border border-border-light px-3 py-2 text-sm font-medium text-content-secondary hover:bg-surface-secondary disabled:opacity-50 transition-colors"
+            >
+              <Camera size={14} />
+              {t('fieldreports.take_photo', { defaultValue: 'Tirar foto' })}
+            </button>
+            <button
+              type="button"
+              disabled={busy}
+              onClick={() => galleryInputRef.current?.click()}
+              className="flex min-h-[44px] items-center gap-1.5 rounded-lg border border-border-light px-3 py-2 text-sm font-medium text-content-secondary hover:bg-surface-secondary disabled:opacity-50 transition-colors"
             >
               {busy ? (
                 <Loader2 size={14} className="animate-spin" />
               ) : (
                 <ImageIcon size={14} />
               )}
-              {t('fieldreports.attach_photo', { defaultValue: 'Attach photo' })}
+              {t('fieldreports.choose_gallery', { defaultValue: 'Escolher da galeria' })}
             </button>
             <button
               type="button"

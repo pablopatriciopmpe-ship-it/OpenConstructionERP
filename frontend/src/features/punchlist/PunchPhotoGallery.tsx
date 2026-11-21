@@ -461,11 +461,12 @@ export function PunchPhotoGallery({
           <Button
             variant="secondary"
             size="sm"
+            className="min-h-[44px]"
             onClick={openCamera}
             disabled={uploading}
             icon={<Camera size={14} />}
           >
-            {t('punch.photo_take', { defaultValue: 'Camera' })}
+            {t('punch.photo_take', { defaultValue: 'Tirar foto' })}
           </Button>
           {/* Multi-select file upload. */}
           <input
@@ -479,13 +480,14 @@ export function PunchPhotoGallery({
           <Button
             variant="secondary"
             size="sm"
+            className="min-h-[44px]"
             onClick={() => fileInputRef.current?.click()}
             disabled={uploading}
             icon={uploading ? <Loader2 size={14} className="animate-spin" /> : <Upload size={14} />}
           >
             {uploading
               ? t('punch.photo_uploading', { defaultValue: 'Uploading...' })
-              : t('punch.photo_upload', { defaultValue: 'Upload' })}
+              : t('punch.photo_upload', { defaultValue: 'Escolher da galeria' })}
           </Button>
         </div>
       </div>

@@ -1,7 +1,7 @@
 // DDC-CWICR-OE: DataDrivenConstruction · OpenConstructionERP​‌‍⁠​‌‍⁠​‌‍⁠​‌‍⁠
 // Copyright (c) 2026 Artem Boiko / DataDrivenConstruction
 import { PhotoStrip } from '@/features/photos/components/PhotoStrip';
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
@@ -655,7 +655,7 @@ export function DailyDiaryPage() {
         onClick={() => openCreate()}
         disabled={!projectId}
         aria-label={t('daily_diary.new_diary', { defaultValue: 'New Diary' })}
-        className="fixed bottom-5 right-5 z-dropdown inline-flex h-14 w-14 min-h-[44px] min-w-[44px] items-center justify-center rounded-full bg-oe-blue text-white shadow-lg ring-1 ring-black/5 transition-transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:hover:scale-100 sm:hidden"
+        className="fixed bottom-[calc(4.5rem+env(safe-area-inset-bottom))] lg:bottom-5 right-5 z-dropdown inline-flex h-14 w-14 min-h-[44px] min-w-[44px] items-center justify-center rounded-full bg-oe-blue text-white shadow-lg ring-1 ring-black/5 transition-transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:hover:scale-100 sm:hidden"
       >
         <Plus size={22} />
       </button>
@@ -2851,6 +2851,8 @@ function PhotoUploadModal({
   const { t } = useTranslation();
   const qc = useQueryClient();
   const addToast = useToastStore((s) => s.addToast);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
+  const galleryInputRef = useRef<HTMLInputElement>(null);
 
   const [mode, setMode] = useState<PhotoAddMode>('upload');
   const [fileUrl, setFileUrl] = useState('');
@@ -3045,42 +3047,77 @@ function PhotoUploadModal({
       )}
 
       {mode === 'upload' && (
-        <div className="mt-3">
-          <label
+        <div className="mt-3 space-y-4">
+          <input
+            ref={cameraInputRef}
+            type="file"
+            accept="image/*"
+            capture="environment"
+            className="hidden"
+            disabled={busy}
+            data-testid="daily-diary-camera-input"
+            onChange={(e) => {
+              void submitUpload(e.target.files);
+              e.target.value = '';
+            }}
+          />
+          <input
+            ref={galleryInputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            disabled={busy}
+            data-testid="daily-diary-photo-file-input"
+            onChange={(e) => {
+              void submitUpload(e.target.files);
+              e.target.value = '';
+            }}
+          />
+          <div
+            onDragOver={(e) => e.preventDefault()}
+            onDrop={(e) => {
+              e.preventDefault();
+              void submitUpload(e.dataTransfer.files);
+            }}
             className={clsx(
-              'flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-border-light px-6 py-8 text-center transition-colors hover:border-oe-blue/40 hover:bg-surface-secondary/40',
+              'flex flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed border-border-light px-6 py-6 text-center transition-colors bg-surface-secondary/20',
               busy && 'pointer-events-none opacity-60',
             )}
           >
-            <input
-              type="file"
-              accept="image/*"
-              className="hidden"
-              disabled={busy}
-              data-testid="daily-diary-photo-file-input"
-              onChange={(e) => {
-                void submitUpload(e.target.files);
-                e.target.value = '';
-              }}
-            />
             {busy ? (
-              <Loader2 size={28} className="animate-spin text-oe-blue" />
+              <Loader2 size={32} className="animate-spin text-oe-blue" />
             ) : (
-              <Upload size={28} className="text-content-tertiary" />
+              <Camera size={32} className="text-oe-blue" />
             )}
-            <span className="text-sm text-content-secondary">
-              {busy
-                ? t('daily_diary.photo_uploading', { defaultValue: 'Uploading...' })
-                : t('daily_diary.photo_drop_or_click', {
-                    defaultValue: 'Click to choose an image from this device',
-                  })}
-            </span>
+            <div className="flex flex-wrap items-center justify-center gap-3">
+              <Button
+                type="button"
+                className="min-h-[44px] px-4 font-semibold"
+                disabled={busy}
+                data-testid="daily-diary-camera-button"
+                onClick={() => cameraInputRef.current?.click()}
+                icon={<Camera size={16} />}
+              >
+                {t('daily_diary.photo_take_photo', { defaultValue: 'Tirar foto' })}
+              </Button>
+              <Button
+                type="button"
+                variant="secondary"
+                className="min-h-[44px] px-4 font-semibold"
+                disabled={busy}
+                data-testid="daily-diary-gallery-button"
+                onClick={() => galleryInputRef.current?.click()}
+                icon={<Upload size={16} />}
+              >
+                {t('daily_diary.photo_choose_gallery', { defaultValue: 'Escolher da galeria' })}
+              </Button>
+            </div>
             <span className="text-2xs text-content-tertiary">
               {t('daily_diary.photo_supported', {
                 defaultValue: 'JPEG, PNG, WebP, HEIC, TIFF. Saved as a site photo.',
               })}
             </span>
-          </label>
+          </div>
         </div>
       )}
 

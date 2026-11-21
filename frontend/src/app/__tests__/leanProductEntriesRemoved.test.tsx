@@ -7,6 +7,7 @@ import {
   SHOW_GUIDED_CASES,
   SHOW_VIDEOS,
   SHOW_PROJECT_JOURNEY,
+  SHOW_HEADER_EXTRAS,
 } from '@/features/cases/casesConfig';
 import { ModuleCasesButton } from '@/features/cases/ModuleCasesButton';
 import { ProjectJourneyButton } from '@/app/layout/ProjectJourney';
@@ -16,6 +17,8 @@ import { LearningTipsCard } from '@/features/settings/LearningTipsCard';
 import { TopBarCard } from '@/features/settings/TopBarCard';
 import { CommandPalette } from '@/shared/ui/CommandPalette';
 import { ModuleGuideButton } from '@/shared/ui/ModuleGuideButton';
+import { Header } from '@/app/layout/Header';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { tasksGuide } from '@/features/tasks/tasksGuide';
 import ptBrResource from '@/app/locales/pt-BR';
 
@@ -134,6 +137,10 @@ describe('Lean and functional product entry points (user decision)', () => {
     render(<TopBarCard />);
     expect(screen.queryByTestId('topbar-switch-journey')).toBeNull();
     expect(screen.queryByTestId('topbar-preview-journey')).toBeNull();
+    expect(screen.queryByTestId('topbar-switch-askAi')).toBeNull();
+    expect(screen.queryByTestId('topbar-switch-news')).toBeNull();
+    expect(screen.queryByTestId('topbar-switch-moduleBuilder')).toBeNull();
+    expect(screen.queryByTestId('topbar-switch-subscribe')).toBeNull();
     expect(screen.getByTestId('topbar-switch-search')).toBeDefined();
   });
 
@@ -170,5 +177,28 @@ describe('Lean and functional product entry points (user decision)', () => {
     expect(card.textContent).toContain('Tarefas');
     expect(card.textContent).toContain('O quadro e suas colunas');
     expect(screen.getByTestId('module-guide-counter').textContent).toBe('Conceito 1 de 6');
+  });
+
+  it('hides the 6 extras in Header while keeping NotificationBell, Search and UserMenu', () => {
+    expect(SHOW_HEADER_EXTRAS).toBe(false);
+    const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+    render(
+      <QueryClientProvider client={qc}>
+        <MemoryRouter initialEntries={['/']}>
+          <Header />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    // Removed / hidden in lean profile:
+    expect(screen.queryByTestId('header-ask-ai')).toBeNull();
+    expect(screen.queryByText(/Serviços em segundo plano/i)).toBeNull();
+    expect(screen.queryByText(/Novidades/i)).toBeNull();
+    expect(screen.queryByText(/Construir um módulo/i)).toBeNull();
+    expect(screen.queryByRole('button', { name: /Ajuda e comentários/i })).toBeNull();
+
+    // Kept in lean profile:
+    expect(screen.getByRole('button', { name: /Notifications|Notificações/i })).toBeDefined();
+    expect(screen.getByRole('button', { name: /Menu de conta/i })).toBeDefined();
   });
 });

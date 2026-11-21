@@ -40,7 +40,7 @@ import { useI18nReady } from '@/shared/lib/useI18nReady';
 import { isTauri, openAppInBrowser, openLink } from '@/shared/lib/desktop';
 import { SubscribeButton } from './SubscribeButton';
 import { ProjectJourneyButton } from './ProjectJourney';
-import { SHOW_PROJECT_JOURNEY, SHOW_VIDEOS } from '@/features/cases/casesConfig';
+import { SHOW_PROJECT_JOURNEY, SHOW_VIDEOS, SHOW_HEADER_EXTRAS } from '@/features/cases/casesConfig';
 import { useTopBarPrefs } from '@/shared/lib/topBarPrefs';
 import { usePageHeaderSlot } from '@/shared/ui/pageHeaderSlot';
 import { getRouteIcon } from './routeIcons';
@@ -610,7 +610,7 @@ export function Header({ title, onMenuClick }: HeaderProps) {
         )}
 
         {/* The AI assistant dock, also reachable from the palette ("Ask AI"). */}
-        {!bar.askAi && (
+        {SHOW_HEADER_EXTRAS && !bar.askAi && (
         <button
           type="button"
           onClick={() => openAiPanel({ pathname: location.pathname, navigate })}
@@ -640,9 +640,9 @@ export function Header({ title, onMenuClick }: HeaderProps) {
         <LearnTopBarButton />
         {/* Background services: what the platform keeps loaded, at every
             width, because it is the way back to a feature that stopped. */}
-        <ProcessesButton />
+        {SHOW_HEADER_EXTRAS && <ProcessesButton />}
         <NotificationBell />
-        {!bar.news && <HeaderNewsButton />}
+        {SHOW_HEADER_EXTRAS && !bar.news && <HeaderNewsButton />}
         {/* Building a module is something you do from wherever you noticed the
             platform was missing one, so it lives here rather than in the
             sidebar. Renders nothing for anyone who may not install one.
@@ -650,9 +650,9 @@ export function Header({ title, onMenuClick }: HeaderProps) {
         {/* Shown from 2xl only: at 125% and 150% text size a 1280-1440px bar
             had no room for these three next to the project picker, and the
             right cluster ran off screen. */}
-        {!bar.moduleBuilder && <div className="hidden 2xl:block"><ModuleBuilderButton /></div>}
-        {!bar.subscribe && <div className="hidden 2xl:block"><SubscribeButton /></div>}
-        <HelpMenu />
+        {SHOW_HEADER_EXTRAS && !bar.moduleBuilder && <div className="hidden 2xl:block"><ModuleBuilderButton /></div>}
+        {SHOW_HEADER_EXTRAS && !bar.subscribe && <div className="hidden 2xl:block"><SubscribeButton /></div>}
+        {SHOW_HEADER_EXTRAS && <HelpMenu />}
 
         {/* Hairline divider between Zone 3 and Zone 4. */}
         <div className="hidden sm:block h-4 w-px bg-border-light/70" aria-hidden />

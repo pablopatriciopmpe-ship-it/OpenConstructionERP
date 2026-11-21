@@ -120,6 +120,7 @@ export function DefectPhotosPanel({
         <Button
           variant="secondary"
           size="sm"
+          className="min-h-[44px]"
           icon={<Camera size={14} />}
           disabled={uploadMut.isPending}
           onClick={() => {
@@ -127,7 +128,7 @@ export function DefectPhotosPanel({
             cameraRef.current?.click();
           }}
         >
-          {t('punch.photo_take', { defaultValue: 'Camera' })}
+          {t('punch.photo_take', { defaultValue: 'Tirar foto' })}
         </Button>
         <input
           ref={fileRef}
@@ -143,11 +144,12 @@ export function DefectPhotosPanel({
         <Button
           variant="secondary"
           size="sm"
+          className="min-h-[44px]"
           icon={uploadMut.isPending ? <Loader2 size={14} className="animate-spin" /> : <Upload size={14} />}
           disabled={uploadMut.isPending}
           onClick={() => fileRef.current?.click()}
         >
-          {t('punch.photo_upload', { defaultValue: 'Upload' })}
+          {t('punch.photo_upload', { defaultValue: 'Escolher da galeria' })}
         </Button>
         <span className="text-2xs text-content-tertiary">
           {t('field_evidence.camera_hint', {

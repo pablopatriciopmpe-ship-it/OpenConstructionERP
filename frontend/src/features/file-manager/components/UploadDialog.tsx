@@ -15,7 +15,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { UploadCloud, X, FileUp } from 'lucide-react';
+import { UploadCloud, X, FileUp, Camera } from 'lucide-react';
 import clsx from 'clsx';
 import { useFileUpload } from '../useFileUpload';
 import type { FileKind } from '../types';
@@ -35,6 +35,7 @@ export function UploadDialog({
 }: UploadDialogProps) {
   const { t } = useTranslation();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
   const [dragOver, setDragOver] = useState(false);
   // The upload routine is shared with the page-level drag-and-drop drop zone
   // (see ``useFileUpload``) so both surfaces hit the exact same pipeline.
@@ -107,6 +108,18 @@ export function UploadDialog({
               }
             }}
           />
+          <input
+            ref={cameraInputRef}
+            type="file"
+            accept="image/*"
+            capture="environment"
+            className="hidden"
+            onChange={(e) => {
+              if (e.target.files && e.target.files.length > 0) {
+                handleFiles(e.target.files);
+              }
+            }}
+          />
 
           <div
             role="button"
@@ -160,18 +173,32 @@ export function UploadDialog({
                 defaultValue: 'PDF, images, Excel, DWG, IFC - any file type',
               })}
             </p>
-            <button
-              type="button"
-              disabled={uploading}
-              onClick={(e) => {
-                e.stopPropagation();
-                fileInputRef.current?.click();
-              }}
-              className="mt-4 inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold bg-oe-blue text-white hover:bg-oe-blue-hover shadow-sm transition-colors disabled:opacity-60"
-            >
-              <FileUp size={14} />
-              {t('files.upload_browse', { defaultValue: 'Browse files' })}
-            </button>
+            <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
+              <button
+                type="button"
+                disabled={uploading}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  cameraInputRef.current?.click();
+                }}
+                className="inline-flex min-h-[44px] items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold bg-surface-secondary text-content-primary hover:bg-surface-tertiary border border-border-light shadow-sm transition-colors disabled:opacity-60"
+              >
+                <Camera size={16} />
+                {t('files.upload_camera', { defaultValue: 'Tirar foto' })}
+              </button>
+              <button
+                type="button"
+                disabled={uploading}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  fileInputRef.current?.click();
+                }}
+                className="inline-flex min-h-[44px] items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold bg-oe-blue text-white hover:bg-oe-blue-hover shadow-sm transition-colors disabled:opacity-60"
+              >
+                <FileUp size={16} />
+                {t('files.upload_browse', { defaultValue: 'Escolher da galeria / arquivos' })}
+              </button>
+            </div>
           </div>
         </div>
       </div>

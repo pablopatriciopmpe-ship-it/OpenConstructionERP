@@ -2157,7 +2157,7 @@ export function PunchListPage() {
         onClick={() => setShowAddModal(true)}
         disabled={!projectId}
         aria-label={t('punch.new_item', { defaultValue: 'New Item' })}
-        className="fixed bottom-5 right-5 z-40 inline-flex h-14 w-14 min-h-[44px] min-w-[44px] items-center justify-center rounded-full bg-oe-blue text-white shadow-lg ring-1 ring-black/5 transition-transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:hover:scale-100 sm:hidden"
+        className="fixed bottom-[calc(4.5rem+env(safe-area-inset-bottom))] lg:bottom-5 right-5 z-40 inline-flex h-14 w-14 min-h-[44px] min-w-[44px] items-center justify-center rounded-full bg-oe-blue text-white shadow-lg ring-1 ring-black/5 transition-transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:hover:scale-100 sm:hidden"
       >
         <Plus size={22} />
       </button>
