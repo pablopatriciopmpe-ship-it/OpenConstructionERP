@@ -36,6 +36,7 @@ import {
   Search,
   Check,
   Loader2,
+  FileText,
   Image as ImageIcon,
 } from 'lucide-react';
 import {
