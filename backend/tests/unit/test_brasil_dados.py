@@ -75,6 +75,46 @@ def test_bdi_components_roundtrip_is_stored_not_hardcoded():
     assert compute_bdi(again) == compute_bdi(COMP)
 
 
+def test_bdi_and_cost_breakdown_totals_agree_on_rounding_per_line():
+    """Garante que a regra de arredondamento por linha (ROUND_HALF_UP em 2 casas por parcela)
+    resulta em totais identicos entre o relatorio/endpoint de BDI e o cost-breakdown
+    (sem divergencia de centavos, eliminando o gap de R$ 0,02 reportado pelo QA).
+    """
+    from app.modules.boq.bdi import bdi_report
+    from app.modules.boq.service import _round_currency
+
+    # Caso real do QA: custo direto 671.15 com BDI TCU (ac 3%, s 0.8%, r 1.27%, g 0.4%, df 1.23%, l 8.96%, pis 0.65%, cofins 3%, iss 5%)
+    qa_comp = BDIComponents(
+        ac=D("3.0"), s=D("0.8"), r=D("1.27"), g=D("0.4"), df=D("1.23"), l=D("8.96"),
+        taxes=(("PIS", D("0.65")), ("COFINS", D("3.0")), ("ISS", D("5.0"))),
+    )
+    lines = build_markup_lines(qa_comp)
+    rows = [
+        BOQMarkup(
+            id=uuid.uuid4(), name=ln["name"], markup_type="percentage", category=ln["category"],
+            percentage=str(ln["percentage"]), fixed_amount="0", apply_to=ln["apply_to"],
+            sort_order=ln["sort_order"], is_active=True, metadata_=ln["metadata"],
+        )
+        for ln in lines
+    ]
+    direct = D("671.15")
+    calculated = _calculate_markup_amounts(direct, rows)
+
+    # Regra unificada: arredondamento por linha
+    line_rounded_amounts = [_round_currency(a) for _, a in calculated]
+    bdi_amount = sum(line_rounded_amounts, D(0))
+    direct_rounded = _round_currency(direct)
+    total_cost_breakdown = direct_rounded + bdi_amount
+
+    rep = bdi_report(qa_comp, direct_rounded, bdi_amount)
+    assert rep["direct_cost"] == "671.15"
+    assert rep["bdi_amount"] == "183.54"
+    assert rep["price_with_bdi"] == "854.69"
+    assert rep["total_with_bdi"] == "854.69"
+    # Ambos os endpoints fecham exatamente em 854.69
+    assert str(total_cost_breakdown) == rep["price_with_bdi"]
+
+
 # ── INCC ───────────────────────────────────────────────────────────────────
 RAW = json.dumps(
     [{"data": f"01/{m:02d}/2024", "valor": v} for m, v in zip(range(1, 5), ("0.50", "0.30", "0.20", "0.10"))]

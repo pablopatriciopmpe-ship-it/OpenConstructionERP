@@ -3336,14 +3336,14 @@ class BOQService:
                 lambda pos, _fx=fx_map, _base=base: _leaf_total_base_with_resources(pos, _fx, _base),
                 escalation.factors,
             )
-            markup_total = sum((amount for _, amount in markup_results), Decimal("0"))
-            grand_total = direct_cost + markup_total
+            markup_total = sum((_round_currency(amount) for _, amount in markup_results), Decimal("0"))
+            grand_total = _round_currency(direct_cost) + markup_total
 
             non_base = {c for c in currencies if c and c != base}
             breakdown[boq_id] = {
-                "direct_cost": float(direct_cost.quantize(cent, rounding=ROUND_HALF_UP)),
-                "markups_total": float(markup_total.quantize(cent, rounding=ROUND_HALF_UP)),
-                "grand_total": float(grand_total.quantize(cent, rounding=ROUND_HALF_UP)),
+                "direct_cost": float(_round_currency(direct_cost)),
+                "markups_total": float(_round_currency(markup_total)),
+                "grand_total": float(_round_currency(grand_total)),
                 "base_currency": base,
                 "currencies": sorted(c for c in currencies if c),
                 # Mixed only when a foreign code is present alongside the base
@@ -8536,9 +8536,9 @@ class BOQService:
                     amount=_round_currency(amount),
                 )
             )
-            markup_total += amount
+            markup_total += _round_currency(amount)
 
-        net_total = direct_cost + markup_total
+        net_total = _round_currency(direct_cost) + markup_total
 
         return BOQWithSections(
             id=boq.id,
@@ -8918,8 +8918,8 @@ class BOQService:
             None,
             (await self._resolve_escalation_factors(markups_orm)).factors,
         )
-        markup_total = sum(amount for _, amount in markup_results)
-        grand_total = float(str(direct_cost + markup_total))
+        markup_total = sum(_round_currency(amount) for _, amount in markup_results)
+        grand_total = float(str(_round_currency(direct_cost) + markup_total))
 
         return BOQStatisticsResponse(
             boq_id=str(boq_id),

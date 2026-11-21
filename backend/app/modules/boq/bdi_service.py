@@ -6,7 +6,7 @@ import uuid
 from decimal import Decimal, ROUND_HALF_UP
 from typing import Any
 
-from app.modules.boq.bdi import BDI_FLAG, BDIComponents, bdi_report, build_markup_lines
+from app.modules.boq.bdi import BDI_FLAG, BDIComponents, _round_currency, bdi_report, build_markup_lines
 from app.modules.boq.schemas import MarkupCreate
 
 
@@ -88,7 +88,8 @@ async def read_bdi(service: Any, boq_id: uuid.UUID) -> dict[str, Any]:
     stored = (getattr(boq, "metadata_", None) or {}).get("bdi")
     direct_cost, calculated = await service.calculate_markups(boq_id)
     existing = await service.list_markups(boq_id)
-    formatted_direct = str(direct_cost.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)) if direct_cost else "0.00"
+    direct_rounded = _round_currency(direct_cost) if direct_cost else Decimal("0.00")
+    formatted_direct = str(direct_rounded)
 
     components: BDIComponents | None = None
     if stored:
@@ -100,11 +101,16 @@ async def read_bdi(service: Any, boq_id: uuid.UUID) -> dict[str, Any]:
     if not components and existing:
         components = _extract_components_from_markups(existing)
 
-    bdi_amount = sum((amt for m, amt in calculated if _is_bdi_line(m) or not stored), Decimal(0))
+    # Regra de arredondamento unificada (arredondamento por linha):
+    # Cada parcela de BDI / markup é arredondada em duas casas decimais (_round_currency / ROUND_HALF_UP),
+    # e o total de BDI é a soma exata das parcelas arredondadas.
+    # Isso garante que a soma dos componentes exibidos na tabela feche ao centavo com o total
+    # e coincida exatamente com o grand_total retornado pelo endpoint /boqs/{id}/cost-breakdown/.
+    bdi_amount = sum((_round_currency(amt) for m, amt in calculated if _is_bdi_line(m) or not stored), Decimal(0))
 
     if not components:
-        effective_pct = (bdi_amount / direct_cost * Decimal(100)) if (direct_cost and bdi_amount) else Decimal(0)
-        formatted_total = str((direct_cost + bdi_amount).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)) if direct_cost else formatted_direct
+        effective_pct = (bdi_amount / direct_rounded * Decimal(100)) if (direct_rounded and bdi_amount) else Decimal(0)
+        formatted_total = str(direct_rounded + bdi_amount) if direct_rounded else formatted_direct
         default_comp = BDIComponents(
             ac=Decimal("4.0000"),
             s=Decimal("0.8000"),
@@ -115,7 +121,7 @@ async def read_bdi(service: Any, boq_id: uuid.UUID) -> dict[str, Any]:
             taxes=(("PIS", Decimal("0.6500")), ("COFINS", Decimal("3.0000")), ("ISS", Decimal("3.0000"))),
         )
         if bdi_amount > 0:
-            rep = bdi_report(default_comp, direct_cost, bdi_amount)
+            rep = bdi_report(default_comp, direct_rounded, bdi_amount)
             return {
                 "configured": True,
                 **default_comp.to_dict(),
@@ -141,7 +147,7 @@ async def read_bdi(service: Any, boq_id: uuid.UUID) -> dict[str, Any]:
             "total_with_bdi": formatted_direct,
         }
 
-    rep = bdi_report(components, direct_cost, bdi_amount, sinapi=stored.get("sinapi_reference") if stored else None)
+    rep = bdi_report(components, direct_rounded, bdi_amount, sinapi=stored.get("sinapi_reference") if stored else None)
     rep["total_with_bdi"] = rep.get("price_with_bdi")
     return {
         "configured": True,

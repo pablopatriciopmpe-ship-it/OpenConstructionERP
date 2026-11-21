@@ -2,6 +2,7 @@
 // Copyright (c) 2026 Artem Boiko / DataDrivenConstruction
 import { ProjectOffersWidget } from '@/features/offers/ProjectOffersWidget';
 import { estimateDisplayName } from '@/shared/lib/estimateDisplayName';
+import { isProductNavRoute } from '@/modules/productManifest';
 import React, { Component, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { ErrorInfo, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -309,7 +310,6 @@ const PROJECT_TABS = [
   'overview',
   'schedule',
   'budget',
-  'tendering',
   'photos',
   'compliance',
 ] as const;
@@ -337,13 +337,6 @@ interface BudgetDashboard {
   total_spent?: number;
   remaining?: number;
   items?: { name: string; planned: number; actual: number }[];
-}
-
-interface TenderPackage {
-  id: string;
-  name: string;
-  status: string;
-  created_at: string;
 }
 
 // ---------------------------------------------------------------------------
@@ -1597,7 +1590,6 @@ export function ProjectDetailPage() {
   // the module off the route does not exist and the button below would fall
   // through to the catch-all 404, so the button goes with it.
   const isCollaborationEnabled = useModuleStore((s) => s.isModuleEnabled('collaboration'));
-  const isTenderingEnabled = useModuleStore((s) => s.isModuleEnabled('oe_tendering') || s.isModuleEnabled('tendering'));
   // The project framework areas (governance, economics, quality and the rest) come with a framework
   // pack. Without it the hub does not offer them; their routes stay live for deep links.
   const { data: partnerPack } = usePartnerPack();
@@ -1878,12 +1870,6 @@ export function ProjectDetailPage() {
     queryKey: ['budget', projectId],
     queryFn: () => apiGet<BudgetDashboard>(`/v1/costmodel/projects/${projectId}/5d/dashboard/`),
     enabled: !!projectId && activeTab === 'budget',
-  });
-
-  const { data: tenderPackages, isLoading: tenderingLoading } = useQuery({
-    queryKey: ['tenderPackages', projectId],
-    queryFn: () => apiGet<TenderPackage[]>(`/v1/tendering/packages/?project_id=${projectId}`),
-    enabled: !!projectId && activeTab === 'tendering',
   });
 
   // Unified dashboard data
@@ -2171,7 +2157,7 @@ export function ProjectDetailPage() {
       >
         {t('projects.detail_intro_body', {
           defaultValue:
-            'This is the project hub: its Planilhas orçamentárias, Cronograma, 5D budget, tendering and key stats sit on one page so you do not hunt through the sidebar to find where the work lives. Jump straight into a cost work-product or open Project Settings to change region, currency or active modules. Edits to Planilhas orçamentárias and costs roll up into the totals shown across Analytics and Reporting.',
+            'This is the project hub: its Planilhas orçamentárias, Cronograma, 5D budget and key stats sit on one page so you do not hunt through the sidebar to find where the work lives. Jump straight into a cost work-product or open Project Settings to change region, currency or active modules. Edits to Planilhas orçamentárias and costs roll up into the totals shown across Analytics and Reporting.',
         })}
       </DismissibleInfo>
 
@@ -2632,7 +2618,6 @@ export function ProjectDetailPage() {
           { key: 'overview' as ProjectTab, label: t('projects.overview'), icon: <Table2 size={16} /> },
           { key: 'schedule' as ProjectTab, label: t('projects.4d_schedule'), icon: <CalendarClock size={16} /> },
           { key: 'budget' as ProjectTab, label: t('projects.5d_budget'), icon: <Wallet size={16} /> },
-          ...(isTenderingEnabled ? [{ key: 'tendering' as ProjectTab, label: t('projects.tendering'), icon: <Gavel size={16} /> }] : []),
           { key: 'photos' as ProjectTab, label: t('projects.photos.tab_label', { defaultValue: 'Photos' }), icon: <ImageIcon size={16} /> },
           { key: 'compliance' as ProjectTab, label: t('compliance.tab_label', { defaultValue: 'Compliance' }), icon: <ShieldCheck size={16} /> },
         ]).map((tab) => (
@@ -3020,7 +3005,9 @@ export function ProjectDetailPage() {
                         bg: dashboardData.quality.ncrs_open > 0 ? 'bg-semantic-error-bg' : 'bg-surface-secondary',
                         to: '/punchlist',
                       },
-                    ].map((item) => (
+                    ]
+                      .filter((item) => isProductNavRoute(item.to))
+                      .map((item) => (
                       <button
                         key={item.label}
                         type="button"
@@ -3044,31 +3031,33 @@ export function ProjectDetailPage() {
                     ))}
                   </div>
                   {/* Procurement summary */}
-                  <div className="mt-3 pt-3 border-t border-border-light">
-                    <button
-                      type="button"
-                      onClick={() => navigate('/procurement')}
-                      className="block w-full text-left rounded-md transition-colors hover:bg-surface-secondary -mx-2 px-2 py-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-oe-blue/40"
-                      aria-label={t('projects.dash_procurement', { defaultValue: 'Procurement' })}
-                    >
-                      <div className="flex items-center gap-2 mb-2">
-                        <Package size={14} className="text-content-tertiary" />
-                        <span className="text-xs font-medium text-content-secondary">
-                          {t('projects.dash_procurement', { defaultValue: 'Procurement' })}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-4 text-xs text-content-secondary">
-                        <span>
-                          <strong className="text-content-primary">{dashboardData.procurement.active_pos}</strong>{' '}
-                          {t('projects.dash_active_pos', { defaultValue: 'active POs' })}
-                        </span>
-                        <span>
-                          <strong className="text-content-primary">{dashboardData.procurement.pending_delivery}</strong>{' '}
-                          {t('projects.dash_pending_delivery', { defaultValue: 'pending delivery' })}
-                        </span>
-                      </div>
-                    </button>
-                  </div>
+                  {isProductNavRoute('/procurement') && (
+                    <div className="mt-3 pt-3 border-t border-border-light">
+                      <button
+                        type="button"
+                        onClick={() => navigate('/procurement')}
+                        className="block w-full text-left rounded-md transition-colors hover:bg-surface-secondary -mx-2 px-2 py-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-oe-blue/40"
+                        aria-label={t('projects.dash_procurement', { defaultValue: 'Procurement' })}
+                      >
+                        <div className="flex items-center gap-2 mb-2">
+                          <Package size={14} className="text-content-tertiary" />
+                          <span className="text-xs font-medium text-content-secondary">
+                            {t('projects.dash_procurement', { defaultValue: 'Procurement' })}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-4 text-xs text-content-secondary">
+                          <span>
+                            <strong className="text-content-primary">{dashboardData.procurement.active_pos}</strong>{' '}
+                            {t('projects.dash_active_pos', { defaultValue: 'active POs' })}
+                          </span>
+                          <span>
+                            <strong className="text-content-primary">{dashboardData.procurement.pending_delivery}</strong>{' '}
+                            {t('projects.dash_pending_delivery', { defaultValue: 'pending delivery' })}
+                          </span>
+                        </div>
+                      </button>
+                    </div>
+                  )}
                 </Card>
               </div>
 
@@ -3206,7 +3195,7 @@ export function ProjectDetailPage() {
                       size="md"
                       className="w-full justify-start"
                       icon={<FolderOpen size={14} />}
-                      onClick={() => navigate('/documents')}
+                      onClick={() => navigate('/files')}
                     >
                       {t('projects.dash_documents_link', { defaultValue: 'Documents' })}
                     </Button>
@@ -3239,28 +3228,32 @@ export function ProjectDetailPage() {
                       size="md"
                       className="w-full justify-start"
                       icon={<Wallet size={14} />}
-                      onClick={() => navigate('/finance')}
+                      onClick={() => navigate('/5d')}
                     >
-                      {t('projects.dash_finance_link', { defaultValue: 'Finance' })}
+                      {t('projects.5d_budget', { defaultValue: '5D Budget' })}
                     </Button>
-                    <Button
-                      variant="secondary"
-                      size="md"
-                      className="w-full justify-start"
-                      icon={<HardHat size={14} />}
-                      onClick={() => navigate('/safety')}
-                    >
-                      {t('projects.dash_safety_link', { defaultValue: 'Safety' })}
-                    </Button>
-                    <Button
-                      variant="secondary"
-                      size="md"
-                      className="w-full justify-start"
-                      icon={<Package size={14} />}
-                      onClick={() => navigate('/procurement')}
-                    >
-                      {t('projects.dash_procurement_link', { defaultValue: 'Procurement' })}
-                    </Button>
+                    {isProductNavRoute('/safety') && (
+                      <Button
+                        variant="secondary"
+                        size="md"
+                        className="w-full justify-start"
+                        icon={<HardHat size={14} />}
+                        onClick={() => navigate('/safety')}
+                      >
+                        {t('projects.dash_safety_link', { defaultValue: 'Safety' })}
+                      </Button>
+                    )}
+                    {isProductNavRoute('/procurement') && (
+                      <Button
+                        variant="secondary"
+                        size="md"
+                        className="w-full justify-start"
+                        icon={<Package size={14} />}
+                        onClick={() => navigate('/procurement')}
+                      >
+                        {t('projects.dash_procurement_link', { defaultValue: 'Procurement' })}
+                      </Button>
+                    )}
                   </div>
                   {/* Document stats — pushed to the bottom via mt-auto so the
                       Quick Actions card visually balances against Recent
@@ -3546,73 +3539,6 @@ export function ProjectDetailPage() {
                     </table>
                   </div>
                 )}
-              </div>
-            )}
-          </div>
-        </Card>
-        </TabErrorBoundary>
-      )}
-
-      {/* Tendering Tab */}
-      {activeTab === 'tendering' && (
-        <TabErrorBoundary fallbackTitle="Tendering data failed to load">
-        <Card padding="lg">
-          <CardHeader
-            title={t('projects.tendering')}
-            subtitle={t('projects.tendering_subtitle', { defaultValue: 'Tender packages and bid management' })}
-            action={
-              <Button
-                variant="ghost"
-                size="sm"
-                icon={<ExternalLink size={14} />}
-                iconPosition="right"
-                onClick={() => navigate('/tendering')}
-              >
-                {t('projects.open_tendering', { defaultValue: 'Open Tendering' })}
-              </Button>
-            }
-          />
-          <div className="mt-4">
-            {tenderingLoading ? (
-              <div className="space-y-3">
-                {Array.from({ length: 3 }).map((_, i) => (
-                  <Skeleton key={i} height={56} className="w-full" />
-                ))}
-              </div>
-            ) : !tenderPackages || tenderPackages.length === 0 ? (
-              <EmptyState
-                icon={<Gavel size={28} strokeWidth={1.5} />}
-                title={t('projects.no_tenders', { defaultValue: 'No tender packages' })}
-                description={t('projects.no_tenders_desc', { defaultValue: 'Create tender packages to manage bidding for this project.' })}
-                action={
-                  <Button
-                    variant="primary"
-                    size="md"
-                    icon={<Plus size={16} />}
-                    onClick={() => navigate('/tendering')}
-                  >
-                    {t('tendering.new_package', { defaultValue: 'New Tender Package' })}
-                  </Button>
-                }
-              />
-            ) : (
-              <div className="divide-y divide-border-light rounded-lg border border-border-light">
-                {tenderPackages.map((pkg) => (
-                  <div key={pkg.id} className="flex items-center gap-4 px-5 py-3.5">
-                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-surface-secondary">
-                      <Gavel size={16} className="text-content-tertiary" />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <p className="text-sm font-medium text-content-primary truncate">
-                        {pkg.name}
-                      </p>
-                      <p className="text-xs text-content-tertiary">{formatDate(pkg.created_at, i18n.language)}</p>
-                    </div>
-                    <Badge variant={statusVariant[pkg.status] ?? 'neutral'} size="sm">
-                      {pkg.status}
-                    </Badge>
-                  </div>
-                ))}
               </div>
             )}
           </div>

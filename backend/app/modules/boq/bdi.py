@@ -98,6 +98,15 @@ def display_percent(value: Decimal) -> Decimal:
     return value.quantize(_PCT_Q, rounding=ROUND_HALF_UP)
 
 
+def _round_currency(value: Decimal | float | int | str | None) -> Decimal:
+    """Arredonda valor monetario para 2 casas decimais (ROUND_HALF_UP)."""
+    if value is None:
+        return Decimal("0.00")
+    if isinstance(value, Decimal):
+        return value.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+    return Decimal(str(value)).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+
+
 def build_markup_lines(c: BDIComponents, *, first_order: int = 1) -> list[dict[str, Any]]:
     """Linhas de markup (dicts para ``MarkupCreate``) que reproduzem o BDI."""
     meta = {BDI_FLAG: True, "norm": NORM}
@@ -142,18 +151,27 @@ def bdi_report(
     *,
     sinapi: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
-    """Valor de BDI visivel no orcamento: formula x efetivo do motor de totais."""
+    """Valor de BDI visivel no orcamento: formula x efetivo do motor de totais.
+
+    Regra de arredondamento unificada: arredondamento por linha (ROUND_HALF_UP em 2 casas
+    por parcela), de modo que direct_cost + bdi_amount fecha identicamente a
+    price_with_bdi e ao grand_total de /cost-breakdown/.
+    """
     formula = compute_bdi(c)
     effective = (bdi_amounts / direct_cost * _HUNDRED) if direct_cost else Decimal(0)
+    direct_rounded = _round_currency(direct_cost)
+    bdi_rounded = _round_currency(bdi_amounts)
+    price_with_bdi = direct_rounded + bdi_rounded
     return {
         "norm": NORM,
         "formula": FORMULA,
         "components": c.to_dict(),
         "bdi_percent": str(display_percent(formula)),
         "effective_percent": str(display_percent(effective)),
-        "direct_cost": str(direct_cost.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)),
-        "bdi_amount": str(bdi_amounts.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)),
-        "price_with_bdi": str((direct_cost + bdi_amounts).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)),
+        "direct_cost": str(direct_rounded),
+        "bdi_amount": str(bdi_rounded),
+        "price_with_bdi": str(price_with_bdi),
+        "total_with_bdi": str(price_with_bdi),
         "sinapi_reference": sinapi,
     }
 
