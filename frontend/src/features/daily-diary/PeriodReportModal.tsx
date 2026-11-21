@@ -20,7 +20,7 @@ import {
 import { WideModal } from '@/shared/ui/WideModal';
 import { Button } from '@/shared/ui/Button';
 import { Input } from '@/shared/ui/Input';
-import { useToast } from '@/shared/ui/Toast';
+import { useToastStore } from '@/stores/useToastStore';
 import {
   previewPeriodReport,
   downloadPeriodReportPdf,
@@ -42,7 +42,7 @@ export const PeriodReportModal: React.FC<PeriodReportModalProps> = ({
   projectId,
 }) => {
   const { t } = useTranslation();
-  const toast = useToast();
+  const addToast = useToastStore((s) => s.addToast);
 
   // Helper date calculations
   const getPresetDates = (preset: PeriodPreset) => {
@@ -123,12 +123,12 @@ export const PeriodReportModal: React.FC<PeriodReportModalProps> = ({
 
   const handleGeneratePreview = async () => {
     if (!validateDates(dateFrom, dateTo)) {
-      toast.show(
-        t('period_report.invalid_period', {
+      addToast({
+        type: 'error',
+        title: t('period_report.invalid_period', {
           defaultValue: 'Período inválido: verifique as datas e o limite máximo de 90 dias.',
         }),
-        'error',
-      );
+      });
       return;
     }
 
@@ -158,13 +158,13 @@ export const PeriodReportModal: React.FC<PeriodReportModalProps> = ({
       setNextSteps(res.next_steps || []);
       setSelectedPhotoIds(res.photos.filter((p) => p.selected).map((p) => p.id));
     } catch (err: any) {
-      toast.show(
-        err?.message ||
+      addToast({
+        type: 'error',
+        title: err?.message ||
           t('period_report.preview_error', {
             defaultValue: 'Erro ao gerar prévia do relatório.',
           }),
-        'error',
-      );
+      });
     } finally {
       setLoading(false);
     }
@@ -193,20 +193,20 @@ export const PeriodReportModal: React.FC<PeriodReportModalProps> = ({
         include_daily_log: includeDailyLog,
         locale: 'pt-BR',
       });
-      toast.show(
-        t('period_report.pdf_download_success', {
+      addToast({
+        type: 'success',
+        title: t('period_report.pdf_download_success', {
           defaultValue: 'PDF gerado com sucesso!',
         }),
-        'success',
-      );
+      });
     } catch (err: any) {
-      toast.show(
-        err?.message ||
+      addToast({
+        type: 'error',
+        title: err?.message ||
           t('period_report.pdf_download_error', {
             defaultValue: 'Erro ao baixar PDF.',
           }),
-        'error',
-      );
+      });
     } finally {
       setDownloading(false);
     }
@@ -217,16 +217,16 @@ export const PeriodReportModal: React.FC<PeriodReportModalProps> = ({
     const textToCopy = preview.whatsapp_text || executiveSummary;
     navigator.clipboard.writeText(textToCopy);
     setCopied(true);
-    toast.show(
-      t('period_report.whatsapp_copied', { defaultValue: 'Copiado!' }),
-      'success',
-    );
+    addToast({
+      type: 'success',
+      title: t('period_report.whatsapp_copied', { defaultValue: 'Copiado!' }),
+    });
     setTimeout(() => setCopied(false), 2500);
   };
 
   return (
-    <WideModal open={isOpen}
-      isOpen={isOpen}
+    <WideModal
+      open={isOpen}
       onClose={onClose}
       title={t('period_report.modal_title', {
         defaultValue: 'Relatório da obra por período',

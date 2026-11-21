@@ -17,10 +17,8 @@ vi.mock('react-i18next', () => ({
   },
 }));
 
-vi.mock('@/shared/ui/Toast', () => ({
-  useToast: () => ({
-    show: vi.fn(),
-  }),
+vi.mock('@/stores/useToastStore', () => ({
+  useToastStore: (selector: any) => selector({ addToast: vi.fn() }),
 }));
 
 describe('PeriodReportModal component (v0.4)', () => {
