@@ -31,7 +31,7 @@ import {
 } from './api';
 import { Button } from '@/shared/ui/Button';
 import { Card } from '@/shared/ui/Card';
-import { formatCurrency } from '@/shared/lib/format';
+import { formatCurrency } from '@/shared/lib/money';
 
 type FilterTab = 'all' | 'draft' | 'sent' | 'accepted' | 'declined';
 
