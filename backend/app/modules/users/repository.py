@@ -56,8 +56,12 @@ class UserRepository:
         offset: int = 0,
         limit: int = 50,
         is_active: bool | None = None,
+        only_ids: "set[uuid.UUID] | None" = None,
     ) -> tuple[list[User], int]:
         """List users with pagination. Returns (users, total_count).
+
+        ``only_ids`` limits the directory to those users (a company caller only sees its own
+        team, see ``app.modules.saas.access.visible_user_ids``); ``None`` means everyone.
 
         Erased accounts (``deleted_at`` set) are never returned. Deleting a user
         anonymises the row in place instead of removing it, because projects
@@ -77,6 +81,8 @@ class UserRepository:
         base = select(User).where(User.deleted_at.is_(None))
         if is_active is not None:
             base = base.where(User.is_active == is_active)
+        if only_ids is not None:
+            base = base.where(User.id.in_(only_ids))
 
         # Count
         from sqlalchemy import func

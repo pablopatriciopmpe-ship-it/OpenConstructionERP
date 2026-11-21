@@ -45,6 +45,8 @@ import json
 import logging
 import re
 import unicodedata
+from contextvars import ContextVar, Token
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
@@ -118,6 +120,94 @@ _LINE_CAPS: dict[str, int] = {
     "email": MAX_EMAIL,
     "website": MAX_WEBSITE,
 }
+
+
+# ── Tenant scope ────────────────────────────────────────────────────────────
+# The file above is ONE record per installation. In the SaaS every company has its own
+# letterhead (``oe_saas_company_profile``), and a document generated for a company must NEVER
+# print another company's data. ``read_company_profile`` is the single door every generator
+# walks through (PDF, Excel, e-mail, document templates), and who it answers for is always
+# EXPLICIT:
+#
+# * a TENANT scope (bound for every request of a company's user, or by ``tenant_job_scope`` for
+#   work outside a request): the company's own profile; the global file is never read;
+# * an INSTALLATION scope (bound for a request of the platform owner / a non-SaaS caller): the
+#   global file, which is the installation default;
+# * NO scope (a job nobody gave a tenant, a public link): fails CLOSED while the installation
+#   has companies: an empty letterhead, never the global file and never another company's.
+#   An installation with no company at all keeps reading the file (self-hosted, single company).
+
+
+@dataclass(frozen=True)
+class TenantProfileScope:
+    tenant_id: str
+    profile: dict[str, Any]  # already sanitised and "effective" (sign-up name/CNPJ as fallback)
+    member_role: str = ""
+    installation: bool = False  # True: the platform owner's scope (reads the installation file)
+
+
+INSTALLATION_SCOPE = TenantProfileScope("", {}, "platform", installation=True)
+
+_tenant_scope: ContextVar[TenantProfileScope | None] = ContextVar("company_profile_tenant_scope", default=None)
+_tenants_exist = False  # process flag: does this installation hold any company? (set at startup/sign-up)
+
+
+def set_tenants_exist(value: bool) -> None:
+    global _tenants_exist
+    _tenants_exist = bool(value)
+
+
+def strict_unscoped() -> bool:
+    """Whether an unscoped read must fail closed. ``OE_SAAS_STRICT_DOCUMENTS`` forces it on/off."""
+    import os
+
+    forced = os.environ.get("OE_SAAS_STRICT_DOCUMENTS", "").strip().lower()
+    if forced in ("1", "true", "yes", "on"):
+        return True
+    if forced in ("0", "false", "no", "off"):
+        return False
+    return _tenants_exist
+
+
+def bind_tenant_profile(scope: TenantProfileScope | None) -> Token[TenantProfileScope | None]:
+    """Make ``scope`` the profile every generator reads for the current context."""
+    return _tenant_scope.set(scope)
+
+
+def bind_installation_scope() -> Token[TenantProfileScope | None]:
+    """Declare that this context answers for the installation itself (platform owner)."""
+    return _tenant_scope.set(INSTALLATION_SCOPE)
+
+
+def reset_tenant_profile(token: Token[TenantProfileScope | None]) -> None:
+    try:
+        _tenant_scope.reset(token)
+    except (ValueError, LookupError):
+        pass
+
+
+def current_tenant_scope() -> TenantProfileScope | None:
+    """The company the current context answers for, or ``None`` (installation scope or no scope)."""
+    scope = _tenant_scope.get()
+    return None if scope is None or scope.installation else scope
+
+
+def current_tenant_id() -> str | None:
+    scope = current_tenant_scope()
+    return scope.tenant_id if scope is not None else None
+
+
+def installation_identity_allowed() -> bool:
+    """True when the installation's own identity (global profile, footer, watermark) may be printed."""
+    scope = _tenant_scope.get()
+    if scope is not None:
+        return scope.installation
+    return not strict_unscoped()
+
+
+def tenant_scope_active() -> bool:
+    """True when documents must NOT carry the installation's own identity."""
+    return not installation_identity_allowed()
 
 
 def company_profile_path(data_dir: Path | None = None) -> Path:
@@ -261,7 +351,19 @@ def read_company_profile(data_dir: Path | None = None) -> dict[str, str]:
 
     A fresh ``dict`` is returned each call so callers can never mutate the
     cache. Never raises: every failure path logs and falls back.
+
+    With a tenant bound to the request (see :func:`bind_tenant_profile`) the TENANT's profile is
+    returned and the global file is never read. An explicit ``data_dir`` always reads that
+    directory's file (tests, the CLI).
     """
+    if data_dir is None:
+        scope = _tenant_scope.get()
+        if scope is not None and not scope.installation:
+            return dict(scope.profile)
+        if scope is None and strict_unscoped():
+            # Nobody said whose document this is: print no letterhead rather than guess.
+            logger.warning("company profile read without a tenant scope; printing no letterhead (fail closed)")
+            return dict(DEFAULT_COMPANY_PROFILE)
     path = company_profile_path(data_dir)
     key = str(path)
     try:

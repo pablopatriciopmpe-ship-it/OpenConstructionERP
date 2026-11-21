@@ -1,5 +1,6 @@
 // DDC-CWICR-OE: DataDrivenConstruction · OpenConstructionERP
 // Copyright (c) 2026 Artem Boiko / DataDrivenConstruction
+import { TrialBanner } from '@/features/saas/TrialBanner';
 import { useState, useCallback, useEffect } from 'react';
 import type { ReactNode } from 'react';
 import { useLocation } from 'react-router-dom';
@@ -174,6 +175,7 @@ export function AppLayout({ title, children }: AppLayoutProps) {
           onMenuClick={openSidebar}
         />
         {/* Bottom room for the floating assistant and recent buttons, so they never sit on the last controls. */}
+        <TrialBanner />
         <main className="px-4 pt-4 pb-24 sm:px-7">
           {children}
         </main>

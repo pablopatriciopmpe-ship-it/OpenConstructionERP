@@ -21,7 +21,9 @@ from app.saas_billing.plans import PlanLimitExceeded, check_limit
 
 def _locked_tenant(connection, tenant_id):
     return connection.execute(
-        select(Tenant.status, Tenant.plan_code, Tenant.trial_ends_at).where(Tenant.id == tenant_id).with_for_update()
+        select(Tenant.status, Tenant.plan_code, Tenant.trial_ends_at, Tenant.deleted_at, Tenant.ai_trial_cap)
+        .where(Tenant.id == tenant_id)
+        .with_for_update()
     ).first()
 
 
@@ -37,7 +39,7 @@ def _project_before_insert(mapper, connection, target: Project) -> None:  # noqa
     t = _locked_tenant(connection, tenant_id)
     if t is None:
         raise PlanInactiveError("missing")
-    plan = effective_plan(t.status, t.plan_code, t.trial_ends_at)
+    plan = effective_plan(t.status, t.plan_code, t.trial_ends_at, deleted_at=t.deleted_at, ai_trial_cap=t.ai_trial_cap)
     if plan is None:
         raise PlanInactiveError(t.status)
     current = connection.execute(
@@ -53,7 +55,7 @@ def _member_before_insert(mapper, connection, target: TenantMember) -> None:  # 
     t = _locked_tenant(connection, target.tenant_id)
     if t is None:
         raise PlanInactiveError("missing")
-    plan = effective_plan(t.status, t.plan_code, t.trial_ends_at)
+    plan = effective_plan(t.status, t.plan_code, t.trial_ends_at, deleted_at=t.deleted_at, ai_trial_cap=t.ai_trial_cap)
     if plan is None:
         raise PlanInactiveError(t.status)
     stmt = select(func.count()).select_from(TenantMember).where(TenantMember.tenant_id == target.tenant_id)

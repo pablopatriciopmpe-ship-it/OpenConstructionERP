@@ -14,6 +14,7 @@ import { DataFeedsSettings } from './DataFeedsSettings';
 import { ModulesSettings } from './ModulesSettings';
 import { SettingsTeamPanel } from './SettingsTeamPanel';
 import { CompanyDocumentsSettings } from './CompanyDocumentsSettings';
+import { TeamPlanPanel, CompanyCommercialCard } from '@/features/saas';
 import { MarketSettings } from '@/features/market/MarketSettings';
 import { WebhookLeads } from './WebhookLeads';
 import { McpSettingsPanel } from '@/features/mcp';
@@ -2076,7 +2077,7 @@ export function SettingsPage() {
               left half of the two-column grid and leave the right half empty. */}
           {activeTab === 'team' && (
             <div className="lg:col-span-2 min-w-0">
-              <SettingsTeamPanel />
+              <TeamPlanPanel fallback={<SettingsTeamPanel />} />
             </div>
           )}
 
@@ -2084,6 +2085,7 @@ export function SettingsPage() {
           {activeTab === 'company' && (
             <div className="lg:col-span-2 min-w-0">
               <CompanyDocumentsSettings />
+              <div className="mt-4"><CompanyCommercialCard /></div>
             </div>
           )}
 

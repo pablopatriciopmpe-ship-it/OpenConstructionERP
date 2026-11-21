@@ -10,7 +10,7 @@ Tables:
 import uuid
 from datetime import date, datetime
 
-from sqlalchemy import JSON, Boolean, Date, DateTime, ForeignKey, Index, Integer, String, Text, UniqueConstraint
+from sqlalchemy import JSON, Boolean, Date, DateTime, ForeignKey, Index, Integer, String, Text, event, text
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.database import GUID, Base
@@ -29,13 +29,18 @@ class Offer(Base):
 
     __tablename__ = "oe_offers_offer"
     __table_args__ = (
-        UniqueConstraint("number", "revision", name="uq_offers_offer_number_revision"),
+        # Numbering is per company: two companies may both issue "OF-2026-001". ``coalesce`` keeps the
+        # installation's own (tenant-less) numbers unique too, which a bare NULL column would not.
+        Index("uq_offers_offer_tenant_number_revision", text("coalesce(tenant_id, '')"), "number", "revision", unique=True),
         Index("ix_offers_offer_project_status", "project_id", "status"),
     )
 
     project_id: Mapped[uuid.UUID] = mapped_column(
         GUID(), ForeignKey("oe_projects_project.id", ondelete="CASCADE"), nullable=False, index=True
     )
+    # Company that owns the row (``None``: the installation itself). Stamped on insert from the request's
+    # tenant (see ``_stamp_tenant``); the numbering, defaults and text library are per company.
+    tenant_id: Mapped[str | None] = mapped_column(String(36), nullable=True, index=True)
     boq_id: Mapped[uuid.UUID | None] = mapped_column(GUID(), nullable=True, index=True)
     group_id: Mapped[uuid.UUID] = mapped_column(GUID(), nullable=False, index=True)
     number: Mapped[str] = mapped_column(String(60), nullable=False, index=True)
@@ -154,6 +159,9 @@ class OfferTextBlock(Base):
     __table_args__ = (Index("ix_offers_text_scope_kind", "scope", "project_id", "kind"),)
 
     scope: Mapped[str] = mapped_column(String(10), nullable=False, default="company", server_default="company")
+    # Company that owns the row (``None``: the installation itself). Stamped on insert from the request's
+    # tenant (see ``_stamp_tenant``); the numbering, defaults and text library are per company.
+    tenant_id: Mapped[str | None] = mapped_column(String(36), nullable=True, index=True)
     project_id: Mapped[uuid.UUID | None] = mapped_column(
         GUID(), ForeignKey("oe_projects_project.id", ondelete="CASCADE"), nullable=True, index=True
     )
@@ -169,10 +177,14 @@ class OfferTextBlock(Base):
 
 
 class OfferSettings(Base):
-    """Company defaults for offers. One row, key ``default``."""
+    """Company defaults for offers. One row per company (key ``default``; ``tenant_id`` ``None`` = the installation)."""
 
     __tablename__ = "oe_offers_settings"
-    __table_args__ = (UniqueConstraint("key", name="uq_offers_settings_key"),)
+    __table_args__ = (Index("uq_offers_settings_tenant_key", text("coalesce(tenant_id, '')"), "key", unique=True),)
+
+    # Company that owns the row (``None``: the installation itself). Stamped on insert from the request's
+    # tenant (see ``_stamp_tenant``); the numbering, defaults and text library are per company.
+    tenant_id: Mapped[str | None] = mapped_column(String(36), nullable=True, index=True)
 
     key: Mapped[str] = mapped_column(String(20), nullable=False, default="default", server_default="default")
     number_pattern: Mapped[str] = mapped_column(
@@ -238,3 +250,15 @@ class OfferSettings(Base):
     @default_notes.setter
     def default_notes(self, val: str | None) -> None:
         self._set_meta_setting("default_notes", val)
+
+
+def _stamp_tenant(mapper, connection, target) -> None:  # noqa: ANN001, ARG001
+    """New rows belong to the company the request (or ``tenant_job_scope``) answers for."""
+    if target.tenant_id is None:
+        from app.core.company_profile import current_tenant_id
+
+        target.tenant_id = current_tenant_id()
+
+
+for _model in (Offer, OfferTextBlock, OfferSettings):
+    event.listen(_model, "before_insert", _stamp_tenant)

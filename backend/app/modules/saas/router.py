@@ -14,22 +14,38 @@ import os
 import uuid
 from collections.abc import Callable, Mapping
 
+from datetime import UTC, datetime
+
 from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy import func, select
 
 from app.core import rls
+from app.core.rate_limiter import RateLimiter, client_identifier, login_limiter
 from app.dependencies import CurrentUserId, RequireRole, SessionDep
 from app.modules.saas import service as svc
 from app.modules.saas.billing_store import SqlBillingStore
 from app.modules.saas.models import (
     GLOBAL_ROLE_FOR_MEMBER,
     AiUsage,
+    CompanyProfile,
     MasterAudit,
     Subscription,
     Tenant,
     TenantMember,
 )
-from app.modules.saas.schemas import MemberCreate, PlanChange, SubscribeRequest, TenantCreate, TopUp
+from app.modules.saas.errors import PlanInactiveError, PlanLimitError
+from app.modules.saas.schemas import (
+    MemberCreate,
+    MemberRoleChange,
+    PlanChange,
+    SignupConfirm,
+    SignupRequest,
+    SubscribeRequest,
+    TenantCreate,
+    TenantDelete,
+    TenantRename,
+    TopUp,
+)
 from app.saas_billing.plans import PLANS, get_plan
 from app.saas_billing.providers.asaas import AsaasSandboxProvider
 from app.saas_billing.providers.base import PaymentProvider, WebhookAuthError
@@ -37,6 +53,11 @@ from app.saas_billing.service import BillingService
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
+
+# Cadastro público: teto por IP e por e-mail (impede abuso e "mail bombing" de um endereço alheio).
+signup_ip_limiter = RateLimiter(max_requests=int(os.environ.get("SAAS_SIGNUP_PER_IP_HOUR", "5")), window_seconds=3600)
+signup_email_limiter = RateLimiter(max_requests=3, window_seconds=3600)
+_ROLE_ALIAS = {"editor": "member"}  # nome na tela -> papel interno
 
 
 def default_providers() -> Mapping[str, PaymentProvider]:
@@ -69,6 +90,60 @@ async def list_plans() -> list[dict]:
     return svc.plans_public()
 
 
+@router.post("/signup", status_code=201)
+async def signup(data: SignupRequest, request: Request) -> dict:
+    """Cadastro público "Comece grátis": empresa + dono + trial Pro de 14 dias, sem cartão e sem cobrança."""
+    import hashlib
+
+    from app.config import get_settings
+    from app.database import async_session_factory
+
+    ip = client_identifier(request)
+    email_key = hashlib.sha256(data.email.strip().lower().encode()).hexdigest()[:24]
+    ok = login_limiter.is_allowed(f"signup_{ip}")[0]
+    ok = ok and signup_ip_limiter.is_allowed(f"signup_{ip}")[0]
+    ok = ok and signup_email_limiter.is_allowed(f"signup_mail_{email_key}")[0]
+    if not ok:
+        raise HTTPException(
+            status_code=429,
+            detail="Muitas tentativas de cadastro. Aguarde e tente novamente.",
+            headers={"Retry-After": "3600"},
+        )
+    if data.website.strip():  # honeypot preenchido: robô. Responde como sucesso e não cria nada.
+        return {"status": "trial", "email_confirmation": "pending", "account_active": False}
+    # Rota anônima que cria empresa/membro: roda como código de sistema, fora do RLS de tenant.
+    with rls.system_scope():
+        async with async_session_factory() as session:
+            result = await svc.signup_tenant(
+                session,
+                full_name=data.full_name,
+                email=str(data.email),
+                password=data.password,
+                company_name=data.company_name,
+                cnpj=data.cnpj,
+                phone=data.phone,
+                trade_name=data.trade_name,
+                settings=get_settings(),
+            )
+            await session.commit()
+    return result
+
+
+@router.post("/signup/confirm")
+async def signup_confirm(data: SignupConfirm, request: Request) -> dict:
+    from app.database import async_session_factory
+
+    if not login_limiter.is_allowed(f"signup_confirm_{client_identifier(request)}")[0]:
+        raise HTTPException(429, "Muitas tentativas. Aguarde e tente novamente.", headers={"Retry-After": "60"})
+    with rls.system_scope():
+        async with async_session_factory() as session:
+            ok = await svc.confirm_signup_email(session, data.token)
+            await session.commit()
+    if not ok:
+        raise HTTPException(400, "Link de confirmação inválido, expirado ou já usado")
+    return {"confirmed": True}
+
+
 # ── Empresa do usuário ─────────────────────────────────────────────────────
 
 
@@ -79,6 +154,8 @@ async def my_tenant(session: SessionDep, user_id: CurrentUserId) -> dict:
         raise HTTPException(404, "Usuário não pertence a uma empresa")
     tenant = (await session.execute(select(Tenant).where(Tenant.id == member.tenant_id))).scalar_one()
     plan = svc.plan_of(tenant)
+    view = plan or get_plan(tenant.plan_code)
+    state = svc.tenant_state(tenant)
     return {
         "tenant": {
             "id": str(tenant.id),
@@ -88,24 +165,131 @@ async def my_tenant(session: SessionDep, user_id: CurrentUserId) -> dict:
             "trial_ends_at": tenant.trial_ends_at,
         },
         "role": member.role,
-        "write_access": plan is not None,
+        "write_access": state["write_access"],
+        "state": state["state"],  # trial | trial_expired | active | past_due | canceled | suspended | deleted
+        "trial_days_left": state["trial_days_left"],
+        "plan": {
+            "code": view.code,
+            "name": view.name,
+            "max_users": view.max_users,
+            "max_projects": view.max_projects,
+            "ai_credits": view.ai_credits_month,
+        },
         "usage": await svc.usage(session, tenant),
     }
 
 
+# ── Perfil da empresa (por tenant) ─────────────────────────────────────────
+
+
+def _company_view(tenant: Tenant, stored: dict | None) -> dict:
+    from app.modules.saas.profile import COMMERCIAL_FIELDS, effective_profile, sanitise_tenant_profile
+
+    profile = sanitise_tenant_profile(stored or {})
+    return {
+        "tenant": {"id": str(tenant.id), "legal_name": tenant.legal_name, "cnpj": tenant.cnpj},
+        "profile": profile,
+        # "efetivo": o que um documento imprime (razão social/CNPJ do cadastro quando o perfil está vazio).
+        "effective": effective_profile(tenant.legal_name, tenant.cnpj, stored or {}),
+        "commercial_fields": list(COMMERCIAL_FIELDS),
+    }
+
+
+async def _profile_row(session, tenant_id: uuid.UUID) -> CompanyProfile | None:
+    return (await session.execute(select(CompanyProfile).where(CompanyProfile.tenant_id == tenant_id))).scalar_one_or_none()
+
+
+@router.get("/company")
+async def get_company_profile(session: SessionDep, user_id: CurrentUserId) -> dict:
+    """Perfil da empresa do usuário (qualquer papel lê): timbrado, contato, logo e padrões comerciais da proposta."""
+    member = await svc.get_membership(session, user_id)
+    if member is None:
+        raise HTTPException(404, "Usuário não pertence a uma empresa")
+    tenant = (await session.execute(select(Tenant).where(Tenant.id == member.tenant_id))).scalar_one()
+    row = await _profile_row(session, tenant.id)
+    return _company_view(tenant, row.profile if row else None)
+
+
+async def save_tenant_profile(session, tenant: Tenant, patch: dict, *, replace: bool) -> dict:
+    """Grava o perfil do tenant (``replace``: substitui tudo; senão mescla o que veio) e invalida o cache."""
+    from app.modules.saas.profile import invalidate, sanitise_tenant_profile
+
+    row = await _profile_row(session, tenant.id)
+    base = {} if (replace or row is None) else dict(row.profile or {})
+    base.update(patch)
+    clean = sanitise_tenant_profile(base)
+    if row is None:
+        session.add(CompanyProfile(tenant_id=tenant.id, profile=clean))
+    else:
+        row.profile = clean
+    await session.flush()
+    invalidate(tenant.id)
+    return clean
+
+
+@router.put("/company")
+async def put_company_profile(data: dict, session: SessionDep, user_id: CurrentUserId) -> dict:
+    """Grava o perfil (dono/admin), MESCLADO sobre o que já existe: só muda o que veio ("" limpa um campo).
+
+    Mesmas chaves e limites do perfil global + campos comerciais; valor inválido é descartado.
+    ``DELETE`` limpa tudo.
+    """
+    tenant, _ = await _tenant_admin(session, user_id)
+    clean = await save_tenant_profile(session, tenant, data, replace=False)
+    return _company_view(tenant, clean)
+
+
+@router.delete("/company")
+async def reset_company_profile(session: SessionDep, user_id: CurrentUserId) -> dict:
+    """Limpa o perfil (inclui o logo). Razão social e CNPJ do cadastro não mudam."""
+    from app.modules.saas.profile import invalidate
+
+    tenant, _ = await _tenant_admin(session, user_id)
+    row = await _profile_row(session, tenant.id)
+    if row is not None:
+        row.profile = {}
+        await session.flush()
+    invalidate(tenant.id)
+    return _company_view(tenant, None)
+
+
 @router.get("/members")
 async def list_members(session: SessionDep, user_id: CurrentUserId) -> list[dict]:
+    from app.modules.users.models import User
+
     tenant, _ = await _tenant_admin(session, user_id)
-    rows = (await session.execute(select(TenantMember).where(TenantMember.tenant_id == tenant.id))).scalars().all()
-    return [{"user_id": str(m.user_id), "role": m.role} for m in rows]
+    rows = (
+        await session.execute(
+            select(TenantMember, User)
+            .join(User, User.id == TenantMember.user_id)
+            .where(TenantMember.tenant_id == tenant.id)
+            .order_by(TenantMember.created_at)
+        )
+    ).all()
+    return [
+        {
+            "user_id": str(m.user_id),
+            "role": m.role,
+            "email": u.email,
+            "full_name": u.full_name,
+            "is_active": bool(u.is_active),
+        }
+        for m, u in rows
+    ]
 
 
 @router.post("/members", status_code=201)
 async def add_member(data: MemberCreate, session: SessionDep, user_id: CurrentUserId) -> dict:
     from app.modules.users.models import User
+    from app.modules.users.schemas import _validate_strong_password
     from app.modules.users.service import hash_password
 
     tenant, _ = await _tenant_admin(session, user_id)
+    try:
+        _validate_strong_password(data.password)
+    except ValueError as exc:
+        raise HTTPException(422, str(exc)) from None
+    role = _ROLE_ALIAS.get(data.role, data.role)
     email = data.email.strip().lower()
     if (await session.execute(select(User.id).where(User.email == email))).first():
         raise HTTPException(409, "E-mail já cadastrado")
@@ -113,15 +297,57 @@ async def add_member(data: MemberCreate, session: SessionDep, user_id: CurrentUs
         email=email,
         hashed_password=hash_password(data.password),
         full_name=data.full_name.strip(),
-        role=GLOBAL_ROLE_FOR_MEMBER[data.role],
+        role=GLOBAL_ROLE_FOR_MEMBER[role],
         locale="pt",
         is_active=True,
     )
     session.add(user)
     await session.flush()
-    session.add(TenantMember(tenant_id=tenant.id, user_id=user.id, role=data.role))  # limite: hook before_insert
+    session.add(TenantMember(tenant_id=tenant.id, user_id=user.id, role=role))  # limite: hook before_insert
     await session.flush()
-    return {"user_id": str(user.id), "role": data.role}
+    return {"user_id": str(user.id), "role": role}
+
+
+@router.patch("/members/{member_user_id}")
+async def change_member_role(
+    member_user_id: uuid.UUID, data: MemberRoleChange, session: SessionDep, user_id: CurrentUserId
+) -> dict:
+    """Troca o papel de um membro respeitando o limite de usuários do plano (viewer -> editor consome vaga no Pro)."""
+    from app.modules.saas.entitlement import counted_roles_filter
+    from app.modules.users.models import User
+    from app.saas_billing.plans import PlanLimitExceeded, check_limit
+
+    tenant, _ = await _tenant_admin(session, user_id)
+    plan = svc.plan_of(tenant)
+    if plan is None:
+        raise PlanInactiveError(tenant.status)
+    target = (
+        await session.execute(
+            select(TenantMember).where(TenantMember.tenant_id == tenant.id, TenantMember.user_id == member_user_id)
+        )
+    ).scalar_one_or_none()
+    if target is None:
+        raise HTTPException(404, "Membro não encontrado")
+    if target.role == "owner":
+        raise HTTPException(409, "O papel do dono da empresa não pode ser alterado")
+    role = _ROLE_ALIAS.get(data.role, data.role)
+    was_free = target.role == "viewer" and not counted_roles_filter(plan)
+    becomes_counted = role != "viewer" or counted_roles_filter(plan)
+    if was_free and becomes_counted:
+        stmt = select(func.count()).select_from(TenantMember).where(TenantMember.tenant_id == tenant.id)
+        if not counted_roles_filter(plan):
+            stmt = stmt.where(TenantMember.role != "viewer")
+        current = (await session.execute(stmt)).scalar_one()
+        try:
+            check_limit(plan, "users", current)
+        except PlanLimitExceeded as exc:
+            raise PlanLimitError(exc.resource, exc.limit, exc.current) from None
+    target.role = role
+    user = await session.get(User, member_user_id)
+    if user is not None:
+        user.role = GLOBAL_ROLE_FOR_MEMBER[role]
+    await session.flush()
+    return {"user_id": str(member_user_id), "role": role}
 
 
 @router.delete("/members/{member_user_id}", status_code=204)
@@ -232,7 +458,14 @@ master = APIRouter(prefix="/master", dependencies=[Depends(RequireRole("admin"))
 
 @master.get("/overview")
 async def master_overview(session: SessionDep) -> dict:
-    by_status = dict((await session.execute(select(Tenant.status, func.count()).group_by(Tenant.status))).all())
+    by_status = dict(
+        (
+            await session.execute(
+                select(Tenant.status, func.count()).where(Tenant.deleted_at.is_(None)).group_by(Tenant.status)
+            )
+        ).all()
+    )
+    deleted = (await session.execute(select(func.count()).select_from(Tenant).where(Tenant.deleted_at.is_not(None)))).scalar_one()
     mrr_cents = 0
     rows = (await session.execute(select(Subscription).where(Subscription.status.in_(("active", "past_due"))))).scalars().all()
     for s in rows:
@@ -244,6 +477,7 @@ async def master_overview(session: SessionDep) -> dict:
     return {
         "tenants_by_status": by_status,
         "tenants_total": sum(by_status.values()),
+        "tenants_deleted": int(deleted),
         "active_subscriptions": len(rows),
         "mrr_cents": mrr_cents,
         "ai_credits_used_this_month": int(ai_month),
@@ -251,9 +485,12 @@ async def master_overview(session: SessionDep) -> dict:
 
 
 @master.get("/tenants")
-async def master_list_tenants(session: SessionDep) -> list[dict]:
+async def master_list_tenants(session: SessionDep, include_deleted: bool = False) -> list[dict]:
+    stmt = select(Tenant).order_by(Tenant.created_at)
+    if not include_deleted:
+        stmt = stmt.where(Tenant.deleted_at.is_(None))
     out = []
-    for t in (await session.execute(select(Tenant).order_by(Tenant.created_at))).scalars().all():
+    for t in (await session.execute(stmt)).scalars().all():
         out.append(
             {
                 "id": str(t.id),
@@ -261,6 +498,7 @@ async def master_list_tenants(session: SessionDep) -> list[dict]:
                 "cnpj": t.cnpj,
                 "status": t.status,
                 "plan_code": t.plan_code,
+                **svc.tenant_state(t),
                 "usage": await svc.usage(session, t),
             }
         )
@@ -291,6 +529,52 @@ async def _get_tenant(session, tenant_id: uuid.UUID) -> Tenant:
     if tenant is None:
         raise HTTPException(404, "Empresa não encontrada")
     return tenant
+
+
+@master.patch("/tenants/{tenant_id}")
+async def master_rename(tenant_id: uuid.UUID, data: TenantRename, session: SessionDep, user_id: CurrentUserId) -> dict:
+    t = await _get_tenant(session, tenant_id)
+    old, t.legal_name = t.legal_name, data.legal_name.strip()
+    from app.modules.saas.profile import invalidate
+
+    invalidate(t.id)  # a razão social do cadastro é o fallback do perfil impresso
+    await svc.audit(session, uuid.UUID(user_id), "tenant_renamed", t.id, f"{old} -> {t.legal_name}")
+    return {"id": str(t.id), "legal_name": t.legal_name}
+
+
+@master.delete("/tenants/{tenant_id}")
+async def master_delete(
+    tenant_id: uuid.UUID, session: SessionDep, user_id: CurrentUserId, data: TenantDelete | None = None
+) -> dict:
+    """Exclusão LÓGICA e reversível: nada é apagado; os membros perdem o acesso até a restauração."""
+    data = data or TenantDelete()
+    t = await _get_tenant(session, tenant_id)
+    if t.deleted_at is not None:
+        raise HTTPException(409, "Empresa já está excluída")
+    has_active = (
+        await session.execute(
+            select(func.count())
+            .select_from(Subscription)
+            .where(Subscription.tenant_id == t.id, Subscription.status.in_(("active", "past_due")))
+        )
+    ).scalar_one()
+    if has_active and not data.force:
+        raise HTTPException(409, "A empresa tem assinatura ativa. Cancele a assinatura ou confirme com force=true.")
+    t.deleted_at, t.deleted_by = datetime.now(UTC), uuid.UUID(user_id)
+    await svc.audit(
+        session, uuid.UUID(user_id), "tenant_deleted", t.id, f"{t.legal_name}" + (f" | {data.reason}" if data.reason else "")
+    )
+    return {"id": str(t.id), "deleted_at": t.deleted_at}
+
+
+@master.post("/tenants/{tenant_id}/restore")
+async def master_restore(tenant_id: uuid.UUID, session: SessionDep, user_id: CurrentUserId) -> dict:
+    t = await _get_tenant(session, tenant_id)
+    if t.deleted_at is None:
+        raise HTTPException(409, "Empresa não está excluída")
+    t.deleted_at, t.deleted_by = None, None
+    await svc.audit(session, uuid.UUID(user_id), "tenant_restored", t.id, f"{t.legal_name} (status {t.status})")
+    return {"id": str(t.id), "status": t.status}
 
 
 @master.post("/tenants/{tenant_id}/suspend")
