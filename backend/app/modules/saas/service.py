@@ -240,6 +240,8 @@ async def signup_tenant(
     company_name: str,
     cnpj: str | None,
     settings: object,
+    phone: str | None = None,
+    trade_name: str | None = None,
 ) -> dict:
     """Cria empresa + dono + trial Pro de 14 dias (teto de 30 créditos de IA). Não faz commit.
 
@@ -324,6 +326,25 @@ async def signup_tenant(
             delivery=delivery,
         )
     )
+    # Perfil inicial da empresa (documentos já saem com o nome, CNPJ e contato do cadastro).
+    from app.modules.saas.models import CompanyProfile
+    from app.modules.saas.profile import invalidate, sanitise_tenant_profile
+
+    session.add(
+        CompanyProfile(
+            tenant_id=tenant.id,
+            profile=sanitise_tenant_profile(
+                {
+                    "legal_name": tenant.legal_name,
+                    "tax_number": cnpj_norm or "",
+                    "email": email,
+                    "phone": phone or "",
+                    "trade_name": trade_name or "",
+                }
+            ),
+        )
+    )
+    invalidate(tenant.id)
     await audit(session, user.id, "tenant_signup", tenant.id, f"{tenant.legal_name} trial pro 14d")
     return {
         "tenant_id": str(tenant.id),

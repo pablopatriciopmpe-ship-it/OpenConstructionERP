@@ -121,6 +121,8 @@ async def signup(data: SignupRequest, request: Request) -> dict:
                 password=data.password,
                 company_name=data.company_name,
                 cnpj=data.cnpj,
+                phone=data.phone,
+                trade_name=data.trade_name,
                 settings=get_settings(),
             )
             await session.commit()
@@ -181,19 +183,15 @@ async def my_tenant(session: SessionDep, user_id: CurrentUserId) -> dict:
 
 
 def _company_view(tenant: Tenant, stored: dict | None) -> dict:
-    from app.core.company_profile import DEFAULT_COMPANY_PROFILE, sanitise
+    from app.modules.saas.profile import COMMERCIAL_FIELDS, effective_profile, sanitise_tenant_profile
 
-    profile = {**DEFAULT_COMPANY_PROFILE, **sanitise(stored or {})}
-    # "efetivo": o que um documento imprime. Cai na razão social e no CNPJ do cadastro quando o perfil está vazio.
-    effective = {
-        **profile,
-        "legal_name": profile["legal_name"] or tenant.legal_name,
-        "tax_number": profile["tax_number"] or (tenant.cnpj or ""),
-    }
+    profile = sanitise_tenant_profile(stored or {})
     return {
         "tenant": {"id": str(tenant.id), "legal_name": tenant.legal_name, "cnpj": tenant.cnpj},
         "profile": profile,
-        "effective": effective,
+        # "efetivo": o que um documento imprime (razão social/CNPJ do cadastro quando o perfil está vazio).
+        "effective": effective_profile(tenant.legal_name, tenant.cnpj, stored or {}),
+        "commercial_fields": list(COMMERCIAL_FIELDS),
     }
 
 
@@ -203,7 +201,7 @@ async def _profile_row(session, tenant_id: uuid.UUID) -> CompanyProfile | None:
 
 @router.get("/company")
 async def get_company_profile(session: SessionDep, user_id: CurrentUserId) -> dict:
-    """Perfil da empresa do usuário (qualquer papel lê). Campos: logo, razão social, endereço, contato, registros."""
+    """Perfil da empresa do usuário (qualquer papel lê): timbrado, contato, logo e padrões comerciais da proposta."""
     member = await svc.get_membership(session, user_id)
     if member is None:
         raise HTTPException(404, "Usuário não pertence a uma empresa")
@@ -212,30 +210,46 @@ async def get_company_profile(session: SessionDep, user_id: CurrentUserId) -> di
     return _company_view(tenant, row.profile if row else None)
 
 
-@router.put("/company")
-async def put_company_profile(data: dict, session: SessionDep, user_id: CurrentUserId) -> dict:
-    """Grava o perfil (dono/admin). Mesmas chaves e limites do perfil global; campo inválido é descartado."""
-    from app.core.company_profile import sanitise
+async def save_tenant_profile(session, tenant: Tenant, patch: dict, *, replace: bool) -> dict:
+    """Grava o perfil do tenant (``replace``: substitui tudo; senão mescla o que veio) e invalida o cache."""
+    from app.modules.saas.profile import invalidate, sanitise_tenant_profile
 
-    tenant, _ = await _tenant_admin(session, user_id)
-    clean = sanitise(data)
     row = await _profile_row(session, tenant.id)
+    base = {} if (replace or row is None) else dict(row.profile or {})
+    base.update(patch)
+    clean = sanitise_tenant_profile(base)
     if row is None:
         session.add(CompanyProfile(tenant_id=tenant.id, profile=clean))
     else:
         row.profile = clean
     await session.flush()
+    invalidate(tenant.id)
+    return clean
+
+
+@router.put("/company")
+async def put_company_profile(data: dict, session: SessionDep, user_id: CurrentUserId) -> dict:
+    """Grava o perfil (dono/admin), MESCLADO sobre o que já existe: só muda o que veio ("" limpa um campo).
+
+    Mesmas chaves e limites do perfil global + campos comerciais; valor inválido é descartado.
+    ``DELETE`` limpa tudo.
+    """
+    tenant, _ = await _tenant_admin(session, user_id)
+    clean = await save_tenant_profile(session, tenant, data, replace=False)
     return _company_view(tenant, clean)
 
 
 @router.delete("/company")
 async def reset_company_profile(session: SessionDep, user_id: CurrentUserId) -> dict:
     """Limpa o perfil (inclui o logo). Razão social e CNPJ do cadastro não mudam."""
+    from app.modules.saas.profile import invalidate
+
     tenant, _ = await _tenant_admin(session, user_id)
     row = await _profile_row(session, tenant.id)
     if row is not None:
         row.profile = {}
         await session.flush()
+    invalidate(tenant.id)
     return _company_view(tenant, None)
 
 
@@ -521,6 +535,9 @@ async def _get_tenant(session, tenant_id: uuid.UUID) -> Tenant:
 async def master_rename(tenant_id: uuid.UUID, data: TenantRename, session: SessionDep, user_id: CurrentUserId) -> dict:
     t = await _get_tenant(session, tenant_id)
     old, t.legal_name = t.legal_name, data.legal_name.strip()
+    from app.modules.saas.profile import invalidate
+
+    invalidate(t.id)  # a razão social do cadastro é o fallback do perfil impresso
     await svc.audit(session, uuid.UUID(user_id), "tenant_renamed", t.id, f"{old} -> {t.legal_name}")
     return {"id": str(t.id), "legal_name": t.legal_name}
 

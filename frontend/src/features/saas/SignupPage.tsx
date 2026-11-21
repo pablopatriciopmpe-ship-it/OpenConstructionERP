@@ -10,7 +10,7 @@ import type { SignupBody, SignupResult } from './api';
 export function SignupPage() {
   const navigate = useNavigate();
   const setTokens = useAuthStore((s) => s.setTokens);
-  const [form, setForm] = useState({ full_name: '', email: '', password: '', company_name: '', cnpj: '' });
+  const [form, setForm] = useState({ full_name: '', email: '', password: '', company_name: '', cnpj: '', trade_name: '', phone: '' });
   const [website, setWebsite] = useState(''); // honeypot: campo escondido, humano não preenche
   const [accept, setAccept] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -38,6 +38,8 @@ export function SignupPage() {
         password: form.password,
         company_name: form.company_name,
         cnpj: form.cnpj.trim() || null,
+        trade_name: form.trade_name.trim() || null,
+        phone: form.phone.trim() || null,
         accept_terms: true,
         website,
       };
@@ -111,7 +113,9 @@ export function SignupPage() {
               hint="Mínimo de 8 caracteres, com letra e número"
             />
             <Input label="Nome da empresa" value={form.company_name} onChange={set('company_name')} required minLength={2} />
+            <Input label="Nome fantasia (opcional)" value={form.trade_name} onChange={set('trade_name')} />
             <Input label="CNPJ (opcional)" value={form.cnpj} onChange={set('cnpj')} placeholder="00.000.000/0000-00" />
+            <Input label="Telefone ou WhatsApp (opcional)" value={form.phone} onChange={set('phone')} autoComplete="tel" />
             {/* honeypot: fora da tela e fora da ordem de tabulação */}
             <div aria-hidden="true" style={{ position: 'absolute', left: '-10000px', height: 0, overflow: 'hidden' }}>
               <label>

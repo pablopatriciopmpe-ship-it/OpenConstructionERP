@@ -117,7 +117,15 @@ def _read_appearance(doc_type: str | None = None) -> dict[str, Any]:
         from app.core.pdf_appearance import DEFAULT_APPEARANCE, resolve_appearance
 
         data = resolve_appearance(doc_type)
-        return data if isinstance(data, dict) else dict(DEFAULT_APPEARANCE)
+        data = data if isinstance(data, dict) else dict(DEFAULT_APPEARANCE)
+        from app.core.company_profile import tenant_scope_active
+
+        if tenant_scope_active():
+            # The footer line and the watermark are free text the INSTALLATION owner typed (often
+            # their own name or address). They are not a customer's, so a tenant's documents
+            # never print them.
+            data = {**data, "footer_text": "", "watermark_text": ""}
+        return data
     except Exception:  # noqa: BLE001 - degrade, never break PDF output
         logger.debug("Could not read document appearance; using platform default", exc_info=True)
         return {}

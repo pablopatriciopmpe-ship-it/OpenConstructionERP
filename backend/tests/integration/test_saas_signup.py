@@ -420,11 +420,11 @@ async def test_empresas_de_autocadastro_nao_veem_os_dados_uma_da_outra(client, a
 
 
 async def test_perfil_da_empresa_e_por_tenant_com_fallback_e_papeis(client):
-    a, b = await _signup(client, cnpj="45.723.174/0001-10"), await _signup(client)
+    a, b = await _signup(client, cnpj="98.765.432/0001-98"), await _signup(client)
     ha, hb = a["headers"], b["headers"]
     # vazio: o perfil "efetivo" cai na razão social e no CNPJ do cadastro
     v = (await client.get("/api/v1/saas/company", headers=ha)).json()
-    assert v["profile"]["address"] == "" and v["effective"]["tax_number"] == "45.723.174/0001-10"
+    assert v["profile"]["address"] == "" and v["effective"]["tax_number"] == "98.765.432/0001-98"
     assert v["effective"]["legal_name"] == v["tenant"]["legal_name"]
     logo = "data:image/png;base64,iVBORw0KGgo="
     body = {
@@ -433,7 +433,7 @@ async def test_perfil_da_empresa_e_por_tenant_com_fallback_e_papeis(client):
         "phone": "+55 11 4000-1000",
         "email": "contato@aurora.example",
         "website": "https://aurora.example",
-        "tax_number": "45.723.174/0001-10",
+        "tax_number": "98.765.432/0001-98",
         "document_logo_data_url": logo,
     }
     r = await client.put("/api/v1/saas/company", json=body, headers=ha)
@@ -443,7 +443,8 @@ async def test_perfil_da_empresa_e_por_tenant_com_fallback_e_papeis(client):
     assert got["profile"]["document_logo_data_url"] == logo and got["profile"]["phone"] == "+55 11 4000-1000"
     # isolamento: a empresa B não vê nada da A
     other = (await client.get("/api/v1/saas/company", headers=hb)).json()
-    assert other["profile"]["legal_name"] == "" and other["profile"]["document_logo_data_url"] == ""
+    assert other["profile"]["legal_name"] != "Aurora Engenharia e Construções Ltda"  # o do cadastro da B, nunca o da A
+    assert other["profile"]["document_logo_data_url"] == "" and other["profile"]["phone"] == ""
     # editor lê, mas só dono/admin grava
     em = f"ed-{uuid.uuid4().hex[:6]}@construtora-teste.io"
     assert (await client.post("/api/v1/saas/members", json={"email": em, "password": PASSWORD, "role": "editor"}, headers=ha)).status_code == 201
@@ -455,4 +456,4 @@ async def test_perfil_da_empresa_e_por_tenant_com_fallback_e_papeis(client):
     bad = await client.put("/api/v1/saas/company", json={"phone": "123", "document_logo_data_url": "http://x/logo.png"}, headers=ha)
     assert bad.json()["profile"]["phone"] == "123" and bad.json()["profile"]["document_logo_data_url"] == ""
     cleared = (await client.delete("/api/v1/saas/company", headers=ha)).json()
-    assert cleared["profile"]["phone"] == "" and cleared["tenant"]["cnpj"] == "45.723.174/0001-10"
+    assert cleared["profile"]["phone"] == "" and cleared["tenant"]["cnpj"] == "98.765.432/0001-98"

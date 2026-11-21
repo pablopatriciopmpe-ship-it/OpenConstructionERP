@@ -1,5 +1,5 @@
 // Autoatendimento do SaaS (v0.3-D): tipos e chamadas da API /v1/saas.
-import { apiDelete, apiGet, apiPatch, apiPost } from '@/shared/lib/api';
+import { apiDelete, apiGet, apiPatch, apiPost, apiPut } from '@/shared/lib/api';
 
 export type TenantState =
   | 'trial'
@@ -37,12 +37,21 @@ export interface SaasMember {
   is_active: boolean;
 }
 
+export interface CompanyProfileView {
+  tenant: { id: string; legal_name: string; cnpj: string | null };
+  profile: Record<string, string>;
+  effective: Record<string, string>;
+  commercial_fields: string[];
+}
+
 export interface SignupBody {
   full_name: string;
   email: string;
   password: string;
   company_name: string;
   cnpj?: string | null;
+  phone?: string | null;
+  trade_name?: string | null;
   accept_terms: boolean;
   website?: string;
 }
@@ -71,6 +80,8 @@ export interface MasterTenant {
 }
 
 export const saasApi = {
+  company: () => apiGet<CompanyProfileView>('/v1/saas/company'),
+  saveCompany: (patch: Record<string, string>) => apiPut<CompanyProfileView>('/v1/saas/company', patch),
   me: () => apiGet<SaasMe>('/v1/saas/me'),
   members: () => apiGet<SaasMember[]>('/v1/saas/members'),
   addMember: (body: { email: string; full_name: string; password: string; role: 'editor' | 'viewer' }) =>

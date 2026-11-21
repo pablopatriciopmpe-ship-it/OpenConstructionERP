@@ -14,7 +14,7 @@ import { DataFeedsSettings } from './DataFeedsSettings';
 import { ModulesSettings } from './ModulesSettings';
 import { SettingsTeamPanel } from './SettingsTeamPanel';
 import { CompanyDocumentsSettings } from './CompanyDocumentsSettings';
-import { TeamPlanPanel } from '@/features/saas';
+import { TeamPlanPanel, CompanyCommercialCard } from '@/features/saas';
 import { MarketSettings } from '@/features/market/MarketSettings';
 import { WebhookLeads } from './WebhookLeads';
 import { McpSettingsPanel } from '@/features/mcp';
@@ -2085,6 +2085,7 @@ export function SettingsPage() {
           {activeTab === 'company' && (
             <div className="lg:col-span-2 min-w-0">
               <CompanyDocumentsSettings />
+              <div className="mt-4"><CompanyCommercialCard /></div>
             </div>
           )}
 

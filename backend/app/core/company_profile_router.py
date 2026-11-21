@@ -29,6 +29,8 @@ from pydantic import BaseModel, ConfigDict
 
 from app.core.app_branding import MAX_LOGO_DATA_URL_CHARS
 from app.core.company_profile import (
+    DEFAULT_COMPANY_PROFILE,
+    current_tenant_scope,
     LOGO_IMAGE_TYPES,
     MAX_ADDRESS_CHARS,
     MAX_ADDRESS_LINES,
@@ -43,7 +45,7 @@ from app.core.company_profile import (
     sanitise,
     write_company_profile,
 )
-from app.dependencies import RequireRole, get_current_user_payload
+from app.dependencies import CurrentUserPayload, SessionDep, get_current_user_payload
 
 router = APIRouter(tags=["company-profile"])
 
@@ -106,6 +108,37 @@ class CompanyProfileUpdate(BaseModel):
     website: str | None = None
 
 
+def _known(profile: dict) -> dict:
+    """Only the keys this response model knows (a tenant profile carries extra commercial fields)."""
+    return {k: v for k, v in profile.items() if k in DEFAULT_COMPANY_PROFILE}
+
+
+async def _profile_writer(payload: CurrentUserPayload) -> None:
+    """Who may change the letterhead: the platform admin (the installation default) or, for a
+    company's user, the company's owner/admin (their own profile; never anyone else's)."""
+    if str(payload.get("role", "")).lower() == "admin":
+        return
+    scope = current_tenant_scope()
+    if scope is not None and scope.member_role in ("owner", "admin"):
+        return
+    raise HTTPException(status_code=403, detail="Only an administrator of the company can change the letterhead")
+
+
+async def _save_tenant(session, tenant_id: str, patch: dict, *, replace: bool) -> dict:
+    import uuid as _uuid
+
+    from sqlalchemy import select
+
+    from app.modules.saas.models import Tenant
+    from app.modules.saas.router import save_tenant_profile
+
+    tenant = (await session.execute(select(Tenant).where(Tenant.id == _uuid.UUID(tenant_id)))).scalar_one()
+    clean = await save_tenant_profile(session, tenant, patch, replace=replace)
+    from app.modules.saas.profile import effective_profile
+
+    return effective_profile(tenant.legal_name, tenant.cnpj, clean)
+
+
 @router.get(
     "/company-profile/",
     response_model=CompanyProfileResponse,
@@ -119,7 +152,7 @@ class CompanyProfileUpdate(BaseModel):
 )
 async def get_company_profile() -> CompanyProfileResponse:
     """The letterhead every generated document is printed with."""
-    return CompanyProfileResponse(**read_company_profile())
+    return CompanyProfileResponse(**_known(read_company_profile()))
 
 
 @router.get(
@@ -192,15 +225,15 @@ def _refuse_an_unusable_logo(submitted: str | None) -> None:
 @router.put(
     "/company-profile/",
     response_model=CompanyProfileResponse,
-    dependencies=[Depends(RequireRole("admin"))],
+    dependencies=[Depends(_profile_writer)],
 )
 @router.put(
     "/company-profile",
     response_model=CompanyProfileResponse,
     include_in_schema=False,
-    dependencies=[Depends(RequireRole("admin"))],
+    dependencies=[Depends(_profile_writer)],
 )
-async def put_company_profile(body: CompanyProfileUpdate) -> CompanyProfileResponse:
+async def put_company_profile(body: CompanyProfileUpdate, session: SessionDep) -> CompanyProfileResponse:
     """Admin: set the letterhead. Merged over what is stored, then sanitised.
 
     ``None`` leaves the stored value alone, so the form can save one field at a
@@ -210,11 +243,15 @@ async def put_company_profile(body: CompanyProfileUpdate) -> CompanyProfileRespo
     merged, so it cannot cost the firm the logo already stored.
     """
     _refuse_an_unusable_logo(body.document_logo_data_url)
-    current = read_company_profile()
     patch = {key: value for key, value in body.model_dump().items() if value is not None}
     if "document_logo_data_url" in patch:
         # A new logo replaces its PNG too, unless the same request carries one.
         patch.setdefault("document_logo_png_data_url", "")
+    scope = current_tenant_scope()
+    if scope is not None:
+        # A company's user edits THEIR company's profile, never the installation file.
+        return CompanyProfileResponse(**_known(await _save_tenant(session, scope.tenant_id, patch, replace=False)))
+    current = read_company_profile()
     current.update(patch)
     return CompanyProfileResponse(**write_company_profile(current))
 
@@ -222,14 +259,17 @@ async def put_company_profile(body: CompanyProfileUpdate) -> CompanyProfileRespo
 @router.delete(
     "/company-profile/",
     response_model=CompanyProfileResponse,
-    dependencies=[Depends(RequireRole("admin"))],
+    dependencies=[Depends(_profile_writer)],
 )
 @router.delete(
     "/company-profile",
     response_model=CompanyProfileResponse,
     include_in_schema=False,
-    dependencies=[Depends(RequireRole("admin"))],
+    dependencies=[Depends(_profile_writer)],
 )
-async def delete_company_profile() -> CompanyProfileResponse:
+async def delete_company_profile(session: SessionDep) -> CompanyProfileResponse:
     """Admin: clear the letterhead, so documents print without one again."""
+    scope = current_tenant_scope()
+    if scope is not None:
+        return CompanyProfileResponse(**_known(await _save_tenant(session, scope.tenant_id, {}, replace=True)))
     return CompanyProfileResponse(**reset_company_profile())

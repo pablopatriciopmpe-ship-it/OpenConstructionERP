@@ -32,6 +32,8 @@ class SignupRequest(BaseModel):
     password: str = Field(min_length=8, max_length=128)
     company_name: str = Field(min_length=2, max_length=255)
     cnpj: str | None = Field(default=None, max_length=18)
+    phone: str | None = Field(default=None, max_length=40)
+    trade_name: str | None = Field(default=None, max_length=120)
     accept_terms: bool
     website: str = Field(default="", max_length=200)  # honeypot: humano nunca preenche
 
