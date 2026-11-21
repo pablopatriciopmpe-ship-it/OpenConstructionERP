@@ -58,13 +58,9 @@ const SHORTCUT_GROUPS: ShortcutGroup[] = [
       { keys: ['g', 'a'], descriptionKey: 'nav.assemblies' },
       { keys: ['g', 'v'], descriptionKey: 'validation.title' },
       { keys: ['g', 's'], descriptionKey: 'schedule.title' },
-      { keys: ['g', 'f'], descriptionKey: 'finance.title' },
-      { keys: ['g', '5'], descriptionKey: 'nav.5d_cost_model' },
       { keys: ['g', 'r'], descriptionKey: 'nav.reports' },
-      { keys: ['g', 't'], descriptionKey: 'tendering.title' },
       { keys: ['g', 'm'], descriptionKey: 'meetings.title' },
       { keys: ['g', 'i'], descriptionKey: 'rfi.title' },
-      { keys: ['g', 'o'], descriptionKey: 'contacts.title' },
     ],
   },
   {

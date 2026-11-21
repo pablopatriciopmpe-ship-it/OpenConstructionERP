@@ -71,7 +71,7 @@ describe('action registry', () => {
 
   it('turns every plain menu row into a navigate action with a stable id', () => {
     const nav = buildNavActions();
-    expect(nav.find((x) => x.id === navActionId('/finance'))?.path).toBe('/finance');
+    expect(nav.find((x) => x.id === navActionId('/boq'))?.path).toBe('/boq');
     expect(new Set(nav.map((x) => x.id)).size).toBe(nav.length);
   });
 

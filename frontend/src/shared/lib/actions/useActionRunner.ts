@@ -75,11 +75,30 @@ export function useActionRunner(): (action: PaletteAction, project?: ProjectRef 
   );
 }
 
-/** Actions whose module is switched on. */
+const PRUNED_MODULE_IDS = new Set(['finance', 'tendering', 'contacts', 'oe_finance', 'oe_tendering', 'oe_contacts']);
+const PRUNED_PATHS = new Set(['/finance', '/tendering', '/contacts']);
+
+/** Actions whose module is switched on and not in pruned/hidden modules. */
 export function useAvailableActions(): readonly PaletteAction[] {
   const actions = useActions();
   const { isModuleEnabled } = useModuleStore();
-  return useMemo(() => actions.filter((a) => !a.moduleKey || isModuleEnabled(a.moduleKey)), [actions, isModuleEnabled]);
+  return useMemo(
+    () =>
+      actions.filter((a) => {
+        if (a.moduleKey && (PRUNED_MODULE_IDS.has(a.moduleKey) || !isModuleEnabled(a.moduleKey))) {
+          return false;
+        }
+        if (a.path && PRUNED_PATHS.has(a.path.replace(/:projectId\/?/, ''))) {
+          return false;
+        }
+        const prefix = a.id.split('.')[0];
+        if (PRUNED_MODULE_IDS.has(prefix)) {
+          return false;
+        }
+        return true;
+      }),
+    [actions, isModuleEnabled],
+  );
 }
 
 /** actionId → binding in force (defaults plus the user's changes). */

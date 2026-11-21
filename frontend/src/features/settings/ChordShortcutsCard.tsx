@@ -5,7 +5,7 @@
  * "G then key" chord. Defaults are what the app always had; a key already used
  * by another chord is refused with a message. Kept on this device.
  */
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { RotateCcw } from 'lucide-react';
 import { Card, CardHeader, CardContent, Button } from '@/shared/ui';
@@ -18,11 +18,24 @@ import {
   setChordKey,
   type GChord,
 } from '@/shared/lib/gChords';
+import { navGroups } from '@/app/layout/navCatalog';
+
+/** Excluded modules: support or out-of-product shortcuts (CEO instruction). */
+const EXCLUDED_SHORTCUT_ROUTES = new Set(['/tendering', '/finance', '/5d', '/contacts']);
 
 export function ChordShortcutsCard() {
   const { t } = useTranslation();
   const chosen = gChordPref.use();
   const [error, setError] = useState<{ id: string; text: string } | null>(null);
+
+  const visibleChords = useMemo(() => {
+    const visibleRoutes = new Set(navGroups.flatMap((group) => group.items.map((item) => item.to)));
+    return G_CHORDS.filter(
+      (chord) => visibleRoutes.has(chord.route) && !EXCLUDED_SHORTCUT_ROUTES.has(chord.route),
+    );
+  }, []);
+
+  const visibleChordIds = useMemo(() => new Set(visibleChords.map((c) => c.id)), [visibleChords]);
 
   const label = (c: GChord) => t(c.labelKey, { defaultValue: c.fallback });
 
@@ -37,7 +50,7 @@ export function ChordShortcutsCard() {
       return;
     }
     const other = chordConflict(chord, key);
-    if (other) {
+    if (other && visibleChordIds.has(other.id)) {
       setError({
         id: chord.id,
         text: t('settings.chords_taken', {
@@ -62,7 +75,7 @@ export function ChordShortcutsCard() {
       />
       <CardContent>
         <ul className="flex flex-col divide-y divide-border-light">
-          {G_CHORDS.map((chord) => {
+          {visibleChords.map((chord) => {
             const key = chordKey(chord, chosen);
             const changed = key !== chord.key;
             const text = label(chord);
