@@ -1,0 +1,3 @@
+source_ref=preview/v03-proposta
+source_sha=627147e0d482ca498ef0befe0f37293de31895b1
+backend=https://erp-teste.evolux-erp.workers.dev
