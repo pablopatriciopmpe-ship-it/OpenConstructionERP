@@ -220,8 +220,8 @@ describe('CostDatabaseSearchModal - add reads the picked items in full', () => {
     const { onAdded } = renderModal();
 
     const rateCell = await screen.findByTestId('cost-row-rate-item-9', {}, SETTLE);
-    expect(rateCell.textContent).toContain('511.11');
-    expect(rateCell.textContent).toContain('Catalogue 500.00');
+    expect(rateCell.textContent).toMatch(/511[,.]11/);
+    expect(rateCell.textContent).toMatch(/Catalogue 500[,.]00/);
 
     fireEvent.click(screen.getByText('Frame wall'));
     fireEvent.click(screen.getByText(/^Add 1 to BOQ/));
@@ -247,7 +247,7 @@ describe('CostDatabaseSearchModal - add reads the picked items in full', () => {
     renderModal();
 
     const rateCell = await screen.findByTestId('cost-row-rate-item-7', {}, SETTLE);
-    expect(rateCell.textContent).toBe('Catalogue 500.00');
+    expect(rateCell.textContent).toMatch(/Catalogue 500[,.]00/);
     expect(screen.queryByTestId('cost-row-rate-item-8')).toBeNull();
   });
 

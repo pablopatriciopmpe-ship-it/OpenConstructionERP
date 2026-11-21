@@ -15,6 +15,51 @@ def _is_bdi_line(markup: Any) -> bool:
     return isinstance(meta, dict) and meta.get(BDI_FLAG) is True
 
 
+def _extract_components_from_markups(markups: list[Any]) -> BDIComponents | None:
+    if not markups:
+        return None
+    ac = s = r = g = df = l = Decimal(0)
+    taxes: list[tuple[str, Decimal]] = []
+    matched = False
+    for m in markups:
+        name = str(getattr(m, "name", "") or "").strip()
+        name_lower = name.lower()
+        meta = getattr(m, "metadata_", None) or {}
+        comp = meta.get("component") if isinstance(meta, dict) else None
+        pct = Decimal(str(getattr(m, "percentage", 0) or 0))
+        cat = str(getattr(m, "category", "") or "").lower()
+
+        if comp == "AC" or "(ac)" in name_lower or "administra" in name_lower or cat == "overhead":
+            ac = pct
+            matched = True
+        elif comp == "S" or "(s)" in name_lower or "seguro" in name_lower or cat == "insurance":
+            s = pct
+            matched = True
+        elif comp == "R" or "(r)" in name_lower or "risco" in name_lower or cat == "contingency":
+            r = pct
+            matched = True
+        elif comp == "G" or "(g)" in name_lower or "garantia" in name_lower or cat == "bond":
+            g = pct
+            matched = True
+        elif comp == "DF" or "(df)" in name_lower or "despesa" in name_lower or "financeir" in name_lower:
+            df = pct
+            matched = True
+        elif comp == "L" or "(l)" in name_lower or "lucro" in name_lower or cat == "profit":
+            l = pct
+            matched = True
+        elif cat == "tax" or any(t in name_lower for t in ("pis", "cofins", "iss", "tribut")):
+            taxes.append((name, pct))
+            matched = True
+
+    if not matched:
+        return None
+
+    try:
+        return BDIComponents(ac=ac, s=s, r=r, g=g, df=df, l=l, taxes=tuple(taxes))
+    except Exception:
+        return None
+
+
 async def apply_bdi(
     service: Any,
     boq_id: uuid.UUID,
@@ -42,17 +87,52 @@ async def read_bdi(service: Any, boq_id: uuid.UUID) -> dict[str, Any]:
     boq = await service.boq_repo.get_by_id(boq_id)
     stored = (getattr(boq, "metadata_", None) or {}).get("bdi")
     direct_cost, calculated = await service.calculate_markups(boq_id)
-    if not stored:
-        formatted_direct = str(direct_cost.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)) if direct_cost else "0.00"
+    existing = await service.list_markups(boq_id)
+    formatted_direct = str(direct_cost.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)) if direct_cost else "0.00"
+
+    components: BDIComponents | None = None
+    if stored:
+        try:
+            components = BDIComponents.from_dict(stored)
+        except Exception:
+            components = None
+
+    if not components and existing:
+        components = _extract_components_from_markups(existing)
+
+    bdi_amount = sum((amt for m, amt in calculated if _is_bdi_line(m) or not stored), Decimal(0))
+
+    if not components:
+        effective_pct = (bdi_amount / direct_cost * Decimal(100)) if (direct_cost and bdi_amount) else Decimal(0)
+        formatted_total = str((direct_cost + bdi_amount).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)) if direct_cost else formatted_direct
+        default_comp = BDIComponents(
+            ac=Decimal("4.0000"),
+            s=Decimal("0.8000"),
+            r=Decimal("1.2700"),
+            g=Decimal("0.4000"),
+            df=Decimal("1.2300"),
+            l=Decimal("7.4000"),
+            taxes=(("PIS", Decimal("0.6500")), ("COFINS", Decimal("3.0000")), ("ISS", Decimal("3.0000"))),
+        )
+        if bdi_amount > 0:
+            rep = bdi_report(default_comp, direct_cost, bdi_amount)
+            return {
+                "configured": True,
+                **default_comp.to_dict(),
+                **rep,
+                "bdi_percent": str(effective_pct.quantize(Decimal("0.0001"), rounding=ROUND_HALF_UP)) if effective_pct else rep["bdi_percent"],
+                "total_with_bdi": formatted_total,
+            }
+
         return {
             "configured": False,
-            "ac": "",
-            "s": "",
-            "r": "",
-            "g": "",
-            "df": "",
-            "l": "",
-            "taxes": [],
+            "ac": "4.0000",
+            "s": "0.8000",
+            "r": "1.2700",
+            "g": "0.4000",
+            "df": "1.2300",
+            "l": "7.4000",
+            "taxes": [{"name": "PIS", "percentage": "0.65"}, {"name": "COFINS", "percentage": "3.00"}, {"name": "ISS", "percentage": "3.00"}],
             "bdi_percent": "0.0000",
             "effective_percent": "0.0000",
             "direct_cost": formatted_direct,
@@ -60,11 +140,11 @@ async def read_bdi(service: Any, boq_id: uuid.UUID) -> dict[str, Any]:
             "price_with_bdi": formatted_direct,
             "total_with_bdi": formatted_direct,
         }
-    components = BDIComponents.from_dict(stored)
-    bdi_amount = sum((amt for m, amt in calculated if _is_bdi_line(m)), Decimal(0))
-    rep = bdi_report(components, direct_cost, bdi_amount, sinapi=stored.get("sinapi_reference"))
+
+    rep = bdi_report(components, direct_cost, bdi_amount, sinapi=stored.get("sinapi_reference") if stored else None)
     rep["total_with_bdi"] = rep.get("price_with_bdi")
     return {
         "configured": True,
+        **components.to_dict(),
         **rep,
     }

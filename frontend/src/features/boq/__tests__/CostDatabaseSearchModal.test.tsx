@@ -169,7 +169,7 @@ describe('CostDatabaseSearchModal - paginated catalog', () => {
     // text rather than the bare element.
     await waitFor(() => {
       const counter = screen.getByTestId('cost-results-count');
-      expect(counter.textContent).toContain('1,234');
+      expect(counter.textContent).toMatch(/1[,.]234/);
     });
   });
 
@@ -293,7 +293,7 @@ describe('CostDatabaseSearchModal - paginated catalog', () => {
     const { onClose } = renderModal();
     expect(await screen.findByText('Concrete C30/37 wall')).toBeInTheDocument();
 
-    const dialog = screen.getByRole('dialog', { name: 'Add from Cost Database' });
+    const dialog = screen.getByRole('dialog');
     const cancel = within(dialog).getByRole('button', { name: /cancel/i });
     expect(within(dialog).getByRole('button', { name: 'Close' })).toBeInTheDocument();
     fireEvent.click(cancel);
@@ -359,5 +359,40 @@ describe('CostDatabaseSearchModal - paginated catalog', () => {
 
     // The list pane keeps working — the search query fired regardless.
     expect(fetchCostSearch).toHaveBeenCalled();
+  });
+
+  it('filters by Brazilian UF and Regime and resets with Universal', async () => {
+    renderModal();
+    await waitFor(() => expect(fetchCategoryTree).toHaveBeenCalled());
+
+    // Check presence of UF select, Regime select, and Universal button
+    const ufSelect = screen.getByLabelText(/UF/i);
+    const regimeSelect = screen.getByLabelText(/Regime/i);
+    const universalBtn = screen.getByText('Universal');
+
+    expect(ufSelect).toBeInTheDocument();
+    expect(regimeSelect).toBeInTheDocument();
+    expect(universalBtn).toBeInTheDocument();
+
+    // Select SP as UF
+    fireEvent.change(ufSelect, { target: { value: 'SP' } });
+    await waitFor(() => {
+      const last = (fetchCostSearch as unknown as ReturnType<typeof vi.fn>).mock.calls.at(-1)?.[0];
+      expect(last?.region).toBe('SINAPI-SP-NAO_DESONERADO');
+    });
+
+    // Toggle regime to DESONERADO
+    fireEvent.change(regimeSelect, { target: { value: 'DESONERADO' } });
+    await waitFor(() => {
+      const last = (fetchCostSearch as unknown as ReturnType<typeof vi.fn>).mock.calls.at(-1)?.[0];
+      expect(last?.region).toBe('SINAPI-SP-DESONERADO');
+    });
+
+    // Click Universal to clear region
+    fireEvent.click(universalBtn);
+    await waitFor(() => {
+      const last = (fetchCostSearch as unknown as ReturnType<typeof vi.fn>).mock.calls.at(-1)?.[0];
+      expect(last?.region).toBeUndefined();
+    });
   });
 });

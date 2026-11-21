@@ -194,6 +194,52 @@ export function sumBoqGrandTotals(
 }
 
 /**
+ * Identify the primary estimate of a project among multiple BOQs.
+ *
+ * When a project contains both an active work estimate and a baseline/budget
+ * target copy (or imported base spreadsheet), summing them doubles the true cost
+ * (e.g. R$ 48,9 mi + R$ 48,9 mi = R$ 97,7 mi). This selects the primary
+ * estimate so project-level dashboards reflect the true scope.
+ */
+export function getPrimaryEstimate(
+  details: readonly BOQDetail[],
+  boqSummaries?: readonly BOQSummary[],
+): BOQDetail | null {
+  if (!details || details.length === 0) return null;
+  if (details.length === 1) return details[0];
+
+  // 1. Explicit primary / main markers on details
+  const explicitDetail = details.find((d) => {
+    const raw = d as Record<string, unknown>;
+    const meta = (raw.metadata || raw.metadata_) as Record<string, unknown> | undefined;
+    return raw.is_primary === true || raw.is_main === true || meta?.is_primary === true || meta?.is_main === true;
+  });
+  if (explicitDetail) return explicitDetail;
+
+  // Check matching summary for is_primary or is_main
+  if (boqSummaries) {
+    const sumPrimary = boqSummaries.find((s) => {
+      const raw = s as Record<string, unknown>;
+      const meta = (raw.metadata || raw.metadata_) as Record<string, unknown> | undefined;
+      return raw.is_primary === true || raw.is_main === true || meta?.is_primary === true || meta?.is_main === true;
+    });
+    if (sumPrimary) {
+      const match = details.find((d) => d.id === sumPrimary.id);
+      if (match) return match;
+    }
+  }
+
+  // 2. Filter out estimates named "budget", "base", "baseline", "template", "cópia" or "copy"
+  const nonBaseline = details.filter((d) => {
+    const n = (d.name || '').trim().toLowerCase();
+    return !/^(budget|base|baseline|modelo|template|c[oó]pia|copy)/i.test(n);
+  });
+  if (nonBaseline.length > 0) return nonBaseline[0];
+
+  return details[0];
+}
+
+/**
  * Is this position still unpriced?
  *
  * The rate of an unpriced position is the *string* `"0"`, which is the column
@@ -1551,6 +1597,7 @@ export function ProjectDetailPage() {
   // the module off the route does not exist and the button below would fall
   // through to the catch-all 404, so the button goes with it.
   const isCollaborationEnabled = useModuleStore((s) => s.isModuleEnabled('collaboration'));
+  const isTenderingEnabled = useModuleStore((s) => s.isModuleEnabled('oe_tendering') || s.isModuleEnabled('tendering'));
   // The project framework areas (governance, economics, quality and the rest) come with a framework
   // pack. Without it the hub does not offer them; their routes stay live for deep links.
   const { data: partnerPack } = usePartnerPack();
@@ -1756,7 +1803,18 @@ export function ProjectDetailPage() {
       };
     }
 
-    const totalBudget = sumBoqGrandTotals(boqDetails);
+    const primaryEstimate = getPrimaryEstimate(boqDetails, boqs);
+    const hasBaseline = boqDetails.some((d) => {
+      const n = (d.name || '').trim().toLowerCase();
+      const raw = d as Record<string, unknown>;
+      const meta = (raw.metadata || raw.metadata_) as Record<string, unknown> | undefined;
+      return /^(budget|base|baseline|modelo|template)/i.test(n) || meta?.is_baseline === true;
+    });
+
+    const isMultiBoqWithPrimary = boqDetails.length > 1 && (hasBaseline || primaryEstimate != null);
+    const totalBudget = isMultiBoqWithPrimary && primaryEstimate
+      ? toNum(primaryEstimate.grand_total)
+      : sumBoqGrandTotals(boqDetails);
     const totalPositions = countLeafPositions(boqDetails);
     let validatedCount = 0;
     let passedCount = 0;
@@ -1776,6 +1834,8 @@ export function ProjectDetailPage() {
 
     return {
       totalBudget,
+      primaryEstimate,
+      isPrimaryOnly: isMultiBoqWithPrimary,
       // Count the BOQs the project actually has, not the ones whose detail
       // happened to load - otherwise a failed detail silently shrinks the
       // count as well as the money.
@@ -2500,17 +2560,28 @@ export function ProjectDetailPage() {
           const costPerM2Str = costPerM2
             ? `${formatCurrency(costPerM2, currency)}/m\u00b2`
             : undefined;
+          const estimateNote = stats.isPrimaryOnly && stats.primaryEstimate
+            ? t('projects.primary_estimate_note', {
+                defaultValue: 'Planilha principal: {{name}}',
+                name: estimateDisplayName(stats.primaryEstimate.name),
+              })
+            : boqDetails && boqDetails.length > 1
+            ? t('projects.all_estimates_sum_note', {
+                defaultValue: 'Soma de {{count}} planilhas',
+                count: boqDetails.length,
+              })
+            : undefined;
+          const subtitle = stats.unavailable || stats.partial
+            ? t('common.load_failed')
+            : [costPerM2Str, estimateNote].filter(Boolean).join(' • ');
+
           return (
             <SummaryCard
-              label={t('boq.grand_total')}
+              label={stats.isPrimaryOnly ? t('projects.total_budget_primary', { defaultValue: 'Total do projeto' }) : t('boq.grand_total')}
               value={stats.unavailable ? '\u2014' : formatCurrency(stats.totalBudget, currency)}
               icon={<DollarSign size={20} strokeWidth={1.75} />}
               variant="blue"
-              // A cost per m2 derived from a short total is worse than none:
-              // it looks precise. Drop it whenever the total is not whole.
-              subtitle={
-                stats.unavailable || stats.partial ? t('common.load_failed') : costPerM2Str
-              }
+              subtitle={subtitle}
             />
           );
         })()}
@@ -2561,7 +2632,7 @@ export function ProjectDetailPage() {
           { key: 'overview' as ProjectTab, label: t('projects.overview'), icon: <Table2 size={16} /> },
           { key: 'schedule' as ProjectTab, label: t('projects.4d_schedule'), icon: <CalendarClock size={16} /> },
           { key: 'budget' as ProjectTab, label: t('projects.5d_budget'), icon: <Wallet size={16} /> },
-          { key: 'tendering' as ProjectTab, label: t('projects.tendering'), icon: <Gavel size={16} /> },
+          ...(isTenderingEnabled ? [{ key: 'tendering' as ProjectTab, label: t('projects.tendering'), icon: <Gavel size={16} /> }] : []),
           { key: 'photos' as ProjectTab, label: t('projects.photos.tab_label', { defaultValue: 'Photos' }), icon: <ImageIcon size={16} /> },
           { key: 'compliance' as ProjectTab, label: t('compliance.tab_label', { defaultValue: 'Compliance' }), icon: <ShieldCheck size={16} /> },
         ]).map((tab) => (

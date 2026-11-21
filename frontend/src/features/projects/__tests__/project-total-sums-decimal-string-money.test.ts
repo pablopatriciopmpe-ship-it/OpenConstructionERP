@@ -21,7 +21,7 @@
 // "true" every time would not pass.
 
 import { describe, it, expect } from 'vitest';
-import { sumBoqGrandTotals, isPositionUnpriced } from '../ProjectDetailPage';
+import { sumBoqGrandTotals, isPositionUnpriced, getPrimaryEstimate } from '../ProjectDetailPage';
 
 describe('a project total over several estimates', () => {
   // The exact shape the API sends: PositionResponse and BOQResponse both carry
@@ -82,5 +82,30 @@ describe('whether a position counts as unpriced', () => {
     expect(isPositionUnpriced('125.50')).toBe(false);
     expect(isPositionUnpriced(125.5)).toBe(false);
     expect(isPositionUnpriced('0.01')).toBe(false);
+  });
+});
+
+describe('getPrimaryEstimate resolves primary budget instead of summing baseline duplicates', () => {
+  it('selects explicit is_primary estimate', () => {
+    const list = [
+      { id: '1', name: 'Budget Target', grand_total: '48900000', positions: [], is_primary: false },
+      { id: '2', name: 'Orçamento Executivo', grand_total: '48900000', positions: [], is_primary: true },
+    ] as any;
+    expect(getPrimaryEstimate(list)?.id).toBe('2');
+  });
+
+  it('filters out "Budget" or "Base" estimates when an actual estimate is present', () => {
+    const list = [
+      { id: '1', name: 'Budget', grand_total: '48900000', positions: [] },
+      { id: '2', name: 'Ampliação Escola Municipal', grand_total: '48900000', positions: [] },
+    ] as any;
+    expect(getPrimaryEstimate(list)?.id).toBe('2');
+  });
+
+  it('returns single estimate unchanged', () => {
+    const list = [
+      { id: '1', name: 'Single Estimate', grand_total: '10000', positions: [] },
+    ] as any;
+    expect(getPrimaryEstimate(list)?.id).toBe('1');
   });
 });

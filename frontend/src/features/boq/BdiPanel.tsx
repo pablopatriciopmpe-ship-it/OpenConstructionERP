@@ -29,14 +29,16 @@ export function BdiPanel({
 
   useEffect(() => {
     if (query.data) {
+      const d = query.data as Record<string, any>;
+      const comps = d.components as Record<string, any> | undefined;
       setForm({
-        ac: query.data.ac ?? '',
-        s: query.data.s ?? '',
-        r: query.data.r ?? '',
-        g: query.data.g ?? '',
-        df: query.data.df ?? '',
-        l: query.data.l ?? '',
-        taxes: query.data.taxes ?? [],
+        ac: d.ac ?? comps?.ac ?? '4.0000',
+        s: d.s ?? comps?.s ?? '0.8000',
+        r: d.r ?? comps?.r ?? '1.2700',
+        g: d.g ?? comps?.g ?? '0.4000',
+        df: d.df ?? comps?.df ?? '1.2300',
+        l: d.l ?? comps?.l ?? '7.4000',
+        taxes: d.taxes ?? comps?.taxes ?? [],
       });
     }
   }, [query.data]);
@@ -45,6 +47,9 @@ export function BdiPanel({
     mutationFn: () => boqApi.updateBdi(boqId, form),
     onSuccess: (data) => {
       qc.setQueryData(['boq-bdi', boqId], data);
+      qc.invalidateQueries({ queryKey: ['boq-markups', boqId] });
+      qc.invalidateQueries({ queryKey: ['boq', boqId] });
+      qc.invalidateQueries({ queryKey: ['boq-cost-breakdown', boqId] });
       addToast({ type: 'success', title: t('brasil.bdi.saved', { defaultValue: 'BDI salvo' }) });
     },
     onError: () =>

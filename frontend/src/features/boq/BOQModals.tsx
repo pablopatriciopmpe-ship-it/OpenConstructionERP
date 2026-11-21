@@ -25,6 +25,7 @@ import {
   Database,
   ChevronDown,
   AlertCircle,
+  Globe,
 } from 'lucide-react';
 import { Button, Badge, CountryFlag } from '@/shared/ui';
 import { apiGet, apiPost } from '@/shared/lib/api';
@@ -384,6 +385,36 @@ export function AssemblyPickerModal({
 
 /* ── CostDatabaseSearchModal ─────────────────────────────────────────── */
 
+const BRAZILIAN_UFS = [
+  { uf: 'AC', name: 'Acre' },
+  { uf: 'AL', name: 'Alagoas' },
+  { uf: 'AP', name: 'Amapá' },
+  { uf: 'AM', name: 'Amazonas' },
+  { uf: 'BA', name: 'Bahia' },
+  { uf: 'CE', name: 'Ceará' },
+  { uf: 'DF', name: 'Distrito Federal' },
+  { uf: 'ES', name: 'Espírito Santo' },
+  { uf: 'GO', name: 'Goiás' },
+  { uf: 'MA', name: 'Maranhão' },
+  { uf: 'MT', name: 'Mato Grosso' },
+  { uf: 'MS', name: 'Mato Grosso do Sul' },
+  { uf: 'MG', name: 'Minas Gerais' },
+  { uf: 'PA', name: 'Pará' },
+  { uf: 'PB', name: 'Paraíba' },
+  { uf: 'PR', name: 'Paraná' },
+  { uf: 'PE', name: 'Pernambuco' },
+  { uf: 'PI', name: 'Piauí' },
+  { uf: 'RJ', name: 'Rio de Janeiro' },
+  { uf: 'RN', name: 'Rio Grande do Norte' },
+  { uf: 'RS', name: 'Rio Grande do Sul' },
+  { uf: 'RO', name: 'Rondônia' },
+  { uf: 'RR', name: 'Roraima' },
+  { uf: 'SC', name: 'Santa Catarina' },
+  { uf: 'SP', name: 'São Paulo' },
+  { uf: 'SE', name: 'Sergipe' },
+  { uf: 'TO', name: 'Tocantins' },
+] as const;
+
 export function CostDatabaseSearchModal({
   boqId,
   onClose,
@@ -434,6 +465,34 @@ export function CostDatabaseSearchModal({
     userPickedRegionRef.current = true;
     setRegion(r);
   }, []);
+
+  // UF and Regime states for SINAPI region selection
+  const [selectedUf, setSelectedUf] = useState<string>(() => {
+    const m = region.match(/^SINAPI-([A-Z]{2})/i);
+    return m ? m[1].toUpperCase() : '';
+  });
+  const [selectedRegime, setSelectedRegime] = useState<'DESONERADO' | 'NAO_DESONERADO'>(() => {
+    if (/DESONERADO/i.test(region) && !/NAO[-_]?DESONERADO/i.test(region)) {
+      return 'DESONERADO';
+    }
+    return 'NAO_DESONERADO';
+  });
+
+  useEffect(() => {
+    const m = region.match(/^SINAPI-([A-Z]{2})-(.*)/i);
+    if (m) {
+      setSelectedUf(m[1].toUpperCase());
+      const reg = m[2].toUpperCase();
+      if (reg.includes('NAO')) {
+        setSelectedRegime('NAO_DESONERADO');
+      } else if (reg.includes('DESONERADO')) {
+        setSelectedRegime('DESONERADO');
+      }
+    } else if (region === '') {
+      setSelectedUf('');
+    }
+  }, [region]);
+
   /** Slash-joined classification breadcrumb selected in the left tree.
    *  Empty string = "All categories". */
   const [selectedPath, setSelectedPath] = useState('');
@@ -474,6 +533,50 @@ export function CostDatabaseSearchModal({
     queryFn: () => apiGet<string[]>('/v1/costs/regions/'),
   });
   const regions = useMemo(() => regionsData ?? [], [regionsData]);
+
+  const handleUfChange = useCallback((newUf: string) => {
+    setSelectedUf(newUf);
+    if (!newUf) {
+      setRegionByUser('');
+      return;
+    }
+    const targetPrefix = `SINAPI-${newUf}-`;
+    const existing = regions.find((r) => {
+      const upper = r.toUpperCase();
+      return upper.startsWith(targetPrefix) && upper.includes(selectedRegime);
+    }) || regions.find((r) => r.toUpperCase().startsWith(targetPrefix));
+
+    if (existing) {
+      setRegionByUser(existing);
+    } else {
+      setRegionByUser(`SINAPI-${newUf}-${selectedRegime}`);
+    }
+  }, [regions, selectedRegime, setRegionByUser]);
+
+  const handleRegimeChange = useCallback((newRegime: 'DESONERADO' | 'NAO_DESONERADO') => {
+    setSelectedRegime(newRegime);
+    if (selectedUf) {
+      const targetPrefix = `SINAPI-${selectedUf}-`;
+      const existing = regions.find((r) => {
+        const upper = r.toUpperCase();
+        return upper.startsWith(targetPrefix) && upper.includes(newRegime);
+      });
+      if (existing) {
+        setRegionByUser(existing);
+      } else {
+        setRegionByUser(`SINAPI-${selectedUf}-${newRegime}`);
+      }
+    }
+  }, [regions, selectedUf, setRegionByUser]);
+
+  const handleClearRegion = useCallback(() => {
+    setSelectedUf('');
+    setRegionByUser('');
+  }, [setRegionByUser]);
+
+  const otherRegions = useMemo(() => {
+    return regions.filter((r) => !r.toUpperCase().startsWith('SINAPI-'));
+  }, [regions]);
 
   // Category tree — separate query, scoped to active region.  5-min staleTime
   // matches the backend's cache TTL so we don't refetch on every interaction.
@@ -1705,51 +1808,100 @@ export function CostDatabaseSearchModal({
           </button>
         </div>
 
-        {/* Region tabs — country DBs first, "All databases" pushed to the
-            end of the row. The first country DB is auto-selected on mount
-            (see defaulting effect above) so the initial paint is fast,
-            and "All databases" remains accessible for the user who wants
-            the multi-region view. */}
-        <div className="px-6 py-2 border-b border-border-light flex items-center gap-1.5 overflow-x-auto scrollbar-none shrink-0">
-          {regions.map((r) => {
-            const info = REGION_MAP[r];
-            // DE_BERLIN has a localized display name (a German reader expects
-            // "Deutschland / DACH", not the English country name).
-            const label =
-              r === 'DE_BERLIN'
-                ? t('costdb.region_de_berlin', { defaultValue: info?.name || r })
-                : info?.name || r;
-            const flag = info?.flag;
-            const isActive = region === r;
-            return (
-              <button
-                key={r}
-                onClick={() => setRegionByUser(r)}
-                className={`shrink-0 flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${
-                  isActive
-                    ? 'bg-oe-blue text-white'
-                    : 'bg-surface-secondary text-content-secondary hover:bg-surface-tertiary'
-                }`}
-              >
-                {flag && flag !== 'custom' ? (
-                  <CountryFlag code={flag} size={13} />
-                ) : flag === 'custom' ? (
-                  <span className="text-2xs">&#9733;</span>
-                ) : null}
-                <span>{label}</span>
-              </button>
-            );
-          })}
+        {/* Region filter bar — UF select + Regime select + Universal, replacing flat 60-button scroll */}
+        <div className="px-6 py-2.5 border-b border-border-light flex flex-wrap items-center gap-3 shrink-0 bg-surface-secondary/40">
+          {/* Universal / Limpar button */}
           <button
-            onClick={() => setRegionByUser('')}
-            className={`shrink-0 rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${
+            type="button"
+            onClick={handleClearRegion}
+            className={`shrink-0 flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
               region === ''
-                ? 'bg-oe-blue text-white'
-                : 'bg-surface-secondary text-content-secondary hover:bg-surface-tertiary'
+                ? 'bg-oe-blue text-white shadow-xs'
+                : 'bg-surface-secondary text-content-secondary hover:bg-surface-tertiary border border-border-light'
             }`}
+            title={t('catalog.all_regions', { defaultValue: 'Todas as bases / Universal' })}
           >
-            {t('catalog.all_regions', { defaultValue: 'All databases' })}
+            <Globe size={13} className="shrink-0" />
+            <span>{t('catalog.universal', { defaultValue: 'Universal' })}</span>
           </button>
+
+          {/* UF Select */}
+          <div className="flex items-center gap-1.5">
+            <label htmlFor="cost-modal-uf-select" className="text-xs font-medium text-content-secondary shrink-0">
+              {t('common.uf_state', { defaultValue: 'UF:' })}
+            </label>
+            <select
+              id="cost-modal-uf-select"
+              aria-label={t('common.uf_state', { defaultValue: 'UF / Estado' })}
+              value={selectedUf}
+              onChange={(e) => handleUfChange(e.target.value)}
+              className="rounded-lg border border-border bg-surface-primary px-2.5 py-1 text-xs text-content-primary focus:border-oe-blue focus:outline-none focus:ring-1 focus:ring-oe-blue"
+            >
+              <option value="">{t('catalog.select_uf', { defaultValue: 'Selecione a UF...' })}</option>
+              {BRAZILIAN_UFS.map(({ uf, name }) => (
+                <option key={uf} value={uf}>
+                  {uf} — {name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Regime Select */}
+          <div className="flex items-center gap-1.5">
+            <label htmlFor="cost-modal-regime-select" className="text-xs font-medium text-content-secondary shrink-0">
+              {t('costdb.regime', { defaultValue: 'Regime:' })}
+            </label>
+            <select
+              id="cost-modal-regime-select"
+              aria-label={t('costdb.regime', { defaultValue: 'Regime de desoneração' })}
+              value={selectedRegime}
+              onChange={(e) => handleRegimeChange(e.target.value as 'DESONERADO' | 'NAO_DESONERADO')}
+              className="rounded-lg border border-border bg-surface-primary px-2.5 py-1 text-xs text-content-primary focus:border-oe-blue focus:outline-none focus:ring-1 focus:ring-oe-blue"
+            >
+              <option value="NAO_DESONERADO">{t('costdb.regime_nao_desonerado', { defaultValue: 'Não desonerado' })}</option>
+              <option value="DESONERADO">{t('costdb.regime_desonerado', { defaultValue: 'Desonerado' })}</option>
+            </select>
+          </div>
+
+          {/* Non-SINAPI / International regions (e.g. DE_BERLIN, CS_PRAGUE) */}
+          {otherRegions.length > 0 && (
+            <div className="flex items-center gap-1.5 pl-2 border-l border-border-light overflow-x-auto scrollbar-none">
+              <span className="text-2xs text-content-tertiary uppercase tracking-wider shrink-0 font-medium">
+                {t('costdb.other_databases', { defaultValue: 'Outras bases' })}:
+              </span>
+              {otherRegions.map((r) => {
+                const info = REGION_MAP[r];
+                const label =
+                  r === 'DE_BERLIN'
+                    ? t('costdb.region_de_berlin', { defaultValue: info?.name || r })
+                    : info?.name || r;
+                const flag = info?.flag;
+                const isActive = region === r;
+                return (
+                  <button
+                    key={r}
+                    type="button"
+                    onClick={() => {
+                      setSelectedUf('');
+                      setRegionByUser(r);
+                    }}
+                    className={`shrink-0 flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${
+                      isActive
+                        ? 'bg-oe-blue text-white shadow-xs'
+                        : 'bg-surface-secondary text-content-secondary hover:bg-surface-tertiary border border-border-light'
+                    }`}
+                  >
+                    {flag && flag !== 'custom' ? (
+                      <CountryFlag code={flag} size={13} />
+                    ) : flag === 'custom' ? (
+                      <span className="text-2xs">&#9733;</span>
+                    ) : null}
+                    <span>{label}</span>
+                  </button>
+                );
+              })}
+            </div>
+          )}
         </div>
 
         {/* Two-pane body: tree (left) + search/list (right) */}
@@ -2420,7 +2572,7 @@ export function CostDatabaseSearchModal({
                 ? t('boq.adding', { defaultValue: 'Adding...' })
                 : onSelectForResources
                   ? t('boq.add_as_resources', { defaultValue: 'Add {{count}} as resources', count: selected.size })
-                  : t('boq.add_n_positions', { defaultValue: 'Add {{count}} to Planilha orçamentária', count: selected.size })}
+                  : t('boq.add_n_positions', { defaultValue: 'Add {{count}} to BOQ', count: selected.size })}
             </Button>
           </div>
         </div>

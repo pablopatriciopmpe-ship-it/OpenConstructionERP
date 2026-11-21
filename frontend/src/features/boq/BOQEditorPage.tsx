@@ -445,6 +445,16 @@ export function BOQEditorPage() {
 
   const markups: Markup[] = markupsData?.markups ?? [];
 
+  const isBdiProject = useMemo(() => {
+    return (
+      currencyCode === 'BRL' ||
+      (project?.region ?? '').toUpperCase() === 'BR' ||
+      (project?.country_code ?? '').toUpperCase() === 'BR' ||
+      Boolean((boq as any)?.metadata?.bdi || (boq as any)?.metadata_?.bdi)
+    );
+  }, [currencyCode, project?.region, project?.country_code, boq]);
+  const [showDetailedMarkups, setShowDetailedMarkups] = useState(false);
+
   /* ── Authoritative Grand Total (audit #156) ───────────────────────────
    *  The toolbar's Grand-Total card used to print a client-side chain whose
    *  tax came from ``getVatRateFromMarkups`` — a ``.find`` that takes only the
@@ -6010,23 +6020,59 @@ export function BOQEditorPage() {
 
       {/* ── Markup Management Panel ──────────────────────────────────── */}
       {boqId && (
-        <div data-testid="boq-markup-panel">
-          <MarkupPanel
-            boqId={boqId}
-            markups={markups}
-            directCost={directCost}
-            currencySymbol={currencySymbol}
-            currencyCode={currencyCode}
-            locale={locale}
-            fmt={fmt}
-            openSignal={markupOpenSignal}
-            pricedFromPublishedRates={boq?.metadata?.priced_from_published_rates === true}
-            taxInclusiveCost={taxInclusiveCost}
-            readOnly={Boolean(boq?.is_locked)}
-          />
-        </div>
+        <>
+          {isBdiProject ? (
+            <div data-testid="boq-bdi-unified-section" className="space-y-2">
+              <div className="flex items-center justify-end px-2 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowDetailedMarkups(!showDetailedMarkups)}
+                  className="text-xs text-oe-blue hover:underline font-medium cursor-pointer"
+                >
+                  {showDetailedMarkups
+                    ? t('boq.show_bdi_panel', { defaultValue: '← Voltar ao painel BDI (TCU 2.622/2013)' })
+                    : t('boq.show_detailed_markups', { defaultValue: 'Ver lista detalhada de acréscimos e custos indiretos →' })}
+                </button>
+              </div>
+              {showDetailedMarkups ? (
+                <div data-testid="boq-markup-panel">
+                  <MarkupPanel
+                    boqId={boqId}
+                    markups={markups}
+                    directCost={directCost}
+                    currencySymbol={currencySymbol}
+                    currencyCode={currencyCode}
+                    locale={locale}
+                    fmt={fmt}
+                    openSignal={markupOpenSignal}
+                    pricedFromPublishedRates={boq?.metadata?.priced_from_published_rates === true}
+                    taxInclusiveCost={taxInclusiveCost}
+                    readOnly={Boolean(boq?.is_locked)}
+                  />
+                </div>
+              ) : (
+                <BdiPanel boqId={boqId} directCost={directCost} readOnly={Boolean(boq?.is_locked)} />
+              )}
+            </div>
+          ) : (
+            <div data-testid="boq-markup-panel">
+              <MarkupPanel
+                boqId={boqId}
+                markups={markups}
+                directCost={directCost}
+                currencySymbol={currencySymbol}
+                currencyCode={currencyCode}
+                locale={locale}
+                fmt={fmt}
+                openSignal={markupOpenSignal}
+                pricedFromPublishedRates={boq?.metadata?.priced_from_published_rates === true}
+                taxInclusiveCost={taxInclusiveCost}
+                readOnly={Boolean(boq?.is_locked)}
+              />
+            </div>
+          )}
+        </>
       )}
-      {boqId && <BdiPanel boqId={boqId} directCost={directCost} readOnly={Boolean(boq?.is_locked)} />}
 
       {/* ── Cost per m2 benchmark strip ──────────────────────────────────
           Self-hides when the BOQ has no $GFA variable to divide by. */}
