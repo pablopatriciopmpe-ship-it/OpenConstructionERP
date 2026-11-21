@@ -117,12 +117,38 @@ def render_offer_excel(data: dict[str, Any], *, mode: str = "analytic") -> bytes
         r_idx += 2
 
     # Table Header
-    money_fmt = f'"{c_symbol} " #,##0.00'
+    money_fmt = '"R$" #,##0.00' if c_symbol == "R$" else f'"{c_symbol} " #,##0.00'
     pct_fmt = "0.00%"
     qty_fmt = "#,##0.00"
 
     totals = data.get("totals") or {}
     gross_total = _dec(totals.get("gross") or totals.get("net") or "0")
+    lines = data.get("lines") or []
+    subtotals = totals.get("section_subtotals") or {}
+
+    from app.core.pdf_branding import clean_section_title
+    from app.modules.offers.pricing import COUNTED_ROLES
+
+    computed_subtotals: dict[str, Decimal] = {}
+    for ln in lines:
+        if ln.get("kind") != "section" and ln.get("role") in COUNTED_ROLES:
+            sec = str(ln.get("section") or "")
+            if not sec and ln.get("ordinal") and "." in str(ln.get("ordinal")):
+                sec = str(ln.get("ordinal")).split(".")[0]
+            if sec:
+                computed_subtotals[sec] = computed_subtotals.get(sec, Decimal("0")) + _dec(ln.get("total") or "0")
+
+    def get_section_subtotal(ord_key: str) -> Decimal:
+        k = str(ord_key).strip()
+        v = subtotals.get(k)
+        if v is not None and str(v).strip() and _dec(v) != 0:
+            return _dec(v)
+        for alt in (k, k.zfill(2), k.lstrip("0")):
+            if alt in computed_subtotals and computed_subtotals[alt] != 0:
+                return computed_subtotals[alt]
+            if alt in subtotals and _dec(subtotals[alt]) != 0:
+                return _dec(subtotals[alt])
+        return Decimal("0")
 
     if is_synth:
         headers = ["Item", "Etapa / Seção Macro", "Subtotal (R$)", "% do Total"]
@@ -131,14 +157,18 @@ def render_offer_excel(data: dict[str, Any], *, mode: str = "analytic") -> bytes
             ws.cell(row=r_idx, column=c_idx).font = Font(name="Arial", size=9, bold=True, color="FFFFFF")
         r_idx += 1
 
-        subtotals = totals.get("section_subtotals") or {}
-        lines = data.get("lines") or []
+        net_total = _dec(totals.get("net") or totals.get("gross") or "0")
+        if net_total == 0:
+            sec_sum = sum(get_section_subtotal(ln.get("ordinal", "")) for ln in lines if ln.get("kind") == "section")
+            net_total = sec_sum if sec_sum > 0 else Decimal("1")
+
         for ln in lines:
             if ln.get("kind") == "section":
                 ord_ = str(ln.get("ordinal") or "")
-                desc_ = str(ln.get("description") or ord_)
-                sub_val = _dec(subtotals.get(ord_) or ln.get("total") or "0")
-                pct = (float(sub_val / gross_total) if gross_total > 0 else 0.0)
+                raw_desc = str(ln.get("description") or ord_)
+                desc_ = clean_section_title(raw_desc)
+                sub_val = get_section_subtotal(ord_) or _dec(ln.get("total") or "0")
+                pct = (float(sub_val / net_total) if net_total > 0 else 0.0)
 
                 _format_cell(ws.cell(row=r_idx, column=1), ord_, align="center", bold=True)
                 _format_cell(ws.cell(row=r_idx, column=2), desc_, bold=True)
@@ -155,11 +185,31 @@ def render_offer_excel(data: dict[str, Any], *, mode: str = "analytic") -> bytes
             ws.cell(row=r_idx, column=c_idx).font = Font(name="Arial", size=9, bold=True, color="FFFFFF")
         r_idx += 1
 
-        lines = data.get("lines") or []
+        open_sec_ord: str | None = None
+        open_sec_desc: str | None = None
+
+        def close_sec_excel() -> None:
+            nonlocal open_sec_ord, open_sec_desc, r_idx
+            if open_sec_ord is not None:
+                sub_val = get_section_subtotal(open_sec_ord)
+                if sub_val > 0:
+                    ws.merge_cells(start_row=r_idx, start_column=1, end_row=r_idx, end_column=5)
+                    _format_cell(ws.cell(row=r_idx, column=1), f"Subtotal - {open_sec_desc or open_sec_ord}:", bold=True, align="right", bg="F6F6EF")
+                    _format_cell(ws.cell(row=r_idx, column=6), float(sub_val), num_fmt=money_fmt, bold=True, align="right", bg="F6F6EF")
+                    for c in range(1, 7):
+                        ws.cell(row=r_idx, column=c).border = border_thin
+                    r_idx += 1
+            open_sec_ord = None
+            open_sec_desc = None
+
         for ln in lines:
             if ln.get("kind") == "section":
+                close_sec_excel()
                 ord_ = str(ln.get("ordinal") or "")
-                desc_ = str(ln.get("description") or ord_)
+                raw_desc = str(ln.get("description") or ord_)
+                desc_ = clean_section_title(raw_desc)
+                open_sec_ord = ord_
+                open_sec_desc = desc_
                 ws.merge_cells(start_row=r_idx, start_column=1, end_row=r_idx, end_column=6)
                 _format_cell(ws.cell(row=r_idx, column=1), f"{ord_} - {desc_}", bold=True, bg="E2F2EC")
                 for c in range(1, 7):
@@ -168,14 +218,15 @@ def render_offer_excel(data: dict[str, Any], *, mode: str = "analytic") -> bytes
                 continue
 
             ord_ = str(ln.get("ordinal") or "")
-            desc_ = str(ln.get("description") or "")
+            raw_desc = str(ln.get("description") or "")
+            desc = clean_section_title(raw_desc)
             unit = str(ln.get("unit") or "")
             qty = _dec(ln.get("quantity") or "0")
             rate = _dec(ln.get("unit_rate") or "0")
             tot = _dec(ln.get("total") or "0")
 
             _format_cell(ws.cell(row=r_idx, column=1), ord_, align="center")
-            _format_cell(ws.cell(row=r_idx, column=2), desc_)
+            _format_cell(ws.cell(row=r_idx, column=2), desc)
             _format_cell(ws.cell(row=r_idx, column=3), unit, align="center")
             _format_cell(ws.cell(row=r_idx, column=4), float(qty), num_fmt=qty_fmt, align="right")
             _format_cell(ws.cell(row=r_idx, column=5), float(rate), num_fmt=money_fmt, align="right")
@@ -183,6 +234,8 @@ def render_offer_excel(data: dict[str, Any], *, mode: str = "analytic") -> bytes
             for c in range(1, 7):
                 ws.cell(row=r_idx, column=c).border = border_thin
             r_idx += 1
+
+        close_sec_excel()
 
     # Totals Row
     last_col = 4 if is_synth else 6

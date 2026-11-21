@@ -80,8 +80,8 @@ _PT_DEFAULTS = {
     "offer_description": "Descrição",
     "offer_qty": "Qtd.",
     "offer_unit": "Un.",
-    "offer_unit_price": "Preço unitário",
-    "offer_total": "Total",
+    "offer_unit_price": "Preço unitário (R$)",
+    "offer_total": "Total (R$)",
     "offer_page": "Página",
     "offer_optional": "Opcional",
     "offer_alternative": "Alternativa a {ref}",
@@ -108,7 +108,7 @@ _PT_DEFAULTS = {
     "offer_contact": "Contato",
     "offer_licence": "Registro Profissional",
     "offer_subtotal": "Subtotal {name}",
-    "offer_subtotal_col": "Subtotal",
+    "offer_subtotal_col": "Subtotal (R$)",
     "offer_net_total": "Total Líquido",
     "offer_tax_on": "{label} {rate}% sobre {base}",
     "offer_exclusions": "O que não está incluso",
@@ -183,6 +183,16 @@ def _fmt_money(value: Any, locale: str) -> str:
     return pricing.format_decimal(str(value), locale) if value not in (None, "") else ""
 
 
+def _format_currency_val(val: Any, currency: str, locale: str) -> str:
+    formatted = _fmt_money(val, locale)
+    if not formatted:
+        return ""
+    cur = (currency or "").upper().strip()
+    if cur == "BRL" or (locale or "").lower().startswith("pt"):
+        return f"R$ {formatted}"
+    return f"{formatted} {currency}".strip()
+
+
 def _para(text: Any, style: Any, *, bold: bool = False) -> Any:
     from reportlab.platypus import Paragraph
 
@@ -218,6 +228,8 @@ def render_offer(
     from app.core.pdf_fonts import BODY_FONT, BOLD_FONT, pdf_font_for_text
 
     locale = str(data.get("locale") or "en")
+    comp_profile = data.get("company_profile")
+    token = pdf_branding.set_company_profile_context(comp_profile) if comp_profile else None
     labels = _labels(locale)
     rtl = is_rtl(locale)
     pack = data.get("pack") or {}
@@ -356,27 +368,51 @@ def render_offer(
     totals = data.get("totals") or {}
     subtotals = totals.get("section_subtotals") or {}
 
+    computed_subtotals: dict[str, Decimal] = {}
+    for ln in lines:
+        if ln.get("kind") != "section" and ln.get("role") in pricing.COUNTED_ROLES:
+            sec = str(ln.get("section") or "")
+            if not sec and ln.get("ordinal") and "." in str(ln.get("ordinal")):
+                sec = str(ln.get("ordinal")).split(".")[0]
+            if sec:
+                computed_subtotals[sec] = computed_subtotals.get(sec, Decimal("0")) + Decimal(str(ln.get("total") or "0"))
+
+    def get_section_subtotal(ord_key: str) -> Decimal:
+        k = str(ord_key).strip()
+        v = subtotals.get(k)
+        if v is not None and str(v).strip() and Decimal(str(v)) != 0:
+            return Decimal(str(v))
+        for alt in (k, k.zfill(2), k.lstrip("0")):
+            if alt in computed_subtotals and computed_subtotals[alt] != 0:
+                return computed_subtotals[alt]
+            if alt in subtotals and Decimal(str(subtotals[alt])) != 0:
+                return Decimal(str(subtotals[alt]))
+        return Decimal("0")
+
     if mode == "synthetic":
         cols = [
             labels["offer_item"],
             labels["offer_description"],
-            labels.get("offer_subtotal_col", "Subtotal"),
+            labels.get("offer_subtotal_col", "Subtotal (R$)" if (locale or "").startswith("pt") else "Subtotal"),
             labels["offer_percent"],
         ]
         rows = [[_para(c, head) for c in cols]]
         styles_cmds = []
-        gross_val = Decimal(str(totals.get("gross") or totals.get("net") or "1"))
+        net_val = Decimal(str(totals.get("net") or totals.get("gross") or "0"))
+        if net_val == 0:
+            sec_sum = sum(get_section_subtotal(ln.get("ordinal", "")) for ln in lines if ln.get("kind") == "section")
+            net_val = sec_sum if sec_sum > 0 else Decimal("1")
         for ln in lines:
             if ln.get("kind") == "section":
                 ord_ = ln.get("ordinal", "")
-                desc_ = ln.get("description", "") or ord_
-                amount = subtotals.get(ord_) or ln.get("total") or "0"
-                amt_d = Decimal(str(amount or "0"))
-                pct_str = f"{(float(amt_d / gross_val) * 100):.1f}%" if gross_val > 0 else "0.0%"
+                raw_desc = ln.get("description", "") or ord_
+                desc_ = pdf_branding.clean_section_title(raw_desc) if (locale or "").startswith("pt") else raw_desc
+                amt_d = get_section_subtotal(ord_) or Decimal(str(ln.get("total") or "0"))
+                pct_str = f"{(float(amt_d / net_val) * 100):.1f}%" if net_val > 0 else "0.0%"
                 rows.append([
                     _para(ord_, cell, bold=True),
                     _para(desc_, cell, bold=True),
-                    _para(_fmt_money(amount, locale), cell_r, bold=True),
+                    _para(_fmt_money(amt_d, locale), cell_r, bold=True),
                     _para(pct_str, cell_r, bold=True),
                 ])
                 styles_cmds.append(("LINEBELOW", (0, len(rows) - 1), (-1, len(rows) - 1), 0.25, colors.HexColor("#dddddd")))
@@ -417,9 +453,11 @@ def render_offer(
             nonlocal open_section
             if open_section is None:
                 return
-            amount = subtotals.get(open_section["ordinal"])
-            if amount not in (None, "") and Decimal(str(amount)) != 0:
+            amt_d = get_section_subtotal(open_section["ordinal"])
+            if amt_d > 0:
                 name = open_section["description"] or open_section["ordinal"]
+                if (locale or "").startswith("pt"):
+                    name = pdf_branding.clean_section_title(name)
                 rows.append(
                     [
                         "",
@@ -427,7 +465,7 @@ def render_offer(
                         "",
                         "",
                         "",
-                        _para(_fmt_money(amount, locale), cell_r, bold=True),
+                        _para(_fmt_money(amt_d, locale), cell_r, bold=True),
                     ]
                 )
                 styles_cmds.append(("LINEABOVE", (0, len(rows) - 1), (-1, len(rows) - 1), 0.4, muted))
@@ -437,9 +475,11 @@ def render_offer(
             if ln.get("kind") == "section":
                 close_section()
                 open_section = ln
-                title = f"{ln.get('ordinal', '')} {ln.get('description', '')}".strip()
-                if ln.get("ordinal") == "M" and ln.get("description"):
-                    title = ln["description"]
+                raw_desc = ln.get('description', '')
+                clean_desc = pdf_branding.clean_section_title(raw_desc) if (locale or "").startswith("pt") else raw_desc
+                title = f"{ln.get('ordinal', '')} {clean_desc}".strip()
+                if ln.get("ordinal") == "M" and clean_desc:
+                    title = clean_desc
                 rows.append([_para(title, cell, bold=True), "", "", "", "", ""])
                 idx = len(rows) - 1
                 styles_cmds += [
@@ -449,6 +489,8 @@ def render_offer(
                 continue
             role = ln.get("role") or "base"
             desc = str(ln.get("description") or "")
+            if (locale or "").startswith("pt"):
+                desc = pdf_branding.clean_section_title(desc)
             tag = ""
             if role == "optional":
                 tag = labels["offer_optional"]
@@ -507,7 +549,7 @@ def render_offer(
     summary_rows = [
         [
             _para(labels["offer_net_total"], cell, bold=True),
-            _para(f"{_fmt_money(totals.get('net'), locale)} {currency}", cell_r, bold=True),
+            _para(_format_currency_val(totals.get('net'), currency, locale), cell_r, bold=True),
         ]
     ]
     tax_label = str(data.get("tax_label") or "")
@@ -521,11 +563,11 @@ def render_offer(
             text = labels["offer_tax_on"].format(
                 label=tax_label, rate=grp.get("rate"), base=_fmt_money(grp.get("base"), locale)
             )
-            summary_rows.append([_para(text, cell), _para(f"{_fmt_money(grp.get('tax'), locale)} {currency}", cell_r)])
+            summary_rows.append([_para(text, cell), _para(_format_currency_val(grp.get('tax'), currency, locale), cell_r)])
     summary_rows.append(
         [
             _para(labels["offer_gross"], cell, bold=True),
-            _para(f"{_fmt_money(totals.get('gross'), locale)} {currency}", cell_r, bold=True),
+            _para(_format_currency_val(totals.get('gross'), currency, locale), cell_r, bold=True),
         ]
     )
     summary = Table(summary_rows, colWidths=[frame_w * 0.6, frame_w * 0.4 - 0], hAlign="RIGHT" if not rtl else "LEFT")
@@ -552,7 +594,7 @@ def render_offer(
             box_rows.append(
                 [
                     _para(f"{n.get('ordinal', '')} {n.get('description', '')} ({tag})", cell),
-                    _para(f"{_fmt_money(n.get('total'), locale)} {currency}", cell_r),
+                    _para(_format_currency_val(n.get('total'), currency, locale), cell_r),
                 ]
             )
         box = Table(box_rows, colWidths=[frame_w * 0.75, frame_w * 0.25])
@@ -683,14 +725,11 @@ def render_offer(
     mirror = rtl
 
     def furniture(canvas: Any, doc: Any, first: bool) -> None:
-        pdf_branding._draw_page_furniture(canvas, doc, header=not first, caller="offer_pdf", doc_type="customer_offer")
+        pdf_branding._draw_page_furniture(
+            canvas, doc, header=not first, caller="offer_pdf", doc_type="customer_offer", doc_ref=footer_label
+        )
         if first:
             _draw_address(canvas, data, window, page_h, page_w, labels, mirror)
-        canvas.saveState()
-        canvas.setFont(pdf_font_for_text(footer_label), 7)
-        canvas.setFillColor(muted)
-        canvas.drawString(side_l, 9 * MM, footer_label)
-        canvas.restoreState()
         if draft:
             pdf_branding.draw_watermark(
                 canvas, {"watermark_text": labels["offer_draft"], "watermark_opacity": 12}, page_w=page_w, page_h=page_h
@@ -735,9 +774,13 @@ def render_offer(
     )
     from reportlab.platypus import NextPageTemplate
 
-    story.insert(0, NextPageTemplate("Later"))
-    pdf_branding.build_with_page_count(doc, story)
-    return buffer.getvalue(), int(getattr(doc, "page", 0) or 1)
+    try:
+        story.insert(0, NextPageTemplate("Later"))
+        pdf_branding.build_with_page_count(doc, story)
+        return buffer.getvalue(), int(getattr(doc, "page", 0) or 1)
+    finally:
+        if token:
+            pdf_branding.reset_company_profile_context(token)
 
 
 def _due_text(row: dict[str, Any], labels: dict[str, str]) -> str:

@@ -22,14 +22,17 @@ TEXT_KINDS: tuple[str, ...] = (
     "payment_terms",
     "validity",
     "conditions",
-    "exclusions",
-    "notes",
-    "payment_details",
-    "execution_period",
     "warranty",
     "closing",
     "legal_notice",
 )
+EXTRA_TEXT_KINDS: tuple[str, ...] = (
+    "exclusions",
+    "notes",
+    "payment_details",
+    "execution_period",
+)
+ALL_TEXT_KINDS: tuple[str, ...] = TEXT_KINDS + EXTRA_TEXT_KINDS
 
 
 @lru_cache(maxsize=1)

@@ -8433,6 +8433,23 @@ class BOQService:
             else:
                 remaining_ungrouped.append(pos)
 
+        # Fallback for imported / duplicated BOQs where parent_id is missing or points to another BOQ:
+        # Match position to section by ordinal prefix (e.g. "01.001" belongs to section "01")
+        if remaining_ungrouped and section_map:
+            sec_ord_map = {spos.ordinal.strip(): sid for sid, spos in section_map.items() if spos.ordinal}
+            still_ungrouped: list[Position] = []
+            for pos in remaining_ungrouped:
+                matched_sid = None
+                p_ord = (pos.ordinal or "").strip()
+                if "." in p_ord:
+                    prefix = p_ord.split(".")[0]
+                    matched_sid = sec_ord_map.get(prefix)
+                if matched_sid:
+                    children_map.setdefault(matched_sid, []).append(pos)
+                else:
+                    still_ungrouped.append(pos)
+            remaining_ungrouped = still_ungrouped
+
         # BUG-B-010: build a child-section adjacency map so a parent
         # section's subtotal rolls up nested sub-section costs (3-4+
         # levels). A section nested under another section lands in

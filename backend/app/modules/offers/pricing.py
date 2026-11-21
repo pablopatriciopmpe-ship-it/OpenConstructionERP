@@ -159,7 +159,7 @@ def build_lines(
                 "role": role,
                 "alternative_of": str(it.get("alternative_of") or "") if role == "alternative" else "",
                 "by_others": bool(it.get("by_others")),
-                "section": str(it.get("section") if it.get("section") is not None else section_ordinal),
+                "section": str(it.get("section") or section_ordinal),
                 "tax_rate": plain(dec(tax_rate, default_tax_rate))
                 if tax_rate not in (None, "")
                 else plain(default_tax_rate),
@@ -222,7 +222,12 @@ def totals(
         amount = dec(ln.get("total"))
         if role in COUNTED_ROLES:
             net += amount
-            by_section[ln.get("section", "")] = by_section.get(ln.get("section", ""), ZERO) + amount
+            sec_name = str(ln.get("section") or "")
+            if not sec_name and ln.get("ordinal"):
+                parts = str(ln.get("ordinal")).split(".")
+                if len(parts) > 1:
+                    sec_name = parts[0]
+            by_section[sec_name] = by_section.get(sec_name, ZERO) + amount
             rate_key = plain(dec(ln.get("tax_rate"))) if tax_mode == "standard" else "0"
             by_rate[rate_key] = by_rate.get(rate_key, ZERO) + amount
         elif role in ("optional", "alternative"):
@@ -449,7 +454,12 @@ def format_decimal(value: Decimal | str, locale: str | None, places: int | None 
 
 def format_money(value: Decimal | str, currency: str | None, locale: str | None, *, symbol: bool = False) -> str:
     text = format_decimal(value, locale, minor_unit(currency))
-    return f"{text} {currency}".strip() if symbol and currency else text
+    if not (symbol and currency):
+        return text
+    cur = (currency or "").upper().strip()
+    if cur == "BRL" or (locale or "").lower().startswith("pt"):
+        return f"R$ {text}"
+    return f"{text} {currency}".strip()
 
 
 def format_date(value: str | date | None, locale: str | None) -> str:

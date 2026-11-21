@@ -23,6 +23,7 @@ from openpyxl import Workbook
 from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
 from openpyxl.utils import get_column_letter
 
+from app.core.pdf_branding import clean_section_title
 from app.core.xlsx_branding import apply_company_header
 from app.core.xlsx_text import store_strings_as_text
 
@@ -1068,33 +1069,40 @@ def render_synthetic_xlsx(boq_data: Any, project_line: str | None = None) -> byt
         c.fill = fill_hdr
         c.alignment = align_c if i == 1 else (align_l if i == 2 else align_r)
 
-    positions = getattr(boq_data, "positions", [])
-    # Group by major sections (e.g. "01", "02" or top level items)
+    boq_sections = getattr(boq_data, "sections", [])
     sections: list[dict[str, Any]] = []
-    current_sec: dict[str, Any] | None = None
     grand_total = Decimal(0)
 
-    for p in positions:
-        pos_qty = _to_dec(getattr(p, "quantity", 0))
-        pos_total = _to_dec(getattr(p, "total", 0))
-        unit = str(getattr(p, "unit", "")).strip()
-        ord_val = str(getattr(p, "ordinal", "")).strip()
-        desc = str(getattr(p, "description", "")).strip()
-
-        grand_total += pos_total
-
-        if not unit and pos_qty == 0:
-            if current_sec:
-                sections.append(current_sec)
-            current_sec = {"ordinal": ord_val, "description": desc, "total": Decimal(0)}
-        else:
-            if current_sec:
-                current_sec["total"] += pos_total
+    if boq_sections:
+        for s in boq_sections:
+            s_ord = str(getattr(s, "ordinal", "") or "").strip()
+            s_desc = clean_section_title(str(getattr(s, "description", "") or s_ord))
+            s_tot = Decimal(0)
+            for p in getattr(s, "positions", []):
+                s_tot += _to_dec(getattr(p, "total", 0))
+            grand_total += s_tot
+            sections.append({"ordinal": s_ord, "description": s_desc, "total": s_tot})
+    else:
+        positions = getattr(boq_data, "positions", [])
+        current_sec: dict[str, Any] | None = None
+        for p in positions:
+            pos_qty = _to_dec(getattr(p, "quantity", 0))
+            pos_total = _to_dec(getattr(p, "total", 0))
+            unit = str(getattr(p, "unit", "")).strip()
+            ord_val = str(getattr(p, "ordinal", "")).strip()
+            desc = clean_section_title(str(getattr(p, "description", "")).strip())
+            grand_total += pos_total
+            if not unit and pos_qty == 0:
+                if current_sec:
+                    sections.append(current_sec)
+                current_sec = {"ordinal": ord_val, "description": desc, "total": Decimal(0)}
             else:
-                current_sec = {"ordinal": "01", "description": "Serviços Gerais", "total": pos_total}
-
-    if current_sec:
-        sections.append(current_sec)
+                if current_sec:
+                    current_sec["total"] += pos_total
+                else:
+                    current_sec = {"ordinal": "01", "description": "Serviços Gerais", "total": pos_total}
+        if current_sec:
+            sections.append(current_sec)
 
     if grand_total == 0:
         grand_total = Decimal(1)
@@ -1152,32 +1160,40 @@ def render_synthetic_pdf(boq_data: Any, project_line: str | None = None) -> byte
     from app.core import pdf_branding
     from app.core.pdf_fonts import BODY_FONT, BOLD_FONT
 
-    positions = getattr(boq_data, "positions", [])
+    boq_sections = getattr(boq_data, "sections", [])
     sections: list[dict[str, Any]] = []
-    current_sec: dict[str, Any] | None = None
     grand_total = Decimal(0)
 
-    for p in positions:
-        pos_qty = _to_dec(getattr(p, "quantity", 0))
-        pos_total = _to_dec(getattr(p, "total", 0))
-        unit = str(getattr(p, "unit", "")).strip()
-        ord_val = str(getattr(p, "ordinal", "")).strip()
-        desc = str(getattr(p, "description", "")).strip()
-
-        grand_total += pos_total
-
-        if not unit and pos_qty == 0:
-            if current_sec:
-                sections.append(current_sec)
-            current_sec = {"ordinal": ord_val, "description": desc, "total": Decimal(0)}
-        else:
-            if current_sec:
-                current_sec["total"] += pos_total
+    if boq_sections:
+        for s in boq_sections:
+            s_ord = str(getattr(s, "ordinal", "") or "").strip()
+            s_desc = clean_section_title(str(getattr(s, "description", "") or s_ord))
+            s_tot = Decimal(0)
+            for p in getattr(s, "positions", []):
+                s_tot += _to_dec(getattr(p, "total", 0))
+            grand_total += s_tot
+            sections.append({"ordinal": s_ord, "description": s_desc, "total": s_tot})
+    else:
+        positions = getattr(boq_data, "positions", [])
+        current_sec: dict[str, Any] | None = None
+        for p in positions:
+            pos_qty = _to_dec(getattr(p, "quantity", 0))
+            pos_total = _to_dec(getattr(p, "total", 0))
+            unit = str(getattr(p, "unit", "")).strip()
+            ord_val = str(getattr(p, "ordinal", "")).strip()
+            desc = clean_section_title(str(getattr(p, "description", "")).strip())
+            grand_total += pos_total
+            if not unit and pos_qty == 0:
+                if current_sec:
+                    sections.append(current_sec)
+                current_sec = {"ordinal": ord_val, "description": desc, "total": Decimal(0)}
             else:
-                current_sec = {"ordinal": "01", "description": "Serviços Gerais", "total": pos_total}
-
-    if current_sec:
-        sections.append(current_sec)
+                if current_sec:
+                    current_sec["total"] += pos_total
+                else:
+                    current_sec = {"ordinal": "01", "description": "Serviços Gerais", "total": pos_total}
+        if current_sec:
+            sections.append(current_sec)
 
     if grand_total == 0:
         grand_total = Decimal(1)

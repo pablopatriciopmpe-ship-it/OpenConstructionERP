@@ -59,16 +59,82 @@ colour and geometry stay the platform defaults; only the brand identity
 
 from __future__ import annotations
 
+import contextlib
+from contextvars import ContextVar, Token
 import functools
 import html
 import logging
+import re
 from datetime import UTC, datetime
 from typing import Any
 
 logger = logging.getLogger(__name__)
 
 #: The brand shown when no workspace branding is set (or it cannot be read).
-DEFAULT_BRAND = "OpenConstructionERP"
+DEFAULT_BRAND = "Evolux Obras"
+
+_current_company_profile: ContextVar[dict[str, Any] | None] = ContextVar("current_company_profile", default=None)
+
+
+def set_company_profile_context(profile: dict[str, Any] | None) -> Token[Any]:
+    return _current_company_profile.set(profile)
+
+
+def reset_company_profile_context(token: Token[Any]) -> None:
+    with contextlib.suppress(ValueError, LookupError):
+        _current_company_profile.reset(token)
+
+
+PROVISIONAL_LOGO_DATA_URL = (
+    "data:image/png;base64,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"
+)
+
+_PAREN_EN_PATTERN = re.compile(r"\s*\((?![^)]*(?:NBR|ABNT|NR|\d))[^)]+\)")
+
+
+def clean_section_title(text: str | None) -> str:
+    """Strip parenthetical English translations in pt-BR while keeping technical standards (NBR, NR) and digits."""
+    if not text:
+        return ""
+    return _PAREN_EN_PATTERN.sub("", str(text)).strip()
 
 #: Footer text colour and header brand colour - the platform default accent.
 #: Kept module-level (not configurable in this MVP) so every PDF stays
@@ -141,12 +207,10 @@ def branded_appearance(doc_type: str | None = None) -> dict[str, Any]:
 
 
 def _read_company_profile() -> dict[str, Any]:
-    """Return the persisted company profile, or ``{}``, never raising.
-
-    Same lazy-import, degrade-never-break contract as :func:`_read_branding`:
-    a profile that cannot be read costs the letterhead and the document logo,
-    never the document.
-    """
+    """Return the persisted company profile, or `{}`, never raising."""
+    scoped = _current_company_profile.get()
+    if scoped is not None:
+        return dict(scoped)
     try:
         from app.core.company_profile import read_company_profile
 
@@ -158,29 +222,35 @@ def _read_company_profile() -> dict[str, Any]:
 
 
 def _letterhead_profile() -> dict[str, Any] | None:
-    """Return the company profile when it calls for a letterhead, else ``None``.
-
-    :func:`app.core.company_profile.has_letterhead` is the one definition of
-    "enough to print" (a legal name or a logo; contact details alone say
-    nothing about whose they are), so this asks it rather than re-deciding.
-    """
+    """Return the company profile when it calls for a letterhead, else a branded fallback."""
     try:
         from app.core.company_profile import has_letterhead
 
         profile = _read_company_profile()
-        return profile if has_letterhead(profile) else None
+        if not profile or not has_letterhead(profile):
+            return {
+                "legal_name": _company_name(),
+                "document_logo_data_url": PROVISIONAL_LOGO_DATA_URL,
+                "document_logo_png_data_url": PROVISIONAL_LOGO_DATA_URL,
+                "address": profile.get("address", "") if profile else "",
+                "registration_line": profile.get("registration_line", "") if profile else "",
+                "vat_id": profile.get("vat_id", "") if profile else "",
+                "tax_number": profile.get("tax_number", "") if profile else "",
+                "phone": profile.get("phone", "") if profile else "",
+                "email": profile.get("email", "") if profile else "",
+                "website": profile.get("website", "") if profile else "",
+            }
+        if not profile.get("document_logo_data_url"):
+            profile["document_logo_data_url"] = PROVISIONAL_LOGO_DATA_URL
+            profile["document_logo_png_data_url"] = PROVISIONAL_LOGO_DATA_URL
+        return profile
     except Exception:  # noqa: BLE001 - degrade, never break PDF output
         logger.debug("Could not decide on a letterhead; none drawn", exc_info=True)
         return None
 
 
 def _logo_candidates(branding: dict[str, Any], profile: dict[str, Any]) -> list[str]:
-    """The logos to try, best first: the document logo, then the app logo.
-
-    Both are offered so a document logo that fails to decode still leaves the
-    app logo in the header instead of nothing. An SVG logo is offered as the
-    PNG the browser rasterised it to, and not at all when it has none.
-    """
+    """The logos to try, best first: the document logo, then the app logo, then provisional."""
     candidates: list[str] = []
     pairs = (
         (profile.get("document_logo_data_url"), profile.get("document_logo_png_data_url")),
@@ -191,6 +261,8 @@ def _logo_candidates(branding: dict[str, Any], profile: dict[str, Any]) -> list[
             value = png
         if isinstance(value, str) and value and value not in candidates:
             candidates.append(value)
+    if PROVISIONAL_LOGO_DATA_URL not in candidates:
+        candidates.append(PROVISIONAL_LOGO_DATA_URL)
     return candidates
 
 
@@ -494,6 +566,7 @@ def _draw_page_furniture(
     caller: str,
     doc_type: str | None = None,
     default_line: bool = True,
+    doc_ref: str | None = None,
 ) -> None:
     """The body of :func:`branded_header_footer`, with the header optional.
 
@@ -540,11 +613,12 @@ def _draw_page_furniture(
             # signed contract is a support ticket.
             footer_left = custom_footer[:160]
         elif default_line:
-            footer_left = _company_name(branding)[:160]
+            comp_name = _company_name(branding)[:120]
+            footer_left = f"{comp_name}  ·  {doc_ref}" if doc_ref else comp_name
             # Only the "auto" stamp setting keeps the date in this line; the
             # others print it on the line below, or not at all.
             if (appearance.get("print_stamp") or "auto") == "auto":
-                generated = datetime.now(tz=UTC).strftime("%Y-%m-%d")
+                generated = datetime.now(tz=UTC).strftime("%d/%m/%Y")
                 suffix = f"  |  {furniture_text('generated', date=generated)}"
         else:
             footer_left = ""
@@ -579,19 +653,22 @@ def _draw_page_furniture(
 
 
 def furniture_text(key: str, **values: Any) -> str:
-    """One of the generic footer phrases, in the language of the request.
-
-    The phrases live in the locale files under ``pdf_footer`` (``page_of``,
-    ``page``, ``printed``, ``generated``) and are resolved with the request's
-    locale, English where a language has not translated one. A language the PDF
-    layer cannot print (:data:`app.core.document_forms_i18n.REGISTER_UNRENDERABLE`)
-    gets English instead of boxes.
-    """
+    """One of the generic footer phrases, in the language of the request."""
     from app.core import i18n
+
+    locale = values.pop("locale", None) or i18n.get_locale()
+    if locale in ("pt", "pt-BR", "pt_BR", "en", ""):
+        if key == "page_of":
+            return f"Página {values.get('page', 1)} de {values.get('total', 1)}"
+        if key == "page":
+            return f"Página {values.get('page', 1)}"
+        if key == "generated":
+            return f"Gerado em {values.get('date', '')}"
+        if key == "printed":
+            return f"Impresso em {values.get('timestamp', '')}"
 
     if not i18n.is_locale_loaded("en"):
         i18n.load_translations()
-    locale = i18n.get_locale()
     try:
         from app.core.document_forms_i18n import REGISTER_UNRENDERABLE
 

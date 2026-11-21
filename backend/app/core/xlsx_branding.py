@@ -286,13 +286,9 @@ def _letterhead_profile() -> dict[str, Any] | None:
 
 
 def _brand_name() -> str:
-    """The name for the printed header and footer, or ``""``.
-
-    The same name the PDF footer prints. A workspace with a logo and no name
-    anywhere gets no text rather than the platform's name.
-    """
+    """The name for the printed header and footer."""
     name = pdf_branding._company_name()
-    return "" if name == pdf_branding.DEFAULT_BRAND else name
+    return name or "Evolux Obras"
 
 
 def _accent() -> str:

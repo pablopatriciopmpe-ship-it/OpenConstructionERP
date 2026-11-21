@@ -115,6 +115,45 @@ def _one_line(addr: dict[str, Any]) -> str:
     )
 
 
+_FINDINGS_PT: dict[str, str] = {
+    "The offer has no customer. Pick a contact.": "A proposta não possui cliente associado. Selecione um contato.",
+    "The customer has no billing address.": "O cliente não possui endereço de faturamento cadastrado.",
+    "The project has no site address.": "A obra não possui endereço do local cadastrado.",
+    "The offer has no validity date.": "A proposta não possui data de validade definida.",
+    "Valid until must be after the issue date.": "A data de validade deve ser posterior à data de emissão.",
+    "The offer has no payment terms.": "A proposta não possui condições de pagamento preenchidas.",
+    "Net, tax and gross do not add up from the printed lines.": "Os valores de líquido, impostos e total bruto não coincidem com a soma das linhas.",
+    "The offer mixes currencies.": "A proposta mistura moedas distintas.",
+    "Reverse charge needs the customer's VAT id.": "Operação com inversão do sujeito passivo exige o CNPJ/inscrição do cliente.",
+    "Consumer customer: show the gross total (pack rule).": "Cliente consumidor: exiba o valor total bruto (exigência fiscal).",
+    "The final instalment must be the last one.": "A parcela final deve ser a última no cronograma.",
+    "Address does not fit the envelope window.": "O endereço excede a área da janela do envelope.",
+    "The devis does not name the mandatory insurance.": "A proposta não cita o seguro obrigatório exigido.",
+    "A reduced VAT rate needs the customer's attestation.": "Alíquota reduzida exige comprovação ou declaração do cliente.",
+    "Off-premises consumer offer without a cancellation notice.": "Proposta fora do estabelecimento sem o aviso de cancelamento / direito de arrependimento.",
+    "The licence number is missing (BPC §7030.5).": "Número de registro profissional não informado.",
+}
+
+
+def _translate_finding_message(msg: str, details: dict[str, Any] | None = None, locale: str = "en") -> str:
+    if not (locale or "").lower().startswith("pt"):
+        return msg
+    if msg in _FINDINGS_PT:
+        return _FINDINGS_PT[msg]
+    d = details or {}
+    if msg.startswith("Offer number ") and "already used" in msg:
+        return f"O número de proposta {d.get('number', '')} já está em uso."
+    if msg.startswith("The BOQ changed after revision "):
+        return f"A planilha de orçamento foi alterada após o envio da revisão {d.get('revision', '')}. Emita uma nova revisão."
+    if msg.startswith("Instalments total "):
+        return f"A soma das parcelas ({d.get('sum', '')}) difere do total líquido da proposta ({d.get('net', '')})."
+    if msg.startswith("Spread rates move the net by "):
+        return f"A distribuição do BDI altera o total em {d.get('delta', '')} em relação ao orçamento."
+    if msg.startswith("The deposit exceeds the statutory cap of "):
+        return f"O sinal excede o teto legal de {d.get('cap', '')}."
+    return msg
+
+
 class OfferService:
     def __init__(self, session: AsyncSession) -> None:
         self.session = session
@@ -175,12 +214,15 @@ class OfferService:
                 }
             )
 
-        for pos in structured.positions:
-            add_position(pos, "")
+        sec_map = {sec.ordinal.strip(): sec for sec in structured.sections if getattr(sec, "ordinal", None)}
         for sec in structured.sections:
             items.append({"kind": "section", "ordinal": sec.ordinal, "description": sec.description, "level": 0})
             for pos in sec.positions:
                 add_position(pos, sec.ordinal)
+        for pos in structured.positions:
+            p_ord = (getattr(pos, "ordinal", "") or "").strip()
+            prefix = p_ord.split(".")[0] if "." in p_ord else ""
+            add_position(pos, prefix if prefix in sec_map else "")
         markups = [
             {"label": m.name, "amount": str(m.amount)}
             for m in structured.markups
@@ -709,7 +751,7 @@ class OfferService:
                 FindingOut(
                     rule_id=r.rule_id,
                     severity=str(r.severity.value if hasattr(r.severity, "value") else r.severity).lower(),  # type: ignore[arg-type]
-                    message=r.message,
+                    message=_translate_finding_message(r.message, r.details, offer.locale),
                     element_ref=r.element_ref,
                     details=r.details or {},
                     section=section,  # type: ignore[arg-type]
@@ -937,6 +979,9 @@ class OfferService:
                 "payment_details": getattr(offer, "payment_details", "") or (offer.texts or {}).get("payment_details", {}).get("body", ""),
             }
         )  # fmt: skip
+        comp_profile = await self._tenant_company_profile(project)
+        if comp_profile:
+            data["company_profile"] = comp_profile
         basis = await self._exclusions(offer)
         return offer_pdf.render_offer(data, exclusions=basis, draft=offer.status == "draft", mode=mode)
 
@@ -957,7 +1002,34 @@ class OfferService:
                 "payment_details": getattr(offer, "payment_details", "") or (offer.texts or {}).get("payment_details", {}).get("body", ""),
             }
         )  # fmt: skip
+        comp_profile = await self._tenant_company_profile(project)
+        if comp_profile:
+            data["company_profile"] = comp_profile
         return render_offer_excel(data, mode=mode)
+
+    async def _tenant_company_profile(self, project: Any) -> dict[str, Any] | None:
+        try:
+            import uuid
+            from sqlalchemy import select
+            from app.modules.saas.models import CompanyProfile, Tenant
+
+            tenant_id = getattr(project, "tenant_id", None)
+            if not tenant_id:
+                return None
+            tid = uuid.UUID(str(tenant_id)) if not isinstance(tenant_id, uuid.UUID) else tenant_id
+            tenant = (await self.session.execute(select(Tenant).where(Tenant.id == tid))).scalar_one_or_none()
+            if not tenant:
+                return None
+            row = (await self.session.execute(select(CompanyProfile).where(CompanyProfile.tenant_id == tid))).scalar_one_or_none()
+            profile = row.profile if row and row.profile else {}
+            effective = {
+                **profile,
+                "legal_name": profile.get("legal_name") or tenant.legal_name,
+                "tax_number": profile.get("tax_number") or (tenant.cnpj or ""),
+            }
+            return effective
+        except Exception:
+            return None
 
     async def _exclusions(self, offer: Offer) -> dict[str, list[str]]:
         """Exclusions and assumptions come from the estimate basis, never from a second list."""
