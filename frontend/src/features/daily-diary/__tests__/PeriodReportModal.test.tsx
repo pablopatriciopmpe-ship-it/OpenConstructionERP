@@ -21,6 +21,16 @@ vi.mock('@/stores/useToastStore', () => ({
   useToastStore: (selector: any) => selector({ addToast: vi.fn() }),
 }));
 
+vi.mock('@/shared/ui', async (importOriginal) => {
+  const actual = await importOriginal<Record<string, unknown>>();
+  return {
+    ...actual,
+    AuthImage: ({ src, alt, className }: any) => (
+      <img src={src} alt={alt} className={className} data-testid="auth-image" />
+    ),
+  };
+});
+
 describe('PeriodReportModal component (v0.4)', () => {
   const mockPreviewResponse: api.PeriodReportPreviewResponse = {
     project_name: 'Obra Teste Aurora',
@@ -132,7 +142,7 @@ describe('PeriodReportModal component (v0.4)', () => {
     expect(summaryInput.value).toBe('Resumo das obras na semana.');
   });
 
-  it('handles photo selection toggle in photo grid', async () => {
+  it('handles photo selection toggle in photo grid and renders AuthImage', async () => {
     vi.spyOn(api, 'previewPeriodReport').mockResolvedValue(mockPreviewResponse);
 
     render(
@@ -148,6 +158,10 @@ describe('PeriodReportModal component (v0.4)', () => {
     await waitFor(() => {
       expect(screen.getByTestId('selected-photos-count')).toBeDefined();
     });
+
+    // Check AuthImage rendered for photo items
+    const authImages = screen.getAllByTestId('auth-image');
+    expect(authImages.length).toBe(2);
 
     // Initially photo-1 is selected (1 / 2)
     expect(screen.getByTestId('selected-photos-count').textContent).toBe('1 / 2');

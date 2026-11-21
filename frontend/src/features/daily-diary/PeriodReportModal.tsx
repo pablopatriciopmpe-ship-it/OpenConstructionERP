@@ -20,6 +20,7 @@ import {
 import { WideModal } from '@/shared/ui/WideModal';
 import { Button } from '@/shared/ui/Button';
 import { Input } from '@/shared/ui/Input';
+import { AuthImage } from '@/shared/ui';
 import { useToastStore } from '@/stores/useToastStore';
 import {
   previewPeriodReport,
@@ -233,7 +234,7 @@ export const PeriodReportModal: React.FC<PeriodReportModalProps> = ({
       })}
       size="xl"
     >
-      <div className="space-y-6 pb-2" data-testid="period-report-modal">
+      <div className="space-y-6 pb-6 pb-[max(1.5rem,env(safe-area-inset-bottom))]" data-testid="period-report-modal">
         {/* Step 1: Configuração do período e opções */}
         <div className="bg-surface-elevated/40 border border-border/60 rounded-xl p-4 sm:p-5 space-y-4">
           <div>
@@ -591,10 +592,11 @@ export const PeriodReportModal: React.FC<PeriodReportModalProps> = ({
                       >
                         <div className="aspect-video bg-surface-elevated flex items-center justify-center overflow-hidden">
                           {photo.url ? (
-                            <img
+                            <AuthImage
                               src={photo.url}
                               alt={photo.caption || photo.date}
                               className="w-full h-full object-cover"
+                              fallback={<ImageIcon className="text-text-muted" size={24} />}
                             />
                           ) : (
                             <ImageIcon className="text-text-muted" size={24} />

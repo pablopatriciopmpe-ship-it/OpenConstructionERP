@@ -13,6 +13,9 @@ import {
   apiDelete,
   activeLanguageTag,
   downloadWithAuth,
+  fetchWithAuth,
+  extractErrorMessageFromBody,
+  triggerDownload,
   type Page,
 } from '@/shared/lib/api';
 import { documentExportUrl } from '@/shared/lib/documentExport';
@@ -654,12 +657,45 @@ export function previewPeriodReport(data: PeriodReportPreviewParams): Promise<Pe
 }
 
 export async function downloadPeriodReportPdf(data: PeriodReportPdfParams): Promise<void> {
-  return downloadWithAuth('/v1/daily-diary/period-report/pdf', {
+  const response = await fetchWithAuth('/api/v1/daily-diary/period-report/pdf', {
     method: 'POST',
-    body: JSON.stringify(data),
     headers: {
       'Content-Type': 'application/json',
+      Accept: 'application/pdf',
     },
-    defaultFilename: `relatorio-obra-${data.date_from}-a-${data.date_to}.pdf`,
+    body: JSON.stringify(data),
   });
+
+  if (!response.ok) {
+    let detail = `Download failed (HTTP ${response.status})`;
+    try {
+      const json = await response.json();
+      detail = extractErrorMessageFromBody(json) ?? detail;
+    } catch {
+      // Body was not JSON; keep status-based message.
+    }
+    throw new Error(detail);
+  }
+
+  const contentType = response.headers.get('content-type') || '';
+  if (!contentType.includes('application/pdf')) {
+    throw new Error(`Invalid response content type: expected application/pdf but received ${contentType || 'empty'}`);
+  }
+
+  const disposition = response.headers.get('Content-Disposition');
+  let filename = `relatorio-obra-${data.date_from}-a-${data.date_to}.pdf`;
+  const starMatch = disposition?.match(/filename\*=UTF-8''(.+?)(?:;|$)/i);
+  if (starMatch?.[1]) {
+    try {
+      filename = decodeURIComponent(starMatch[1].replace(/^"/, '').replace(/"$/, ''));
+    } catch {
+      // fallback
+    }
+  } else {
+    const plainMatch = disposition?.match(/filename="?([^";]+)"?/);
+    if (plainMatch?.[1]) filename = plainMatch[1];
+  }
+
+  const blob = await response.blob();
+  triggerDownload(blob, filename);
 }
