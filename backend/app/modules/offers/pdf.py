@@ -228,8 +228,6 @@ def render_offer(
     from app.core.pdf_fonts import BODY_FONT, BOLD_FONT, pdf_font_for_text
 
     locale = str(data.get("locale") or "en")
-    comp_profile = data.get("company_profile")
-    token = pdf_branding.set_company_profile_context(comp_profile) if comp_profile else None
     labels = _labels(locale)
     rtl = is_rtl(locale)
     pack = data.get("pack") or {}
@@ -676,18 +674,23 @@ def render_offer(
         if kind == "payment_details" and not chunk_text and data.get("payment_details"):
             chunk_text = str(data["payment_details"])
         if chunk_text:
+            items: list[Any] = []
             if heading_key and labels.get(heading_key):
-                story.append(_para(labels[heading_key], h2))
+                items.append(_para(labels[heading_key], h2))
             chunk = _body_paras(chunk_text, small if kind == "legal_notice" else body)
             if chunk:
-                story.extend(chunk)
+                items.extend(chunk)
+            if items:
+                story.append(KeepTogether(items))
                 story.append(Spacer(1, 2.5 * MM))
 
     ex = exclusions or {}
     for key, label in (("exclusions", "offer_exclusions"), ("assumptions", "offer_assumptions")):
         if ex.get(key):
-            story.append(_para(labels[label], h2))
-            story.extend(_para(f"- {item}", body) for item in ex[key])
+            items = [_para(labels[label], h2)]
+            items.extend(_para(f"- {item}", body) for item in ex[key])
+            story.append(KeepTogether(items))
+            story.append(Spacer(1, 2.5 * MM))
 
     # -- acceptance, kept whole
     import html
@@ -787,13 +790,24 @@ def render_offer(
     )
     from reportlab.platypus import NextPageTemplate
 
-    try:
-        story.insert(0, NextPageTemplate("Later"))
-        pdf_branding.build_with_page_count(doc, story)
-        return buffer.getvalue(), int(getattr(doc, "page", 0) or 1)
-    finally:
-        if token:
-            pdf_branding.reset_company_profile_context(token)
+    story.insert(0, NextPageTemplate("Later"))
+    pdf_branding.build_with_page_count(doc, story)
+    return buffer.getvalue(), int(getattr(doc, "page", 0) or 1)
+
+
+def _customer_address_lines(customer: dict[str, Any], *, home_country: str = "", attn_label: str = "Attn.") -> list[str]:
+    addr = customer.get("billing_address") or {}
+    lines = [str(customer.get("name") or "")]
+    if customer.get("attn"):
+        lines.append(f"{attn_label} {customer['attn']}")
+    if addr.get("street"):
+        lines.append(addr["street"])
+    town = " ".join(p for p in (addr.get("postcode"), addr.get("city")) if p)
+    if addr.get("state") and (home_country or "").upper() == "US":
+        town = f"{addr.get('city', '')}, {addr['state']} {addr.get('postcode', '')}".strip(", ")
+    if town:
+        lines.append(town)
+    return [line for line in lines if line]
 
 
 def _due_text(row: dict[str, Any], labels: dict[str, str]) -> str:
@@ -819,10 +833,9 @@ def _draw_address(
     rtl: bool,
 ) -> None:
     from app.core.pdf_fonts import pdf_font_for_text
-    from app.modules.offers.service import address_lines
 
     customer = data.get("customer") or {}
-    lines = address_lines(customer, home_country=str(data.get("home_country") or ""), attn_label=labels["offer_attn"])
+    lines = _customer_address_lines(customer, home_country=str(data.get("home_country") or ""), attn_label=labels["offer_attn"])
     fit = address_fit(lines, window)
     size, leading = (10.0, 12.0) if fit != "small" else (9.0, 10.5)
     x = _window_x(window)

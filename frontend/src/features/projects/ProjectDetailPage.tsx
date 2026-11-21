@@ -61,6 +61,7 @@ import {
 import { DismissibleInfo } from '@/shared/ui/DismissibleInfo';
 import { ProjectLayoutManager } from './ProjectLayoutManager';
 import { ProjectStatusBadge, CURATED_PROJECT_STATUSES, useProjectStatusLabel } from './ProjectStatusBadge';
+import { projectRegionLabel } from '@/shared/lib/projectRegionLabel';
 import { folderLinkHref } from './folderLink';
 import { StatusHistoryTimeline } from './StatusHistoryTimeline';
 import { useProjectDetailLayoutStore } from '@/stores/useProjectDetailLayoutStore';
@@ -1973,7 +1974,7 @@ export function ProjectDetailPage() {
       >
         {t('projects.detail_intro_body', {
           defaultValue:
-            'This is the project hub: its Planilhas orçamentárias, Cronograma, 5D budget and key stats sit on one page so you do not hunt through the sidebar to find where the work lives. Jump straight into a cost work-product or open Project Settings to change region, currency or active modules. Edits to Planilhas orçamentárias and costs roll up into the totals shown across Analytics and Reporting.',
+            'Este é o centro da obra: seus orçamentos, cronograma e principais indicadores consolidados em uma só página para acesso rápido. Acesse diretamente os itens orçados ou abra as Configurações do projeto para gerenciar região, moeda e preferências.',
         })}
       </DismissibleInfo>
 
@@ -2157,7 +2158,7 @@ export function ProjectDetailPage() {
                     {currency ?? t('projects.currency_not_set', { defaultValue: 'Currency not set' })}
                   </Badge>
                   <Badge variant="neutral" size="sm">
-                    {project.region}
+                    {projectRegionLabel(project.region)}
                   </Badge>
                   <span className="text-xs text-content-tertiary ml-2">
                     {t('projects.created', { date: formatDate(project.created_at, i18n.language) })}

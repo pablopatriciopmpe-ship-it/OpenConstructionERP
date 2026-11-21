@@ -693,7 +693,7 @@ export function ProjectsPage() {
       >
         {t('projects.intro_body', {
           defaultValue:
-            'Every project you create lands here as a card carrying its Planilha orçamentária count, total value in its own currency, region and uploaded file types, so you see the whole portfolio at a glance without opening each one. Open a card to reach the project hub, or pin and filter to keep daily work on top. Totals feed Analytics and the role Painéis in Reporting.',
+            'Cada projeto criado aparece aqui em um card com contagem de orçamentos, valor total na moeda configurada, região e arquivos vinculados, permitindo visão geral de todo o portfólio. Abra um card para acessar o painel do projeto ou use filtros para acompanhar suas obras em andamento.',
         })}
       </DismissibleInfo>
 

@@ -347,11 +347,14 @@ interface ChangeOrderSummary {
   currency?: string;
 }
 
-function fmtMoney(value: number | string | null | undefined, currency = 'EUR'): string {
-  if (value == null) return `${currency} 0`;
-  const n = typeof value === 'string' ? Number(value) : value;
-  if (!Number.isFinite(n)) return `${currency} 0`;
-  return `${currency} ${n.toLocaleString(getNumberLocale(), { maximumFractionDigits: 0 })}`;
+function fmtMoney(value: number | string | null | undefined, currency = 'BRL'): string {
+  const curr = (currency || 'BRL').trim();
+  const num = value == null ? 0 : typeof value === 'string' ? Number(value) : value;
+  const n = Number.isFinite(num) ? num : 0;
+  if (curr.toUpperCase() === 'BRL') {
+    return n.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  }
+  return `${curr} ${n.toLocaleString(getNumberLocale(), { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
 
 export function ChangeOrdersPulseWidget({

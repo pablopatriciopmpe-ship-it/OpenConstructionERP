@@ -73,16 +73,14 @@ logger = logging.getLogger(__name__)
 #: The brand shown when no workspace branding is set (or it cannot be read).
 DEFAULT_BRAND = "Evolux Obras"
 
-_current_company_profile: ContextVar[dict[str, Any] | None] = ContextVar("current_company_profile", default=None)
+
+def set_company_profile_context(profile: dict[str, Any] | None) -> Any:
+    # Deprecated: tenant profile is bound via app.core.company_profile.bind_tenant_profile
+    return None
 
 
-def set_company_profile_context(profile: dict[str, Any] | None) -> Token[Any]:
-    return _current_company_profile.set(profile)
-
-
-def reset_company_profile_context(token: Token[Any]) -> None:
-    with contextlib.suppress(ValueError, LookupError):
-        _current_company_profile.reset(token)
+def reset_company_profile_context(token: Any) -> None:
+    pass
 
 
 PROVISIONAL_LOGO_DATA_URL = (
@@ -148,8 +146,8 @@ _HEADER_COLOR = "#1a1a2e"
 #: Header logo box (points). The logo is scaled to fit inside this box while
 #: keeping its aspect ratio; a wordmark therefore stays legible and a square
 #: mark never overflows the header band.
-_LOGO_MAX_W = 130.0
-_LOGO_MAX_H = 22.0
+_LOGO_MAX_W = 160.0
+_LOGO_MAX_H = 24.0
 
 
 def _read_branding() -> dict[str, Any]:
@@ -219,43 +217,35 @@ def branded_appearance(doc_type: str | None = None) -> dict[str, Any]:
 
 def _read_company_profile() -> dict[str, Any]:
     """Return the persisted company profile, or `{}`, never raising."""
-    scoped = _current_company_profile.get()
-    if scoped is not None:
-        return dict(scoped)
-    # Never read global company_profile.json to avoid cross-tenant data leaks (v0.3-B).
-    return {}
+    try:
+        from app.core.company_profile import read_company_profile
+
+        data = read_company_profile()
+        return data if isinstance(data, dict) else {}
+    except Exception:
+        logger.debug("Could not read company profile; no letterhead", exc_info=True)
+        return {}
 
 
 def _letterhead_profile() -> dict[str, Any] | None:
-    """Return the company profile when it calls for a letterhead, else a branded fallback."""
+    """Return the company profile when it calls for a letterhead, else None."""
     try:
         from app.core.company_profile import has_letterhead
 
         profile = _read_company_profile()
-        if not profile or not has_letterhead(profile):
-            return {
-                "legal_name": _company_name(),
-                "document_logo_data_url": PROVISIONAL_LOGO_DATA_URL,
-                "document_logo_png_data_url": PROVISIONAL_LOGO_DATA_URL,
-                "address": profile.get("address", "") if profile else "",
-                "registration_line": profile.get("registration_line", "") if profile else "",
-                "vat_id": profile.get("vat_id", "") if profile else "",
-                "tax_number": profile.get("tax_number", "") if profile else "",
-                "phone": profile.get("phone", "") if profile else "",
-                "email": profile.get("email", "") if profile else "",
-                "website": profile.get("website", "") if profile else "",
-            }
-        if not profile.get("document_logo_data_url"):
-            profile["document_logo_data_url"] = PROVISIONAL_LOGO_DATA_URL
-            profile["document_logo_png_data_url"] = PROVISIONAL_LOGO_DATA_URL
-        return profile
+        return profile if has_letterhead(profile) else None
     except Exception:  # noqa: BLE001 - degrade, never break PDF output
         logger.debug("Could not decide on a letterhead; none drawn", exc_info=True)
         return None
 
 
 def _logo_candidates(branding: dict[str, Any], profile: dict[str, Any]) -> list[str]:
-    """The logos to try, best first: the document logo, then the app logo, then provisional."""
+    """The logos to try, best first: the document logo, then the app logo.
+
+    Both are offered so a document logo that fails to decode still leaves the
+    app logo in the header instead of nothing. An SVG logo is offered as the
+    PNG the browser rasterised it to, and not at all when it has none.
+    """
     candidates: list[str] = []
     pairs = (
         (profile.get("document_logo_data_url"), profile.get("document_logo_png_data_url")),
@@ -265,10 +255,7 @@ def _logo_candidates(branding: dict[str, Any], profile: dict[str, Any]) -> list[
         if isinstance(value, str) and value.startswith("data:image/svg"):
             value = png
         if isinstance(value, str) and value and value not in candidates:
-            if "AAAm4klEQVR4nO2deTxU3RvA74yZ18zIZCSyVHah" not in value and "OpenConstruction" not in value:
-                candidates.append(value)
-    if PROVISIONAL_LOGO_DATA_URL not in candidates:
-        candidates.append(PROVISIONAL_LOGO_DATA_URL)
+            candidates.append(value)
     return candidates
 
 
@@ -382,6 +369,12 @@ def _company_name(branding: dict[str, Any] | None = None) -> str:
     here, so they cannot disagree. The profile is only read when the app name
     is empty, so a workspace without a profile prints what it always did.
     """
+    from app.core.company_profile import tenant_scope_active
+
+    if tenant_scope_active():
+        legal_name = _read_company_profile().get("legal_name")
+        return legal_name.strip() if isinstance(legal_name, str) and legal_name.strip() else ""
+
     data = branding if branding is not None else _read_branding()
     name = _app_company_name(data)
     if name:
@@ -620,12 +613,15 @@ def _draw_page_furniture(
             footer_left = custom_footer[:160]
         elif default_line:
             comp_name = _company_name(branding)[:120]
-            footer_left = f"{comp_name}  ·  {doc_ref}" if doc_ref else comp_name
-            # Only the "auto" stamp setting keeps the date in this line; the
-            # others print it on the line below, or not at all.
-            if (appearance.get("print_stamp") or "auto") == "auto":
-                generated = datetime.now(tz=UTC).strftime("%d/%m/%Y")
-                suffix = f"  |  {furniture_text('generated', date=generated)}"
+            if comp_name:
+                footer_left = f"{comp_name}  ·  {doc_ref}" if doc_ref else comp_name
+                # Only the "auto" stamp setting keeps the date in this line; the
+                # others print it on the line below, or not at all.
+                if (appearance.get("print_stamp") or "auto") == "auto":
+                    generated = datetime.now(tz=UTC).strftime("%d/%m/%Y")
+                    suffix = f"  |  {furniture_text('generated', date=generated)}"
+            else:
+                footer_left = ""
         else:
             footer_left = ""
         face, size = BODY_FONT, 7.0
@@ -1169,8 +1165,8 @@ def branded_header_logo(canvas: Any, doc: Any, *, align: str = "right") -> bool:
 #: Letterhead logo box (points). Larger than the header box because on a
 #: letterhead the logo is the point, and 60 x 20 mm holds a wide wordmark and a
 #: square mark alike without pushing the document title far down the page.
-_LETTERHEAD_LOGO_MAX_W = 60.0 * MM
-_LETTERHEAD_LOGO_MAX_H = 20.0 * MM
+_LETTERHEAD_LOGO_MAX_W = 75.0 * MM
+_LETTERHEAD_LOGO_MAX_H = 22.0 * MM
 #: Centred, the logo sits above the block instead of beside it, so every
 #: millimetre of it is added to the letterhead's height. Measured on the RFI
 #: form: at the full 20 mm, with the address on three lines, a centred

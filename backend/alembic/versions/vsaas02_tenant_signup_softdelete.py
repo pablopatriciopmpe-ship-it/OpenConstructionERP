@@ -23,7 +23,7 @@ import sqlalchemy as sa
 from alembic import op
 
 revision: str = "vsaas02_signup"
-down_revision: str | Sequence[str] | None = "vcub01_cub_rates"
+down_revision: str | Sequence[str] | None = "voff02_offer_commercial_fields"
 branch_labels: str | Sequence[str] | None = None
 depends_on: str | Sequence[str] | None = None
 
