@@ -6009,7 +6009,6 @@ async def export_boq_pdf(
     # ── Commercial report dispatch ──────────────────────────────────────────
     if report_type in ("material_labor", "labor_service", "sinapi", "synthetic"):
         from app.modules.boq import commercial_exports
-        from app.core.content_disposition import content_disposition
 
         project_line = f"{project.name} · {project.project_code}" if project.project_code else project.name
         if report_type == "material_labor":
@@ -6028,7 +6027,7 @@ async def export_boq_pdf(
         return StreamingResponse(
             io.BytesIO(c_pdf),
             media_type="application/pdf",
-            headers={"Content-Disposition": content_disposition(c_fn, "attachment")},
+            headers={"Content-Disposition": attachment_disposition(c_fn)},
         )
     # The subtotals in ``boq_data`` were rolled up in the project's base
     # currency with this FX table; each printed line is converted with it too,
@@ -6074,8 +6073,6 @@ async def export_boq_pdf(
             #
             # PDF generation is CPU-bound (ReportLab rendering); run in a
             # thread so it does not stall the event loop for other requests.
-            import asyncio
-
             _currency = (project.currency or "").strip()
             _country = document_country(project.country_code, project.region, _currency)
             _locale = (project.locale or "en").strip()
@@ -6095,8 +6092,6 @@ async def export_boq_pdf(
                 details=_pdf_details,
             )
         else:
-            import asyncio
-
             if include_resources and not resource_rows_fit(boq_data):
                 _log.info(
                     "BOQ %s: %d positions with %d resource rows pass the PDF row budget (%d) - "

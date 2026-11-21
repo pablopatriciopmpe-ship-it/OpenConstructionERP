@@ -114,3 +114,49 @@ def test_synthetic_exports():
 
     pdf = commercial_exports.render_synthetic_pdf(boq, "Projeto Alpha")
     assert isinstance(pdf, bytes) and pdf.startswith(b"%PDF")
+
+
+def test_commercial_export_pdf_endpoints_via_testclient():
+    import uuid
+    from unittest.mock import AsyncMock, patch
+    from fastapi.testclient import TestClient
+    from app.main import create_app
+    from app.dependencies import get_current_user_id, get_current_user_payload, get_session
+    from app.modules.boq.router import router as boq_router
+
+    app = create_app()
+    routes = [getattr(r, "path", "") for r in app.routes]
+    if not any("/api/v1/boq" in r for r in routes):
+        app.include_router(boq_router, prefix="/api/v1/boq")
+
+    boq_id = uuid.uuid4()
+    app.dependency_overrides[get_current_user_id] = lambda: uuid.uuid4()
+    app.dependency_overrides[get_current_user_payload] = lambda: {
+        "sub": str(uuid.uuid4()),
+        "role": "admin",
+        "permissions": ["*"],
+    }
+    app.dependency_overrides[get_session] = lambda: AsyncMock()
+
+    sample_boq = _sample_boq()
+    sample_boq.id = boq_id
+    sample_boq.project_id = uuid.uuid4()
+    sample_project = SimpleNamespace(name="Obra Alpha", project_code="PRJ-01")
+
+    try:
+        with patch("app.modules.boq.router._verify_boq_owner", new_callable=AsyncMock), \
+             patch("app.modules.boq.router._stamp_drawing_refs", new_callable=AsyncMock), \
+             patch("app.modules.projects.repository.ProjectRepository.get_by_id", new_callable=AsyncMock, return_value=sample_project), \
+             patch("app.modules.boq.service.BOQService.get_boq_structured_for_export", new_callable=AsyncMock, return_value=sample_boq):
+            client = TestClient(app)
+            for report_type in ("synthetic", "material-labor", "labor-service", "sinapi"):
+                res = client.get(f"/api/v1/boq/boqs/{boq_id}/export/{report_type}/?format=pdf")
+                assert res.status_code == 200, f"Failed on {report_type}: {res.status_code} {res.text}"
+                assert "application/pdf" in res.headers.get("content-type", "")
+                assert res.content.startswith(b"%PDF")
+                assert "attachment;" in res.headers.get("content-disposition", "")
+    finally:
+        app.dependency_overrides.pop(get_current_user_id, None)
+        app.dependency_overrides.pop(get_current_user_payload, None)
+        app.dependency_overrides.pop(get_session, None)
+
