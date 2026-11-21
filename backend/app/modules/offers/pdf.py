@@ -408,7 +408,10 @@ def render_offer(
                 raw_desc = ln.get("description", "") or ord_
                 desc_ = pdf_branding.clean_section_title(raw_desc) if (locale or "").startswith("pt") else raw_desc
                 amt_d = get_section_subtotal(ord_) or Decimal(str(ln.get("total") or "0"))
-                pct_str = f"{(float(amt_d / net_val) * 100):.1f}%" if net_val > 0 else "0.0%"
+                pct_val = (float(amt_d / net_val) * 100) if net_val > 0 else 0.0
+                pct_str = f"{pct_val:.1f}%"
+                if (locale or "").startswith("pt"):
+                    pct_str = pct_str.replace(".", ",")
                 rows.append([
                     _para(ord_, cell, bold=True),
                     _para(desc_, cell, bold=True),
@@ -687,21 +690,31 @@ def render_offer(
             story.extend(_para(f"- {item}", body) for item in ex[key])
 
     # -- acceptance, kept whole
+    import html
+    from reportlab.platypus import Paragraph
+
     customer_dict = data.get("customer") or {}
-    cust_display_name = str(customer_dict.get("name") or "")
-    cust_display_wa = str(customer_dict.get("whatsapp") or customer_dict.get("phone") or "")
+    cust_display_name = html.escape(str(customer_dict.get("name") or "").strip())
+    cust_display_wa = html.escape(str(customer_dict.get("whatsapp") or customer_dict.get("phone") or "").strip())
+    sig_text_parts: list[str] = []
+    if cust_display_name:
+        sig_text_parts.append(f"<b>{cust_display_name}</b>")
+    if cust_display_wa:
+        sig_text_parts.append(f"WhatsApp: {cust_display_wa}")
+    header_line = " · ".join(sig_text_parts)
+    sig_html = (
+        (f"{header_line}<br/>" if header_line else "")
+        + "<font color='#666666' size='7.5'>De acordo com os valores, condições e escopo desta proposta comercial.</font>"
+    )
+    sig_para = Paragraph(sig_html, cell)
+
     sign = Table(
         [
             [_para(labels["offer_accepted_on"], small), _para(labels["offer_signature"], small)],
             ["", ""],
             [
                 _para("Data: ____ / ____ / ________", cell),
-                _para(
-                    f"<b>{cust_display_name}</b>"
-                    + (f" · WhatsApp: {cust_display_wa}" if cust_display_wa else "")
-                    + "<br/><font color='#666666' size='7.5'>De acordo com os valores, condições e escopo desta proposta comercial.</font>",
-                    cell,
-                ),
+                sig_para,
             ],
         ],
         colWidths=[frame_w * 0.35, frame_w * 0.65],

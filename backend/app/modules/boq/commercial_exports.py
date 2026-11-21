@@ -249,7 +249,7 @@ def render_material_labor_xlsx(boq_data: Any, project_line: str | None = None) -
     ]
     cur_r = 4
     for label, val, pct in row_data:
-        ws_resumo.append([label, float(val), f"{float(pct):.2f}%"])
+        ws_resumo.append([label, float(val), f"{float(pct):.2f}%".replace(".", ",")])
         ws_resumo.cell(row=cur_r, column=1).font = f_cell
         ws_resumo.cell(row=cur_r, column=1).alignment = align_l
         ws_resumo.cell(row=cur_r, column=2).font = f_cell
@@ -262,7 +262,7 @@ def render_material_labor_xlsx(boq_data: Any, project_line: str | None = None) -
         cur_r += 1
 
     # Total Row
-    ws_resumo.append(["TOTAL GERAL DO ORÇAMENTO", float(summary["grand_total"]), "100.00%"])
+    ws_resumo.append(["TOTAL GERAL DO ORÇAMENTO", float(summary["grand_total"]), "100,00%"])
     ws_resumo.cell(row=cur_r, column=1).font = f_bold
     ws_resumo.cell(row=cur_r, column=1).fill = fill_sub
     ws_resumo.cell(row=cur_r, column=2).font = f_bold
@@ -301,7 +301,7 @@ def render_material_labor_xlsx(boq_data: Any, project_line: str | None = None) -
                 float(it["quantity"]),
                 float(it["unit_rate"]),
                 float(it["total"]),
-                f"{float(it['pct']):.2f}%",
+                f"{float(it['pct']):.2f}%".replace(".", ","),
             ])
             ws.cell(row=r_idx, column=1).alignment = align_c
             ws.cell(row=r_idx, column=2).alignment = align_l
@@ -325,7 +325,8 @@ def render_material_labor_xlsx(boq_data: Any, project_line: str | None = None) -
 
         # Totals row
         tot_sum = sum((it["total"] for it in items), Decimal(0))
-        ws.append(["TOTAL", f"{len(items)} itens", "", "", "", float(tot_sum), f"{float((tot_sum/summary['grand_total'])*100):.2f}%"])
+        tot_pct_str = f"{float((tot_sum/summary['grand_total'])*100):.2f}%".replace(".", ",")
+        ws.append(["TOTAL", f"{len(items)} itens", "", "", "", float(tot_sum), tot_pct_str])
         ws.cell(row=r_idx, column=1).font = f_bold
         ws.cell(row=r_idx, column=1).fill = fill_sub
         ws.cell(row=r_idx, column=2).font = f_bold
@@ -590,7 +591,7 @@ def render_labor_service_xlsx(boq_data: Any, project_line: str | None = None) ->
             float(pos_total),
             float(mo_total),
             float(mo_unit),
-            f"{float(mo_pct):.1f}%",
+            f"{float(mo_pct):.1f}%".replace(".", ","),
         ])
         ws.cell(row=r_idx, column=1).alignment = align_c
         ws.cell(row=r_idx, column=2).alignment = align_l
@@ -616,7 +617,8 @@ def render_labor_service_xlsx(boq_data: Any, project_line: str | None = None) ->
 
     # Totals row
     overall_mo_pct = (tot_mo / tot_serv * 100) if tot_serv > 0 else Decimal(0)
-    ws.append(["TOTAL GERAL", "Total consolidado de serviços e mão de obra", "", "", float(tot_serv), float(tot_mo), "", f"{float(overall_mo_pct):.1f}%"])
+    overall_pct_str = f"{float(overall_mo_pct):.1f}%".replace(".", ",")
+    ws.append(["TOTAL GERAL", "Total consolidado de serviços e mão de obra", "", "", float(tot_serv), float(tot_mo), "", overall_pct_str])
     for col in range(1, len(headers) + 1):
         cell = ws.cell(row=r_idx, column=col)
         cell.font = f_bold
@@ -862,7 +864,7 @@ def render_sinapi_xlsx(boq_data: Any, project_line: str | None = None) -> bytes:
             float(pos_qty),
             float(pos_rate),
             float(pos_total),
-            f"{float(pct):.2f}%",
+            f"{float(pct):.2f}%".replace(".", ","),
         ])
         ws.cell(row=r_idx, column=1).alignment = align_c
         ws.cell(row=r_idx, column=2).alignment = align_c
@@ -886,7 +888,7 @@ def render_sinapi_xlsx(boq_data: Any, project_line: str | None = None) -> bytes:
         r_idx += 1
 
     # Totals row
-    ws.append(["TOTAL GERAL", "", "Total consolidado do orçamento", "", "", "", float(grand_total), "100.00%"])
+    ws.append(["TOTAL GERAL", "", "Total consolidado do orçamento", "", "", "", float(grand_total), "100,00%"])
     for col in range(1, len(headers) + 1):
         cell = ws.cell(row=r_idx, column=col)
         cell.font = f_bold
@@ -1110,7 +1112,7 @@ def render_synthetic_xlsx(boq_data: Any, project_line: str | None = None) -> byt
     r_idx = 4
     for sec in sections:
         sec_pct = (sec["total"] / grand_total) * 100
-        ws.append([sec["ordinal"], sec["description"], float(sec["total"]), f"{float(sec_pct):.2f}%"])
+        ws.append([sec["ordinal"], sec["description"], float(sec["total"]), f"{float(sec_pct):.2f}%".replace(".", ",")])
         ws.cell(row=r_idx, column=1).alignment = align_c
         ws.cell(row=r_idx, column=2).alignment = align_l
         ws.cell(row=r_idx, column=3).alignment = align_r
@@ -1123,7 +1125,7 @@ def render_synthetic_xlsx(boq_data: Any, project_line: str | None = None) -> byt
         r_idx += 1
 
     # Total row
-    ws.append(["TOTAL", "TOTAL GERAL DO ORÇAMENTO", float(grand_total), "100.00%"])
+    ws.append(["TOTAL", "TOTAL GERAL DO ORÇAMENTO", float(grand_total), "100,00%"])
     for col in range(1, 5):
         cell = ws.cell(row=r_idx, column=col)
         cell.font = f_bold

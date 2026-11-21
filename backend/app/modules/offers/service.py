@@ -1011,25 +1011,41 @@ class OfferService:
         try:
             import uuid
             from sqlalchemy import select
+            from app.core import pdf_branding
             from app.modules.saas.models import CompanyProfile, Tenant
 
             tenant_id = getattr(project, "tenant_id", None)
             if not tenant_id:
-                return None
+                return {
+                    "legal_name": pdf_branding.DEFAULT_BRAND,
+                    "document_logo_data_url": pdf_branding.PROVISIONAL_LOGO_DATA_URL,
+                    "document_logo_png_data_url": pdf_branding.PROVISIONAL_LOGO_DATA_URL,
+                }
             tid = uuid.UUID(str(tenant_id)) if not isinstance(tenant_id, uuid.UUID) else tenant_id
             tenant = (await self.session.execute(select(Tenant).where(Tenant.id == tid))).scalar_one_or_none()
             if not tenant:
-                return None
+                return {
+                    "legal_name": pdf_branding.DEFAULT_BRAND,
+                    "document_logo_data_url": pdf_branding.PROVISIONAL_LOGO_DATA_URL,
+                    "document_logo_png_data_url": pdf_branding.PROVISIONAL_LOGO_DATA_URL,
+                }
             row = (await self.session.execute(select(CompanyProfile).where(CompanyProfile.tenant_id == tid))).scalar_one_or_none()
             profile = row.profile if row and row.profile else {}
             effective = {
                 **profile,
-                "legal_name": profile.get("legal_name") or tenant.legal_name,
+                "legal_name": profile.get("legal_name") or tenant.legal_name or pdf_branding.DEFAULT_BRAND,
                 "tax_number": profile.get("tax_number") or (tenant.cnpj or ""),
+                "document_logo_data_url": profile.get("document_logo_data_url") or pdf_branding.PROVISIONAL_LOGO_DATA_URL,
+                "document_logo_png_data_url": profile.get("document_logo_png_data_url") or pdf_branding.PROVISIONAL_LOGO_DATA_URL,
             }
             return effective
         except Exception:
-            return None
+            from app.core import pdf_branding
+            return {
+                "legal_name": pdf_branding.DEFAULT_BRAND,
+                "document_logo_data_url": pdf_branding.PROVISIONAL_LOGO_DATA_URL,
+                "document_logo_png_data_url": pdf_branding.PROVISIONAL_LOGO_DATA_URL,
+            }
 
     async def _exclusions(self, offer: Offer) -> dict[str, list[str]]:
         """Exclusions and assumptions come from the estimate basis, never from a second list."""

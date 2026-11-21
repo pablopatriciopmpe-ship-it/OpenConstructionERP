@@ -86,45 +86,48 @@ def reset_company_profile_context(token: Token[Any]) -> None:
 
 
 PROVISIONAL_LOGO_DATA_URL = (
-    "data:image/png;base64,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"
+    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQwAAAA0CAYAAAB/0gbnAAAACXBIWXMAAAAAAAAAAQCEeRdzAAANNUlEQVR"
+    "4nO1dZ3BcVxX2Nm1faZssWb1aVpclWbLjuMtx3KXQe5+hD0PPAENvQ4khdBgIfWihDj0wEAOhhGYIvU3oQwIJGGJswfmetJvd9859bVd6kvZ8"
+    "M/eH5fvO7d895d67mzYJBAKBQCAQrBqCsfqRZOfYmczY3Ln8zKl/Nu686n9eJtQBdUl0jl0TjKWGve4fgUBA8Pn94WT3xOsbdy5c8poklGl24WK"
+    "ya/xan89f53V/CQQ1C5BFw+CeGzwnBJuJ6vpFIQ2BwCOQZvEGr0nAaSJN47Ve95tAUHOAz2JNmyGqROZJMJYa8rr/BIKaAhycni9+lynROfoqr/tP"
+    "IKgpZMbnfuT1wnebMmNzP/S6/wSCmkJ+x6k7vV74bhPV/Q6v+08gqCl4vegrTV73n0BQU/B6wQtheIdgIj0Vzrbeszy13MPrem1k1KWbjur7PJTK"
+    "Xe51vWzD6wXvGWH4/CHjYnGWfIFQfRWHYtWR7Nn+FkOfzi781+t6rRUEwrHOSGPnQxHCT/XteE/Dtt2fqR/Y9fFU79Q7Eu3DL6HFf8wXCCadyMxuv"
+    "/LX+j4nuZ9eqTZUHV4veK8IwxcMNVRa9no/qi6EwcIXTjefSI8c+KateTA7fwEEEogk+u0I3/CEcf787Z4kIYyVhxBGOXzBujQWr6v5QP0W29L3ZK"
+    "syhDCEMNYthDDuhr8usiU7ccXPKp0TqZ7Jt5E4n6ocIQwhjHULIYwl4F5Senjf10y0h4v0/zemeqffVd8/+yEilp+bzYvYlv6nqsoSwthghJGfOf2"
+    "vYDw9aSf5/IFoNcditSGEsYR42+BzVfOrfmDXJ/x10Vb9N3X1jXO0+H+rIhjVZlJzhFHprlzt5LbdSsLYcepON/Lq6vMHYi1bn16WtvQ/DdEYs+9"
+    "CicwOw3eUYE+bfDNDk/x5uLWLk7q5qWN/zE4c+SUcdVCJI/n2B/r8wbhVnZ0QRrSx8+H6OkbyHQ9WyWbz59rvb9lnlILR1KBKLqIWXD87jVYU4Au"
+    "EUvnpE7epyILUj4Dq20A43pWbOv4X7ltEVbhvrAiD+mR/qnfq7ZmxQ9/PTR69FaeZkz2Tbw0lszut2gIfir5vEMYtym7YfAT10mRPHf9TdvzwLaXt"
+    "C4Rj7eF08/F4y8DVlO992vwaPXhzdvuRXxULEcKoFmE0HuTkYQDMvuOcbKTy/nQTYwfjomB6eO9X7fRLbvr4X2PNfU/i5BTghDAwcfV5MyMHvqWS"
+    "zeVH3Uvz+OsizTRx/2yQOzZ3jrS3iF5mONtyFdfWSu4URZu6H6OaB/BrWH7f2PUIdgxIy/CHwo36/CrCAOFhkZqM6WKye+KNtMCDqrqQdvxvA3ER+"
+    "UB2ff/MB9j1U7Khcd8b1pkQRnUIAyKxyxsGrH/m/aoP/KFIExao/htNM9EhnGlZgLnktH/qt+68XqXleE0YAO16V3C3pYkEXlnWVyAXIkGDTNKqKn"
+    "kbpX7r7Ie5fqOFdp2d70Fs+emTt3MycFZHn58ljME9N2A3tzOeRCrv3aTYBBSEcR1pSh9TySvtOyEMs4FWEcbs/F2cmmxQ9Uij0MuEKmeQN3P6PNR"
+    "erg6x5t4nGhfs/AXamTaX5oMJYjaYVknbmRhUShhYrKr+tUsYQKJ9+KXGei9cImNhb2G4OE0sv+Pk3wOReLeqDnagMikiubb72JVBpPwRtt+ZN1s4"
+    "wnCayCx7GFcPbo5QH/3DTBYez1J9r5lEZPLChCkWYlW5WiMMuynROfZqvUyosJzGALubqwN2aH1eeOH1VSU78jtcHdIj+2/CDo1y4WTTFh6pwlzeU"
+    "DIzqy+/csLYf5Oqf50QBjQgLkqBxQWyjTb1PJZrE7eDOwGc1qrxdRIBgz+Jk0FE8lF9XjPCgM8EzlT4cMiUPZke3v91Lh98VpxWZbWpIGyc6pt+d6"
+    "p3+p2abJorpYQBDQ6PaWFOKU8xC2FUjzAATBJ9Xqib+nyBaHKAkwvHVGk++vdhLh+Yn3NskjnzFMXkvV6ftwqE8Q1V/zoijE2aw62Dcz42DFz2Kc"
+    "4Uw8RWybILRD9U4wtz0a4cIrTHczK49qoIY3l8ykwNmDuqzYK786MijPzM/H/gCDe0X2ujz18sz85VB6eEsZoh0/VIGHByGvMvXNKH5uJtQy/Q56"
+    "PJ9JvSAQTg0OPKJ5X5vnzD/CFOzdZ8MzpfRsWEQVqBqn+dEobWd5mWBTt9nxk99D3OKeoURNpbVWVgftiVo3J8IsKgz6siDNSFkx3ObDnN5Sdz53"
+    "X6vCrCWHZ+Owa0D5h8cLYX/yiEUV3CQJgKtp9h0MoP8/gQqtLnibdue45enCoqQgTUpmobLkhx39DAj5bmqwJhnFXVwQ1haHXqGr/WrN9BfKrF5R"
+    "SIYqjK4c5eqIAFycmAM1OflyMMhDiVdQzWZTjZXN/zPoxTdzg5LxRKZi9Ldm9/05ID/25ndDGDEIaug0n9BataJRrIrEo2pz2UOo4wKMxCvchN0uz"
+    "44Z9wec3Ca9h9uLaRfXyoLF/lhHGjqg5uCWNZDf+uarwj+Y4HWcmwDepDkrnIlQNHs10xiOhwMur7Zz+oz8sRRmb0wLfN5HO/D7QcetflMxIGR1ps"
+    "V5A2Af+G5Tpbi4Rx5pazWvKEMNyHVYvAgR4uVFjY4blX2slW/yQniztNaFVHPuqgnQk5UZpvJcOqnAZlhzCwiNNDe7+iJIxs670tZTiA6v5IdHP3"
+    "o+3KaBja8yVORrxt8PmG8hjCSA/t+bKZfGggBsKYPPo7fT42rLoUhrUEaRVvtrXOnBKGnUVcaVrvhAE0DF7+Ob3sRMfIy+Hdzk2f+JthMZOtyslR"
+    "7baqUC0ALzj3DWk2u0rzVUwYY3Pn2AqQWYbwsBvC4LSz8vHRQqk9VnLsQrVQaPy+YOd7hMC5yBgSTrLq83OEwWkLRfj8IW7zKQt1LkN1cMuyDWTe"
+    "NjKaFuTF24deFErmdhczC2GsDGEg5KeXDd8G59jLTR77g8rE4KIuSMF4w4SqbFU4jiZGS2k+R4QxevBmw0Snyc/lXfrpCmP5VoSxdFrW+icvKj2"
+    "sVQoi6lOKchZhOlp9D18W9z02Bc53wBGGdlanJLxZCpVjFn4qfV63hEFm3kO4MnAK1pBZCGNlCEPTJJhoBTdhyIR4sUoOe7hrp/EkZAGBSKKPW3T"
+    "whejzOiEMqM3couLCj7jP4pQwsFPjfIH+G03DYs6WqNrvHD5/Zvzwj7n6wqwyOx6ukb9Cu8CFNu4bVZREf8+mANrhX8jKbxm4Wp/XLWHEWrY+gyu"
+    "DNqVxQ2avCYMjB08JY3b+LvgA7CSckTArI9Ex+gobbVg0U7GhFbDeb6qn3icBR6xKu4i3bnu2XrYTwlCp7nhtqrA7giTjrQPPUrVVTRg+f8O23Z/"
+    "V58dBIixYxaJZxBN5Zv1vF6RlzKvqDP9BdHPXo0ovAwajyW3JrvHXqA7JgfgQ3eDKUhEG7tToF2hdQ9OVilDpIhcpck0Yik0p2tTzOENmIQz3Cfa"
+    "2WRmqw1mlyY6trPLCY+Jg58fkhYeb840UJj3n83BCGJFc2/1UbcBdCpgs8C+YtVVFGLTDPZPLjx18abD8IRwSM7RLI5RyM8styLS4xmqsEKLEISj"
+    "TfLPzF8we9TU9Gk59j/mwdBJz39lGRQRH5SB3SxjwUbDtJVMp0THyMphtxcxWnSSE4Z4wAKvbpXbuLGAHt3tL1TDopImUOa1K4IQwYI9zJgNbJhE"
+    "Ie1GMIQwtxMyo9csvVxVBplYv9xs6WoTB5Aq6bRApYXFVMh8Qkg9nW+9lVgx7DmPy6K0YJ1tl4BxKON7FyXZLGJpZNnboB7bWmVUFV/q8xUYnDJw"
+    "bUH2PRaVydhnqSxoC4vpO6gdnaskFLgOcPqADE0Bls99NFiduwxsftq63k9rOhY2zE0d+wb1vgTs5/Djw/gI3wL0VK02JS2ivmSO6ANX1dmwcln1"
+    "LhMRFXgpwTxhkZpE5ZHZRrZhRCGNlCYN25pjq+rObdxywaHEYR2U/LxPF73FqVGVHF+DmxS34bdgn6qg+uA9ROHxmgzB8bASIyjd7LIZ914HKrkv"
+    "l9znpRzNgbsDns7zrsmbB8gI+TybE5/FOh/5IvwpmD+iEEulpHOLiyoImZfXj45UQBgATWuHctk8YlRBHpQtyJQljvQM7MG424lIRnFbRzV2PxMS"
+    "1+9x9haX7oUVgx8fFK5Rr57GZ9Qh/KJzHCVn4cNBWOEDhWwGp2dUOnQILF3eF4HREudU8d2Kr/Eiij+bVA6LNvU/A/CoLLwthCAQC21iNRS2EIRB"
+    "sEHi94IUwBIJ1BK8XvBCGQLCO4PWCF8IQCNYRcHrN60XvNiFu7HX/CQQ1BbwN6fXCd5sQ6/e6/wSCmoKdM/RrNVXvxqJAILAFPKdudmpwzSb8fqX"
+    "JT+oJBIIVgtXDq2sxJTvHznjdbwJBTQLvGOBardckYDfh/L7VjxwLBIIVBEgDP+22ps0TqpumWQhZCARrA7gRh1uUiEBw7w+sdkIdUBc4OMVnIRAI"
+    "BAKBQCAQbBT8H6j0L4EBaN2BAAAAAElFTkSuQmCC"
 )
 
 _PAREN_EN_PATTERN = re.compile(r"\s*\((?![^)]*(?:NBR|ABNT|NR|\d))[^)]+\)")
@@ -211,14 +214,8 @@ def _read_company_profile() -> dict[str, Any]:
     scoped = _current_company_profile.get()
     if scoped is not None:
         return dict(scoped)
-    try:
-        from app.core.company_profile import read_company_profile
-
-        data = read_company_profile()
-        return data if isinstance(data, dict) else {}
-    except Exception:  # noqa: BLE001 - degrade, never break PDF output
-        logger.debug("Could not read company profile; no letterhead", exc_info=True)
-        return {}
+    # Never read global company_profile.json to avoid cross-tenant data leaks (v0.3-B).
+    return {}
 
 
 def _letterhead_profile() -> dict[str, Any] | None:
@@ -260,7 +257,8 @@ def _logo_candidates(branding: dict[str, Any], profile: dict[str, Any]) -> list[
         if isinstance(value, str) and value.startswith("data:image/svg"):
             value = png
         if isinstance(value, str) and value and value not in candidates:
-            candidates.append(value)
+            if "AAAm4klEQVR4nO2deTxU3RvA74yZ18zIZCSyVHah" not in value and "OpenConstruction" not in value:
+                candidates.append(value)
     if PROVISIONAL_LOGO_DATA_URL not in candidates:
         candidates.append(PROVISIONAL_LOGO_DATA_URL)
     return candidates
