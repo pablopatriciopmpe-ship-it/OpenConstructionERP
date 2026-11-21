@@ -414,6 +414,6 @@ async def cub_estimate(
         "cub_por_m2": str(per_sqm),
         "total": str(q2(area_m2 * per_sqm)),
         "por_parcela": {k: str(q2(area_m2 * v)) for k, v in parts.items() if v},
-        "fonte": cub_attribution(row),
+        "fonte": cub_attribution(row.source_name or row.sinduscon_name),
         "aviso": "Estimativa preliminar (CUB não inclui fundações, elevadores, paisagismo, equipamentos e outros itens da NBR 12.721).",
     }
