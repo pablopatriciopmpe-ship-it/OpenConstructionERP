@@ -76,25 +76,26 @@ async def _profile_scope(row: Any) -> Any:
     return TenantProfileScope(tenant_id=str(row.id), profile=cached, member_role=row.member_role or "")
 
 
-async def _check(request: Request, payload: dict[str, Any] | None) -> Any:
-    """Aplica as regras de acesso e devolve a linha da empresa (ou ``None`` sem empresa)."""
+async def _check(request: Request, payload: dict[str, Any] | None) -> tuple[str, Any]:
+    """Aplica as regras de acesso. Devolve ``("tenant", linha)``, ``("installation", None)`` (usuário sem
+    empresa: dono da plataforma ou instalação não-SaaS) ou ``("none", None)`` (anônimo / fora da API)."""
     if payload is None or not request.url.path.startswith("/api/"):
-        return None
+        return "none", None
     sub = payload.get("sub")
     if not sub:
-        return None
+        return "none", None
     path = request.url.path
     method = request.method.upper()
     deleted_ok = path.startswith(_DELETED_ALLOWED_PREFIXES)
     write_ok = method in _SAFE_METHODS or path.startswith(_WRITE_ALLOWED_PREFIXES)
     if deleted_ok and write_ok:
-        return None  # login, perfil e assinatura nunca dependem do estado: evita a consulta
+        return "none", None  # login, perfil e assinatura nunca dependem do estado: evita a consulta
     try:
         row = await _tenant_row(str(sub))
     except Exception:  # noqa: BLE001 - sem tabelas SaaS (instalação não-SaaS): não bloqueia
-        return None
+        return "installation", None
     if row is None:
-        return None
+        return "installation", None
     from app.modules.saas.entitlement import effective_plan
     from app.modules.saas.errors import PlanInactiveError
 
@@ -104,28 +105,37 @@ async def _check(request: Request, payload: dict[str, Any] | None) -> Any:
                 status_code=403,
                 detail={"code": "tenant_deleted", "message": "Esta empresa foi excluída. Fale com o suporte para restaurar."},
             )
-        return None
+        return "none", None
     if not write_ok and effective_plan(row.status, row.plan_code, row.trial_ends_at, deleted_at=row.deleted_at) is None:
         raise PlanInactiveError(row.status)
-    return row
+    return "tenant", row
 
 
 async def tenant_access_guard(request: Request, payload: OptionalUserPayload = None) -> AsyncGenerator[None, None]:
-    from app.core.company_profile import bind_tenant_profile, reset_tenant_profile
+    from app.core.company_profile import (
+        DEFAULT_COMPANY_PROFILE,
+        TenantProfileScope,
+        bind_installation_scope,
+        bind_tenant_profile,
+        reset_tenant_profile,
+        set_tenants_exist,
+    )
 
-    row = await _check(request, payload)
+    kind, row = await _check(request, payload)
     token = None
-    if row is not None:
+    if kind == "tenant":
+        set_tenants_exist(True)
         try:
             token = bind_tenant_profile(await _profile_scope(row))
         except Exception:  # noqa: BLE001
             # Fail CLOSED: sem conseguir ler o perfil da empresa, o documento sai sem timbrado
             # (perfil vazio), nunca com o perfil global de outra pessoa.
-            from app.core.company_profile import DEFAULT_COMPANY_PROFILE, TenantProfileScope
-
             token = bind_tenant_profile(
                 TenantProfileScope(str(row.id), {**DEFAULT_COMPANY_PROFILE, "legal_name": row.legal_name}, row.member_role or "")
             )
+    elif kind == "installation":
+        # Quem não pertence a empresa (dono da plataforma / instalação não-SaaS): escopo EXPLÍCITO da instalação.
+        token = bind_installation_scope()
     try:
         yield
     finally:

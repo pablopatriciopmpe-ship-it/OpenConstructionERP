@@ -1155,3 +1155,16 @@ def sample_cad_elements():
             "quantities": {"area": 85.0, "volume": 17.0},
         },
     ]
+
+
+@pytest.fixture(autouse=True)
+def _reset_company_profile_strictness():
+    """``set_tenants_exist`` é estado do processo: cada teste começa como uma instalação sem empresas."""
+    try:
+        from app.core import company_profile
+    except Exception:  # noqa: BLE001 - suíte sem o pacote da app
+        yield
+        return
+    company_profile.set_tenants_exist(False)
+    yield
+    company_profile.set_tenants_exist(False)

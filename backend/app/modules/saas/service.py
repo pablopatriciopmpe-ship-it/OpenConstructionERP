@@ -180,6 +180,9 @@ async def create_tenant_with_owner(
     )
     session.add(tenant)
     await session.flush()
+    from app.core.company_profile import set_tenants_exist
+
+    set_tenants_exist(True)
     user = User(
         email=owner_email.strip().lower(),
         hashed_password=hash_password(owner_password),
@@ -275,6 +278,9 @@ async def signup_tenant(
     )
     session.add(tenant)
     await session.flush()
+    from app.core.company_profile import set_tenants_exist
+
+    set_tenants_exist(True)
     needs_confirmation = email_delivery_enabled(settings)  # type: ignore[arg-type]
     user = User(
         email=email,

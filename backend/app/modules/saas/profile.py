@@ -11,6 +11,8 @@ from __future__ import annotations
 import re
 import time
 import uuid
+from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
 from typing import Any
 
 from sqlalchemy import select
@@ -97,3 +99,34 @@ async def load_effective(session: AsyncSession, tenant_id: uuid.UUID, legal_name
     profile = effective_profile(legal_name, cnpj, row)
     remember(key, profile)
     return profile
+
+
+class TenantScopeError(RuntimeError):
+    """O tenant pedido para um job não existe ou foi excluído: o job não deve gerar documento."""
+
+
+@asynccontextmanager
+async def tenant_job_scope(tenant_id: str | uuid.UUID) -> AsyncIterator[None]:
+    """Liga o tenant EXPLÍCITO a um documento/job gerado fora de uma requisição (agendados, workers).
+
+    Dentro do bloco, PDF/Excel/e-mail imprimem o perfil dessa empresa e as propostas leem/gravam só
+    dados dela. Sem este bloco um job não tem escopo e o timbrado sai vazio (falha fechada); nunca
+    lê o perfil global. Levanta ``TenantScopeError`` se a empresa não existe ou foi excluída.
+    """
+    from app.core import rls
+    from app.core.company_profile import TenantProfileScope, bind_tenant_profile, reset_tenant_profile
+    from app.database import async_session_factory
+    from app.modules.saas.models import Tenant
+
+    tid = uuid.UUID(str(tenant_id))
+    with rls.system_scope():
+        async with async_session_factory() as session:
+            tenant = (await session.execute(select(Tenant).where(Tenant.id == tid))).scalar_one_or_none()
+            if tenant is None or tenant.deleted_at is not None:
+                raise TenantScopeError(f"tenant {tid} indisponível para gerar documentos")
+            profile = await load_effective(session, tenant.id, tenant.legal_name, tenant.cnpj)
+    token = bind_tenant_profile(TenantProfileScope(str(tid), profile, "system"))
+    try:
+        yield
+    finally:
+        reset_tenant_profile(token)

@@ -11,6 +11,14 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.modules.offers.models import Offer, OfferSettings, OfferTextBlock
 
 
+def _tenant_cond(column):  # noqa: ANN001
+    """Rows of the company the request answers for (the installation's own rows when there is none)."""
+    from app.core.company_profile import current_tenant_id
+
+    tid = current_tenant_id()
+    return column.is_(None) if tid is None else column == tid
+
+
 class OfferRepository:
     def __init__(self, session: AsyncSession) -> None:
         self.session = session
@@ -37,10 +45,12 @@ class OfferRepository:
         return list((await self.session.execute(stmt)).scalars().all())
 
     async def numbers(self) -> list[str]:
-        return list((await self.session.execute(select(Offer.number).distinct())).scalars().all())
+        # Per company: the sequence of one company is never visible to (or advanced by) another.
+        stmt = select(Offer.number).where(_tenant_cond(Offer.tenant_id)).distinct()
+        return list((await self.session.execute(stmt)).scalars().all())
 
     async def number_taken(self, number: str, group_id: uuid.UUID | None) -> bool:
-        stmt = select(Offer.group_id).where(Offer.number == number).distinct()
+        stmt = select(Offer.group_id).where(Offer.number == number, _tenant_cond(Offer.tenant_id)).distinct()
         groups = set((await self.session.execute(stmt)).scalars().all())
         return bool(groups - ({group_id} if group_id else set()))
 
@@ -54,7 +64,7 @@ class OfferRepository:
     async def text_blocks(
         self, *, project_id: uuid.UUID | None = None, kind: str | None = None, scope: str | None = None
     ) -> list[OfferTextBlock]:
-        stmt = select(OfferTextBlock)
+        stmt = select(OfferTextBlock).where(_tenant_cond(OfferTextBlock.tenant_id))
         if scope:
             stmt = stmt.where(OfferTextBlock.scope == scope)
         if project_id is not None:
@@ -79,19 +89,16 @@ class OfferRepository:
     # -- settings ---------------------------------------------------------------------------
 
     async def settings(self) -> OfferSettings:
-        row = (
-            await self.session.execute(select(OfferSettings).where(OfferSettings.key == "default"))
-        ).scalar_one_or_none()
+        where = (OfferSettings.key == "default", _tenant_cond(OfferSettings.tenant_id))
+        row = (await self.session.execute(select(OfferSettings).where(*where))).scalar_one_or_none()
         if row is None:
             # Two first reads in flight (the settings page asks twice) both see no row; the loser of the
             # unique key must read the winner's row, not fail the request.
-            row = OfferSettings(key="default")
+            row = OfferSettings(key="default")  # tenant stamped on insert
             try:
                 async with self.session.begin_nested():
                     self.session.add(row)
                     await self.session.flush()
             except IntegrityError:
-                row = (
-                    await self.session.execute(select(OfferSettings).where(OfferSettings.key == "default"))
-                ).scalar_one()
+                row = (await self.session.execute(select(OfferSettings).where(*where))).scalar_one()
         return row
