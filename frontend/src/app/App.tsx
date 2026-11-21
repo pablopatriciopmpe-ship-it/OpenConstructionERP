@@ -7,6 +7,7 @@ import { Routes, Route, Navigate, Outlet, useLocation, useMatch, useParams } fro
 import { AppLayout } from './layout';
 import { DashboardPage } from '@/features/dashboard';
 import { LoginPage, RegisterPage, ForgotPasswordPage, ResetPasswordPage, VerifyEmailPage, AuthedHome } from '@/features/auth';
+import { SignupPage, MasterPanelPage } from '@/features/saas';
 import { ProjectsPage, CreateProjectPage, ProjectDetailPage, ProjectSettingsPage } from '@/features/projects';
 // Import the lightweight BOQ pages from their source modules directly,
 // NOT via the `@/features/boq` barrel.  The barrel re-exports
@@ -1395,6 +1396,8 @@ export default function App() {
         <Route path="/login" element={isAuthenticated ? <AuthedHome /> : <LoginPage />} />
         <Route path="/login-next" element={isAuthenticated ? <AuthedHome /> : <Suspense fallback={<LoadingScreen />}><LoginPageNext /></Suspense>} />
         <Route path="/register" element={isAuthenticated ? <AuthedHome /> : <RegisterPage />} />
+        {/* "Comece grátis": cadastro público do SaaS (empresa + dono + teste de 14 dias). */}
+        <Route path="/cadastro" element={isAuthenticated ? <AuthedHome /> : <SignupPage />} />
         <Route path="/auth/oidc/callback" element={<Suspense fallback={<LoadingScreen />}><OidcCallbackPage /></Suspense>} />
         <Route path="/forgot-password" element={isAuthenticated ? <AuthedHome /> : <ForgotPasswordPage />} />
         {/* The password-reset email links here (backend users/service.py).
@@ -1736,6 +1739,7 @@ export default function App() {
 
         <Route path="/setup/databases" element={<P title="Databases & Resources"><DatabaseSetupPage /></P>} />
         <Route path="/settings" element={<P title="Settings"><SettingsPage /></P>} />
+        <Route path="/master" element={<P title="Painel master"><MasterPanelPage /></P>} />
         <Route path="/integrations" element={<P title="Integrations"><IntegrationsPage /></P>} />
         <Route path="/jobs" element={<P title="Background Jobs"><JobsPage /></P>} />
         <Route path="/workflows" element={<P title="Approval Workflows"><WorkflowsPage /></P>} />

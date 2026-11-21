@@ -82,6 +82,7 @@ export function LoginPage() {
         } catch { setError('Não foi possível iniciar o acesso da empresa.'); }
       }}>Entrar com a conta da empresa</Button>}
       <Link className="block underline text-sm" to="/forgot-password">Esqueci minha senha</Link>
+      <Link className="block underline text-sm" to="/cadastro" data-testid="signup-link">Criar conta grátis (14 dias de teste)</Link>
       <footer className="text-xs text-content-secondary"><a href="/api/source" target="_blank" rel="noopener noreferrer">{BRAND.sourceLabel}</a></footer>
     </section>
   </main>;
