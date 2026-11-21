@@ -8,7 +8,7 @@ import { useNavigate, useLocation, useParams, useSearchParams } from 'react-rout
 import {
   Table, Table2, ArrowRight, Copy, Trash2, Plus, Pencil,
   Search, ArrowUpDown, GitCompareArrows, X, Loader2,
-  CalendarDays, LayoutGrid, List, LayoutTemplate,
+  CalendarDays, LayoutGrid, List, LayoutTemplate, Wand2,
 } from 'lucide-react';
 import { Card, Badge, EmptyState, Skeleton, Button, Breadcrumb, FileTypeChips, DismissibleInfo, IntroRichText, RecoveryCard } from '@/shared/ui';
 import { PageHeader } from '@/shared/ui/PageHeader';
@@ -964,6 +964,15 @@ export function BOQListPage() {
                 {t('boq.cancel_compare', { defaultValue: 'Cancel Compare' })}
               </Button>
             ) : null}
+            <Button
+              variant="secondary"
+              size="sm"
+              icon={<Wand2 size={14} />}
+              onClick={() => navigate('/orcamento-rapido')}
+              data-testid="boq-list-quick-budget-button"
+            >
+              {t('dashboard.quick_start', { defaultValue: 'Orçamento rápido' })}
+            </Button>
             <Button
               variant="primary"
               size="sm"

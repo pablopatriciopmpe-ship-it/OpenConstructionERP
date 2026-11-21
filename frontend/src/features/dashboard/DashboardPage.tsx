@@ -2723,21 +2723,13 @@ function DashboardPageInner() {
             variant="secondary"
             size="md"
             icon={<Sparkles size={16} />}
-            onClick={() => {
-              if (lastBoq) { navigate(`/boq/${lastBoq.id}`); return; }
-              const firstProject = projects?.[0];
-              if (firstProject) navigate(`/projects/${firstProject.id}/boq/new`);
-              else navigate('/projects/new');
-            }}
-            title={
-              lastBoq
-                ? t('dashboard.quick_start_resume_hint', { defaultValue: 'Continue your most recent Orçamento: {{name}}', name: estimateDisplayName(lastBoq.name) })
-                : t('dashboard.quick_start_hint', { defaultValue: 'Jump into an Orçamento - resumes the latest or starts a new one' })
-            }
+            onClick={() => navigate('/orcamento-rapido')}
+            title={t('dashboard.quick_start_hint', {
+              defaultValue: 'Monte uma planilha por formulário: escolha o tipo de obra, a UF e os serviços',
+            })}
+            data-testid="dashboard-quick-budget-button"
           >
-            {lastBoq
-              ? t('dashboard.quick_resume', { defaultValue: 'Resume last Orçamento' })
-              : t('dashboard.quick_start', { defaultValue: 'Quick Start' })}
+            {t('dashboard.quick_start', { defaultValue: 'Orçamento rápido' })}
           </Button>
           <Button
             variant={customizing ? 'primary' : 'secondary'}

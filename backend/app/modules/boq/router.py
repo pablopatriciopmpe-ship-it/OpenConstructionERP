@@ -12665,3 +12665,9 @@ async def get_anomalies(
     await verify_project_access(project_id, user_id, session)
     rows = await service.get_anomalies(project_id)
     return [AnomalyResponse(**r) for r in rows]
+
+
+# ── Orçamento rápido (catálogo SINAPI -> BOQ) ────────────────────────────────
+from app.modules.boq.quick_budget.api import router as _quick_budget_router  # noqa: E402
+
+router.include_router(_quick_budget_router)
