@@ -109,6 +109,40 @@ class Offer(Base):
         "metadata", JSON, nullable=False, default=dict, server_default="{}"
     )
 
+    @property
+    def execution_period(self) -> str:
+        if isinstance(self.metadata_, dict):
+            val = self.metadata_.get("execution_period")
+            if val:
+                return str(val)
+        txt = self.texts.get("execution_period") if isinstance(self.texts, dict) else None
+        if isinstance(txt, dict) and txt.get("body"):
+            return str(txt["body"])
+        return ""
+
+    @execution_period.setter
+    def execution_period(self, val: str | None) -> None:
+        if not isinstance(self.metadata_, dict):
+            self.metadata_ = {}
+        self.metadata_["execution_period"] = str(val or "")
+
+    @property
+    def payment_details(self) -> str:
+        if isinstance(self.metadata_, dict):
+            val = self.metadata_.get("payment_details")
+            if val:
+                return str(val)
+        txt = self.texts.get("payment_details") if isinstance(self.texts, dict) else None
+        if isinstance(txt, dict) and txt.get("body"):
+            return str(txt["body"])
+        return ""
+
+    @payment_details.setter
+    def payment_details(self, val: str | None) -> None:
+        if not isinstance(self.metadata_, dict):
+            self.metadata_ = {}
+        self.metadata_["payment_details"] = str(val or "")
+
     def __repr__(self) -> str:
         return f"<Offer {self.number} {self.revision} {self.status}>"
 
@@ -156,3 +190,51 @@ class OfferSettings(Base):
     texts_seeded_for: Mapped[list] = mapped_column(  # type: ignore[assignment]
         JSON, nullable=False, default=list, server_default="[]"
     )
+
+    def _get_meta_setting(self, key: str) -> str:
+        if isinstance(self.texts_seeded_for, list):
+            for it in self.texts_seeded_for:
+                if isinstance(it, dict) and key in it:
+                    return str(it[key])
+        return ""
+
+    def _set_meta_setting(self, key: str, val: str | None) -> None:
+        if not isinstance(self.texts_seeded_for, list):
+            self.texts_seeded_for = []
+        for it in self.texts_seeded_for:
+            if isinstance(it, dict) and key in it:
+                it[key] = str(val or "")
+                return
+        self.texts_seeded_for.append({key: str(val or "")})
+
+    @property
+    def default_execution_period(self) -> str:
+        return self._get_meta_setting("default_execution_period")
+
+    @default_execution_period.setter
+    def default_execution_period(self, val: str | None) -> None:
+        self._set_meta_setting("default_execution_period", val)
+
+    @property
+    def default_payment_details(self) -> str:
+        return self._get_meta_setting("default_payment_details")
+
+    @default_payment_details.setter
+    def default_payment_details(self, val: str | None) -> None:
+        self._set_meta_setting("default_payment_details", val)
+
+    @property
+    def default_exclusions(self) -> str:
+        return self._get_meta_setting("default_exclusions")
+
+    @default_exclusions.setter
+    def default_exclusions(self, val: str | None) -> None:
+        self._set_meta_setting("default_exclusions", val)
+
+    @property
+    def default_notes(self) -> str:
+        return self._get_meta_setting("default_notes")
+
+    @default_notes.setter
+    def default_notes(self, val: str | None) -> None:
+        self._set_meta_setting("default_notes", val)

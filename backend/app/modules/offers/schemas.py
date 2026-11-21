@@ -13,7 +13,19 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from app.modules.offers.pricing import LINE_ROLES, MARKUP_PRESENTATIONS, TAX_MODES
 
-TextKind = Literal["intro", "payment_terms", "validity", "conditions", "warranty", "closing", "legal_notice"]
+TextKind = Literal[
+    "intro",
+    "payment_terms",
+    "validity",
+    "conditions",
+    "warranty",
+    "closing",
+    "legal_notice",
+    "exclusions",
+    "notes",
+    "payment_details",
+    "execution_period",
+]
 Status = Literal["draft", "sent", "accepted", "declined", "expired", "superseded"]
 _DECIMAL = r"^-?\d{1,15}(\.\d{1,6})?$"
 
@@ -49,11 +61,15 @@ class OfferUpdate(BaseModel):
 
     contact_id: uuid.UUID | None = None
     customer_kind: Literal["private", "business"] | None = None
+    customer: dict[str, Any] | None = None
+    status: Status | None = None
     number: str | None = Field(default=None, min_length=1, max_length=60)
     issue_date: date | None = None
     validity_days: int | None = Field(default=None, ge=1, le=3650)
     valid_until: date | None = None
     payment_days: int | None = Field(default=None, ge=0, le=365)
+    execution_period: str | None = Field(default=None, max_length=120)
+    payment_details: str | None = None
     reference: str | None = Field(default=None, max_length=120)
     contact_person: dict[str, str] | None = None
     licence_number: str | None = Field(default=None, max_length=60)
@@ -113,6 +129,8 @@ class OfferResponse(BaseModel):
     reference: str
     contact_person: dict[str, Any]
     licence_number: str
+    execution_period: str = ""
+    payment_details: str = ""
     markup_presentation: str
     options: dict[str, Any]
     lines: list[dict[str, Any]]
@@ -141,10 +159,12 @@ class OfferSummary(BaseModel):
     revision: str
     status: Status
     customer_name: str
+    customer_whatsapp: str = ""
     currency: str
     gross: str
     valid_until: date | None
     issue_date: date
+    title: str = ""
 
 
 class OffersListResponse(BaseModel):
@@ -225,6 +245,10 @@ class SettingsOut(BaseModel):
     markup_presentation: str
     schedule_templates: list[dict[str, Any]]
     default_schedule: str
+    default_execution_period: str = ""
+    default_payment_details: str = ""
+    default_exclusions: str = ""
+    default_notes: str = ""
     next_number: str = ""
 
 
@@ -235,6 +259,10 @@ class SettingsUpdate(BaseModel):
     markup_presentation: str | None = None
     schedule_templates: list[ScheduleTemplateIn] | None = None
     default_schedule: str | None = Field(default=None, max_length=40)
+    default_execution_period: str | None = Field(default=None, max_length=120)
+    default_payment_details: str | None = None
+    default_exclusions: str | None = None
+    default_notes: str | None = None
 
     @field_validator("number_pattern")
     @classmethod

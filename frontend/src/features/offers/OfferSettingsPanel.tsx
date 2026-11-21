@@ -19,7 +19,7 @@ import { PlaceholderChips } from './offerParts';
 
 const inputCls =
   'oe-input w-full';
-const MARKETS = ['DE', 'GB', 'FR', 'US'] as const;
+const MARKETS = ['BR', 'DE', 'GB', 'FR', 'US'] as const;
 
 /** Whether a numbering pattern keeps a sequence part, which every pattern must. */
 export function patternHasSequence(pattern: string): boolean {
@@ -42,14 +42,25 @@ function NumberingCard() {
   const [pattern, setPattern] = useState('');
   const [validity, setValidity] = useState('');
   const [paymentDays, setPaymentDays] = useState('');
+  const [executionPeriod, setExecutionPeriod] = useState('');
+  const [paymentDetails, setPaymentDetails] = useState('');
+  const [exclusions, setExclusions] = useState('');
+  const [notes, setNotes] = useState('');
+
   useEffect(() => {
     if (q.data) {
       setPattern(q.data.number_pattern);
       setValidity(q.data.validity_days?.toString() ?? '');
       setPaymentDays(q.data.payment_days?.toString() ?? '');
+      setExecutionPeriod(q.data.default_execution_period ?? '');
+      setPaymentDetails(q.data.default_payment_details ?? '');
+      setExclusions(q.data.default_exclusions ?? '');
+      setNotes(q.data.default_notes ?? '');
     }
   }, [q.data]);
+
   const valid = patternHasSequence(pattern);
+
   return (
     <Card padding="md">
       <h2 className="mb-3 text-sm font-semibold">{t('offers.settings.company.offer_numbering', { defaultValue: 'Numbering and defaults' })}</h2>
@@ -71,6 +82,40 @@ function NumberingCard() {
           {t('offers.settings.payment_days', { defaultValue: 'Default payment term (days)' })}
           <input className={inputCls} inputMode="numeric" value={paymentDays} onChange={(e) => setPaymentDays(e.target.value.replace(/\D/g, ''))} />
         </label>
+        <label className="text-sm">
+          Prazo de Execução Padrão
+          <input className={inputCls} value={executionPeriod} placeholder="Ex: 60 dias úteis" onChange={(e) => setExecutionPeriod(e.target.value)} />
+        </label>
+        <label className="text-sm sm:col-span-3">
+          Dados para Pagamento Padrão (PIX / Conta Bancária)
+          <textarea
+            rows={2}
+            className={`${inputCls} font-mono text-xs`}
+            value={paymentDetails}
+            placeholder="Ex: Chave PIX: 12.345.678/0001-90 | Banco: ..."
+            onChange={(e) => setPaymentDetails(e.target.value)}
+          />
+        </label>
+        <label className="text-sm sm:col-span-3">
+          O que NÃO está incluso (Padrão)
+          <textarea
+            rows={2}
+            className={`${inputCls} text-xs`}
+            value={exclusions}
+            placeholder="Ex: Não inclui taxas de licenciamento municipal, projetos complementares..."
+            onChange={(e) => setExclusions(e.target.value)}
+          />
+        </label>
+        <label className="text-sm sm:col-span-3">
+          Observações Gerais (Padrão)
+          <textarea
+            rows={2}
+            className={`${inputCls} text-xs`}
+            value={notes}
+            placeholder="Ex: Proposta sujeita a reajuste após o período de validade..."
+            onChange={(e) => setNotes(e.target.value)}
+          />
+        </label>
       </div>
       <Button
         className="mt-3"
@@ -81,6 +126,10 @@ function NumberingCard() {
             number_pattern: pattern,
             validity_days: validity ? Number(validity) : null,
             payment_days: paymentDays ? Number(paymentDays) : null,
+            default_execution_period: executionPeriod || null,
+            default_payment_details: paymentDetails || null,
+            default_exclusions: exclusions || null,
+            default_notes: notes || null,
           })
         }
       >

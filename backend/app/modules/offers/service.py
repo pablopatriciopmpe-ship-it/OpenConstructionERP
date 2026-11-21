@@ -115,6 +115,45 @@ def _one_line(addr: dict[str, Any]) -> str:
     )
 
 
+_FINDINGS_PT: dict[str, str] = {
+    "The offer has no customer. Pick a contact.": "A proposta não possui cliente associado. Selecione um contato.",
+    "The customer has no billing address.": "O cliente não possui endereço de faturamento cadastrado.",
+    "The project has no site address.": "A obra não possui endereço do local cadastrado.",
+    "The offer has no validity date.": "A proposta não possui data de validade definida.",
+    "Valid until must be after the issue date.": "A data de validade deve ser posterior à data de emissão.",
+    "The offer has no payment terms.": "A proposta não possui condições de pagamento preenchidas.",
+    "Net, tax and gross do not add up from the printed lines.": "Os valores de líquido, impostos e total bruto não coincidem com a soma das linhas.",
+    "The offer mixes currencies.": "A proposta mistura moedas distintas.",
+    "Reverse charge needs the customer's VAT id.": "Operação com inversão do sujeito passivo exige o CNPJ/inscrição do cliente.",
+    "Consumer customer: show the gross total (pack rule).": "Cliente consumidor: exiba o valor total bruto (exigência fiscal).",
+    "The final instalment must be the last one.": "A parcela final deve ser a última no cronograma.",
+    "Address does not fit the envelope window.": "O endereço excede a área da janela do envelope.",
+    "The devis does not name the mandatory insurance.": "A proposta não cita o seguro obrigatório exigido.",
+    "A reduced VAT rate needs the customer's attestation.": "Alíquota reduzida exige comprovação ou declaração do cliente.",
+    "Off-premises consumer offer without a cancellation notice.": "Proposta fora do estabelecimento sem o aviso de cancelamento / direito de arrependimento.",
+    "The licence number is missing (BPC §7030.5).": "Número de registro profissional não informado.",
+}
+
+
+def _translate_finding_message(msg: str, details: dict[str, Any] | None = None, locale: str = "en") -> str:
+    if not (locale or "").lower().startswith("pt"):
+        return msg
+    if msg in _FINDINGS_PT:
+        return _FINDINGS_PT[msg]
+    d = details or {}
+    if msg.startswith("Offer number ") and "already used" in msg:
+        return f"O número de proposta {d.get('number', '')} já está em uso."
+    if msg.startswith("The BOQ changed after revision "):
+        return f"A planilha de orçamento foi alterada após o envio da revisão {d.get('revision', '')}. Emita uma nova revisão."
+    if msg.startswith("Instalments total "):
+        return f"A soma das parcelas ({d.get('sum', '')}) difere do total líquido da proposta ({d.get('net', '')})."
+    if msg.startswith("Spread rates move the net by "):
+        return f"A distribuição do BDI altera o total em {d.get('delta', '')} em relação ao orçamento."
+    if msg.startswith("The deposit exceeds the statutory cap of "):
+        return f"O sinal excede o teto legal de {d.get('cap', '')}."
+    return msg
+
+
 class OfferService:
     def __init__(self, session: AsyncSession) -> None:
         self.session = session
@@ -175,12 +214,15 @@ class OfferService:
                 }
             )
 
-        for pos in structured.positions:
-            add_position(pos, "")
+        sec_map = {sec.ordinal.strip(): sec for sec in structured.sections if getattr(sec, "ordinal", None)}
         for sec in structured.sections:
             items.append({"kind": "section", "ordinal": sec.ordinal, "description": sec.description, "level": 0})
             for pos in sec.positions:
                 add_position(pos, sec.ordinal)
+        for pos in structured.positions:
+            p_ord = (getattr(pos, "ordinal", "") or "").strip()
+            prefix = p_ord.split(".")[0] if "." in p_ord else ""
+            add_position(pos, prefix if prefix in sec_map else "")
         markups = [
             {"label": m.name, "amount": str(m.amount)}
             for m in structured.markups
@@ -457,6 +499,9 @@ class OfferService:
             valid_until=pricing.valid_until(today, days),
             payment_days=payment_days if payment_days is not None else FALLBACK_PAYMENT_DAYS,
             contact_person=await self._user_person(user_id),
+            licence_number="",
+            execution_period=cfg.default_execution_period or (pack.get("texts", {}).get("execution_period", {}).get(locale) or "90 dias corridos"),
+            payment_details=cfg.default_payment_details or "",
             markup_presentation=cfg.markup_presentation or "spread",
             options=self._default_options(pack, kind),
             texts=await self._pick_texts(project.id, pack, locale),
@@ -493,8 +538,19 @@ class OfferService:
 
     async def update(self, offer_id: uuid.UUID, data: OfferUpdate) -> Offer:
         offer = await self.get(offer_id)
-        self._assert_editable(offer)
         patch = data.model_dump(exclude_unset=True, mode="python")
+        if "status" in patch and patch["status"] is not None:
+            offer.status = patch.pop("status")
+        if patch:
+            self._assert_editable(offer)
+        if "customer" in patch and patch["customer"] is not None:
+            merged = dict(offer.customer or {})
+            merged.update(patch.pop("customer"))
+            offer.customer = merged
+        if "execution_period" in patch and patch["execution_period"] is not None:
+            offer.execution_period = str(patch.pop("execution_period"))
+        if "payment_details" in patch and patch["payment_details"] is not None:
+            offer.payment_details = str(patch.pop("payment_details"))
         if "contact_id" in patch:
             project = await self._project(offer.project_id)
             pack = pack_mod.pack_for(project.country_code, project.subdivision_code)
@@ -649,8 +705,9 @@ class OfferService:
             "site_same_as_billing", "issue_date", "valid_until", "currency", "tax_mode", "tax_rate",
             "markup_presentation", "options", "lines", "totals", "texts", "schedule", "instalments",
             "licence_number", "retention_percent", "advance_security", "payment_days", "contract_id",
+            "execution_period", "payment_details",
         )  # fmt: skip
-        return {c: getattr(offer, c) for c in cols}
+        return {c: getattr(offer, c, None) for c in cols}
 
     async def _snapshot(self, offer: Offer) -> dict[str, Any]:
         from app.modules.offers import pdf as offer_pdf
@@ -694,7 +751,7 @@ class OfferService:
                 FindingOut(
                     rule_id=r.rule_id,
                     severity=str(r.severity.value if hasattr(r.severity, "value") else r.severity).lower(),  # type: ignore[arg-type]
-                    message=r.message,
+                    message=_translate_finding_message(r.message, r.details, offer.locale),
                     element_ref=r.element_ref,
                     details=r.details or {},
                     section=section,  # type: ignore[arg-type]
@@ -887,10 +944,13 @@ class OfferService:
     # -- output ------------------------------------------------------------------------------
 
     async def _summary(self, offer: Offer) -> OfferSummary:
+        cust = offer.customer or {}
+        wa = str(cust.get("whatsapp") or cust.get("phone") or "")
         return OfferSummary(
             id=offer.id, project_id=offer.project_id, boq_id=offer.boq_id, number=offer.number, revision=offer.revision,
-            status=offer.status, customer_name=str((offer.customer or {}).get("name") or ""), currency=offer.currency,
+            status=offer.status, customer_name=str(cust.get("name") or ""), customer_whatsapp=wa, currency=offer.currency,
             gross=str((offer.totals or {}).get("gross", "0")), valid_until=offer.valid_until, issue_date=offer.issue_date,
+            title=offer.title or "Proposta Comercial",
         )  # fmt: skip
 
     async def response(self, offer: Offer) -> OfferResponse:
@@ -902,7 +962,7 @@ class OfferService:
         out.editable = offer.status == "draft"
         return out
 
-    async def render(self, offer: Offer) -> tuple[bytes, int]:
+    async def render(self, offer: Offer, mode: str = "analytic") -> tuple[bytes, int]:
         """The PDF of the stored record. Drafts and previews carry the DRAFT watermark; a sent offer never does."""
         from app.modules.offers import pdf as offer_pdf
 
@@ -915,10 +975,77 @@ class OfferService:
                 "contact_person": offer.contact_person, "project_name": project.name, "pack": pack,
                 "home_country": project.country_code or "", "validity_days": offer.validity_days,
                 "payment_days": offer.payment_days, "tax_label": offer.tax_label, "licence_number": offer.licence_number,
+                "execution_period": getattr(offer, "execution_period", "") or (offer.texts or {}).get("execution_period", {}).get("body", ""),
+                "payment_details": getattr(offer, "payment_details", "") or (offer.texts or {}).get("payment_details", {}).get("body", ""),
             }
         )  # fmt: skip
+        comp_profile = await self._tenant_company_profile(project)
+        if comp_profile:
+            data["company_profile"] = comp_profile
         basis = await self._exclusions(offer)
-        return offer_pdf.render_offer(data, exclusions=basis, draft=offer.status == "draft")
+        return offer_pdf.render_offer(data, exclusions=basis, draft=offer.status == "draft", mode=mode)
+
+    async def render_excel(self, offer: Offer, mode: str = "analytic") -> bytes:
+        """The Excel export of the stored record with company letterhead."""
+        from app.modules.offers.excel import render_offer_excel
+
+        project = await self._project(offer.project_id)
+        pack = pack_mod.pack_for(project.country_code, project.subdivision_code)
+        data = self._dict(offer)
+        data.update(
+            {
+                "title": offer.title, "locale": offer.locale, "reference": offer.reference,
+                "contact_person": offer.contact_person, "project_name": project.name, "pack": pack,
+                "home_country": project.country_code or "", "validity_days": offer.validity_days,
+                "payment_days": offer.payment_days, "tax_label": offer.tax_label, "licence_number": offer.licence_number,
+                "execution_period": getattr(offer, "execution_period", "") or (offer.texts or {}).get("execution_period", {}).get("body", ""),
+                "payment_details": getattr(offer, "payment_details", "") or (offer.texts or {}).get("payment_details", {}).get("body", ""),
+            }
+        )  # fmt: skip
+        comp_profile = await self._tenant_company_profile(project)
+        if comp_profile:
+            data["company_profile"] = comp_profile
+        return render_offer_excel(data, mode=mode)
+
+    async def _tenant_company_profile(self, project: Any) -> dict[str, Any] | None:
+        try:
+            import uuid
+            from sqlalchemy import select
+            from app.core import pdf_branding
+            from app.modules.saas.models import CompanyProfile, Tenant
+
+            tenant_id = getattr(project, "tenant_id", None)
+            if not tenant_id:
+                return {
+                    "legal_name": pdf_branding.DEFAULT_BRAND,
+                    "document_logo_data_url": pdf_branding.PROVISIONAL_LOGO_DATA_URL,
+                    "document_logo_png_data_url": pdf_branding.PROVISIONAL_LOGO_DATA_URL,
+                }
+            tid = uuid.UUID(str(tenant_id)) if not isinstance(tenant_id, uuid.UUID) else tenant_id
+            tenant = (await self.session.execute(select(Tenant).where(Tenant.id == tid))).scalar_one_or_none()
+            if not tenant:
+                return {
+                    "legal_name": pdf_branding.DEFAULT_BRAND,
+                    "document_logo_data_url": pdf_branding.PROVISIONAL_LOGO_DATA_URL,
+                    "document_logo_png_data_url": pdf_branding.PROVISIONAL_LOGO_DATA_URL,
+                }
+            row = (await self.session.execute(select(CompanyProfile).where(CompanyProfile.tenant_id == tid))).scalar_one_or_none()
+            profile = row.profile if row and row.profile else {}
+            effective = {
+                **profile,
+                "legal_name": profile.get("legal_name") or tenant.legal_name or pdf_branding.DEFAULT_BRAND,
+                "tax_number": profile.get("tax_number") or (tenant.cnpj or ""),
+                "document_logo_data_url": profile.get("document_logo_data_url") or pdf_branding.PROVISIONAL_LOGO_DATA_URL,
+                "document_logo_png_data_url": profile.get("document_logo_png_data_url") or pdf_branding.PROVISIONAL_LOGO_DATA_URL,
+            }
+            return effective
+        except Exception:
+            from app.core import pdf_branding
+            return {
+                "legal_name": pdf_branding.DEFAULT_BRAND,
+                "document_logo_data_url": pdf_branding.PROVISIONAL_LOGO_DATA_URL,
+                "document_logo_png_data_url": pdf_branding.PROVISIONAL_LOGO_DATA_URL,
+            }
 
     async def _exclusions(self, offer: Offer) -> dict[str, list[str]]:
         """Exclusions and assumptions come from the estimate basis, never from a second list."""

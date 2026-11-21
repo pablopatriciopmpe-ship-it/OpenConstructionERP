@@ -261,3 +261,30 @@ def test_contract_payload_maps_each_instalment_to_a_milestone() -> None:
     assert out["total_value"] == "1000.00"
     assert [m["kind"] for m in out["milestones"]] == ["deposit", "final"]
     assert [m["percent_of_contract"] for m in out["milestones"]] == ["30.0000", "70.0000"]
+
+
+def test_section_subtotals_sum_equals_net_total_and_percentages_sum_to_100() -> None:
+    items = [
+        {"kind": "section", "ordinal": "01", "description": "Serviços Preliminares (Preliminaries / site setup)"},
+        {"kind": "item", "ordinal": "01.001", "description": "Placa", "quantity": "10", "unit_rate": "100.00", "role": "base"},
+        {"kind": "item", "ordinal": "01.002", "description": "Tapume", "quantity": "20", "unit_rate": "50.00", "role": "base"},
+        {"kind": "section", "ordinal": "02", "description": "Movimento de Terra (Earthworks)"},
+        {"kind": "item", "ordinal": "02.001", "description": "Escavação", "quantity": "50", "unit_rate": "40.00", "role": "base"},
+        {"kind": "item", "ordinal": "02.002", "description": "Bota-fora", "quantity": "30", "unit_rate": "100.00", "role": "base"},
+    ]
+    composed = pricing.compose(items, currency="BRL", presentation="spread", tax_rate=Decimal("0"))
+    totals = composed["totals"]
+    lines = composed["lines"]
+    subtotals = totals["section_subtotals"]
+
+    assert "01" in subtotals and subtotals["01"] == "2000.00"
+    assert "02" in subtotals and subtotals["02"] == "5000.00"
+
+    subtotal_sum = sum(Decimal(v) for v in subtotals.values())
+    net_val = Decimal(totals["net"])
+    assert subtotal_sum == net_val == Decimal("7000.00")
+
+    # Verify percentages
+    pct_01 = float(Decimal(subtotals["01"]) / net_val) * 100
+    pct_02 = float(Decimal(subtotals["02"]) / net_val) * 100
+    assert round(pct_01 + pct_02, 1) == 100.0

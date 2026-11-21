@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import { AlertTriangle, Download, FileText } from 'lucide-react';
+import { AlertTriangle, Download, FileText, FileDown, FileSpreadsheet, MessageCircle } from 'lucide-react';
 import { useQueryClient } from '@tanstack/react-query';
 import { Badge } from '@/shared/ui/Badge';
 import { Breadcrumb, EmptyState, PageHeader, Skeleton } from '@/shared/ui';
@@ -25,6 +25,8 @@ import {
   useOfferContext,
   useOfferValidation,
   usePatchOffer,
+  offerPdfUrl,
+  offerExcelUrl,
   type Offer,
   type OfferFinding,
   type OfferPatch,
@@ -184,7 +186,7 @@ export function OfferPage() {
           </span>
         }
         actions={
-          <>
+          <div className="flex items-center gap-2 flex-wrap">
             {offer.status === 'draft' && (
               <SendAction
                 canSend={valQ.data?.can_send !== false}
@@ -193,10 +195,47 @@ export function OfferPage() {
                 onSend={() => run(send, t('offers.send', { defaultValue: 'Send offer' }), (r) => void downloadPdf(r as Offer))}
               />
             )}
-            <Button variant="secondary" icon={<Download size={16} />} onClick={() => void downloadPdf(offer)}>
-              {offer.status === 'draft' ? t('offers.download_draft', { defaultValue: 'Download draft' }) : t('offers.download', { defaultValue: 'Download' })}
-            </Button>
-          </>
+            <a
+              href={offerPdfUrl(offer.id, 'analytic')}
+              download
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border border-border-light bg-surface-elevated hover:bg-[#156D61]/10 text-content-primary hover:text-[#156D61] transition-colors shadow-sm"
+              title="Baixar Proposta Analítica (PDF)"
+            >
+              <FileDown size={14} className="text-[#156D61]" />
+              PDF Analítico
+            </a>
+            <a
+              href={offerPdfUrl(offer.id, 'synthetic')}
+              download
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border border-border-light bg-surface-elevated hover:bg-[#156D61]/10 text-content-primary hover:text-[#156D61] transition-colors shadow-sm"
+              title="Baixar Proposta Sintética (PDF)"
+            >
+              <FileDown size={14} className="text-[#156D61]" />
+              PDF Sintético
+            </a>
+            <a
+              href={offerExcelUrl(offer.id, 'analytic')}
+              download
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border border-border-light bg-surface-elevated hover:bg-emerald-50 text-content-primary hover:text-emerald-700 dark:hover:bg-emerald-950/40 transition-colors shadow-sm"
+              title="Baixar Proposta Analítica (Excel)"
+            >
+              <FileSpreadsheet size={14} className="text-emerald-600" />
+              Excel Analítico
+            </a>
+            <a
+              href={offerExcelUrl(offer.id, 'synthetic')}
+              download
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border border-border-light bg-surface-elevated hover:bg-emerald-50 text-content-primary hover:text-emerald-700 dark:hover:bg-emerald-950/40 transition-colors shadow-sm"
+              title="Baixar Proposta Sintética (Excel)"
+            >
+              <FileSpreadsheet size={14} className="text-emerald-600" />
+              Excel Sintético
+            </a>
+          </div>
         }
       />
 
@@ -250,6 +289,50 @@ export function OfferPage() {
             ) : (
               <CustomerEmpty projectId={projectId} country={String(ctxQ.data?.pack.country ?? '')} onCreated={(id) => save({ contact_id: id })} />
             )}
+
+            {/* Editable customer fields for proposal presentation (Name, WhatsApp, Email) */}
+            <div className="mt-4 pt-3 border-t border-border-light grid gap-3 sm:grid-cols-2">
+              <label className="text-xs font-medium text-content-secondary">
+                Nome do Cliente / Empresa
+                <input
+                  type="text"
+                  className={inputCls}
+                  value={String(offer.customer?.name ?? '')}
+                  disabled={readOnly}
+                  placeholder="Ex: João da Silva / Construtora ABC"
+                  onChange={(e) =>
+                    save({
+                      customer: {
+                        ...(offer.customer || {}),
+                        name: e.target.value,
+                      },
+                    })
+                  }
+                />
+              </label>
+              <label className="text-xs font-medium text-content-secondary">
+                WhatsApp do Cliente
+                <div className="relative mt-1">
+                  <MessageCircle size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-emerald-600" />
+                  <input
+                    type="text"
+                    className={`${inputCls} pl-8`}
+                    value={String(offer.customer?.whatsapp ?? '')}
+                    disabled={readOnly}
+                    placeholder="Ex: (11) 98765-4321"
+                    onChange={(e) =>
+                      save({
+                        customer: {
+                          ...(offer.customer || {}),
+                          whatsapp: e.target.value,
+                        },
+                      })
+                    }
+                  />
+                </div>
+              </label>
+            </div>
+
             {ctxQ.data?.pack.consumer_rule === true && (
               <div className="mt-3" role="group" aria-label={t('offers.customer_kind_label', { defaultValue: 'Customer type' })}>
                 <div className="flex gap-2">
@@ -280,14 +363,59 @@ export function OfferPage() {
                 defaultValue: '{{count}} items · net {{net}}',
               })}
             </p>
-            <fieldset className="mt-3" disabled={readOnly}>
-              <legend className="text-xs text-content-tertiary">{t('offers.markups_label', { defaultValue: 'How Margens appear' })}</legend>
-              {(['spread', 'lines', 'section'] as const).map((m) => (
-                <label key={m} className="mr-4 inline-flex items-center gap-1 text-sm">
-                  <input type="radio" name="markup" checked={offer.markup_presentation === m} onChange={() => save({ markup_presentation: m })} />
-                  {t(`offers.markups.${m}`, { defaultValue: m })}
+            <fieldset className="mt-3 p-3 rounded-lg border border-border-light bg-surface-secondary/40" disabled={readOnly}>
+              <legend className="text-xs font-semibold text-content-primary px-1">
+                Apresentação do BDI e Margens na Proposta
+              </legend>
+              <div className="space-y-2 mt-1">
+                <label className="flex items-start gap-2 text-xs cursor-pointer">
+                  <input
+                    type="radio"
+                    name="markup"
+                    className="mt-0.5"
+                    checked={offer.markup_presentation === 'spread'}
+                    onChange={() => save({ markup_presentation: 'spread' })}
+                  />
+                  <div>
+                    <span className="font-semibold text-content-primary">
+                      Embutir BDI/ADM nos itens (Recomendado para o cliente)
+                    </span>
+                    <p className="text-[11px] text-content-tertiary">
+                      O BDI/ADM é rateado diretamente no preço unitário dos serviços; o relatório não exibe BDI destacado.
+                    </p>
+                  </div>
                 </label>
-              ))}
+                <label className="flex items-start gap-2 text-xs cursor-pointer">
+                  <input
+                    type="radio"
+                    name="markup"
+                    className="mt-0.5"
+                    checked={offer.markup_presentation === 'lines'}
+                    onChange={() => save({ markup_presentation: 'lines' })}
+                  />
+                  <div>
+                    <span className="font-semibold text-content-primary">Destacar BDI em linhas separadas</span>
+                    <p className="text-[11px] text-content-tertiary">
+                      Custos diretos são exibidos nos itens e o BDI é discriminado no resumo da proposta.
+                    </p>
+                  </div>
+                </label>
+                <label className="flex items-start gap-2 text-xs cursor-pointer">
+                  <input
+                    type="radio"
+                    name="markup"
+                    className="mt-0.5"
+                    checked={offer.markup_presentation === 'section'}
+                    onChange={() => save({ markup_presentation: 'section' })}
+                  />
+                  <div>
+                    <span className="font-semibold text-content-primary">Seção dedicada de BDI</span>
+                    <p className="text-[11px] text-content-tertiary">
+                      Agrupa todos os acréscimos e margens em uma seção dedicada ao final da proposta.
+                    </p>
+                  </div>
+                </label>
+              </div>
             </fieldset>
             <Link className="mt-3 inline-block text-sm underline" to={`/boq/${boqId}`}>
               {t('offers.edit_in_estimate', { defaultValue: 'Edit in Orçamento' })}
@@ -399,6 +527,16 @@ function DetailsFields({ offer, readOnly, languages, onSave }: { offer: Offer; r
         </div>
       </div>
       <label className="text-sm">
+        Prazo de Execução da Obra
+        <input
+          className={inputCls}
+          value={offer.execution_period ?? ''}
+          disabled={readOnly}
+          placeholder="Ex: 60 dias úteis / 4 meses"
+          onChange={(e) => onSave({ execution_period: e.target.value })}
+        />
+      </label>
+      <label className="text-sm">
         {t('offers.document_language', { defaultValue: 'Document language' })}
         <select className={`${inputCls} oe-select`} value={offer.locale} disabled={readOnly} onChange={(e) => onSave({ locale: e.target.value })}>
           {[...new Set([offer.locale, ...languages])].map((l) => (
@@ -411,6 +549,17 @@ function DetailsFields({ offer, readOnly, languages, onSave }: { offer: Offer; r
       <label className="text-sm sm:col-span-2">
         {t('offers.your_reference', { defaultValue: 'Customer reference' })}
         <input className={inputCls} value={reference} disabled={readOnly} onChange={(e) => setReference(e.target.value)} onBlur={() => reference !== offer.reference && onSave({ reference })} />
+      </label>
+      <label className="text-sm sm:col-span-2">
+        Dados para Pagamento (PIX / Conta Bancária)
+        <textarea
+          rows={3}
+          className={`${inputCls} font-mono text-xs`}
+          value={offer.payment_details ?? ''}
+          disabled={readOnly}
+          placeholder="Ex: Chave PIX: 12.345.678/0001-90 (CNPJ)&#10;Banco: 001 - Banco do Brasil&#10;Agência: 1234-5 | Conta Corrente: 67890-1"
+          onChange={(e) => onSave({ payment_details: e.target.value })}
+        />
       </label>
     </div>
   );

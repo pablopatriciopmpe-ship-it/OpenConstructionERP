@@ -3474,6 +3474,7 @@ export function BOQEditorPage() {
        * from a printed estimate the grid itself totalled correctly. */
       const token = useAuthStore.getState().accessToken;
       // Map frontend format names to API endpoints and query params
+      const isCommercial = format.startsWith('commercial:');
       const exportFormat = format === 'gaeb_x84' ? 'gaeb' : format;
       const params = new URLSearchParams();
       // The route reads the phase from ``?format=``. It used to be sent as
@@ -3490,9 +3491,15 @@ export function BOQEditorPage() {
         params.set('include_resources', 'true');
       }
       const query = params.toString();
+      let fetchUrl = `/api/v1/boq/boqs/${boqId}/export/${exportFormat}/${query ? `?${query}` : ''}`;
+      if (isCommercial) {
+        const [, reportKind, subFormat] = format.split(':');
+        const commParams = new URLSearchParams({ format: subFormat });
+        fetchUrl = `/api/v1/boq/boqs/${boqId}/export/${reportKind}/?${commParams.toString()}`;
+      }
       let r: Response;
       try {
-        r = await fetch(`/api/v1/boq/boqs/${boqId}/export/${exportFormat}/${query ? `?${query}` : ''}`, {
+        r = await fetch(fetchUrl, {
           headers: token ? { Authorization: `Bearer ${token}` } : {},
         });
       } catch {
@@ -3512,7 +3519,8 @@ export function BOQEditorPage() {
         const extensions: Record<string, string> = {
           excel: 'xlsx', csv: 'csv', pdf: 'pdf', gaeb: 'x83', gaeb_x84: 'x84', bc3: 'bc3',
         };
-        triggerDownload(blob, `${boq?.name ?? 'boq'}.${extensions[format] ?? format}`);
+        const ext = isCommercial ? (format.endsWith('pdf') ? 'pdf' : 'xlsx') : (extensions[format] ?? format);
+        triggerDownload(blob, `${boq?.name ?? 'boq'}.${ext}`);
         const fidelity = reportFromHeaders(r.headers);
         if (fidelity && fidelity.errors + fidelity.warnings > 0) {
           const reportId = fidelity.id;
