@@ -460,11 +460,17 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
         'gaeb',
         'gaeb-exchange',
         'oe_gaeb',
+        'cases',
+        'oe_cases',
+        'videos',
+        'oe_videos',
+        'courses',
+        'oe_courses',
       ]);
       for (const gr of globalResults) {
         if (!gr.url) continue;
         const mod = (gr.module ?? '').toLowerCase();
-        if (prunedModules.has(mod) || /^\/(finance|tendering|contacts|5d|gaeb-exchange)(\/|$|\?)/i.test(gr.url)) continue;
+        if (prunedModules.has(mod) || /^\/(finance|tendering|contacts|5d|gaeb-exchange|cases|videos|courses)(\/|$|\?)/i.test(gr.url)) continue;
         if (!moduleGroups.has(gr.module)) moduleGroups.set(gr.module, []);
         moduleGroups.get(gr.module)!.push({
           kind: 'link',

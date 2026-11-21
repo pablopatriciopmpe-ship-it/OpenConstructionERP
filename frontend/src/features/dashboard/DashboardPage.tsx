@@ -145,7 +145,7 @@ const DashboardCasesCard = lazy(() =>
 const DashboardMarketCasesCard = lazy(() =>
   import('./DashboardMarketCasesCard').then((m) => ({ default: m.DashboardMarketCasesCard })),
 );
-import { SHOW_GUIDED_CASES } from '@/features/cases/casesConfig';
+import { SHOW_GUIDED_CASES, SHOW_VIDEOS } from '@/features/cases/casesConfig';
 const AccountingSyncCard = lazy(() =>
   import('@/features/accounting-sync/AccountingSyncCard').then((m) => ({ default: m.AccountingSyncCard })),
 );
@@ -2637,11 +2637,11 @@ function DashboardPageInner() {
     // case it most needs to speak up in, so a self-hiding version would go
     // silent exactly where it is needed.
     regional_pack: <RegionalPackCard />,
-    watch_share: (
+    watch_share: SHOW_VIDEOS ? (
       <Suspense fallback={null}>
         <PromoVideos />
       </Suspense>
-    ),
+    ) : null,
     // Same rule: never in WIDGET_NULL_FALLBACK. It waits for the pack answer
     // so the market it leads with is decided once, and the grid's skeleton
     // stands in meanwhile rather than a card that flips.

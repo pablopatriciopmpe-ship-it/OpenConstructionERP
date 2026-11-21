@@ -9,8 +9,10 @@
 import { useTranslation } from 'react-i18next';
 import { Card, CardHeader, CardContent } from '@/shared/ui/Card';
 import { useVideoHintsStore } from '@/features/videos/videoRoutes';
+import { SHOW_VIDEOS } from '@/features/cases/casesConfig';
 
 export function LearningTipsCard() {
+  if (!SHOW_VIDEOS) return null;
   const { t } = useTranslation();
   const off = useVideoHintsStore((s) => s.off);
   const hidden = useVideoHintsStore((s) => s.hidden);

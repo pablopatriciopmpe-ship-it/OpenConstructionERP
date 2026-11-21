@@ -15,6 +15,7 @@ import clsx from 'clsx';
 import { ChevronDown, GraduationCap, MonitorPlay } from 'lucide-react';
 import { usePageHeaderSlot } from '@/shared/ui/pageHeaderSlot';
 import { itemCountForRoute, useVideoHintsStore, videoCountForRoute, videoRouteFor } from './videoRoutes';
+import { SHOW_VIDEOS } from '@/features/cases/casesConfig';
 
 const loadPanel = () => import('./ModuleVideosPanel');
 const ModuleVideosPanel = lazy(loadPanel);
@@ -92,6 +93,7 @@ function Chip({ route, where }: { route: string; where: 'row' | 'bar' }) {
 }
 
 export function ModuleVideosSlot() {
+  if (!SHOW_VIDEOS) return null;
   const { pathname } = useLocation();
   const route = videoRouteFor(pathname);
   const hidden = useVideoHintsStore((s) => (route ? s.off || s.hidden.includes(route) : true));

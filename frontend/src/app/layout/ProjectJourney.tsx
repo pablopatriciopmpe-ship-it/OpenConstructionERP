@@ -29,7 +29,7 @@ import {
 import { useModuleStore } from '@/stores/useModuleStore';
 import { videoCountForRoute, videoRouteFor } from '@/features/videos/videoRoutes';
 import type { Playbook } from '@/features/cases/types';
-import { SHOW_GUIDED_CASES } from '@/features/cases/casesConfig';
+import { SHOW_GUIDED_CASES, SHOW_VIDEOS, SHOW_PROJECT_JOURNEY } from '@/features/cases/casesConfig';
 
 // The case registry eagerly bundles ~85 playbook data files, so it is loaded
 // LAZILY (dynamic import when the panel opens) to keep it out of the always-on
@@ -106,6 +106,9 @@ const ARC_ACCENT: Record<
 };
 
 export function ProjectJourneyButton() {
+  if (!SHOW_PROJECT_JOURNEY) {
+    return null;
+  }
   const { t } = useTranslation();
   const location = useLocation();
   const [open, setOpen] = useState(false);
@@ -166,6 +169,9 @@ function ProjectJourneyPanel({
   currentPhaseKey: string | null;
   onClose: () => void;
 }) {
+  if (!SHOW_PROJECT_JOURNEY) {
+    return null;
+  }
   const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
@@ -392,7 +398,7 @@ function ProjectJourneyPanel({
                 </p>
               </div>
               <div className="flex shrink-0 flex-wrap items-center gap-2">
-                {phaseHasVideo(currentPhase) && (
+                {SHOW_VIDEOS && phaseHasVideo(currentPhase) && (
                   <button
                     type="button"
                     onClick={() => setVideoRoutes(currentPhase.modules.map((m) => m.to))}
@@ -491,7 +497,7 @@ function ProjectJourneyPanel({
                                 </h4>
                               </div>
                             </div>
-                            {hasVideo && (
+                            {SHOW_VIDEOS && hasVideo && (
                               <button
                                 type="button"
                                 onClick={() => setVideoRoutes(phase.modules.map((m) => m.to))}
@@ -594,7 +600,7 @@ function ProjectJourneyPanel({
           )}
         </div>
       </div>
-      {videoRoutes && (
+      {SHOW_VIDEOS && videoRoutes && (
         <Suspense fallback={null}>
           <JourneyStepVideo routes={videoRoutes} onClose={closeVideo} />
         </Suspense>

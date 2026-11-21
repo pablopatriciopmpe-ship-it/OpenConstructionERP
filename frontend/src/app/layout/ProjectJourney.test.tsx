@@ -19,6 +19,11 @@ vi.mock('react-i18next', () => ({
 
 // The case index is a large lazy chunk; the map works without it.
 vi.mock('@/features/cases/playbookModules', () => ({ playbooksForRoute: () => [] }));
+vi.mock('@/features/cases/casesConfig', () => ({
+  SHOW_PROJECT_JOURNEY: true,
+  SHOW_VIDEOS: true,
+  SHOW_GUIDED_CASES: true,
+}));
 
 import { ProjectJourneyButton } from './ProjectJourney';
 import { JOURNEY_PHASES, resolveJourneyPhaseKey } from './projectJourneyData';

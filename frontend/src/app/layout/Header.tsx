@@ -40,6 +40,7 @@ import { useI18nReady } from '@/shared/lib/useI18nReady';
 import { isTauri, openAppInBrowser, openLink } from '@/shared/lib/desktop';
 import { SubscribeButton } from './SubscribeButton';
 import { ProjectJourneyButton } from './ProjectJourney';
+import { SHOW_PROJECT_JOURNEY } from '@/features/cases/casesConfig';
 import { useTopBarPrefs } from '@/shared/lib/topBarPrefs';
 import { usePageHeaderSlot } from '@/shared/ui/pageHeaderSlot';
 import { getRouteIcon } from './routeIcons';
@@ -563,7 +564,7 @@ export function Header({ title, onMenuClick }: HeaderProps) {
             Names the lifecycle phase the current screen belongs to and
             opens the whole-platform journey map. First in the cluster so it
             reads as "where am I" ahead of the action buttons. */}
-        {!bar.journey && <ProjectJourneyButton />}
+        {!bar.journey && SHOW_PROJECT_JOURNEY && <ProjectJourneyButton />}
         <div className="hidden sm:block h-4 w-px bg-border-light/70" aria-hidden />
 
         {/* ── Zone 2 (Search) ──────────────────────────────────────── */}

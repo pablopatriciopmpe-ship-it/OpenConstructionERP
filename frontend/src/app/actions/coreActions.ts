@@ -49,6 +49,9 @@ export const PRUNED_NAV_ROUTES = new Set([
   '/tendering',
   '/contacts',
   '/gaeb-exchange',
+  '/cases',
+  '/videos',
+  '/courses',
 ]);
 
 export const PRUNED_MODULE_IDS = new Set([
@@ -64,6 +67,12 @@ export const PRUNED_MODULE_IDS = new Set([
   'gaeb-exchange',
   'gaeb',
   'oe_gaeb',
+  'cases',
+  'oe_cases',
+  'videos',
+  'oe_videos',
+  'courses',
+  'oe_courses',
 ]);
 
 export function isPrunedActionPath(path?: string | null): boolean {

@@ -3,11 +3,13 @@
 import { describe, it, expect } from 'vitest';
 import fs from 'node:fs';
 import path from 'node:path';
-import { SHOW_GUIDED_CASES } from '@/features/cases/casesConfig';
+import { SHOW_GUIDED_CASES, SHOW_VIDEOS, SHOW_PROJECT_JOURNEY } from '@/features/cases/casesConfig';
 
 describe('Visible keys pt-BR regression test', () => {
-  it('has guided cases enabled (SHOW_GUIDED_CASES === true)', () => {
-    expect(SHOW_GUIDED_CASES).toBe(true);
+  it('has lean profile enabled (SHOW_GUIDED_CASES, SHOW_VIDEOS, SHOW_PROJECT_JOURNEY === false)', () => {
+    expect(SHOW_GUIDED_CASES).toBe(false);
+    expect(SHOW_VIDEOS).toBe(false);
+    expect(SHOW_PROJECT_JOURNEY).toBe(false);
   });
 
   it('tracks all pending visible translations in baseline-faltando-ptbr.json', () => {
@@ -36,7 +38,7 @@ describe('Visible keys pt-BR regression test', () => {
     expect(totalKeys).toBe(1171);
   });
 
-  it('ensures known visible keys (guides and playbooks) have either pt-BR translation or tracking', () => {
+  it('ensures known visible keys (guides and screens) have either pt-BR translation or tracking', () => {
     const baselinePath = path.resolve(__dirname, '../locales/baseline-faltando-ptbr.json');
     const baseline = JSON.parse(fs.readFileSync(baselinePath, 'utf-8'));
     const trackedKeys = new Set<string>();
