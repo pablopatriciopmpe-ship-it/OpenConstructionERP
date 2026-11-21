@@ -42,6 +42,51 @@ export const NAV_DEFAULT_SHORTCUTS: Record<string, string> = {
   '/files': 'G O',
 };
 
+/** Pruned routes and modules: out-of-product, support or hidden infrastructure. */
+export const PRUNED_NAV_ROUTES = new Set([
+  '/5d',
+  '/finance',
+  '/tendering',
+  '/contacts',
+]);
+
+export const PRUNED_MODULE_IDS = new Set([
+  '5d',
+  'costmodel',
+  'oe_costmodel',
+  'finance',
+  'oe_finance',
+  'tendering',
+  'oe_tendering',
+  'contacts',
+  'oe_contacts',
+]);
+
+export function isPrunedActionPath(path?: string | null): boolean {
+  if (!path) return false;
+  const bare = path.split(/[?#]/)[0].replace(/^\/projects\/:projectId/, '');
+  const root = '/' + (bare.split('/').filter(Boolean)[0] ?? '');
+  return PRUNED_NAV_ROUTES.has(root) || PRUNED_NAV_ROUTES.has(bare);
+}
+
+export function isPrunedModuleKey(moduleKey?: string | null, path?: string | null): boolean {
+  if (!moduleKey) return false;
+  const mod = moduleKey.toLowerCase();
+  if (mod === '5d' || mod === 'costmodel' || mod === 'oe_costmodel') {
+    // 5d cost model route is pruned, while cost-control (/cost-control) is kept
+    return !path || path === '/5d' || path.startsWith('/5d/') || path.startsWith('/5d?');
+  }
+  return PRUNED_MODULE_IDS.has(mod);
+}
+
+export function isPrunedAction(action: PaletteAction): boolean {
+  if (action.path && isPrunedActionPath(action.path)) return true;
+  if (action.moduleKey && isPrunedModuleKey(action.moduleKey, action.path)) return true;
+  const prefix = action.id.split('.')[0]?.toLowerCase();
+  if (prefix && (prefix === 'finance' || prefix === 'tendering' || prefix === 'contacts')) return true;
+  return false;
+}
+
 /** Action id of a sidebar row; the Sidebar uses it to show that row's shortcut. */
 export function navActionId(path: string): string {
   return `nav.${path}`;
@@ -54,6 +99,7 @@ export function buildNavActions(): PaletteAction[] {
     for (const item of group.items) {
       // Role-gated rows stay in the sidebar only; the palette has no role context.
       if (item.adminOnly || item.roleGate) continue;
+      if (PRUNED_NAV_ROUTES.has(item.to) || isPrunedModuleKey(item.moduleKey, item.to)) continue;
       const id = navActionId(item.to);
       if (seen.has(id) || !/^[a-z0-9][a-z0-9._/:-]{0,63}$/.test(id)) continue;
       seen.add(id);
@@ -189,13 +235,16 @@ let registered = false;
 export function registerAppActions(): void {
   if (registered) return;
   registered = true;
-  registerActions('core', CORE_ACTIONS);
+  registerActions('core', CORE_ACTIONS.filter((a) => !isPrunedAction(a)));
   registerActions('nav', buildNavActions());
   for (const manifest of MODULE_REGISTRY) {
     if (!manifest.actions?.length) continue;
+    if (PRUNED_MODULE_IDS.has(manifest.id.toLowerCase())) continue;
     registerActions(
       `module:${manifest.id}`,
-      manifest.actions.map((a) => ({ ...a, moduleKey: a.moduleKey ?? manifest.id })),
+      manifest.actions
+        .filter((a) => !isPrunedAction(a))
+        .map((a) => ({ ...a, moduleKey: a.moduleKey ?? manifest.id })),
     );
   }
 }

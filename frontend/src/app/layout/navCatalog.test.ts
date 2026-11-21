@@ -16,7 +16,7 @@ import { describe, expect, it } from 'vitest';
 import { navGroups } from './navCatalog';
 import { getRouteIcon } from './routeIcons';
 import { MODULE_REGISTRY } from '@/modules/_registry';
-import { CORE_ACTIONS } from '@/app/actions/coreActions';
+import { CORE_ACTIONS, buildNavActions } from '@/app/actions/coreActions';
 
 describe('the screen catalogue and the route-icon map', () => {
   it('agree on the icon for every screen the menu offers', () => {
@@ -160,5 +160,30 @@ describe('the screen catalogue and the routes that mount those screens', () => {
       }
     }
     expect(silent).toEqual([]);
+  });
+
+  it('ensures no action points to a hidden, infra or pruned module route', () => {
+    const allActions = [
+      ...CORE_ACTIONS,
+      ...buildNavActions(),
+      ...MODULE_REGISTRY.flatMap((m) => (m.actions ?? []).map((a) => ({ ...a, moduleKey: a.moduleKey ?? m.id }))),
+    ];
+
+    const prunedRoutes = ['/5d', '/finance', '/tendering', '/contacts'];
+    const prunedModules = ['5d', 'costmodel', 'finance', 'tendering', 'contacts', 'oe_costmodel', 'oe_finance', 'oe_tendering', 'oe_contacts'];
+
+    const violations: string[] = [];
+    for (const action of allActions) {
+      const path = action.path ? action.path.toLowerCase() : '';
+      for (const pruned of prunedRoutes) {
+        if (path === pruned || path.startsWith(pruned + '/') || path.startsWith(pruned + '?') || path.includes(pruned)) {
+          violations.push(`Action '${action.id}' has path '${action.path}' pointing to pruned route '${pruned}'`);
+        }
+      }
+      if (action.moduleKey && prunedModules.includes(action.moduleKey.toLowerCase()) && (path === '/5d' || path.includes('/5d'))) {
+        violations.push(`Action '${action.id}' has pruned moduleKey '${action.moduleKey}'`);
+      }
+    }
+    expect(violations).toEqual([]);
   });
 });

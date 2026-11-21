@@ -8,6 +8,7 @@ import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useProjectContextStore } from '@/stores/useProjectContextStore';
 import { useModuleStore } from '@/stores/useModuleStore';
+import { isPrunedAction } from '@/app/actions/coreActions';
 import { runAction, useActions, type ActionContext, type PaletteAction } from './registry';
 import { SEQUENCE_TIMEOUT_MS, effectiveBindings, eventToChord, useShortcutStore } from './shortcuts';
 
@@ -75,9 +76,6 @@ export function useActionRunner(): (action: PaletteAction, project?: ProjectRef 
   );
 }
 
-const PRUNED_MODULE_IDS = new Set(['finance', 'tendering', 'contacts', 'oe_finance', 'oe_tendering', 'oe_contacts']);
-const PRUNED_PATHS = new Set(['/finance', '/tendering', '/contacts']);
-
 /** Actions whose module is switched on and not in pruned/hidden modules. */
 export function useAvailableActions(): readonly PaletteAction[] {
   const actions = useActions();
@@ -85,14 +83,10 @@ export function useAvailableActions(): readonly PaletteAction[] {
   return useMemo(
     () =>
       actions.filter((a) => {
-        if (a.moduleKey && (PRUNED_MODULE_IDS.has(a.moduleKey) || !isModuleEnabled(a.moduleKey))) {
+        if (isPrunedAction(a)) {
           return false;
         }
-        if (a.path && PRUNED_PATHS.has(a.path.replace(/:projectId\/?/, ''))) {
-          return false;
-        }
-        const prefix = a.id.split('.')[0];
-        if (PRUNED_MODULE_IDS.has(prefix)) {
+        if (a.moduleKey && !isModuleEnabled(a.moduleKey)) {
           return false;
         }
         return true;

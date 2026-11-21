@@ -92,6 +92,24 @@ describe('action registry', () => {
     ];
     expect(defaultConflicts(all)).toEqual([]);
   });
+
+  it('ensures no action points to a hidden, infra or pruned module route', () => {
+    const all = [
+      ...CORE_ACTIONS,
+      ...buildNavActions(),
+      ...MODULE_REGISTRY.flatMap((m) => m.actions ?? []),
+    ];
+    const pruned = ['/5d', '/finance', '/tendering', '/contacts'];
+    for (const action of all) {
+      if (action.path) {
+        for (const p of pruned) {
+          expect(action.path).not.toBe(p);
+          expect(action.path.startsWith(p + '/')).toBe(false);
+          expect(action.path.startsWith(p + '?')).toBe(false);
+        }
+      }
+    }
+  });
 });
 
 describe('fuzzy match', () => {
