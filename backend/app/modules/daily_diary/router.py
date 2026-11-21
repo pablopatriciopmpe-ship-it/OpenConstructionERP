@@ -47,6 +47,14 @@ from app.dependencies import (
 )
 from app.modules.daily_diary.models import DailyDiary, DiaryEntry
 from app.modules.daily_diary.pdf_translations import diary_pdf_filename, resolve_pdf_locale
+from app.modules.daily_diary.period_report import (
+    PeriodPdfRequest,
+    PeriodPreviewRequest,
+    _public,
+    load_period,
+    narrative,
+    render_pdf,
+)
 from app.modules.daily_diary.schemas import (
     BeforeAfterResponse,
     DailyDiaryCreate,
@@ -104,6 +112,52 @@ from app.modules.daily_diary.weather import (
 )
 
 router = APIRouter(tags=["daily_diary"])
+
+
+@router.post("/period-report/preview")
+async def preview_period_report(
+    data: PeriodPreviewRequest,
+    session: SessionDep,
+    user_id: CurrentUserId = None,  # type: ignore[assignment]
+    _perm: None = Depends(RequirePermission("daily_diary.read")),
+) -> dict:
+    """Preview one authorized project's report without writing data."""
+    await verify_project_access(data.project_id, user_id, session)
+    snapshot = await load_period(session, data, include_photos=data.include_photos,
+                                 include_punchlist=data.include_punchlist,
+                                 include_inspections=data.include_inspections,
+                                 include_tasks=data.include_tasks)
+    return _public(snapshot) | await narrative(snapshot, session, user_id, data.use_ai, data.audience)
+
+
+@router.post("/period-report/pdf", response_class=StreamingResponse)
+async def pdf_period_report(
+    data: PeriodPdfRequest,
+    session: SessionDep,
+    user_id: CurrentUserId = None,  # type: ignore[assignment]
+    _perm: None = Depends(RequirePermission("daily_diary.read")),
+) -> StreamingResponse:
+    """Render user-approved text and real project photos for the requested period."""
+    from sqlalchemy import select
+
+    from app.modules.projects.models import Project
+    from app.modules.saas.models import Tenant
+    from app.modules.saas.profile import load_effective
+
+    await verify_project_access(data.project_id, user_id, session)
+    snapshot = await load_period(session, data)
+    # Resolve from the project's tenant, never a process-global company profile.
+    project = (await session.execute(select(Project).where(Project.id == data.project_id))).scalar_one()
+    brand: dict = {}
+    if project.tenant_id:
+        tenant = (await session.execute(select(Tenant).where(Tenant.id == uuid.UUID(project.tenant_id)))).scalar_one_or_none()
+        if tenant and tenant.deleted_at is None:
+            brand = await load_effective(session, tenant.id, tenant.legal_name, tenant.cnpj)
+    pdf = render_pdf(snapshot, data, brand)
+    filename = f"relatorio-obra-{data.date_from}-a-{data.date_to}.pdf"
+    return StreamingResponse(iter([pdf]), media_type="application/pdf",
+                             headers={"Content-Disposition": attachment_disposition(filename),
+                                      "Content-Language": "pt-BR"})
 
 
 def _get_service(session: SessionDep) -> DailyDiaryService:
