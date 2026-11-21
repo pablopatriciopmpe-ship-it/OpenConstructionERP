@@ -44,7 +44,7 @@ import { useBrandingStore } from '@/stores/useBrandingStore';
 import { usePreferencesStore } from '@/stores/usePreferencesStore';
 import { hydrateInfoBlocksFromServer } from '@/stores/useInfoBlockPrefsStore';
 import { useViewModeDefault } from './layout/useViewModeDefault';
-import { ddcVerifyIntegrity, ddcInjectMeta, DDC_ORIGIN } from '@/shared/lib/ddc-integrity';
+import { ddcVerifyIntegrity, ddcInjectMeta } from '@/shared/lib/ddc-integrity';
 import { NavigationProgress } from '@/shared/lib/navigationProgress';
 import { useKeyboardShortcuts } from '@/shared/hooks/useKeyboardShortcuts';
 import { useTranslation } from 'react-i18next';
@@ -1196,9 +1196,8 @@ if (typeof window !== 'undefined' && typeof console !== 'undefined') {
   try {
     // eslint-disable-next-line no-console
     console.info(
-      `%c${DDC_ORIGIN}%c · DataDrivenConstruction · datadrivenconstruction.io`,
+      '%cEvolux Obras',
       'color:#0071E3;font-weight:700',
-      'color:#64748b',
     );
   } catch { /* noop */ }
 }

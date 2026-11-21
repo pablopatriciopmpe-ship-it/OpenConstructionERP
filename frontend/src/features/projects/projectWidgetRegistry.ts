@@ -216,15 +216,6 @@ export const PROJECT_WIDGETS: readonly ProjectWidgetMeta[] = [
 
   /* ── Analytics ─────────────────────────────────────────────────────── */
   {
-    id: 'hse-incidents',
-    labelKey: 'project.widget.hse-incidents.title',
-    labelDefault: 'HSE incidents',
-    descKey: 'project.widget.hse-incidents.description',
-    descDefault: 'Open safety incidents and severity heatmap',
-    icon: HardHat,
-    category: 'analytics',
-  },
-  {
     id: 'quality-ncr',
     labelKey: 'project.widget.quality-ncr.title',
     labelDefault: 'Quality NCRs',

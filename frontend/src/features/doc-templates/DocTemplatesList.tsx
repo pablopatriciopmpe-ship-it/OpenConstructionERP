@@ -40,7 +40,7 @@ export function DocTemplatesList({
   const q = useQuery({ queryKey: ['doc-templates', 'list'], queryFn: listDocKinds });
 
   const rows = useMemo(
-    () => (q.data?.items ?? []).filter((r) => r.channel === channel),
+    () => (q.data?.items ?? []).filter((r) => r.channel === channel && r.module !== 'tendering'),
     [q.data, channel],
   );
   const modules = useMemo(() => [...new Set(rows.map((r) => r.module))].sort(), [rows]);

@@ -58,7 +58,12 @@ export function PackagesSettings() {
 
   const installed = data.packages.filter((p) => data.state.installed.includes(p.id));
   const isOn = (m: string) => (data.state.packaged ? data.state.modules[m] !== false : true);
-  const shown = data.modules.filter((m) => !filter || name(m.key).toLowerCase().includes(filter.toLowerCase()));
+  const shown = data.modules.filter(
+    (m) =>
+      m.key !== 'tendering' &&
+      m.key !== 'oe_tendering' &&
+      (!filter || name(m.key).toLowerCase().includes(filter.toLowerCase())),
+  );
 
   return (
     <div className="space-y-6" data-testid="packages-settings">

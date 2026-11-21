@@ -265,7 +265,9 @@ export function MenuAppearanceCard() {
     const seen = new Set<string>();
     return navGroups.map((g) => ({
       group: g,
-      items: g.items.filter((item) => (seen.has(item.to) ? false : (seen.add(item.to), true))),
+      items: g.items
+        .filter((item) => item.to !== '/tendering' && item.moduleKey !== 'tendering')
+        .filter((item) => (seen.has(item.to) ? false : (seen.add(item.to), true))),
     }));
   }, []);
   const itemByRoute = useMemo(() => {

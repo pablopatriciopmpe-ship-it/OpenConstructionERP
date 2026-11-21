@@ -69,7 +69,6 @@ import {
   RFIInboxWidget,
   ChangeOrdersPulseWidget,
   DailyDiaryWidget,
-  HSEIncidentsWidget,
   VariationsWidget,
   AIInsightsWidget,
   RecentFilesWidget,
@@ -2243,9 +2242,6 @@ export function ProjectDetailPage() {
         >
           {!isWidgetHidden('daily-diary') && (
             <DailyDiaryWidget projectId={projectId!} />
-          )}
-          {!isWidgetHidden('hse-incidents') && (
-            <HSEIncidentsWidget projectId={projectId!} />
           )}
           {!isWidgetHidden('photo-strip') && (
             <PhotoStripWidget projectId={projectId!} />

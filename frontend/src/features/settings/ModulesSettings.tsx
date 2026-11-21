@@ -269,7 +269,10 @@ export function ModulesSettings() {
     gcTime: 5 * 60 * 1000,
   });
 
-  const modules = useMemo(() => data ?? [], [data]);
+  const modules = useMemo(
+    () => (data ?? []).filter((m) => m.name !== 'oe_tendering' && m.name !== 'tendering'),
+    [data],
+  );
 
   /** Name lookup, used by both dependency directions below. */
   const byName = useMemo(() => {
