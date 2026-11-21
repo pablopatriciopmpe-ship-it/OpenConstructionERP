@@ -14,32 +14,43 @@ vi.mock('react-i18next', () => ({
 }));
 
 vi.mock('../playbookModules', () => ({
-  playbooksForRoute: () => [
-    {
-      id: 'mock-case',
-      title: 'Mock Case',
-      category: 'estimating',
-      stage: 'bidding',
-      roles: ['estimator'],
-      steps: [],
-    },
-  ],
+  playbooksForRoute: (route: string) =>
+    route === '/boq'
+      ? [
+          {
+            id: 'mock-case',
+            title: 'Mock Case',
+            category: 'estimating',
+            stage: 'bidding',
+            roles: ['estimator'],
+            steps: [],
+          },
+        ]
+      : [],
 }));
 
 describe('ModuleCasesButton visibility toggle', () => {
-  it('has SHOW_GUIDED_CASES set to false by default for user requirement', () => {
-    expect(SHOW_GUIDED_CASES).toBe(false);
+  it('has SHOW_GUIDED_CASES set to true per user request', () => {
+    expect(SHOW_GUIDED_CASES).toBe(true);
   });
 
-  it('renders null when SHOW_GUIDED_CASES is false', () => {
-    const { container } = render(
+  it('renders cases button on routes that have playbooks', () => {
+    render(
       <MemoryRouter initialEntries={['/boq']}>
         <ModuleCasesButton />
       </MemoryRouter>,
     );
 
+    expect(screen.getByRole('button')).toBeDefined();
+  });
+
+  it('renders null on routes with no playbooks', () => {
+    const { container } = render(
+      <MemoryRouter initialEntries={['/empty-route']}>
+        <ModuleCasesButton />
+      </MemoryRouter>,
+    );
+
     expect(container.firstChild).toBeNull();
-    expect(screen.queryByRole('button')).toBeNull();
-    expect(screen.queryByText(/Casos/i)).toBeNull();
   });
 });

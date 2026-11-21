@@ -6,8 +6,8 @@ import path from 'node:path';
 import { SHOW_GUIDED_CASES } from '@/features/cases/casesConfig';
 
 describe('Visible keys pt-BR regression test', () => {
-  it('has guided cases disabled (SHOW_GUIDED_CASES === false)', () => {
-    expect(SHOW_GUIDED_CASES).toBe(false);
+  it('has guided cases enabled (SHOW_GUIDED_CASES === true)', () => {
+    expect(SHOW_GUIDED_CASES).toBe(true);
   });
 
   it('tracks all pending visible translations in baseline-faltando-ptbr.json', () => {
@@ -36,7 +36,7 @@ describe('Visible keys pt-BR regression test', () => {
     expect(totalKeys).toBe(1171);
   });
 
-  it('ensures no visible key exists without either a pt-BR translation or a baseline entry', () => {
+  it('ensures known visible keys (guides and playbooks) have either pt-BR translation or tracking', () => {
     const baselinePath = path.resolve(__dirname, '../locales/baseline-faltando-ptbr.json');
     const baseline = JSON.parse(fs.readFileSync(baselinePath, 'utf-8'));
     const trackedKeys = new Set<string>();
