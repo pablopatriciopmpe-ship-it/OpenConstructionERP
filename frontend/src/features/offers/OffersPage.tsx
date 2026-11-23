@@ -1,12 +1,10 @@
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   FileText,
   Plus,
   Search,
-  Filter,
-  Download,
   FileSpreadsheet,
   FileDown,
   Calendar,
@@ -15,16 +13,15 @@ import {
   Send,
   XCircle,
   Eye,
-  Building2,
   ExternalLink,
   MessageCircle,
+  type LucideIcon,
 } from 'lucide-react';
 import { useActiveProjectId } from '@/shared/hooks/useActiveProjectId';
 import { boqApi } from '@/features/boq/api';
 import { useQuery } from '@tanstack/react-query';
 import {
   OfferStatus,
-  OfferSummary,
   useAllOffers,
   offerPdfUrl,
   offerExcelUrl,
@@ -40,7 +37,7 @@ type FilterTab = 'all' | 'draft' | 'sent' | 'accepted' | 'declined';
 
 const STATUS_CONFIG: Record<
   OfferStatus,
-  { label: string; bg: string; text: string; icon: React.FC<{ size?: number; className?: string }> }
+  { label: string; bg: string; text: string; icon: LucideIcon }
 > = {
   draft: { label: 'Rascunho', bg: 'bg-surface-secondary text-content-secondary border-border-light', text: 'text-content-secondary', icon: Clock },
   sent: { label: 'Enviado', bg: 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/40 dark:text-blue-300 dark:border-blue-800', text: 'text-blue-600', icon: Send },
@@ -349,7 +346,7 @@ export function OffersPage() {
       {/* Central Visual de Exportações (Export Hub) */}
       <ExportHubCards
         offerId={offers[0]?.id}
-        boqId={offers[0]?.boq_id}
+        boqId={offers[0]?.boq_id || undefined}
         projectId={projectId || undefined}
       />
 

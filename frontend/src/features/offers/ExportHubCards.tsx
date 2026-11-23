@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import {
@@ -11,7 +11,7 @@ import {
   ExternalLink,
   Loader2,
 } from 'lucide-react';
-import { Card, Badge } from '@/shared/ui';
+import { Badge } from '@/shared/ui';
 import { offerPdfUrl, offerExcelUrl } from './api';
 import { downloadWithAuth, getErrorMessage } from '@/shared/lib/api';
 import { useToastStore } from '@/stores/useToastStore';
@@ -22,7 +22,7 @@ interface ExportHubCardsProps {
   projectId?: string;
 }
 
-export function ExportHubCards({ offerId, boqId, projectId }: ExportHubCardsProps) {
+export function ExportHubCards({ offerId, boqId, projectId: _projectId }: ExportHubCardsProps) {
   const { t } = useTranslation();
   const addToast = useToastStore((s) => s.addToast);
   const [downloadingKey, setDownloadingKey] = useState<string | null>(null);

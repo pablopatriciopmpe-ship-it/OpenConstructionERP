@@ -37,7 +37,10 @@ describe('ExportHubCards', () => {
     // Click BOQ Excel download
     const excelBtns = screen.getAllByRole('button', { name: /Excel/i });
     const boqExcelBtn = excelBtns[excelBtns.length - 1];
-    fireEvent.click(boqExcelBtn);
+    expect(boqExcelBtn).toBeDefined();
+    if (boqExcelBtn) {
+      fireEvent.click(boqExcelBtn);
+    }
 
     await waitFor(() => {
       expect(downloadWithAuth).toHaveBeenCalledWith(
@@ -48,7 +51,10 @@ describe('ExportHubCards', () => {
 
     // Click Synthetic PDF
     const pdfBtns = screen.getAllByRole('button', { name: /PDF/i });
-    fireEvent.click(pdfBtns[0]);
+    expect(pdfBtns[0]).toBeDefined();
+    if (pdfBtns[0]) {
+      fireEvent.click(pdfBtns[0]);
+    }
 
     await waitFor(() => {
       expect(downloadWithAuth).toHaveBeenCalledWith(

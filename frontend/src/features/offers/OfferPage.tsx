@@ -2,8 +2,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import { AlertTriangle, Download, FileText, FileDown, FileSpreadsheet, MessageCircle, RotateCcw, Sliders, Eye, EyeOff, Sparkles, CheckCircle2 } from 'lucide-react';
-import { useQueryClient } from '@tanstack/react-query';
+import { AlertTriangle, FileText, FileDown, FileSpreadsheet, MessageCircle, RotateCcw, Sliders } from 'lucide-react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Badge } from '@/shared/ui/Badge';
 import { Breadcrumb, EmptyState, PageHeader, Skeleton } from '@/shared/ui';
 import { Button } from '@/shared/ui/Button';
@@ -124,9 +124,8 @@ export function OfferPage() {
   const decline = useOfferAction(offerId ?? '', 'decline');
   const accept = useAcceptOffer(offerId ?? '');
   const [accepting, setAccepting] = useState(false);
+  const [headerDownloading, setHeaderDownloading] = useState<string | null>(null);
   const rawOptions = (offer?.options || {}) as Record<string, unknown>;
-  const showBdi = rawOptions.show_bdi !== false;
-  const showDiscount = rawOptions.show_discount !== false;
   const showPix = rawOptions.show_pix !== false;
   const showAcceptance = rawOptions.show_acceptance !== false;
 
@@ -332,7 +331,7 @@ export function OfferPage() {
                 placeholder={t('offers.customer_empty', { defaultValue: 'Who is this offer for?' })}
               />
             ) : (
-              <CustomerEmpty projectId={projectId} country={String(ctxQ.data?.pack.country ?? '')} onCreated={(id) => save({ contact_id: id })} />
+              <CustomerEmpty projectId={effectiveProjectId} country={String(ctxQ.data?.pack.country ?? '')} onCreated={(id) => save({ contact_id: id })} />
             )}
 
             {/* Editable customer fields for proposal presentation (Name, WhatsApp, Email) */}
@@ -404,66 +403,8 @@ export function OfferPage() {
           <SectionCard id="commercial" title="Ajustes e Composição Comercial" findings={[]}>
             <div className="space-y-4">
               <p className="text-xs text-content-secondary">
-                Ajuste margens e descontos com prévia em tempo real do valor final e controle a visibilidade dos dados no documento.
+                Resumo em tempo real da composição comercial e controle da visibilidade de dados no documento gerado.
               </p>
-
-              <div className="grid gap-4 sm:grid-cols-2 p-3 rounded-lg border border-border-light bg-surface-secondary/40">
-                {/* Slider BDI */}
-                <div>
-                  <div className="flex items-center justify-between mb-1">
-                    <label className="text-xs font-semibold text-content-primary flex items-center gap-1.5">
-                      <Sliders size={13} className="text-[#156D61]" />
-                      BDI / Margem Comercial (%)
-                    </label>
-                    <span className="text-xs font-bold text-[#156D61] bg-[#156D61]/10 px-2 py-0.5 rounded">
-                      {bdiPercent}%
-                    </span>
-                  </div>
-                  <input
-                    type="range"
-                    min="0"
-                    max="50"
-                    step="0.5"
-                    value={bdiPercent}
-                    disabled={readOnly}
-                    onChange={(e) => setBdiPercent(Number(e.target.value))}
-                    className="w-full accent-[#156D61] cursor-pointer"
-                  />
-                  <div className="flex justify-between text-[10px] text-content-tertiary mt-0.5">
-                    <span>0% (Custo puro)</span>
-                    <span>20% (Padrão)</span>
-                    <span>50%</span>
-                  </div>
-                </div>
-
-                {/* Slider Desconto */}
-                <div>
-                  <div className="flex items-center justify-between mb-1">
-                    <label className="text-xs font-semibold text-content-primary flex items-center gap-1.5">
-                      <Sparkles size={13} className="text-amber-600" />
-                      Desconto Comercial (%)
-                    </label>
-                    <span className="text-xs font-bold text-amber-700 bg-amber-500/10 px-2 py-0.5 rounded">
-                      {discountPercent}%
-                    </span>
-                  </div>
-                  <input
-                    type="range"
-                    min="0"
-                    max="20"
-                    step="0.5"
-                    value={discountPercent}
-                    disabled={readOnly}
-                    onChange={(e) => setDiscountPercent(Number(e.target.value))}
-                    className="w-full accent-amber-600 cursor-pointer"
-                  />
-                  <div className="flex justify-between text-[10px] text-content-tertiary mt-0.5">
-                    <span>0%</span>
-                    <span>10%</span>
-                    <span>20% máx</span>
-                  </div>
-                </div>
-              </div>
 
               {/* Card de Prévia em Tempo Real */}
               <div className="p-3.5 rounded-lg border border-[#156D61]/30 bg-gradient-to-br from-[#156D61]/5 to-transparent space-y-2">
@@ -486,32 +427,20 @@ export function OfferPage() {
                     {formatCurrency(finalCalculatedTotal, offer.currency)}
                   </span>
                 </div>
+                {boqId && (
+                  <div className="pt-2 text-right">
+                    <Link to={`/boq/${encodeURIComponent(boqId)}`} className="text-xs text-[#156D61] hover:underline inline-flex items-center gap-1">
+                      <Sliders size={12} />
+                      Editar BDI e margens no Orçamento
+                    </Link>
+                  </div>
+                )}
               </div>
 
               {/* Switches de Visibilidade no Documento */}
               <div className="space-y-2 pt-2 border-t border-border-light">
                 <div className="text-xs font-semibold text-content-primary">Controle de Exibição no Documento:</div>
                 <div className="grid gap-2 sm:grid-cols-2 text-xs">
-                  <label className="flex items-center gap-2 cursor-pointer p-2 rounded border border-border-light hover:bg-surface-secondary/50">
-                    <input
-                      type="checkbox"
-                      checked={showBdi}
-                      disabled={readOnly}
-                      onChange={(e) => updateOption('show_bdi', e.target.checked)}
-                      className="rounded accent-[#156D61]"
-                    />
-                    <span>Destacar BDI discriminado no resumo</span>
-                  </label>
-                  <label className="flex items-center gap-2 cursor-pointer p-2 rounded border border-border-light hover:bg-surface-secondary/50">
-                    <input
-                      type="checkbox"
-                      checked={showDiscount}
-                      disabled={readOnly}
-                      onChange={(e) => updateOption('show_discount', e.target.checked)}
-                      className="rounded accent-[#156D61]"
-                    />
-                    <span>Destacar desconto comercial no documento</span>
-                  </label>
                   <label className="flex items-center gap-2 cursor-pointer p-2 rounded border border-border-light hover:bg-surface-secondary/50">
                     <input
                       type="checkbox"

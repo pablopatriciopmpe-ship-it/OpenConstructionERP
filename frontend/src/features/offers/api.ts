@@ -121,6 +121,7 @@ export interface Offer {
   execution_period?: string | null;
   payment_details?: string | null;
   reference: string;
+  estimate_net?: string;
   markup_presentation: 'spread' | 'lines' | 'section';
   options?: Record<string, unknown>;
   totals: OfferTotals;

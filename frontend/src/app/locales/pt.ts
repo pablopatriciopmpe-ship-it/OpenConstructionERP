@@ -37191,7 +37191,7 @@ const resource = {
     "quick_budget.generated": "Planilha orçamentária gerada",
     "quick_budget.generate_failed": "Não foi possível gerar a planilha",
     "quick_budget.ai_hint": "Prefere descrever a obra em texto? Use a Estimativa IA, que continua disponível à parte.",
-    "quick_budget.ai_link": "Abrir Estimativa IA",,
+    "quick_budget.ai_link": "Abrir Estimativa IA",
     "price_index.p0151.import": "Importar Stats SA P0151.1 (CPAP África do Sul)",
     "price_index.p0151.hint": "Carregue o ficheiro de publicação da Stats SA. A Tabela 1 passa a ser uma série por grupo de trabalho, com a referência à Stats SA.",
     "price_index.p0151.done": "Séries dos grupos de trabalho: {{series}}, valores novos: {{created}}, valores revistos: {{updated}}",

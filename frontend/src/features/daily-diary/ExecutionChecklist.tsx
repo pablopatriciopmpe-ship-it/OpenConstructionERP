@@ -1,20 +1,16 @@
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   CheckCircle2,
   Circle,
   Search,
-  Filter,
   Calendar,
-  Check,
-  AlertCircle,
   ListTodo,
-  ExternalLink,
   Plus,
 } from 'lucide-react';
 import { Card, Button, Badge } from '@/shared/ui';
-import { fetchTasks, completeTask, updateTask, createTask, type Task } from '@/features/tasks/api';
+import { fetchTasks, completeTask, updateTask, createTask } from '@/features/tasks/api';
 import { boqApi } from '@/features/boq/api';
 import { useToastStore } from '@/stores/useToastStore';
 import { getErrorMessage } from '@/shared/lib/api';
@@ -79,14 +75,31 @@ export function ExecutionChecklist({ projectId }: ExecutionChecklistProps) {
     setIsImporting(true);
     try {
       const primaryBoq = estimates[0];
+      if (!primaryBoq) return;
       const boqData = await boqApi.get(primaryBoq.id);
       const positions = boqData.positions || [];
       const leafItems = positions.filter((p) => {
         const u = (p.unit || '').trim().toLowerCase();
         return u !== '' && u !== 'section' && Number(p.quantity || 0) > 0;
       });
+
+      // Avoid duplicates: filter out positions already present in current tasks
+      const existingPosIds = new Set(
+        tasks.map((t) => t.metadata?.position_id).filter(Boolean)
+      );
+      const newItems = leafItems.filter((p) => !existingPosIds.has(p.id));
+
+      if (newItems.length === 0) {
+        addToast({
+          type: 'info',
+          title: t('daily_diary.services_imported', { defaultValue: 'Serviços importados' }),
+          message: 'Todos os serviços do orçamento já constam no checklist de execução.',
+        });
+        return;
+      }
+
       let created = 0;
-      for (const pos of leafItems.slice(0, 30)) {
+      for (const pos of newItems.slice(0, 30)) {
         await createTask({
           project_id: projectId,
           title: pos.description,
@@ -287,9 +300,9 @@ export function ExecutionChecklist({ projectId }: ExecutionChecklistProps) {
                     >
                       {task.title}
                     </span>
-                    {task.metadata?.unit && task.metadata?.quantity && (
+                    {Boolean(task.metadata?.unit && task.metadata?.quantity) && (
                       <Badge variant="neutral" size="sm">
-                        {String(task.metadata.quantity)} {String(task.metadata.unit).toLowerCase()}
+                        {String(task.metadata?.quantity)} {String(task.metadata?.unit).toLowerCase()}
                       </Badge>
                     )}
                   </div>
