@@ -45,7 +45,7 @@ export const REGION_MAP: Record<string, RegionInfo> = {
   ENG_TORONTO: { label: 'Canada (CAD)', name: 'Canada / International', flag: 'ca', currency: 'CAD' },
   FR_PARIS: { label: 'France (EUR)', name: 'France', flag: 'fr', currency: 'EUR' },
   SP_BARCELONA: { label: 'Spain (EUR)', name: 'Spain / Latin America', flag: 'es', currency: 'EUR' },
-  PT_SAOPAULO: { label: 'Brazil (BRL)', name: 'Brazil / Portugal', flag: 'br', currency: 'BRL' },
+  PT_SAOPAULO: { label: 'Brasil (BRL)', name: 'Brasil (São Paulo)', flag: 'br', currency: 'BRL' },
   RU_STPETERSBURG: { label: 'Russia (RUB)', name: 'Russia / CIS', flag: 'ru', currency: 'RUB' },
   AR_DUBAI: { label: 'Middle East (AED)', name: 'Middle East / Gulf', flag: 'ae', currency: 'AED' },
   ZH_SHANGHAI: { label: 'China (CNY)', name: 'China', flag: 'cn', currency: 'CNY' },
@@ -76,13 +76,13 @@ export const REGION_MAP: Record<string, RegionInfo> = {
   // conflated before.
   ZH_CHINA: { label: 'China (CNY)', name: 'China (Dinge)', flag: 'cn', currency: 'CNY' },
   TR_NATIONAL: { label: 'Türkiye (TRY)', name: 'Türkiye (Birim Fiyat)', flag: 'tr', currency: 'TRY' },
-  BR_NATIONAL: { label: 'Brazil (BRL)', name: 'Brazil (SINAPI)', flag: 'br', currency: 'BRL' },
+  BR_NATIONAL: { label: 'Brasil — SINAPI (R$)', name: 'Brasil (SINAPI)', flag: 'br', currency: 'BRL' },
   ES_ANDALUCIA: { label: 'Spain (EUR)', name: 'Spain (BCCA)', flag: 'es', currency: 'EUR' },
   IT_TOSCANA: { label: 'Italy (EUR)', name: 'Italy (Toscana)', flag: 'it', currency: 'EUR' },
   VN_NATIONAL: { label: 'Vietnam (VND)', name: 'Vietnam (Dinh Muc)', flag: 'vn', currency: 'VND' },
   ID_NATIONAL: { label: 'Indonesia (IDR)', name: 'Indonesia (AHSP)', flag: 'id', currency: 'IDR' },
   GR_NATIONAL: { label: 'Greece (EUR)', name: 'Greece (GGDE)', flag: 'gr', currency: 'EUR' },
-  CUSTOM: { label: 'My Database', name: 'My Database', flag: 'custom', currency: '' },
+  CUSTOM: { label: 'Meu Catálogo', name: 'Meu Catálogo', flag: 'custom', currency: '' },
 };
 
 interface CostDatabaseStore {

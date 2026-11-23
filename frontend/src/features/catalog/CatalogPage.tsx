@@ -34,6 +34,7 @@ import {
 } from 'lucide-react';
 import { Button, Card, Badge, ConfirmDialog, EmptyState, Skeleton, DismissibleInfo, IntroRichText, CountryFlag, CountryFlagBackdrop, Breadcrumb, ModuleGuideButton } from '@/shared/ui';
 import { CurrencyPicker } from '@/shared/ui/CurrencyPicker';
+import { listSeries, fetchSeries } from '@/features/price-index/api';
 import { PageHeader } from '@/shared/ui/PageHeader';
 import { catalogGuide } from './catalogGuide';
 import { useConfirm } from '@/shared/hooks/useConfirm';
@@ -194,7 +195,7 @@ const CWICR_REGIONS: CWICRRegionInfo[] = [
   // price-sheet feature and appear here for base recognition.
   { id: 'ZH_CHINA', name: 'China (Dinge)', flagId: 'cn', currency: 'CNY' },
   { id: 'TR_NATIONAL', name: 'Türkiye (Birim Fiyat)', flagId: 'tr', currency: 'TRY' },
-  { id: 'BR_NATIONAL', name: 'Brazil (SINAPI)', flagId: 'br', currency: 'BRL' },
+  { id: 'BR_NATIONAL', name: 'Brasil (SINAPI)', flagId: 'br', currency: 'BRL' },
   { id: 'ES_ANDALUCIA', name: 'Spain (BCCA)', flagId: 'es', currency: 'EUR' },
   { id: 'IT_TOSCANA', name: 'Italy (Toscana)', flagId: 'it', currency: 'EUR' },
   { id: 'GR_NATIONAL', name: 'Greece (GGDE)', flagId: 'gr', currency: 'EUR' },
@@ -351,7 +352,7 @@ function RegionImportGrid({
         </div>
       </div>
       <div className="grid grid-cols-1 gap-3 p-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {CWICR_REGIONS.map((region) => {
+        {CWICR_REGIONS.filter((r) => r.id === 'BR_NATIONAL').map((region) => {
           const isLoaded = loadedRegionIds.has(region.id);
           const isImporting = importingId === region.id;
 
@@ -926,6 +927,7 @@ function ResourceDetailPanel({
   // humanised form of the raw token for anything not yet mapped.
   const sourceLabels: Record<string, string> = {
     manual: t('catalog.source_manual', { defaultValue: 'Manual' }),
+    sinapi: t('catalog.source_sinapi', { defaultValue: 'SINAPI (CAIXA)' }),
     boq_import: t('catalog.source_boq_import', { defaultValue: 'Planilha orçamentária import' }),
     cad_import: t('catalog.source_cad_import', { defaultValue: 'CAD import' }),
     gaeb_import: t('catalog.source_gaeb_import', { defaultValue: 'GAEB import' }),
@@ -1135,13 +1137,13 @@ function BuildAssemblyModal({
   // into one scalar. Detect the spread, group the running total per
   // currency, and block creation while it's ambiguous.
   const distinctCurrencies = Array.from(
-    new Set(entries.map((e) => e.resource.currency || 'EUR')),
+    new Set(entries.map((e) => e.resource.currency || 'BRL')),
   );
   const isMultiCurrency = distinctCurrencies.length > 1;
-  const currency = distinctCurrencies[0] ?? 'EUR';
+  const currency = distinctCurrencies[0] ?? 'BRL';
 
   const totalsByCurrency = entries.reduce<Record<string, number>>((acc, e) => {
-    const code = e.resource.currency || 'EUR';
+    const code = e.resource.currency || 'BRL';
     acc[code] = (acc[code] ?? 0) + Number(e.resource.base_price) * e.quantity;
     return acc;
   }, {});
@@ -1370,7 +1372,7 @@ function BuildAssemblyModal({
                       {entry.resource.unit}
                     </td>
                     <td className="text-right tabular-nums font-medium">
-                      {fmt(Number(entry.resource.base_price), entry.resource.currency || 'EUR')}
+                      {fmt(Number(entry.resource.base_price), entry.resource.currency || 'BRL')}
                     </td>
                     <td
                       className={`px-3 py-2 text-center font-medium tabular-nums ${
@@ -1379,7 +1381,7 @@ function BuildAssemblyModal({
                           : 'text-content-tertiary'
                       }`}
                     >
-                      {entry.resource.currency || 'EUR'}
+                      {entry.resource.currency || 'BRL'}
                     </td>
                     <td className="text-center">
                       <input
@@ -1393,7 +1395,7 @@ function BuildAssemblyModal({
                       />
                     </td>
                     <td className="text-right tabular-nums font-medium">
-                      {fmt(Number(entry.resource.base_price) * entry.quantity, entry.resource.currency || 'EUR')}
+                      {fmt(Number(entry.resource.base_price) * entry.quantity, entry.resource.currency || 'BRL')}
                     </td>
                     <td className="text-center">
                       <button
@@ -2426,20 +2428,6 @@ export function CatalogPage() {
 
 /* ── Price Adjust Modal ──────────────────────────────────────────────── */
 
-// Published construction cost indices (German, UK, US national indices plus Eurostat) - stable data, kept outside component
-const PRICE_INDICES: Record<string, { label: string; rates: Record<string, number> }> = {
-  DE: { label: 'Germany', rates: { '2020': 3.2, '2021': 5.1, '2022': 14.6, '2023': 7.8, '2024': 4.2, '2025': 3.5, '2026': 3.0 } },
-  AT: { label: 'Austria', rates: { '2020': 2.8, '2021': 4.9, '2022': 12.3, '2023': 6.5, '2024': 3.8, '2025': 3.2, '2026': 2.8 } },
-  CH: { label: 'Switzerland', rates: { '2020': 1.5, '2021': 2.8, '2022': 6.2, '2023': 3.4, '2024': 2.5, '2025': 2.0, '2026': 1.8 } },
-  UK: { label: 'UK', rates: { '2020': 2.0, '2021': 8.5, '2022': 10.2, '2023': 4.8, '2024': 3.5, '2025': 3.0, '2026': 2.8 } },
-  US: { label: 'USA', rates: { '2020': 1.2, '2021': 6.3, '2022': 11.5, '2023': 3.2, '2024': 2.8, '2025': 2.5, '2026': 2.3 } },
-  FR: { label: 'France', rates: { '2020': 2.3, '2021': 5.5, '2022': 9.8, '2023': 5.6, '2024': 3.6, '2025': 2.8, '2026': 2.5 } },
-  EU: { label: 'EU Average', rates: { '2020': 2.5, '2021': 5.8, '2022': 11.0, '2023': 6.0, '2024': 3.5, '2025': 3.0, '2026': 2.5 } },
-  AE: { label: 'UAE / Gulf', rates: { '2020': 1.8, '2021': 3.5, '2022': 7.2, '2023': 4.0, '2024': 3.0, '2025': 2.5, '2026': 2.2 } },
-  RU: { label: 'Russia', rates: { '2020': 4.5, '2021': 8.2, '2022': 18.5, '2023': 9.0, '2024': 6.0, '2025': 5.0, '2026': 4.5 } },
-  IN: { label: 'India', rates: { '2020': 3.0, '2021': 5.0, '2022': 8.5, '2023': 5.5, '2024': 4.5, '2025': 4.0, '2026': 3.5 } },
-};
-
 function PriceAdjustModal({
   stats,
   regionStats,
@@ -2454,6 +2442,7 @@ function PriceAdjustModal({
   onSuccess: () => void;
 }) {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const addToast = useToastStore((s) => s.addToast);
 
   const [factor, setFactor] = useState(1.05);
@@ -2464,23 +2453,70 @@ function PriceAdjustModal({
   const [confirmed, setConfirmed] = useState(false);
 
   const [useIndex, setUseIndex] = useState(false);
-  const [indexRegion, setIndexRegion] = useState('DE');
-  const [baseYear, setBaseYear] = useState(2024);
-  const [targetYear, setTargetYear] = useState(2026);
 
-  // Auto-compute factor from published index
+  // Buscar séries reais de índices de preços (ex.: INCC-M sincronizado do BCB/FGV)
+  const { data: seriesList = [], isLoading: loadingSeries } = useQuery({
+    queryKey: ['price-index', 'series'],
+    queryFn: listSeries,
+    enabled: useIndex,
+  });
+
+  const [selectedSeriesId, setSelectedSeriesId] = useState<string>('');
+
   useEffect(() => {
-    if (!useIndex || baseYear >= targetYear) return;
-    const indexData = PRICE_INDICES[indexRegion];
-    if (!indexData) return;
-    let f = 1;
-    for (let y = baseYear; y < targetYear; y++) {
-      const rate = indexData.rates[String(y)] ?? indexData.rates[String(Math.min(y, 2026))] ?? 3.0;
-      f *= 1 + rate / 100;
+    if (seriesList.length > 0 && !selectedSeriesId) {
+      const incc = seriesList.find((s) => s.name.toUpperCase().includes('INCC'));
+      setSelectedSeriesId(incc ? incc.id : seriesList[0]!.id);
     }
-    setFactor(Math.round(f * 10000) / 10000);
-    setConfirmed(false);
-  }, [useIndex, indexRegion, baseYear, targetYear]);
+  }, [seriesList, selectedSeriesId]);
+
+  const { data: seriesDetail } = useQuery({
+    queryKey: ['price-index', 'series', selectedSeriesId],
+    queryFn: () => fetchSeries(selectedSeriesId),
+    enabled: useIndex && Boolean(selectedSeriesId),
+  });
+
+  const points = useMemo(() => {
+    return [...(seriesDetail?.points ?? [])].sort((a, b) => a.period.localeCompare(b.period));
+  }, [seriesDetail]);
+
+  const [basePeriod, setBasePeriod] = useState<string>('');
+  const [targetPeriod, setTargetPeriod] = useState<string>('');
+
+  useEffect(() => {
+    if (points.length >= 2) {
+      if (!basePeriod || !points.some((p) => p.period === basePeriod)) {
+        setBasePeriod(points[0]!.period);
+      }
+      if (!targetPeriod || !points.some((p) => p.period === targetPeriod)) {
+        setTargetPeriod(points[points.length - 1]!.period);
+      }
+    } else if (points.length === 1) {
+      setBasePeriod(points[0]!.period);
+      setTargetPeriod(points[0]!.period);
+    }
+  }, [points, basePeriod, targetPeriod]);
+
+  // Auto-calcular fator a partir dos períodos da série real (zero taxas inventadas)
+  useEffect(() => {
+    if (!useIndex || !basePeriod || !targetPeriod) return;
+    if (basePeriod === targetPeriod) {
+      setFactor(1.0);
+      setConfirmed(false);
+      return;
+    }
+    const pBase = points.find((p) => p.period === basePeriod);
+    const pTarget = points.find((p) => p.period === targetPeriod);
+    if (!pBase || !pTarget) return;
+
+    const fBase = Number(pBase.factor);
+    const fTarget = Number(pTarget.factor);
+    if (fBase > 0 && fTarget > 0) {
+      const computed = fTarget / fBase;
+      setFactor(Math.round(computed * 10000) / 10000);
+      setConfirmed(false);
+    }
+  }, [useIndex, basePeriod, targetPeriod, points]);
 
   const percentage = fmtFixed((factor - 1) * 100, 1);
   const isIncrease = factor > 1;
@@ -2593,47 +2629,100 @@ function PriceAdjustModal({
             <div className="rounded-lg border border-semantic-warning/30 bg-semantic-warning/10 p-4 space-y-3">
               <div className="flex items-center gap-2 text-xs font-medium text-semantic-warning">
                 <TrendingUp size={14} />
-                {t('catalog.inflation_index', { defaultValue: 'Published Construction Cost Indices' })}
+                {t('catalog.inflation_index', { defaultValue: 'Índice de Preços e Inflação (INCC-M)' })}
               </div>
-              <div className="grid grid-cols-3 gap-3">
-                <div>
-                  <label className="text-2xs text-content-tertiary mb-1 block">{t('catalog.index_country', { defaultValue: 'Country / Source' })}</label>
-                  <select value={indexRegion} onChange={(e) => setIndexRegion(e.target.value)} className="oe-select w-full">
-                    {Object.entries(PRICE_INDICES).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
-                  </select>
+              {loadingSeries ? (
+                <div className="text-xs text-content-tertiary">
+                  {t('common.loading', { defaultValue: 'Carregando séries...' })}
                 </div>
-                <div>
-                  <label className="text-2xs text-content-tertiary mb-1 block">{t('catalog.from_year', { defaultValue: 'From year' })}</label>
-                  <select value={baseYear} onChange={(e) => setBaseYear(Number(e.target.value))} className="oe-select w-full">
-                    {[2020,2021,2022,2023,2024,2025,2026].map(y => <option key={y} value={y}>{y}</option>)}
-                  </select>
+              ) : seriesList.length === 0 ? (
+                <div className="space-y-3">
+                  <p className="text-xs text-content-secondary">
+                    {t('catalog.no_series_hint', {
+                      defaultValue:
+                        'Nenhuma série de índices de preços sincronizada. Sincronize o INCC-M (FGV/BCB) no módulo de Índices para aplicar reajustes automáticos com dados oficiais.',
+                    })}
+                  </p>
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    size="sm"
+                    onClick={() => {
+                      onClose();
+                      navigate('/price-index');
+                    }}
+                    data-testid="sync-incc-btn"
+                  >
+                    {t('catalog.go_to_price_index', { defaultValue: 'Sincronizar INCC-M em Índice de preços' })}
+                  </Button>
                 </div>
-                <div>
-                  <label className="text-2xs text-content-tertiary mb-1 block">{t('catalog.to_year', { defaultValue: 'To year' })}</label>
-                  <select value={targetYear} onChange={(e) => setTargetYear(Number(e.target.value))} className="oe-select w-full">
-                    {[2020,2021,2022,2023,2024,2025,2026,2027,2028,2029,2030].map(y => <option key={y} value={y}>{y}</option>)}
-                  </select>
-                </div>
-              </div>
-              {baseYear < targetYear && (
-                <div className="flex flex-wrap gap-1.5">
-                  {(() => {
-                    const idx = PRICE_INDICES[indexRegion];
-                    const items = [];
-                    for (let y = baseYear; y < targetYear; y++) {
-                      const rate = idx?.rates[String(y)] ?? idx?.rates[String(Math.min(y, 2026))] ?? 3.0;
-                      items.push(<span key={y} className="inline-flex items-center gap-1 rounded bg-surface-secondary px-2 py-0.5 text-2xs"><span className="text-content-tertiary">{y}</span><span className="font-medium text-semantic-warning">+{fmtPercent(rate)}</span></span>);
-                    }
-                    return items;
-                  })()}
-                  <span className="inline-flex items-center gap-1 rounded bg-semantic-warning-bg px-2 py-0.5 text-2xs font-semibold text-semantic-warning">
-                    = ×{fmtFixed(factor, 4)} (+{percentage}%)
-                  </span>
-                </div>
+              ) : (
+                <>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div>
+                      <label className="text-2xs text-content-tertiary mb-1 block">
+                        {t('catalog.select_series', { defaultValue: 'Série de inflação' })}
+                      </label>
+                      <select
+                        value={selectedSeriesId}
+                        onChange={(e) => setSelectedSeriesId(e.target.value)}
+                        className="oe-select w-full"
+                        data-testid="price-index-series-select"
+                      >
+                        {seriesList.map((s) => (
+                          <option key={s.id} value={s.id}>
+                            {s.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="text-2xs text-content-tertiary mb-1 block">
+                        {t('catalog.base_period', { defaultValue: 'Período base' })}
+                      </label>
+                      <select
+                        value={basePeriod}
+                        onChange={(e) => setBasePeriod(e.target.value)}
+                        className="oe-select w-full"
+                        data-testid="price-index-base-period"
+                      >
+                        {points.map((p) => (
+                          <option key={p.period} value={p.period}>
+                            {p.period}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="text-2xs text-content-tertiary mb-1 block">
+                        {t('catalog.target_period', { defaultValue: 'Período alvo' })}
+                      </label>
+                      <select
+                        value={targetPeriod}
+                        onChange={(e) => setTargetPeriod(e.target.value)}
+                        className="oe-select w-full"
+                        data-testid="price-index-target-period"
+                      >
+                        {points.map((p) => (
+                          <option key={p.period} value={p.period}>
+                            {p.period}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                  {basePeriod && targetPeriod && (
+                    <div className="flex items-center gap-2 pt-1 text-2xs">
+                      <span className="text-content-tertiary">
+                        {basePeriod} → {targetPeriod}:
+                      </span>
+                      <span className="font-semibold text-semantic-warning">
+                        = ×{fmtFixed(factor, 4)} ({isIncrease ? '+' : ''}{percentage}%)
+                      </span>
+                    </div>
+                  )}
+                </>
               )}
-              <p className="text-2xs text-content-quaternary">
-                {t('catalog.index_sources', { defaultValue: 'Sources: a UK construction cost index, Eurostat (EU) and national construction cost indices. Representative averages.' })}
-              </p>
             </div>
           )}
 
@@ -2883,7 +2972,7 @@ function CreateResourceModal({
   // open the dropdown would otherwise silently stamp their catalog resource
   // as EUR. Falls back to 'EUR' if the stored preference is malformed.
   const rawPreferredCurrency = usePreferencesStore((s) => s.currency);
-  const preferredCurrency = /^[A-Z]{3}$/.test(rawPreferredCurrency) ? rawPreferredCurrency : 'EUR';
+  const preferredCurrency = /^[A-Z]{3}$/.test(rawPreferredCurrency) ? rawPreferredCurrency : 'BRL';
   // Locale/imperial-aware unit list + measurement-system-seeded default (same
   // primitive the BOQ editor uses) so an imperial user opens on sqft and the
   // dropdown carries imperial + locale tokens instead of metric only.
@@ -2920,7 +3009,7 @@ function CreateResourceModal({
         resource_code: `CUSTOM-${Date.now().toString(36).toUpperCase()}`,
         name: form.name.trim(),
         resource_type: form.resource_type,
-        category: form.category.trim() || 'Custom',
+        category: form.category.trim() || 'Personalizado',
         unit: form.unit,
         base_price: parseFloat(form.base_price) || 0,
         min_price: parseFloat(form.base_price) || 0,
@@ -2974,7 +3063,7 @@ function CreateResourceModal({
             <input
               autoFocus type="text" value={form.name}
               onChange={(e) => setForm({ ...form, name: e.target.value })}
-              placeholder={t('catalog.resource_name_placeholder', { defaultValue: 'e.g. Reinforced concrete C30/37' })}
+              placeholder={t('catalog.resource_name_placeholder', { defaultValue: 'ex.: Concreto usinado FCK 30 MPa' })}
               className="oe-input w-full"
             />
           </div>
@@ -2995,7 +3084,7 @@ function CreateResourceModal({
               <label className="oe-label">{t('catalog.category', { defaultValue: 'Category' })}</label>
               <input type="text" value={form.category}
                 onChange={(e) => setForm({ ...form, category: e.target.value })}
-                placeholder={t('catalog.category_placeholder', { defaultValue: 'e.g. Concrete & Cement' })}
+                placeholder={t('catalog.category_placeholder', { defaultValue: 'ex.: Concreto e Argamassa' })}
                 className="oe-input w-full"
               />
             </div>

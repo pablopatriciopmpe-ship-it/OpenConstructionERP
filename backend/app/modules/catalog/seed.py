@@ -27,9 +27,44 @@ from decimal import Decimal
 from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.product_defaults import active_profile
 from app.modules.catalog.models import CatalogResource
 
 logger = logging.getLogger(__name__)
+
+# Brazilian fallback marker code and resources (100% in pt-BR, BRL, BR_NATIONAL)
+_BR_MARKER_CODE = "BR-LAB-001"
+_BR_RESOURCES: tuple[tuple[str, str, str, str, str, str, str, str], ...] = (
+    # --- Mão de Obra ---
+    ("BR-LAB-001", "Servente de obras com encargos complementares", "labor", "Mão de Obra", "h", "21.50", "18.00", "26.00"),
+    ("BR-LAB-002", "Pedreiro com encargos complementares", "labor", "Mão de Obra", "h", "26.80", "22.00", "32.00"),
+    ("BR-LAB-003", "Eletricista com encargos complementares", "labor", "Mão de Obra", "h", "27.50", "23.00", "33.00"),
+    ("BR-LAB-004", "Encanador ou bombeiro hidráulico com encargos", "labor", "Mão de Obra", "h", "27.10", "22.50", "32.50"),
+    ("BR-LAB-005", "Mestre de obras com encargos complementares", "labor", "Mão de Obra", "h", "42.00", "35.00", "52.00"),
+    ("BR-LAB-006", "Carpinteiro de fôrmas com encargos complementares", "labor", "Mão de Obra", "h", "26.50", "21.50", "31.50"),
+    ("BR-LAB-007", "Pintor com encargos complementares", "labor", "Mão de Obra", "h", "26.20", "21.00", "31.00"),
+    # --- Materiais ---
+    ("BR-MAT-001", "Concreto usinado bombeável fck 25 MPa", "material", "Concreto e Argamassa", "m3", "410.00", "360.00", "470.00"),
+    ("BR-MAT-002", "Concreto usinado bombeável fck 30 MPa", "material", "Concreto e Argamassa", "m3", "435.00", "380.00", "500.00"),
+    ("BR-MAT-003", "Aço CA-50, 10,0 mm, vergalhão", "material", "Aço e Armação", "kg", "8.50", "7.20", "10.20"),
+    ("BR-MAT-004", "Cimento Portland composto CP II-E-32, saco 50 kg", "material", "Cimento e Agregados", "un", "36.50", "30.00", "44.00"),
+    ("BR-MAT-005", "Areia média lavada para concreto e argamassa", "material", "Cimento e Agregados", "m3", "110.00", "85.00", "145.00"),
+    ("BR-MAT-006", "Pedra britada n. 1 (9,5 a 19 mm)", "material", "Cimento e Agregados", "m3", "95.00", "75.00", "125.00"),
+    ("BR-MAT-007", "Bloco cerâmico de vedação 9 x 19 x 19 cm", "material", "Alvenaria e Blocos", "mil", "980.00", "820.00", "1200.00"),
+    ("BR-MAT-008", "Tinta acrílica fosca premium para interiores/exteriores", "material", "Pintura e Acabamento", "l", "24.00", "18.00", "32.00"),
+    ("BR-MAT-009", "Tubo PVC soldável água fria 25 mm (barra 6 m)", "material", "Hidráulica e Saneamento", "m", "4.80", "3.80", "6.20"),
+    ("BR-MAT-010", "Cabo de cobre flexível isolado 2,5 mm2 750 V", "material", "Elétrica", "m", "2.90", "2.20", "3.80"),
+    ("BR-MAT-011", "Tábua de madeira de pinho/eucalipto 2,5 x 20 cm", "material", "Madeira e Fôrmas", "m", "14.50", "11.00", "18.50"),
+    ("BR-MAT-012", "Telha cerâmica colonial resinada", "material", "Cobertura e Telhados", "mil", "1850.00", "1500.00", "2250.00"),
+    # --- Equipamentos ---
+    ("BR-EQP-001", "Caminhão basculante 14 m3 (locação com combustível)", "equipment", "Equipamentos — Locação", "h", "195.00", "160.00", "240.00"),
+    ("BR-EQP-002", "Escavadeira hidráulica sobre esteiras 21 t (locação)", "equipment", "Equipamentos — Locação", "h", "240.00", "200.00", "290.00"),
+    ("BR-EQP-003", "Betoneira 400 l motor elétrico trifásico (locação)", "equipment", "Equipamentos — Locação", "mes", "420.00", "350.00", "510.00"),
+    ("BR-EQP-004", "Bomba de concreto rebocável (locação)", "equipment", "Equipamentos — Locação", "dia", "1200.00", "980.00", "1450.00"),
+    # --- Operadores ---
+    ("BR-OPR-001", "Operador de escavadeira hidráulica com encargos", "operator", "Operadores de Máquinas", "h", "32.50", "27.00", "39.00"),
+    ("BR-OPR-002", "Motorista de caminhão basculante com encargos", "operator", "Operadores de Máquinas", "h", "29.00", "24.00", "35.00"),
+)
 
 # Marker code used for the idempotency guard. If this row exists the whole
 # seed is assumed to have run already.
@@ -194,7 +229,56 @@ async def seed_catalog(
     """
     counts: dict[str, int] = {}
 
-    # Idempotency guard: bail out if the marker resource already exists.
+    # Perfil Brasil (padrão desta edição): se já existirem registros ativos em BR_NATIONAL
+    # com source='sinapi' ou o marcador BR-LAB-001, seed_catalog retorna {} (no-op).
+    profile = active_profile()
+    if profile is not None:
+        existing_br = await session.execute(
+            select(CatalogResource.id)
+            .where(
+                (CatalogResource.resource_code == _BR_MARKER_CODE)
+                | (
+                    (CatalogResource.region == "BR_NATIONAL")
+                    & (CatalogResource.source == "sinapi")
+                    & (CatalogResource.is_active == True)
+                )
+            )
+            .limit(1)
+        )
+        if existing_br.scalar_one_or_none() is not None:
+            logger.info("Catalog seed skipped: Brazilian catalog/marker already present")
+            return {}
+
+        # Semear fallback brasileiro enxuto 100% em BRL / BR_NATIONAL
+        by_type_br: dict[str, int] = {}
+        for code, name, resource_type, category, unit, base, low, high in _BR_RESOURCES:
+            resource = CatalogResource(
+                resource_code=code,
+                name=name,
+                resource_type=resource_type,
+                category=category,
+                unit=unit,
+                base_price=str(Decimal(base)),
+                min_price=str(Decimal(low)),
+                max_price=str(Decimal(high)),
+                currency="BRL",
+                usage_count=0,
+                source="sinapi",
+                region="BR_NATIONAL",
+                specifications={"seed": True, "fallback": True, "band": [low, high]},
+                is_active=True,
+                metadata_={"seed": True, "profile": "brasil"},
+            )
+            session.add(resource)
+            by_type_br[resource_type] = by_type_br.get(resource_type, 0) + 1
+
+        await session.flush()
+        counts["catalog_resources"] = len(_BR_RESOURCES)
+        counts.update({f"resources_{rtype}": n for rtype, n in by_type_br.items()})
+        logger.info("Catalog seed inserted (Brasil): %s", counts)
+        return counts
+
+    # Idempotency guard legado (perfil não-Brasil / OE_PRODUCT_DEFAULTS=off): bail out if the marker resource already exists.
     existing = await session.execute(
         select(CatalogResource.id).where(CatalogResource.resource_code == _MARKER_CODE).limit(1)
     )

@@ -138,6 +138,12 @@ class CatalogResourceService:
                 detail=f"Catalog resource with code '{data.resource_code}' already exists",
             )
 
+        currency = data.currency
+        if not currency:
+            from app.core.product_defaults import active_profile
+            prof = active_profile()
+            currency = str(prof["currency"]) if prof and prof.get("currency") else "EUR"
+
         resource = CatalogResource(
             resource_code=data.resource_code,
             name=data.name,
@@ -147,7 +153,7 @@ class CatalogResourceService:
             base_price=str(data.base_price),
             min_price=str(data.min_price),
             max_price=str(data.max_price),
-            currency=data.currency,
+            currency=currency,
             usage_count=0,
             source=data.source,
             region=data.region,

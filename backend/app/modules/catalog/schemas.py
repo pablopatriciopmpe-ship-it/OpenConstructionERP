@@ -25,6 +25,14 @@ from uuid import UUID
 from pydantic import BaseModel, ConfigDict, Field, field_serializer, field_validator, model_validator
 
 from app.core.decimal_types import FiniteDecimal
+from app.core.product_defaults import active_profile
+
+
+def _default_catalog_currency() -> str:
+    prof = active_profile()
+    if prof and prof.get("currency"):
+        return str(prof["currency"])
+    return "EUR"
 
 
 # ── v3 §10 money serialisation helper ─────────────────────────────────────
@@ -95,7 +103,7 @@ class CatalogResourceCreate(TaxProfile):
     base_price: FiniteDecimal = Field(..., ge=0)
     min_price: FiniteDecimal = Field(default=Decimal("0"), ge=0)
     max_price: FiniteDecimal = Field(default=Decimal("0"), ge=0)
-    currency: str = Field(default="EUR", max_length=10)
+    currency: str = Field(default_factory=_default_catalog_currency, max_length=10)
     source: str = Field(default="manual", max_length=50)
     region: str | None = Field(default=None, max_length=50)
     specifications: dict[str, Any] = Field(default_factory=dict)
