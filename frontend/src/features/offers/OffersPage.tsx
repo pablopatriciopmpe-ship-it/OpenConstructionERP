@@ -32,6 +32,8 @@ import {
 import { Button } from '@/shared/ui/Button';
 import { Card } from '@/shared/ui/Card';
 import { formatCurrency } from '@/shared/lib/money';
+import { downloadWithAuth, getErrorMessage } from '@/shared/lib/api';
+import { useToastStore } from '@/stores/useToastStore';
 import { ExportHubCards } from './ExportHubCards';
 
 type FilterTab = 'all' | 'draft' | 'sent' | 'accepted' | 'declined';
@@ -55,9 +57,22 @@ export function OffersPage() {
   const [activeTab, setActiveTab] = useState<FilterTab>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [showNewModal, setShowNewModal] = useState(false);
+  const addToast = useToastStore((s) => s.addToast);
 
-  // Load all offers (optionally filtered by active project and status)
-  const offersQuery = useAllOffers(activeTab === 'all' ? undefined : activeTab, projectId || undefined);
+  const handleDownload = async (url: string, filename: string) => {
+    try {
+      await downloadWithAuth(url, filename);
+    } catch (err) {
+      addToast({
+        type: 'error',
+        title: t('common.download_failed', { defaultValue: 'Falha no download' }),
+        message: getErrorMessage(err),
+      });
+    }
+  };
+
+  // Load all offers so funnel chips always reflect true counts across all statuses
+  const offersQuery = useAllOffers(undefined, projectId || undefined);
   const estimatesQuery = useQuery({
     queryKey: ['offer-estimates', projectId],
     queryFn: () => (projectId ? boqApi.list(projectId) : Promise.resolve([])),
@@ -282,48 +297,44 @@ export function OffersPage() {
                           </Link>
 
                           {/* Baixar PDF Analítico */}
-                          <a
-                            href={offerPdfUrl(o.id, 'analytic')}
-                            download
-                            target="_blank"
-                            rel="noreferrer"
+                          <button
+                            type="button"
+                            onClick={() => handleDownload(offerPdfUrl(o.id, 'analytic'), `proposta-analitica-${o.number}.pdf`)}
                             className="p-1.5 rounded-lg border border-border-light hover:bg-[#156D61]/10 text-content-secondary hover:text-[#156D61] transition-colors"
                             title="Baixar Proposta Analítica (PDF)"
                           >
                             <FileDown size={14} />
-                          </a>
+                          </button>
 
                           {/* Baixar PDF Sintético */}
-                          <a
-                            href={offerPdfUrl(o.id, 'synthetic')}
-                            download
-                            target="_blank"
-                            rel="noreferrer"
+                          <button
+                            type="button"
+                            onClick={() => handleDownload(offerPdfUrl(o.id, 'synthetic'), `proposta-sintetica-${o.number}.pdf`)}
                             className="px-1.5 py-1 rounded-lg border border-border-light hover:bg-[#156D61]/10 text-[10px] font-medium text-content-secondary hover:text-[#156D61] transition-colors"
                             title="Baixar Proposta Sintética (PDF)"
                           >
                             PDF Sint.
-                          </a>
+                          </button>
 
                           {/* Baixar Excel Analítico */}
-                          <a
-                            href={offerExcelUrl(o.id, 'analytic')}
-                            download
+                          <button
+                            type="button"
+                            onClick={() => handleDownload(offerExcelUrl(o.id, 'analytic'), `proposta-analitica-${o.number}.xlsx`)}
                             className="p-1.5 rounded-lg border border-border-light hover:bg-emerald-50 text-content-secondary hover:text-emerald-700 dark:hover:bg-emerald-950/40 transition-colors"
                             title="Baixar Proposta Analítica (Excel)"
                           >
                             <FileSpreadsheet size={14} />
-                          </a>
+                          </button>
 
                           {/* Baixar Excel Sintético */}
-                          <a
-                            href={offerExcelUrl(o.id, 'synthetic')}
-                            download
+                          <button
+                            type="button"
+                            onClick={() => handleDownload(offerExcelUrl(o.id, 'synthetic'), `proposta-sintetica-${o.number}.xlsx`)}
                             className="px-1.5 py-1 rounded-lg border border-border-light hover:bg-emerald-50 text-[10px] font-medium text-content-secondary hover:text-emerald-700 dark:hover:bg-emerald-950/40 transition-colors"
                             title="Baixar Proposta Sintética (Excel)"
                           >
                             XLS Sint.
-                          </a>
+                          </button>
                         </div>
                       </td>
                     </tr>

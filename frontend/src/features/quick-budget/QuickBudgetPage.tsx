@@ -223,7 +223,7 @@ export function QuickBudgetPage() {
       list.push({
         servico: mi.id,
         quantidade: toDecimalPayloadString(mi.qty),
-        preco_unitario: positive(mi.preco) ? toDecimalPayloadString(mi.preco) : '0',
+        preco_unitario: positive(mi.preco) ? toDecimalPayloadString(mi.preco) : undefined,
         descricao: mi.descricao,
         unidade: mi.unidade || 'un',
         categoria: mi.categoriaId,
@@ -1138,7 +1138,7 @@ export function QuickBudgetPage() {
                   icon={<FileText size={16} />}
                   className="w-full sm:w-auto min-h-[44px] px-6"
                   onClick={() =>
-                    navigate(`/offers?project=${generatedResult.project_id}&boqId=${generatedResult.boq_id}`)
+                    navigate(`/boq/${encodeURIComponent(generatedResult.boq_id)}/offer?project=${encodeURIComponent(generatedResult.project_id)}`)
                   }
                   data-testid="quick-budget-create-offer-btn"
                 >

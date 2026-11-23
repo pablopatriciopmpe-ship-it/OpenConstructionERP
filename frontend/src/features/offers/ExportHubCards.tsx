@@ -1,19 +1,20 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import {
   FileText,
   FileSpreadsheet,
   Download,
+  FileDown,
   Calendar,
   TrendingUp,
-  Boxes,
-  Users,
-  FileDown,
   ExternalLink,
-  ShieldCheck,
+  Loader2,
 } from 'lucide-react';
-import { Card, Badge, Button } from '@/shared/ui';
+import { Card, Badge } from '@/shared/ui';
 import { offerPdfUrl, offerExcelUrl } from './api';
+import { downloadWithAuth, getErrorMessage } from '@/shared/lib/api';
+import { useToastStore } from '@/stores/useToastStore';
 
 interface ExportHubCardsProps {
   offerId?: string;
@@ -23,17 +24,34 @@ interface ExportHubCardsProps {
 
 export function ExportHubCards({ offerId, boqId, projectId }: ExportHubCardsProps) {
   const { t } = useTranslation();
+  const addToast = useToastStore((s) => s.addToast);
+  const [downloadingKey, setDownloadingKey] = useState<string | null>(null);
+
+  const handleDownload = async (key: string, url: string, filename: string) => {
+    setDownloadingKey(key);
+    try {
+      await downloadWithAuth(url, filename);
+    } catch (err) {
+      addToast({
+        type: 'error',
+        title: t('common.download_failed', { defaultValue: 'Falha no download' }),
+        message: getErrorMessage(err),
+      });
+    } finally {
+      setDownloadingKey(null);
+    }
+  };
 
   return (
     <div className="space-y-6" data-testid="export-hub-cards">
       <div>
         <h2 className="text-lg font-bold text-content-primary flex items-center gap-2">
           <Download size={20} className="text-[#156D61]" />
-          {t('offers.export_hub_title', { defaultValue: 'Central de Exportações' })}
+          {t('offers.export_hub_title', { defaultValue: 'Central de Exportação de Documentos' })}
         </h2>
-        <p className="text-xs text-content-secondary mt-0.5">
+        <p className="text-xs text-content-secondary mt-1">
           {t('offers.export_hub_subtitle', {
-            defaultValue: 'Emita relatórios oficiais separados para apresentação ao cliente e aprovação em bancos ou engenharia.',
+            defaultValue: 'Relatórios e propostas prontos para apresentação ao cliente, aprovação bancária e canteiro de obras',
           })}
         </p>
       </div>
@@ -64,16 +82,15 @@ export function ExportHubCards({ offerId, boqId, projectId }: ExportHubCardsProp
                 </div>
               </div>
               {offerId ? (
-                <a
-                  href={offerPdfUrl(offerId, 'synthetic')}
-                  download
-                  target="_blank"
-                  rel="noreferrer"
+                <button
+                  type="button"
+                  disabled={downloadingKey === 'pdf-synthetic'}
+                  onClick={() => handleDownload('pdf-synthetic', offerPdfUrl(offerId, 'synthetic'), `proposta-sintetica-${offerId.slice(0, 8)}.pdf`)}
                   className="min-h-[44px] px-3 py-1.5 text-xs font-medium rounded-lg border border-border-light bg-surface-secondary hover:bg-[#156D61]/10 hover:text-[#156D61] transition-colors flex items-center gap-1.5 shrink-0"
                 >
-                  <FileDown size={14} />
+                  {downloadingKey === 'pdf-synthetic' ? <Loader2 size={14} className="animate-spin" /> : <FileDown size={14} />}
                   PDF
-                </a>
+                </button>
               ) : (
                 <span className="text-[11px] text-content-tertiary shrink-0">Selecione proposta</span>
               )}
@@ -93,16 +110,15 @@ export function ExportHubCards({ offerId, boqId, projectId }: ExportHubCardsProp
                 </div>
               </div>
               {offerId ? (
-                <a
-                  href={offerPdfUrl(offerId, 'analytic')}
-                  download
-                  target="_blank"
-                  rel="noreferrer"
+                <button
+                  type="button"
+                  disabled={downloadingKey === 'pdf-analytic'}
+                  onClick={() => handleDownload('pdf-analytic', offerPdfUrl(offerId, 'analytic'), `proposta-analitica-${offerId.slice(0, 8)}.pdf`)}
                   className="min-h-[44px] px-3 py-1.5 text-xs font-medium rounded-lg border border-border-light bg-surface-secondary hover:bg-[#156D61]/10 hover:text-[#156D61] transition-colors flex items-center gap-1.5 shrink-0"
                 >
-                  <FileDown size={14} />
+                  {downloadingKey === 'pdf-analytic' ? <Loader2 size={14} className="animate-spin" /> : <FileDown size={14} />}
                   PDF
-                </a>
+                </button>
               ) : (
                 <span className="text-[11px] text-content-tertiary shrink-0">Selecione proposta</span>
               )}
@@ -123,22 +139,26 @@ export function ExportHubCards({ offerId, boqId, projectId }: ExportHubCardsProp
               </div>
               {offerId ? (
                 <div className="flex items-center gap-1 shrink-0">
-                  <a
-                    href={offerExcelUrl(offerId, 'synthetic')}
-                    download
+                  <button
+                    type="button"
+                    disabled={downloadingKey === 'excel-synthetic'}
+                    onClick={() => handleDownload('excel-synthetic', offerExcelUrl(offerId, 'synthetic'), `proposta-sintetica-${offerId.slice(0, 8)}.xlsx`)}
                     className="min-h-[44px] px-2.5 py-1.5 text-xs font-medium rounded-lg border border-border-light bg-surface-secondary hover:bg-emerald-50 hover:text-emerald-700 transition-colors flex items-center gap-1"
                     title="Excel Sintético"
                   >
+                    {downloadingKey === 'excel-synthetic' ? <Loader2 size={12} className="animate-spin" /> : null}
                     Sint.
-                  </a>
-                  <a
-                    href={offerExcelUrl(offerId, 'analytic')}
-                    download
+                  </button>
+                  <button
+                    type="button"
+                    disabled={downloadingKey === 'excel-analytic'}
+                    onClick={() => handleDownload('excel-analytic', offerExcelUrl(offerId, 'analytic'), `proposta-analitica-${offerId.slice(0, 8)}.xlsx`)}
                     className="min-h-[44px] px-2.5 py-1.5 text-xs font-medium rounded-lg border border-border-light bg-surface-secondary hover:bg-emerald-50 hover:text-emerald-700 transition-colors flex items-center gap-1"
                     title="Excel Analítico"
                   >
+                    {downloadingKey === 'excel-analytic' ? <Loader2 size={12} className="animate-spin" /> : null}
                     Analít.
-                  </a>
+                  </button>
                 </div>
               ) : (
                 <span className="text-[11px] text-content-tertiary shrink-0">Selecione proposta</span>
@@ -172,14 +192,15 @@ export function ExportHubCards({ offerId, boqId, projectId }: ExportHubCardsProp
                 </div>
               </div>
               {boqId ? (
-                <a
-                  href={`/api/v1/boq/${boqId}/export/excel`}
-                  download
+                <button
+                  type="button"
+                  disabled={downloadingKey === 'boq-excel'}
+                  onClick={() => handleDownload('boq-excel', `/api/v1/boq/boqs/${encodeURIComponent(boqId)}/export/excel`, `orcamento-${boqId.slice(0, 8)}.xlsx`)}
                   className="min-h-[44px] px-3 py-1.5 text-xs font-medium rounded-lg border border-border-light bg-surface-secondary hover:bg-blue-50 hover:text-blue-700 transition-colors flex items-center gap-1.5 shrink-0"
                 >
-                  <FileSpreadsheet size={14} />
+                  {downloadingKey === 'boq-excel' ? <Loader2 size={14} className="animate-spin" /> : <FileSpreadsheet size={14} />}
                   Excel
-                </a>
+                </button>
               ) : (
                 <span className="text-[11px] text-content-tertiary shrink-0">Na obra</span>
               )}
@@ -199,13 +220,13 @@ export function ExportHubCards({ offerId, boqId, projectId }: ExportHubCardsProp
                 </div>
               </div>
               {boqId ? (
-                <a
-                  href={`/boq/${boqId}`}
+                <Link
+                  to={`/boq/${encodeURIComponent(boqId)}`}
                   className="min-h-[44px] px-3 py-1.5 text-xs font-medium rounded-lg border border-border-light bg-surface-secondary hover:bg-purple-50 hover:text-purple-700 transition-colors flex items-center gap-1.5 shrink-0"
                 >
                   <ExternalLink size={14} />
                   Visualizar
-                </a>
+                </Link>
               ) : (
                 <span className="text-[11px] text-content-tertiary shrink-0">Na obra</span>
               )}
@@ -225,13 +246,13 @@ export function ExportHubCards({ offerId, boqId, projectId }: ExportHubCardsProp
                 </div>
               </div>
               {boqId ? (
-                <a
-                  href={`/boq/${boqId}`}
+                <Link
+                  to={`/boq/${encodeURIComponent(boqId)}`}
                   className="min-h-[44px] px-3 py-1.5 text-xs font-medium rounded-lg border border-border-light bg-surface-secondary hover:bg-amber-50 hover:text-amber-700 transition-colors flex items-center gap-1.5 shrink-0"
                 >
                   <ExternalLink size={14} />
                   Cronograma
-                </a>
+                </Link>
               ) : (
                 <span className="text-[11px] text-content-tertiary shrink-0">Na obra</span>
               )}

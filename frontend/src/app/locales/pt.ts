@@ -69497,7 +69497,7 @@ const resource = {
     "doc_templates.kind.procurement.purchase_order": "Ordem de compra",
     "doc_templates.kind.procurement.goods_receipt": "Receção de mercadorias",
 
-    // --- Obra Certa UX Improvements v0.5 ---
+    // --- Melhorias de UX v0.5 ---
     "daily_diary.tab_checklist": "Checklist de Execução",
     "daily_diary.checklist_progress": "{{completed}} de {{total}} serviços concluídos ({{percent}}%)",
     "daily_diary.import_boq_services": "Importar Serviços do Orçamento",

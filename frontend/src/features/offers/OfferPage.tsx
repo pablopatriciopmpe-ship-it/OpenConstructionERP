@@ -35,6 +35,8 @@ import {
   type OfferSettings,
   type OfferStatus,
 } from './api';
+import { boqApi } from '@/features/boq/api';
+import { downloadWithAuth } from '@/shared/lib/api';
 import { OfferScheduleEditor } from './OfferScheduleEditor';
 import { AcceptDialog, CustomerEmpty, PlaceholderChips, SendAction } from './offerParts';
 import { ExportHubCards } from './ExportHubCards';
@@ -82,7 +84,14 @@ export function OfferPage() {
   const addToast = useToastStore((s) => s.addToast);
   const qc = useQueryClient();
 
-  const ctxQ = useOfferContext(projectId, boqId);
+  const boqFallbackQ = useQuery({
+    queryKey: ['boq-fallback', boqId],
+    queryFn: () => (boqId ? boqApi.get(boqId) : null),
+    enabled: !projectId && Boolean(boqId),
+  });
+  const effectiveProjectId = projectId || boqFallbackQ.data?.project_id;
+
+  const ctxQ = useOfferContext(effectiveProjectId, boqId);
   const settingsQ = useOfferSettings();
   const settings = settingsQ.data;
 
@@ -97,14 +106,14 @@ export function OfferPage() {
 
   // First offer needs no setup: create the draft as soon as the page knows there is none.
   useEffect(() => {
-    if (ctxQ.data && ctxQ.data.offers.length === 0 && !requested.current && projectId && boqId) {
+    if (ctxQ.data && ctxQ.data.offers.length === 0 && !requested.current && effectiveProjectId && boqId) {
       requested.current = true;
       create.mutate(
-        { project_id: projectId, boq_id: boqId, contact_id: ctxQ.data.client_contact_id },
+        { project_id: effectiveProjectId, boq_id: boqId, contact_id: ctxQ.data.client_contact_id },
         { onSuccess: (o) => setOfferId(o.id), onError: (e) => addToast({ type: 'error', title: t('offers.page_title', { defaultValue: 'Customer offer' }), message: getErrorMessage(e) }) },
       );
     }
-  }, [ctxQ.data, projectId, boqId, create, addToast, t]);
+  }, [ctxQ.data, effectiveProjectId, boqId, create, addToast, t]);
 
   const offerQ = useOffer(offerId);
   const offer = offerQ.data;
@@ -115,14 +124,31 @@ export function OfferPage() {
   const decline = useOfferAction(offerId ?? '', 'decline');
   const accept = useAcceptOffer(offerId ?? '');
   const [accepting, setAccepting] = useState(false);
+  const rawOptions = (offer?.options || {}) as Record<string, unknown>;
+  const showBdi = rawOptions.show_bdi !== false;
+  const showDiscount = rawOptions.show_discount !== false;
+  const showPix = rawOptions.show_pix !== false;
+  const showAcceptance = rawOptions.show_acceptance !== false;
 
-  // Commercial controls live preview state
-  const [bdiPercent, setBdiPercent] = useState<number>(20);
-  const [discountPercent, setDiscountPercent] = useState<number>(0);
-  const [showBdi, setShowBdi] = useState<boolean>(true);
-  const [showDiscount, setShowDiscount] = useState<boolean>(true);
-  const [showPix, setShowPix] = useState<boolean>(true);
-  const [showAcceptance, setShowAcceptance] = useState<boolean>(true);
+  const updateOption = (key: string, value: unknown) => {
+    save({
+      options: {
+        ...(offer?.options || {}),
+        [key]: value,
+      },
+    });
+  };
+
+  const handleHeaderDownload = async (key: string, url: string, filename: string) => {
+    setHeaderDownloading(key);
+    try {
+      await downloadWithAuth(url, filename);
+    } catch (e) {
+      addToast({ type: 'error', title: t('common.download_failed', { defaultValue: 'Falha no download' }), message: getErrorMessage(e) });
+    } finally {
+      setHeaderDownloading(null);
+    }
+  };
 
   const save = useCallback(
     (change: OfferPatch) => {
@@ -141,7 +167,7 @@ export function OfferPage() {
       onError: (e) => addToast({ type: 'error', title: label, message: getErrorMessage(e) }),
     });
 
-  if (!projectId) {
+  if (!effectiveProjectId) {
     return (
       <div className="space-y-5 animate-fade-in">
         <PageHeader srTitle={t('offers.page_title', { defaultValue: 'Customer offer' })} />
@@ -175,12 +201,10 @@ export function OfferPage() {
   const bySection = (s: string) => findings.filter((f) => f.section === s);
   const readOnly = !offer.editable;
 
-  // Commercial calculations for live preview
-  const baseCost = Number(offer.totals.net || 0);
-  const bdiValue = baseCost * (bdiPercent / 100);
-  const subtotalWithBdi = baseCost + bdiValue;
-  const discountValue = subtotalWithBdi * (discountPercent / 100);
-  const finalCalculatedTotal = Math.max(0, subtotalWithBdi - discountValue);
+  // Commercial values from the real offer calculations (must match PDF exactly)
+  const baseCost = Number(offer.estimate_net || offer.totals.net || 0);
+  const finalCalculatedTotal = Number(offer.totals.gross || offer.totals.net || 0);
+  const totalDifference = finalCalculatedTotal - baseCost;
 
   return (
     <div className="space-y-5 animate-fade-in">
@@ -216,46 +240,46 @@ export function OfferPage() {
                 onSend={() => run(send, t('offers.send', { defaultValue: 'Send offer' }), (r) => void downloadPdf(r as Offer))}
               />
             )}
-            <a
-              href={offerPdfUrl(offer.id, 'analytic')}
-              download
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border border-border-light bg-surface-elevated hover:bg-[#156D61]/10 text-content-primary hover:text-[#156D61] transition-colors shadow-sm"
+            <button
+              type="button"
+              disabled={headerDownloading === 'pdf-analytic'}
+              onClick={() => handleHeaderDownload('pdf-analytic', offerPdfUrl(offer.id, 'analytic'), `${offer.number}_analitica.pdf`)}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border border-border-light bg-surface-elevated hover:bg-[#156D61]/10 text-content-primary hover:text-[#156D61] transition-colors shadow-sm disabled:opacity-50"
               title="Baixar Proposta Analítica (PDF)"
             >
               <FileDown size={14} className="text-[#156D61]" />
-              PDF Analítico
-            </a>
-            <a
-              href={offerPdfUrl(offer.id, 'synthetic')}
-              download
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border border-border-light bg-surface-elevated hover:bg-[#156D61]/10 text-content-primary hover:text-[#156D61] transition-colors shadow-sm"
+              {headerDownloading === 'pdf-analytic' ? 'Baixando...' : 'PDF Analítico'}
+            </button>
+            <button
+              type="button"
+              disabled={headerDownloading === 'pdf-synthetic'}
+              onClick={() => handleHeaderDownload('pdf-synthetic', offerPdfUrl(offer.id, 'synthetic'), `${offer.number}_sintetica.pdf`)}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border border-border-light bg-surface-elevated hover:bg-[#156D61]/10 text-content-primary hover:text-[#156D61] transition-colors shadow-sm disabled:opacity-50"
               title="Baixar Proposta Sintética (PDF)"
             >
               <FileDown size={14} className="text-[#156D61]" />
-              PDF Sintético
-            </a>
-            <a
-              href={offerExcelUrl(offer.id, 'analytic')}
-              download
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border border-border-light bg-surface-elevated hover:bg-emerald-50 text-content-primary hover:text-emerald-700 dark:hover:bg-emerald-950/40 transition-colors shadow-sm"
+              {headerDownloading === 'pdf-synthetic' ? 'Baixando...' : 'PDF Sintético'}
+            </button>
+            <button
+              type="button"
+              disabled={headerDownloading === 'excel-analytic'}
+              onClick={() => handleHeaderDownload('excel-analytic', offerExcelUrl(offer.id, 'analytic'), `${offer.number}_analitica.xlsx`)}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border border-border-light bg-surface-elevated hover:bg-emerald-50 text-content-primary hover:text-emerald-700 dark:hover:bg-emerald-950/40 transition-colors shadow-sm disabled:opacity-50"
               title="Baixar Proposta Analítica (Excel)"
             >
               <FileSpreadsheet size={14} className="text-emerald-600" />
-              Excel Analítico
-            </a>
-            <a
-              href={offerExcelUrl(offer.id, 'synthetic')}
-              download
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border border-border-light bg-surface-elevated hover:bg-emerald-50 text-content-primary hover:text-emerald-700 dark:hover:bg-emerald-950/40 transition-colors shadow-sm"
+              {headerDownloading === 'excel-analytic' ? 'Baixando...' : 'Excel Analítico'}
+            </button>
+            <button
+              type="button"
+              disabled={headerDownloading === 'excel-synthetic'}
+              onClick={() => handleHeaderDownload('excel-synthetic', offerExcelUrl(offer.id, 'synthetic'), `${offer.number}_sintetica.xlsx`)}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border border-border-light bg-surface-elevated hover:bg-emerald-50 text-content-primary hover:text-emerald-700 dark:hover:bg-emerald-950/40 transition-colors shadow-sm disabled:opacity-50"
               title="Baixar Proposta Sintética (Excel)"
             >
               <FileSpreadsheet size={14} className="text-emerald-600" />
-              Excel Sintético
-            </a>
+              {headerDownloading === 'excel-synthetic' ? 'Baixando...' : 'Excel Sintético'}
+            </button>
           </div>
         }
       />
@@ -448,14 +472,12 @@ export function OfferPage() {
                   <span>Custo Base Técnico (Itens):</span>
                   <span className="font-medium text-content-primary">{formatCurrency(baseCost, offer.currency)}</span>
                 </div>
-                <div className="flex items-center justify-between text-xs text-content-secondary">
-                  <span>(+) BDI / Margem ({bdiPercent}%):</span>
-                  <span className="font-medium text-[#156D61]">{formatCurrency(bdiValue, offer.currency)}</span>
-                </div>
-                {discountPercent > 0 && (
-                  <div className="flex items-center justify-between text-xs text-amber-700 dark:text-amber-400">
-                    <span>(-) Desconto ({discountPercent}%):</span>
-                    <span className="font-medium">-{formatCurrency(discountValue, offer.currency)}</span>
+                {totalDifference !== 0 && (
+                  <div className="flex items-center justify-between text-xs text-content-secondary">
+                    <span>Ajustes Comerciais / BDI / Margens:</span>
+                    <span className="font-medium text-[#156D61]">
+                      {totalDifference > 0 ? `+${formatCurrency(totalDifference, offer.currency)}` : formatCurrency(totalDifference, offer.currency)}
+                    </span>
                   </div>
                 )}
                 <div className="pt-2 border-t border-border-light flex items-center justify-between">
@@ -475,7 +497,7 @@ export function OfferPage() {
                       type="checkbox"
                       checked={showBdi}
                       disabled={readOnly}
-                      onChange={(e) => setShowBdi(e.target.checked)}
+                      onChange={(e) => updateOption('show_bdi', e.target.checked)}
                       className="rounded accent-[#156D61]"
                     />
                     <span>Destacar BDI discriminado no resumo</span>
@@ -485,7 +507,7 @@ export function OfferPage() {
                       type="checkbox"
                       checked={showDiscount}
                       disabled={readOnly}
-                      onChange={(e) => setShowDiscount(e.target.checked)}
+                      onChange={(e) => updateOption('show_discount', e.target.checked)}
                       className="rounded accent-[#156D61]"
                     />
                     <span>Destacar desconto comercial no documento</span>
@@ -495,7 +517,7 @@ export function OfferPage() {
                       type="checkbox"
                       checked={showPix}
                       disabled={readOnly}
-                      onChange={(e) => setShowPix(e.target.checked)}
+                      onChange={(e) => updateOption('show_pix', e.target.checked)}
                       className="rounded accent-[#156D61]"
                     />
                     <span>Exibir dados de pagamento e PIX</span>
@@ -505,7 +527,7 @@ export function OfferPage() {
                       type="checkbox"
                       checked={showAcceptance}
                       disabled={readOnly}
-                      onChange={(e) => setShowAcceptance(e.target.checked)}
+                      onChange={(e) => updateOption('show_acceptance', e.target.checked)}
                       className="rounded accent-[#156D61]"
                     />
                     <span>Incluir campo para aceite e assinatura</span>
@@ -610,7 +632,7 @@ export function OfferPage() {
             <ExportHubCards
               offerId={offer.id}
               boqId={offer.boq_id ?? boqId ?? undefined}
-              projectId={projectId}
+              projectId={effectiveProjectId}
             />
           </SectionCard>
         </div>
@@ -629,7 +651,7 @@ export function OfferPage() {
             }
           />
         )}
-        <OfferPreview offerId={offer.id} version={`${offer.totals.gross}|${JSON.stringify(offer.texts)}|${offer.status}|${offer.number}|${offer.valid_until}|${offer.locale}|${offer.instalments.length}|${bdiPercent}|${discountPercent}|${showBdi}|${showDiscount}|${showPix}|${showAcceptance}`} />
+        <OfferPreview offerId={offer.id} version={`${offer.totals.gross}|${JSON.stringify(offer.texts)}|${offer.status}|${offer.number}|${offer.valid_until}|${offer.locale}|${offer.instalments.length}|${JSON.stringify(offer.options)}`} />
       </div>
     </div>
   );

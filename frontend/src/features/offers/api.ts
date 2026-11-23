@@ -122,6 +122,7 @@ export interface Offer {
   payment_details?: string | null;
   reference: string;
   markup_presentation: 'spread' | 'lines' | 'section';
+  options?: Record<string, unknown>;
   totals: OfferTotals;
   lines: { kind: string; ordinal: string; description: string; role?: string; total?: string }[];
   texts: Record<string, TextEntry>;
@@ -170,6 +171,7 @@ export type OfferPatch = Partial<
     | 'advance_security'
     | 'execution_period'
     | 'payment_details'
+    | 'options'
   > & {
     contact_id: string | null;
     customer?: Record<string, unknown>;

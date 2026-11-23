@@ -62459,7 +62459,7 @@ const resource = {
     "onboarding.mod_variations": "Aditivos",
     "onboarding.mod_variations_desc": "Aditivos com medições em obra e fluxo de aprovação",
 
-    // --- Obra Certa UX Improvements v0.5 ---
+    // --- Melhorias de UX v0.5 ---
     "daily_diary.tab_checklist": "Checklist de Execução",
     "daily_diary.checklist_progress": "{{completed}} de {{total}} serviços concluídos ({{percent}}%)",
     "daily_diary.import_boq_services": "Importar Serviços do Orçamento",

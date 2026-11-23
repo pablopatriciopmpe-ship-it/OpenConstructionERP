@@ -655,6 +655,10 @@ def render_offer(
         story.append(sched)
 
     # -- terms
+    options = data.get("options") or {}
+    show_pix = options.get("show_pix") is not False and options.get("show_payment_details") is not False
+    show_acceptance = options.get("show_acceptance") is not False
+
     terms_headings = (
         ("offer_execution_period", "execution_period"),
         ("offer_payment_terms", "payment_terms"),
@@ -668,6 +672,8 @@ def render_offer(
         ("", "legal_notice"),
     )
     for heading_key, kind in terms_headings:
+        if kind == "payment_details" and not show_pix:
+            continue
         chunk_text = text_of(kind)
         if kind == "execution_period" and not chunk_text and data.get("execution_period"):
             chunk_text = str(data["execution_period"])
@@ -732,8 +738,9 @@ def render_offer(
             ]
         )
     )
-    story.append(Spacer(1, 6 * MM))
-    story.append(KeepTogether([_para(labels["offer_acceptance"], h2), sign]))
+    if show_acceptance:
+        story.append(Spacer(1, 6 * MM))
+        story.append(KeepTogether([_para(labels["offer_acceptance"], h2), sign]))
 
     # -- pages
     buffer = io.BytesIO()

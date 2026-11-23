@@ -79,8 +79,12 @@ export function ExecutionChecklist({ projectId }: ExecutionChecklistProps) {
     setIsImporting(true);
     try {
       const primaryBoq = estimates[0];
-      const positions = await boqApi.getPositions(primaryBoq.id);
-      const leafItems = positions.filter((p) => p.unit !== 'section');
+      const boqData = await boqApi.get(primaryBoq.id);
+      const positions = boqData.positions || [];
+      const leafItems = positions.filter((p) => {
+        const u = (p.unit || '').trim().toLowerCase();
+        return u !== '' && u !== 'section' && Number(p.quantity || 0) > 0;
+      });
       let created = 0;
       for (const pos of leafItems.slice(0, 30)) {
         await createTask({
@@ -152,16 +156,14 @@ export function ExecutionChecklist({ projectId }: ExecutionChecklistProps) {
             </p>
           </div>
           <div className="flex items-center gap-2">
-            {total === 0 && (
-              <Button
-                variant="primary"
-                onClick={importFromBoq}
-                loading={isImporting}
-                icon={<Plus size={16} />}
-              >
-                {t('daily_diary.import_boq_services', { defaultValue: 'Importar serviços do Orçamento' })}
-              </Button>
-            )}
+            <Button
+              variant="primary"
+              onClick={importFromBoq}
+              loading={isImporting}
+              icon={<Plus size={16} />}
+            >
+              {t('daily_diary.import_boq_services', { defaultValue: 'Importar serviços do Orçamento' })}
+            </Button>
           </div>
         </div>
 
