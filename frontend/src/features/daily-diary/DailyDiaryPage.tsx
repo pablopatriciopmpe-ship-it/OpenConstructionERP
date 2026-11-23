@@ -1,6 +1,7 @@
 // DDC-CWICR-OE: DataDrivenConstruction · OpenConstructionERP​‌‍⁠​‌‍⁠​‌‍⁠​‌‍⁠
 // Copyright (c) 2026 Artem Boiko / DataDrivenConstruction
 import { PhotoStrip } from '@/features/photos/components/PhotoStrip';
+import { ExecutionChecklist } from './ExecutionChecklist';
 import { useState, useMemo, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -524,6 +525,7 @@ export function DailyDiaryPage() {
         tabs={[
           { id: 'diaries', label: t('daily_diary.tab_diaries', { defaultValue: 'Diaries' }), icon: <Calendar size={14} /> },
           { id: 'today', label: t('daily_diary.tab_today', { defaultValue: 'Today' }), icon: <BookOpen size={14} /> },
+          { id: 'checklist', label: t('daily_diary.tab_checklist', { defaultValue: 'Checklist de Execução' }), icon: <CheckCircle2 size={14} /> },
           { id: 'archive', label: t('daily_diary.tab_archive', { defaultValue: 'Archive' }), icon: <Archive size={14} /> },
         ]}
       />
@@ -620,6 +622,8 @@ export function DailyDiaryPage() {
             }}
           />
         )
+      ) : tab === 'checklist' ? (
+        <ExecutionChecklist projectId={projectId} />
       ) : archiveQ.isError ? (
         <Card padding="none">
           <EmptyState

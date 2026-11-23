@@ -16,11 +16,21 @@ from app.modules.boq.quick_budget.catalog import PROJECT_TYPES, load_catalog, se
 router = APIRouter(prefix="/quick-budget", tags=["quick-budget"])
 
 
+class ItemAmbienteIn(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    nome: str = Field(..., min_length=1, max_length=100)
+    quantidade: Decimal = Field(..., gt=0, le=Decimal("100000000"))
+
+
 class ItemIn(BaseModel):
     model_config = ConfigDict(extra="forbid")
-    servico: str = Field(..., min_length=1, max_length=80)
+    servico: str = Field(..., min_length=1, max_length=120)
     quantidade: Decimal = Field(..., gt=0, le=Decimal("100000000"))
     preco_unitario: Decimal | None = Field(default=None, gt=0, description="Só para serviços sem composição SINAPI")
+    ambientes: list[ItemAmbienteIn] | None = Field(default=None, description="Detalhamento por cômodo/ambiente")
+    descricao: str | None = Field(default=None, max_length=255, description="Descrição do serviço (para item manual inline)")
+    unidade: str | None = Field(default=None, max_length=20, description="Unidade do serviço (para item manual inline)")
+    categoria: str | None = Field(default=None, max_length=80, description="Categoria do serviço (para item manual inline)")
 
 
 class PlanIn(BaseModel):
@@ -46,7 +56,18 @@ def _http(exc: qb.QuickBudgetError) -> HTTPException:
 
 
 def _lines(body: PlanIn) -> list[qb.LineIn]:
-    return [qb.LineIn(i.servico, i.quantidade, i.preco_unitario) for i in body.itens]
+    return [
+        qb.LineIn(
+            service_id=i.servico,
+            quantity=i.quantidade,
+            unit_rate_override=i.preco_unitario,
+            ambientes=[{"nome": a.nome, "quantidade": a.quantidade} for a in i.ambientes] if i.ambientes else None,
+            descricao=i.descricao,
+            unidade=i.unidade,
+            categoria=i.categoria,
+        )
+        for i in body.itens
+    ]
 
 
 @router.get("/catalog/", dependencies=[Depends(RequirePermission("boq.read"))], summary="Catálogo de serviços")

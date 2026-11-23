@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import { AlertTriangle, Download, FileText, FileDown, FileSpreadsheet, MessageCircle } from 'lucide-react';
+import { AlertTriangle, Download, FileText, FileDown, FileSpreadsheet, MessageCircle, RotateCcw, Sliders, Eye, EyeOff, Sparkles, CheckCircle2 } from 'lucide-react';
 import { useQueryClient } from '@tanstack/react-query';
 import { Badge } from '@/shared/ui/Badge';
 import { Breadcrumb, EmptyState, PageHeader, Skeleton } from '@/shared/ui';
@@ -18,6 +18,7 @@ import {
   numberTaken,
   useAcceptOffer,
   useCreateOffer,
+  useOfferSettings,
   useResetOfferText,
   insertAt,
   useOffer,
@@ -31,12 +32,14 @@ import {
   type OfferFinding,
   type OfferPatch,
   type OfferSection,
+  type OfferSettings,
   type OfferStatus,
 } from './api';
 import { OfferScheduleEditor } from './OfferScheduleEditor';
 import { AcceptDialog, CustomerEmpty, PlaceholderChips, SendAction } from './offerParts';
+import { ExportHubCards } from './ExportHubCards';
 
-const SECTIONS: OfferSection[] = ['customer', 'details', 'items', 'schedule', 'texts', 'layout'];
+const SECTIONS: (OfferSection | 'commercial' | 'exports')[] = ['customer', 'details', 'commercial', 'items', 'schedule', 'texts', 'layout', 'exports'];
 const STATUS_VARIANT: Record<OfferStatus, 'neutral' | 'blue' | 'success' | 'warning' | 'error'> = {
   draft: 'neutral',
   sent: 'blue',
@@ -80,6 +83,9 @@ export function OfferPage() {
   const qc = useQueryClient();
 
   const ctxQ = useOfferContext(projectId, boqId);
+  const settingsQ = useOfferSettings();
+  const settings = settingsQ.data;
+
   const create = useCreateOffer();
   const latest = ctxQ.data?.offers.find((o) => o.status !== 'superseded') ?? ctxQ.data?.offers[0];
   const [offerId, setOfferId] = useState<string | undefined>();
@@ -109,6 +115,14 @@ export function OfferPage() {
   const decline = useOfferAction(offerId ?? '', 'decline');
   const accept = useAcceptOffer(offerId ?? '');
   const [accepting, setAccepting] = useState(false);
+
+  // Commercial controls live preview state
+  const [bdiPercent, setBdiPercent] = useState<number>(20);
+  const [discountPercent, setDiscountPercent] = useState<number>(0);
+  const [showBdi, setShowBdi] = useState<boolean>(true);
+  const [showDiscount, setShowDiscount] = useState<boolean>(true);
+  const [showPix, setShowPix] = useState<boolean>(true);
+  const [showAcceptance, setShowAcceptance] = useState<boolean>(true);
 
   const save = useCallback(
     (change: OfferPatch) => {
@@ -158,8 +172,15 @@ export function OfferPage() {
   }
 
   const findings = valQ.data?.findings ?? [];
-  const bySection = (s: OfferSection) => findings.filter((f) => f.section === s);
+  const bySection = (s: string) => findings.filter((f) => f.section === s);
   const readOnly = !offer.editable;
+
+  // Commercial calculations for live preview
+  const baseCost = Number(offer.totals.net || 0);
+  const bdiValue = baseCost * (bdiPercent / 100);
+  const subtotalWithBdi = baseCost + bdiValue;
+  const discountValue = subtotalWithBdi * (discountPercent / 100);
+  const finalCalculatedTotal = Math.max(0, subtotalWithBdi - discountValue);
 
   return (
     <div className="space-y-5 animate-fade-in">
@@ -273,7 +294,7 @@ export function OfferPage() {
             {SECTIONS.map((s) => (
               <a key={s} href={`#offer-${s}`} className="rounded-full border border-border-light px-3 py-1 hover:bg-surface-secondary">
                 {bySection(s).some((f) => f.severity === 'error') ? '! ' : ''}
-                {t(`offers.section.${s}`, { defaultValue: s })}
+                {s === 'commercial' ? 'Comercial & Margem' : s === 'exports' ? 'Central de Exportação' : t(`offers.section.${s}`, { defaultValue: s })}
               </a>
             ))}
           </nav>
@@ -352,7 +373,146 @@ export function OfferPage() {
           </SectionCard>
 
           <SectionCard id="details" title={t('offers.section.details', { defaultValue: 'Offer details' })} findings={bySection('details')}>
-            <DetailsFields offer={offer} readOnly={readOnly} languages={ctxQ.data?.document_languages ?? []} onSave={save} />
+            <DetailsFields offer={offer} readOnly={readOnly} languages={ctxQ.data?.document_languages ?? []} settings={settings} onSave={save} />
+          </SectionCard>
+
+          {/* Seção de Controles Comerciais com Prévia ao Vivo */}
+          <SectionCard id="commercial" title="Ajustes e Composição Comercial" findings={[]}>
+            <div className="space-y-4">
+              <p className="text-xs text-content-secondary">
+                Ajuste margens e descontos com prévia em tempo real do valor final e controle a visibilidade dos dados no documento.
+              </p>
+
+              <div className="grid gap-4 sm:grid-cols-2 p-3 rounded-lg border border-border-light bg-surface-secondary/40">
+                {/* Slider BDI */}
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="text-xs font-semibold text-content-primary flex items-center gap-1.5">
+                      <Sliders size={13} className="text-[#156D61]" />
+                      BDI / Margem Comercial (%)
+                    </label>
+                    <span className="text-xs font-bold text-[#156D61] bg-[#156D61]/10 px-2 py-0.5 rounded">
+                      {bdiPercent}%
+                    </span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="50"
+                    step="0.5"
+                    value={bdiPercent}
+                    disabled={readOnly}
+                    onChange={(e) => setBdiPercent(Number(e.target.value))}
+                    className="w-full accent-[#156D61] cursor-pointer"
+                  />
+                  <div className="flex justify-between text-[10px] text-content-tertiary mt-0.5">
+                    <span>0% (Custo puro)</span>
+                    <span>20% (Padrão)</span>
+                    <span>50%</span>
+                  </div>
+                </div>
+
+                {/* Slider Desconto */}
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="text-xs font-semibold text-content-primary flex items-center gap-1.5">
+                      <Sparkles size={13} className="text-amber-600" />
+                      Desconto Comercial (%)
+                    </label>
+                    <span className="text-xs font-bold text-amber-700 bg-amber-500/10 px-2 py-0.5 rounded">
+                      {discountPercent}%
+                    </span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="20"
+                    step="0.5"
+                    value={discountPercent}
+                    disabled={readOnly}
+                    onChange={(e) => setDiscountPercent(Number(e.target.value))}
+                    className="w-full accent-amber-600 cursor-pointer"
+                  />
+                  <div className="flex justify-between text-[10px] text-content-tertiary mt-0.5">
+                    <span>0%</span>
+                    <span>10%</span>
+                    <span>20% máx</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Card de Prévia em Tempo Real */}
+              <div className="p-3.5 rounded-lg border border-[#156D61]/30 bg-gradient-to-br from-[#156D61]/5 to-transparent space-y-2">
+                <div className="text-xs font-semibold text-content-primary mb-2">Composição Comercial em Tempo Real:</div>
+                <div className="flex items-center justify-between text-xs text-content-secondary">
+                  <span>Custo Base Técnico (Itens):</span>
+                  <span className="font-medium text-content-primary">{formatCurrency(baseCost, offer.currency)}</span>
+                </div>
+                <div className="flex items-center justify-between text-xs text-content-secondary">
+                  <span>(+) BDI / Margem ({bdiPercent}%):</span>
+                  <span className="font-medium text-[#156D61]">{formatCurrency(bdiValue, offer.currency)}</span>
+                </div>
+                {discountPercent > 0 && (
+                  <div className="flex items-center justify-between text-xs text-amber-700 dark:text-amber-400">
+                    <span>(-) Desconto ({discountPercent}%):</span>
+                    <span className="font-medium">-{formatCurrency(discountValue, offer.currency)}</span>
+                  </div>
+                )}
+                <div className="pt-2 border-t border-border-light flex items-center justify-between">
+                  <span className="text-sm font-bold text-content-primary">Valor Final da Proposta:</span>
+                  <span className="text-base font-extrabold text-[#156D61]">
+                    {formatCurrency(finalCalculatedTotal, offer.currency)}
+                  </span>
+                </div>
+              </div>
+
+              {/* Switches de Visibilidade no Documento */}
+              <div className="space-y-2 pt-2 border-t border-border-light">
+                <div className="text-xs font-semibold text-content-primary">Controle de Exibição no Documento:</div>
+                <div className="grid gap-2 sm:grid-cols-2 text-xs">
+                  <label className="flex items-center gap-2 cursor-pointer p-2 rounded border border-border-light hover:bg-surface-secondary/50">
+                    <input
+                      type="checkbox"
+                      checked={showBdi}
+                      disabled={readOnly}
+                      onChange={(e) => setShowBdi(e.target.checked)}
+                      className="rounded accent-[#156D61]"
+                    />
+                    <span>Destacar BDI discriminado no resumo</span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer p-2 rounded border border-border-light hover:bg-surface-secondary/50">
+                    <input
+                      type="checkbox"
+                      checked={showDiscount}
+                      disabled={readOnly}
+                      onChange={(e) => setShowDiscount(e.target.checked)}
+                      className="rounded accent-[#156D61]"
+                    />
+                    <span>Destacar desconto comercial no documento</span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer p-2 rounded border border-border-light hover:bg-surface-secondary/50">
+                    <input
+                      type="checkbox"
+                      checked={showPix}
+                      disabled={readOnly}
+                      onChange={(e) => setShowPix(e.target.checked)}
+                      className="rounded accent-[#156D61]"
+                    />
+                    <span>Exibir dados de pagamento e PIX</span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer p-2 rounded border border-border-light hover:bg-surface-secondary/50">
+                    <input
+                      type="checkbox"
+                      checked={showAcceptance}
+                      disabled={readOnly}
+                      onChange={(e) => setShowAcceptance(e.target.checked)}
+                      className="rounded accent-[#156D61]"
+                    />
+                    <span>Incluir campo para aceite e assinatura</span>
+                  </label>
+                </div>
+              </div>
+            </div>
           </SectionCard>
 
           <SectionCard id="items" title={t('offers.section.items', { defaultValue: 'Items and prices' })} findings={bySection('items')}>
@@ -435,7 +595,7 @@ export function OfferPage() {
           <SectionCard id="texts" title={t('offers.section.texts', { defaultValue: 'Texts' })} findings={bySection('texts')}>
             <div className="space-y-4">
               {TEXT_KINDS.map((kind) => (
-                <TextCard key={`${offer.id}-${kind}`} offer={offer} kind={kind} readOnly={readOnly} onSave={save} />
+                <TextCard key={`${offer.id}-${kind}`} offer={offer} kind={kind} readOnly={readOnly} settings={settings} onSave={save} />
               ))}
             </div>
           </SectionCard>
@@ -444,6 +604,14 @@ export function OfferPage() {
             <p className="text-sm text-content-secondary">
               {t('offers.layout_hint', { defaultValue: 'Logo, paper and margins follow Company and documents settings.' })}
             </p>
+          </SectionCard>
+
+          <SectionCard id="exports" title="Central de Exportação de Documentos" findings={[]}>
+            <ExportHubCards
+              offerId={offer.id}
+              boqId={offer.boq_id ?? boqId ?? undefined}
+              projectId={projectId}
+            />
           </SectionCard>
         </div>
 
@@ -461,7 +629,7 @@ export function OfferPage() {
             }
           />
         )}
-        <OfferPreview offerId={offer.id} version={`${offer.totals.gross}|${JSON.stringify(offer.texts)}|${offer.status}|${offer.number}|${offer.valid_until}|${offer.locale}|${offer.instalments.length}`} />
+        <OfferPreview offerId={offer.id} version={`${offer.totals.gross}|${JSON.stringify(offer.texts)}|${offer.status}|${offer.number}|${offer.valid_until}|${offer.locale}|${offer.instalments.length}|${bdiPercent}|${discountPercent}|${showBdi}|${showDiscount}|${showPix}|${showAcceptance}`} />
       </div>
     </div>
   );
@@ -487,7 +655,19 @@ function SectionCard({ id, title, findings, children }: { id: string; title: str
   );
 }
 
-function DetailsFields({ offer, readOnly, languages, onSave }: { offer: Offer; readOnly: boolean; languages: string[]; onSave: (p: OfferPatch) => void }) {
+function DetailsFields({
+  offer,
+  readOnly,
+  languages,
+  settings,
+  onSave,
+}: {
+  offer: Offer;
+  readOnly: boolean;
+  languages: string[];
+  settings?: OfferSettings;
+  onSave: (p: OfferPatch) => void;
+}) {
   const { t } = useTranslation();
   const [number, setNumber] = useState(offer.number);
   const [taken, setTaken] = useState(false);
@@ -526,8 +706,21 @@ function DetailsFields({ offer, readOnly, languages, onSave }: { offer: Offer; r
           ))}
         </div>
       </div>
-      <label className="text-sm">
-        Prazo de Execução da Obra
+      <div>
+        <div className="flex items-center justify-between mb-1">
+          <label className="text-sm">Prazo de Execução da Obra</label>
+          {settings?.default_execution_period && !readOnly && (
+            <button
+              type="button"
+              className="inline-flex items-center gap-1 text-[11px] text-[#156D61] hover:underline"
+              onClick={() => onSave({ execution_period: settings.default_execution_period })}
+              title="Restaurar prazo padrão da empresa"
+            >
+              <RotateCcw size={11} />
+              Restaurar padrão da empresa
+            </button>
+          )}
+        </div>
         <input
           className={inputCls}
           value={offer.execution_period ?? ''}
@@ -535,7 +728,7 @@ function DetailsFields({ offer, readOnly, languages, onSave }: { offer: Offer; r
           placeholder="Ex: 60 dias úteis / 4 meses"
           onChange={(e) => onSave({ execution_period: e.target.value })}
         />
-      </label>
+      </div>
       <label className="text-sm">
         {t('offers.document_language', { defaultValue: 'Document language' })}
         <select className={`${inputCls} oe-select`} value={offer.locale} disabled={readOnly} onChange={(e) => onSave({ locale: e.target.value })}>
@@ -550,8 +743,21 @@ function DetailsFields({ offer, readOnly, languages, onSave }: { offer: Offer; r
         {t('offers.your_reference', { defaultValue: 'Customer reference' })}
         <input className={inputCls} value={reference} disabled={readOnly} onChange={(e) => setReference(e.target.value)} onBlur={() => reference !== offer.reference && onSave({ reference })} />
       </label>
-      <label className="text-sm sm:col-span-2">
-        Dados para Pagamento (PIX / Conta Bancária)
+      <div className="sm:col-span-2">
+        <div className="flex items-center justify-between mb-1">
+          <label className="text-sm">Dados para Pagamento (PIX / Conta Bancária)</label>
+          {settings?.default_payment_details && !readOnly && (
+            <button
+              type="button"
+              className="inline-flex items-center gap-1 text-[11px] text-[#156D61] hover:underline"
+              onClick={() => onSave({ payment_details: settings.default_payment_details })}
+              title="Restaurar dados bancários e PIX padrão da empresa"
+            >
+              <RotateCcw size={11} />
+              Restaurar padrão da empresa
+            </button>
+          )}
+        </div>
         <textarea
           rows={3}
           className={`${inputCls} font-mono text-xs`}
@@ -560,12 +766,24 @@ function DetailsFields({ offer, readOnly, languages, onSave }: { offer: Offer; r
           placeholder="Ex: Chave PIX: 12.345.678/0001-90 (CNPJ)&#10;Banco: 001 - Banco do Brasil&#10;Agência: 1234-5 | Conta Corrente: 67890-1"
           onChange={(e) => onSave({ payment_details: e.target.value })}
         />
-      </label>
+      </div>
     </div>
   );
 }
 
-function TextCard({ offer, kind, readOnly, onSave }: { offer: Offer; kind: string; readOnly: boolean; onSave: (p: OfferPatch) => void }) {
+function TextCard({
+  offer,
+  kind,
+  readOnly,
+  settings,
+  onSave,
+}: {
+  offer: Offer;
+  kind: string;
+  readOnly: boolean;
+  settings?: OfferSettings;
+  onSave: (p: OfferPatch) => void;
+}) {
   const { t } = useTranslation();
   const entry = offer.texts[kind];
   const [body, setBody] = useState(entry?.body ?? '');
@@ -586,15 +804,38 @@ function TextCard({ offer, kind, readOnly, onSave }: { offer: Offer; kind: strin
     const next = insertAt(body, el?.selectionStart ?? body.length, el?.selectionEnd ?? body.length, token);
     setBody(next.text);
   };
+
+  const handleRestoreDefault = () => {
+    if (kind === 'exclusions' && settings?.default_exclusions) {
+      setBody(settings.default_exclusions);
+      onSave({ texts: { exclusions: { source: 'offer', body: settings.default_exclusions, block_id: null } } });
+    } else if (kind === 'notes' && settings?.default_notes) {
+      setBody(settings.default_notes);
+      onSave({ texts: { notes: { source: 'offer', body: settings.default_notes, block_id: null } } });
+    } else {
+      reset.mutate(kind);
+    }
+  };
+
+  const hasSpecificDefault =
+    (kind === 'exclusions' && Boolean(settings?.default_exclusions)) ||
+    (kind === 'notes' && Boolean(settings?.default_notes));
+
   return (
     <div>
       <div className="mb-1 flex items-center justify-between">
         <h3 className="text-sm font-medium">{t(`offers.texts.kind.${kind}`, { defaultValue: kind })}</h3>
         <span className="flex items-center gap-2">
           {entry && <Badge size="sm">{t(`offers.texts.source.${entry.source}`, { defaultValue: entry.source })}</Badge>}
-          {!readOnly && entry && entry.source !== 'company' && (
-            <button type="button" className="text-xs underline" onClick={() => reset.mutate(kind)}>
-              {t('offers.texts.reset', { defaultValue: 'Reset to company text' })}
+          {!readOnly && (entry?.source !== 'company' || hasSpecificDefault) && (
+            <button
+              type="button"
+              className="inline-flex items-center gap-1 text-xs text-[#156D61] hover:underline"
+              onClick={handleRestoreDefault}
+              title="Restaurar padrão da empresa"
+            >
+              <RotateCcw size={11} />
+              Restaurar padrão da empresa
             </button>
           )}
         </span>

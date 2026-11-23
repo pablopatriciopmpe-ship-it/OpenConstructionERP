@@ -32,6 +32,7 @@ import {
 import { Button } from '@/shared/ui/Button';
 import { Card } from '@/shared/ui/Card';
 import { formatCurrency } from '@/shared/lib/money';
+import { ExportHubCards } from './ExportHubCards';
 
 type FilterTab = 'all' | 'draft' | 'sent' | 'accepted' | 'declined';
 
@@ -117,28 +118,30 @@ export function OffersPage() {
         </div>
       </div>
 
-      {/* Tabs and Search Bar */}
+      {/* Funil de Status em Chips Responsivos */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        {/* Status Filter Tabs */}
-        <div className="flex flex-wrap gap-1 bg-surface-secondary p-1 rounded-xl border border-border-light">
+        {/* Funil Status Chips */}
+        <div className="flex flex-wrap gap-1.5 bg-surface-secondary/70 p-1.5 rounded-xl border border-border-light" role="tablist" aria-label="Funil de status de propostas">
           {tabs.map((tab) => {
             const isActive = activeTab === tab.id;
             return (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2 px-3.5 py-1.5 text-xs font-medium rounded-lg transition-all ${
+                className={`min-h-[44px] flex items-center gap-2 px-3.5 py-2 text-xs font-medium rounded-lg transition-all cursor-pointer ${
                   isActive
-                    ? 'bg-surface-elevated text-content-primary shadow-sm font-semibold'
-                    : 'text-content-secondary hover:text-content-primary hover:bg-surface-elevated/50'
+                    ? 'bg-surface-elevated text-content-primary shadow-sm font-semibold border border-border-light'
+                    : 'text-content-secondary hover:text-content-primary hover:bg-surface-elevated/40'
                 }`}
                 data-testid={`tab-${tab.id}`}
               >
                 <span>{tab.label}</span>
                 {tab.count !== undefined && (
                   <span
-                    className={`px-1.5 py-0.5 rounded-full text-[10px] ${
-                      isActive ? 'bg-[#156D61]/10 text-[#156D61]' : 'bg-surface-tertiary text-content-tertiary'
+                    className={`px-2 py-0.5 rounded-full text-[10px] font-semibold ${
+                      isActive
+                        ? 'bg-[#156D61] text-white'
+                        : 'bg-surface-tertiary text-content-tertiary'
                     }`}
                   >
                     {tab.count}
@@ -331,6 +334,13 @@ export function OffersPage() {
           </div>
         )}
       </Card>
+
+      {/* Central Visual de Exportações (Export Hub) */}
+      <ExportHubCards
+        offerId={offers[0]?.id}
+        boqId={offers[0]?.boq_id}
+        projectId={projectId || undefined}
+      />
 
       {/* Modal / Dialog para criar Nova Proposta a partir de um Orçamento */}
       {showNewModal && (
