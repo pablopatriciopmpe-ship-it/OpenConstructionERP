@@ -305,3 +305,61 @@ async def test_cub_estimate_refuses_reforma_missing_cub_and_bad_area(session):
     with pytest.raises(qb.QuickBudgetError) as exc:
         await qb.cub_estimate(session, project_type="casa_nova", uf="BA", regime="nao_desonerado", standard=None, area_m2=D("0"))
     assert exc.value.code == "area_invalida"
+
+
+@pytest.mark.asyncio
+async def test_quick_budget_ambientes_detalhamento(session):
+    from app.modules.boq.service import BOQService
+    from app.modules.boq.models import Position
+    from sqlalchemy import select
+
+    await _seed(session)
+    pid = await _project(session)
+    service = BOQService(session)
+    ambientes = [{"nome": "Sala", "quantidade": D("15")}, {"nome": "Quarto 1", "quantidade": D("10")}]
+    item = qb.LineIn("contrapiso_teste", D("25"), None, ambientes=ambientes)
+    plan = await qb.build_plan(session, project_type="reforma", uf="BA", regime="desonerado", mode=qb.MODE_FULL, items=[item])
+    assert len(plan.lines) == 1
+    assert plan.lines[0].ambientes == ambientes
+
+    p_dict = qb.plan_to_dict(plan)
+    assert p_dict["itens"][0]["ambientes"] == [{"nome": "Sala", "quantidade": "15"}, {"nome": "Quarto 1", "quantidade": "10"}]
+
+    out = await qb.generate_boq(service, session, project_id=pid, name="Teste com Ambientes", plan=plan)
+    boq_id = uuid.UUID(out["boq_id"])
+    leaf = (await session.execute(select(Position).where(Position.boq_id == boq_id, Position.unit != "section"))).scalars().all()
+    assert len(leaf) == 1
+    assert "Sala: 15" in leaf[0].description and "Quarto 1: 10" in leaf[0].description
+    assert leaf[0].metadata_["quick_budget"]["ambientes"] == [{"nome": "Sala", "quantidade": "15"}, {"nome": "Quarto 1", "quantidade": "10"}]
+
+
+@pytest.mark.asyncio
+async def test_quick_budget_item_manual_inline(session):
+    from app.modules.boq.service import BOQService
+    from app.modules.boq.models import Position
+    from sqlalchemy import select
+
+    await _seed(session)
+    pid = await _project(session)
+    service = BOQService(session)
+    item = qb.LineIn(
+        service_id="manual:12345",
+        quantity=D("2"),
+        unit_rate_override=D("350.00"),
+        descricao="Bancada de Granito Personalizada",
+        unidade="m",
+        categoria="acabamento",
+    )
+    plan = await qb.build_plan(session, project_type="reforma", uf="BA", regime="desonerado", mode=qb.MODE_FULL, items=[item])
+    assert len(plan.lines) == 1
+    assert plan.lines[0].manual is True
+    assert plan.lines[0].total == D("700.00")
+    assert plan.lines[0].service.label == "Bancada de Granito Personalizada"
+
+    out = await qb.generate_boq(service, session, project_id=pid, name="Teste Manual", plan=plan)
+    boq_id = uuid.UUID(out["boq_id"])
+    leaf = (await session.execute(select(Position).where(Position.boq_id == boq_id, Position.unit != "section"))).scalars().all()
+    assert len(leaf) == 1
+    assert leaf[0].description == "Bancada de Granito Personalizada"
+    assert leaf[0].metadata_["quick_budget"]["manual_price"] is True
+

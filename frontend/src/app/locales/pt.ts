@@ -69496,6 +69496,16 @@ const resource = {
     "doc_templates.kind.finance.payment": "Registo de pagamento",
     "doc_templates.kind.procurement.purchase_order": "Ordem de compra",
     "doc_templates.kind.procurement.goods_receipt": "Receção de mercadorias",
+
+    // --- Obra Certa UX Improvements v0.5 ---
+    "daily_diary.tab_checklist": "Checklist de Execução",
+    "daily_diary.checklist_progress": "{{completed}} de {{total}} serviços concluídos ({{percent}}%)",
+    "daily_diary.import_boq_services": "Importar Serviços do Orçamento",
+    "daily_diary.no_boq_title": "Nenhum serviço importado para execução",
+    "daily_diary.no_boq_desc": "Importe os serviços orçados do orçamento ou crie tarefas para acompanhar o checklist de execução no canteiro.",
+    "daily_diary.services_imported": "{{count}} serviços importados para o checklist com sucesso!",
+    "offers.export_hub_title": "Central de Exportação de Documentos",
+    "offers.export_hub_subtitle": "Relatórios e propostas prontos para apresentação ao cliente, aprovação bancária e canteiro de obras",
   }
 } as { translation: Record<string, string> };
 

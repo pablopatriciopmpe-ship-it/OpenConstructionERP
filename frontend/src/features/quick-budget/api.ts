@@ -32,10 +32,19 @@ export interface QbCatalogo {
   categorias: QbCategoria[];
 }
 
+export interface QbItemAmbiente {
+  nome: string;
+  quantidade: string;
+}
+
 export interface QbItemIn {
   servico: string;
   quantidade: string;
   preco_unitario?: string;
+  ambientes?: QbItemAmbiente[];
+  descricao?: string;
+  unidade?: string;
+  categoria?: string;
 }
 
 export interface QbBdiIn {
@@ -82,6 +91,8 @@ export interface QbItemOut {
   terceiros: string;
   status: QbItemStatus;
   motivo: string;
+  manual?: boolean;
+  ambientes?: QbItemAmbiente[];
 }
 
 export interface QbPlanOut {

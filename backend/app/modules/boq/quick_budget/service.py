@@ -41,6 +41,10 @@ class LineIn:
     service_id: str
     quantity: Decimal
     unit_rate_override: Decimal | None = None
+    ambientes: list[dict[str, Any]] | None = None
+    descricao: str | None = None
+    unidade: str | None = None
+    categoria: str | None = None
 
 
 @dataclass
@@ -55,6 +59,7 @@ class PlanLine:
     split: dict[str, Decimal] = field(default_factory=dict)  # por unidade, soma = unit_rate
     cost_item_id: uuid.UUID | None = None
     manual: bool = False
+    ambientes: list[dict[str, Any]] = field(default_factory=list)
 
     @property
     def total(self) -> Decimal:
@@ -161,17 +166,44 @@ async def build_plan(
             region=region,
         )
     merged: dict[str, LineIn] = {}
+    manual_services: dict[str, Service] = {}
     for it in items:
-        if it.service_id not in by_id:
-            raise QuickBudgetError("servico_desconhecido", f"Serviço fora do catálogo: {it.service_id}.")
+        sid = it.service_id
+        if sid not in by_id:
+            if sid.startswith("manual:") or it.descricao:
+                label = it.descricao or "Serviço manual"
+                cat_id = it.categoria or "gerais"
+                unit = it.unidade or "un"
+                manual_services[sid] = Service(
+                    id=sid,
+                    category=cat_id,
+                    label=label,
+                    unit=unit,
+                    sinapi=None,
+                    project_types=(project_type,),
+                    note="Item manual",
+                )
+            else:
+                raise QuickBudgetError("servico_desconhecido", f"Serviço fora do catálogo: {it.service_id}.")
         if it.quantity is None or it.quantity <= 0:
             raise QuickBudgetError("quantidade_invalida", f"Informe uma quantidade maior que zero para {it.service_id}.")
         prev = merged.get(it.service_id)
         if prev:
             prev.quantity += it.quantity
+            if it.ambientes:
+                prev.ambientes = (prev.ambientes or []) + it.ambientes
         else:
-            merged[it.service_id] = LineIn(it.service_id, it.quantity, it.unit_rate_override)
-    wanted = [by_id[i] for i in merged]
+            merged[it.service_id] = LineIn(
+                service_id=it.service_id,
+                quantity=it.quantity,
+                unit_rate_override=it.unit_rate_override,
+                ambientes=it.ambientes,
+                descricao=it.descricao,
+                unidade=it.unidade,
+                categoria=it.categoria,
+            )
+    all_by_id = {**by_id, **manual_services}
+    wanted = [all_by_id[i] for i in merged]
     for s in wanted:
         if project_type not in s.project_types:
             raise QuickBudgetError("servico_fora_do_tipo", f"'{s.label}' não se aplica a este tipo de obra.")
@@ -187,9 +219,9 @@ async def build_plan(
     order = {sid: i for i, sid in enumerate(s.id for s in cat.services)}
     cat_order = {cid: i for i, (cid, _) in enumerate(cat.categories)}
     lines: list[PlanLine] = []
-    for s in sorted(wanted, key=lambda x: (cat_order[x.category], order[x.id])):
+    for s in sorted(wanted, key=lambda x: (cat_order.get(x.category, 999), order.get(x.id, 999))):
         li = merged[s.id]
-        ln = PlanLine(service=s, quantity=li.quantity, sinapi_code=s.sinapi)
+        ln = PlanLine(service=s, quantity=li.quantity, sinapi_code=s.sinapi, ambientes=li.ambientes or [])
         if s.sinapi is None:
             ln.manual = True
             if li.unit_rate_override is None or li.unit_rate_override <= 0:
@@ -250,6 +282,12 @@ def plan_to_dict(plan: Plan) -> dict[str, Any]:
                 "terceiros": str(ln.split.get("subcontractor", _ZERO)),
                 "status": ln.status,
                 "motivo": ln.reason,
+                "manual": ln.manual,
+                "ambientes": [
+                    {"nome": a.get("nome"), "quantidade": str(a.get("quantidade"))}
+                    for a in ln.ambientes
+                    if isinstance(a, dict)
+                ],
             }
             for ln in plan.lines
         ],
@@ -321,6 +359,11 @@ async def generate_boq(
                 resources.append(
                     {"name": names[k], "type": rtype, "unit": ln.service.unit, "quantity": 1, "unit_rate": float(v), "total": float(v)}
                 )
+        desc = ln.service.label
+        if ln.ambientes:
+            parts = [f"{a.get('nome')}: {a.get('quantidade')} {ln.service.unit}" for a in ln.ambientes if isinstance(a, dict) and a.get('nome')]
+            if parts:
+                desc = f"{ln.service.label} ({', '.join(parts)})"
         meta = {
             "resources": resources,
             "quick_budget": {
@@ -333,6 +376,11 @@ async def generate_boq(
                 "reference_month": plan.reference_month,
                 "mode": plan.mode,
                 "manual_price": ln.manual,
+                "ambientes": [
+                    {"nome": a.get("nome"), "quantidade": str(a.get("quantidade"))}
+                    for a in ln.ambientes
+                    if isinstance(a, dict)
+                ],
             },
         }
         await service.add_position(
@@ -340,7 +388,7 @@ async def generate_boq(
                 boq_id=boq.id,
                 parent_id=sec.id,
                 ordinal=f"{sec_no}.{counters[cid]:02d}",
-                description=ln.service.label,
+                description=desc,
                 unit=ln.service.unit,
                 quantity=float(ln.quantity),
                 unit_rate=ln.unit_rate,

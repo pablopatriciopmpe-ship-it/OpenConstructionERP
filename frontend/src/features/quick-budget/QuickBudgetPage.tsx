@@ -15,11 +15,19 @@ import {
   AlertTriangle,
   Calculator,
   Check,
+  CheckCircle2,
   ChevronDown,
   ChevronRight,
+  FileText,
   Hammer,
+  Home,
+  Layers,
+  Plus,
   Search,
+  Sparkles,
+  Trash2,
   Wand2,
+  X,
 } from 'lucide-react';
 import { Button, Card, ErrorState } from '@/shared/ui';
 import { getErrorMessage } from '@/shared/lib/api';
@@ -58,9 +66,24 @@ const TIPOS: { id: QuickBudgetTipo; key: string; label: string; desc: string }[]
   { id: 'reforma', key: 'reforma', label: 'Reforma e serviços', desc: 'Reformas, ampliações e serviços avulsos' },
 ];
 
+export interface AmbienteItem {
+  nome: string;
+  quantidade: string;
+}
+
+export interface ManualItem {
+  id: string;
+  categoriaId: string;
+  descricao: string;
+  unidade: string;
+  preco: string;
+  qty: string;
+}
+
 interface PickState {
   qty: string;
   price: string;
+  ambientes?: AmbienteItem[];
 }
 
 interface BdiForm {
@@ -129,6 +152,14 @@ export function QuickBudgetPage() {
   const [cubResult, setCubResult] = useState<QbCubOut | null>(null);
   const [cubNote, setCubNote] = useState<string | null>(null);
 
+  // v0.5 - Detalhamento por ambientes, itens manuais inline e atalho de proposta
+  const [ambienteModalService, setAmbienteModalService] = useState<{ id: string; descricao: string; unidade: string } | null>(null);
+  const [tempAmbientes, setTempAmbientes] = useState<AmbienteItem[]>([]);
+  const [manualItems, setManualItems] = useState<ManualItem[]>([]);
+  const [addingManualCatId, setAddingManualCatId] = useState<string | null>(null);
+  const [manualForm, setManualForm] = useState({ descricao: '', unidade: 'un', preco: '', qty: '1' });
+  const [generatedResult, setGeneratedResult] = useState<{ boq_id: string; project_id: string; total: string } | null>(null);
+
   const modo: QuickBudgetModo = materialCliente ? 'so_mao_de_obra' : 'completo';
 
   const projectsQ = useQuery({
@@ -163,21 +194,85 @@ export function QuickBudgetPage() {
   const serviceById = useMemo(() => {
     const m = new Map<string, { descricao: string; unidade: string; preco_informado: boolean }>();
     for (const c of catalogQ.data?.categorias ?? []) for (const s of c.servicos) m.set(s.id, s);
+    for (const mi of manualItems) {
+      m.set(mi.id, { descricao: mi.descricao, unidade: mi.unidade, preco_informado: true });
+    }
     return m;
-  }, [catalogQ.data]);
+  }, [catalogQ.data, manualItems]);
 
-  const itens: QbItemIn[] = useMemo(
-    () =>
-      Object.entries(picks)
-        .filter(([, p]) => positive(p.qty))
-        .map(([servico, p]) => {
-          const meta = serviceById.get(servico);
-          const item: QbItemIn = { servico, quantidade: toDecimalPayloadString(p.qty) };
-          if (meta?.preco_informado && positive(p.price)) item.preco_unitario = toDecimalPayloadString(p.price);
-          return item;
-        }),
-    [picks, serviceById],
-  );
+  const itens: QbItemIn[] = useMemo(() => {
+    const list: QbItemIn[] = [];
+    for (const [servico, p] of Object.entries(picks)) {
+      if (!positive(p.qty)) continue;
+      const meta = serviceById.get(servico);
+      const item: QbItemIn = {
+        servico,
+        quantidade: toDecimalPayloadString(p.qty),
+        ambientes:
+          p.ambientes && p.ambientes.length > 0
+            ? p.ambientes
+                .filter((a) => positive(a.quantidade))
+                .map((a) => ({ nome: a.nome.trim() || 'Ambiente', quantidade: toDecimalPayloadString(a.quantidade) }))
+            : undefined,
+      };
+      if (meta?.preco_informado && positive(p.price)) item.preco_unitario = toDecimalPayloadString(p.price);
+      list.push(item);
+    }
+    for (const mi of manualItems) {
+      if (!positive(mi.qty)) continue;
+      list.push({
+        servico: mi.id,
+        quantidade: toDecimalPayloadString(mi.qty),
+        preco_unitario: positive(mi.preco) ? toDecimalPayloadString(mi.preco) : '0',
+        descricao: mi.descricao,
+        unidade: mi.unidade || 'un',
+        categoria: mi.categoriaId,
+      });
+    }
+    return list;
+  }, [picks, serviceById, manualItems]);
+
+  const openAmbienteModal = (serviceId: string, descricao: string, unidade: string) => {
+    const current = picks[serviceId]?.ambientes ?? [];
+    setTempAmbientes(current.length > 0 ? [...current] : [{ nome: 'Sala', quantidade: '' }]);
+    setAmbienteModalService({ id: serviceId, descricao, unidade });
+  };
+
+  const saveAmbientes = () => {
+    if (!ambienteModalService) return;
+    const sid = ambienteModalService.id;
+    const valid = tempAmbientes.filter((a) => positive(a.quantidade));
+    const sum = valid.reduce((acc, a) => acc + (parseDecimalInput(a.quantidade) ?? 0), 0);
+    setPicks((prev) => ({
+      ...prev,
+      [sid]: {
+        qty: sum > 0 ? String(sum) : prev[sid]?.qty ?? '1',
+        price: prev[sid]?.price ?? '',
+        ambientes: valid.length > 0 ? valid : undefined,
+      },
+    }));
+    setAmbienteModalService(null);
+  };
+
+  const addManualItem = (catId: string) => {
+    if (!manualForm.descricao.trim()) return;
+    const newId = `manual:${Date.now()}`;
+    const newItem: ManualItem = {
+      id: newId,
+      categoriaId: catId,
+      descricao: manualForm.descricao.trim(),
+      unidade: manualForm.unidade.trim() || 'un',
+      preco: manualForm.preco.trim(),
+      qty: manualForm.qty.trim() || '1',
+    };
+    setManualItems((prev) => [...prev, newItem]);
+    setAddingManualCatId(null);
+    setManualForm({ descricao: '', unidade: 'un', preco: '', qty: '1' });
+  };
+
+  const removeManualItem = (id: string) => {
+    setManualItems((prev) => prev.filter((m) => m.id !== id));
+  };
 
   const previewKey = JSON.stringify({ tipo, uf, regime, modo, itens });
   const previewQ = useQuery<QbPlanOut>({
@@ -221,7 +316,7 @@ export function QuickBudgetPage() {
         throw new Error(t('quick_budget.bdi_invalid', { defaultValue: 'Confira os percentuais do BDI: use apenas números.' }));
       }
       const tipoLabel = TIPOS.find((x) => x.id === tipo)?.label ?? tipo;
-      return generateQuickBudget({
+      const res = await generateQuickBudget({
         tipo,
         uf,
         regime,
@@ -232,6 +327,7 @@ export function QuickBudgetPage() {
         ignorar_indisponiveis: true,
         bdi: bdiBody,
       });
+      return { ...res, final_project_id: pid };
     },
     onSuccess: (data) => {
       addToast({
@@ -239,7 +335,11 @@ export function QuickBudgetPage() {
         title: t('quick_budget.generated', { defaultValue: 'Planilha orçamentária gerada' }),
         message: fmtBRL(data.bdi?.price_with_bdi ?? data.total),
       });
-      navigate(`/boq/${data.boq_id}`);
+      setGeneratedResult({
+        boq_id: data.boq_id,
+        project_id: data.final_project_id,
+        total: data.bdi?.price_with_bdi ?? data.total,
+      });
     },
     onError: (err) => {
       const info = readQuickBudgetError(err);
@@ -601,7 +701,7 @@ export function QuickBudgetPage() {
                               </span>
                             </label>
                             {pick && (
-                              <div className="flex items-center gap-2">
+                              <div className="flex items-center gap-2 flex-wrap">
                                 <input
                                   className="oe-input w-24 text-right"
                                   inputMode="decimal"
@@ -621,13 +721,148 @@ export function QuickBudgetPage() {
                                     onChange={(e) => setPick(s.id, { price: e.target.value })}
                                   />
                                 )}
+                                <button
+                                  type="button"
+                                  className="min-h-[44px] px-2 py-1 text-xs text-[#156D61] hover:bg-[#156D61]/10 rounded flex items-center gap-1 font-medium transition-colors"
+                                  onClick={() => openAmbienteModal(s.id, s.descricao, s.unidade)}
+                                  title="Dividir quantidade por cômodos/ambientes da obra"
+                                  data-testid={`quick-budget-ambiente-btn-${s.id}`}
+                                >
+                                  <Home size={14} />
+                                  {pick.ambientes && pick.ambientes.length > 0 ? (
+                                    <span className="font-semibold underline">
+                                      {pick.ambientes.length} ambiente(s)
+                                    </span>
+                                  ) : (
+                                    <span>Detalhar por ambiente</span>
+                                  )}
+                                </button>
+                              </div>
+                            )}
+                            {pick && pick.ambientes && pick.ambientes.length > 0 && (
+                              <div className="w-full pl-7 text-[11px] text-content-tertiary flex items-center gap-1.5 flex-wrap">
+                                <span className="font-medium text-content-secondary">Cômodos:</span>
+                                {pick.ambientes.map((a, i) => (
+                                  <span key={i} className="inline-block bg-surface-secondary px-1.5 py-0.5 rounded border border-border-light">
+                                    {a.nome}: {fmtQty(a.quantidade)} {s.unidade.toLowerCase()}
+                                  </span>
+                                ))}
                               </div>
                             )}
                           </li>
                         );
                       })}
+
+                      {/* Itens manuais cadastrados nesta categoria */}
+                      {manualItems
+                        .filter((m) => m.categoriaId === c.id)
+                        .map((m) => (
+                          <li
+                            key={m.id}
+                            className="flex flex-wrap items-center justify-between gap-3 py-2 bg-amber-50/40 dark:bg-amber-950/20 px-2 rounded-lg border border-amber-200/50"
+                          >
+                            <div className="flex-1 min-w-[200px]">
+                              <span className="block text-sm font-medium text-content-primary">{m.descricao}</span>
+                              <span className="block text-xs text-amber-700 dark:text-amber-400 font-medium">
+                                Item manual avulso · {m.unidade.toLowerCase()} · {fmtBRL(m.preco)}
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <input
+                                className="oe-input w-24 text-right"
+                                inputMode="decimal"
+                                value={m.qty}
+                                onChange={(e) =>
+                                  setManualItems((prev) =>
+                                    prev.map((it) => (it.id === m.id ? { ...it, qty: e.target.value } : it))
+                                  )
+                                }
+                              />
+                              <span className="w-10 text-sm text-content-secondary">{m.unidade.toLowerCase()}</span>
+                              <button
+                                type="button"
+                                className="min-h-[44px] min-w-[44px] flex items-center justify-center text-content-tertiary hover:text-rose-600 transition-colors"
+                                onClick={() => removeManualItem(m.id)}
+                                title="Remover item manual"
+                              >
+                                <Trash2 size={16} />
+                              </button>
+                            </div>
+                          </li>
+                        ))}
                     </ul>
                   )}
+
+                  {/* Botão e formulário inline para adicionar item manual na categoria */}
+                  <div className="mt-3 pt-2 border-t border-border-light">
+                    {addingManualCatId === c.id ? (
+                      <div className="p-3 bg-surface-secondary/70 rounded-lg border border-border-light space-y-3 animate-fade-in">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-semibold text-content-primary flex items-center gap-1.5">
+                            <Plus size={14} className="text-[#156D61]" />
+                            Adicionar item manual em {c.rotulo}
+                          </span>
+                          <button
+                            type="button"
+                            className="min-h-[32px] min-w-[32px] flex items-center justify-center text-content-tertiary hover:text-content-primary p-1"
+                            onClick={() => setAddingManualCatId(null)}
+                          >
+                            <X size={14} />
+                          </button>
+                        </div>
+                        <div className="grid gap-2 sm:grid-cols-4">
+                          <div className="sm:col-span-2">
+                            <label className="text-[11px] text-content-secondary block mb-1">Descrição do serviço</label>
+                            <input
+                              className="oe-input w-full text-xs"
+                              placeholder="Ex: Bancada de granito sob medida"
+                              value={manualForm.descricao}
+                              onChange={(e) => setManualForm((prev) => ({ ...prev, descricao: e.target.value }))}
+                            />
+                          </div>
+                          <div>
+                            <label className="text-[11px] text-content-secondary block mb-1">Unidade</label>
+                            <input
+                              className="oe-input w-full text-xs"
+                              placeholder="m², un, m, vb"
+                              value={manualForm.unidade}
+                              onChange={(e) => setManualForm((prev) => ({ ...prev, unidade: e.target.value }))}
+                            />
+                          </div>
+                          <div>
+                            <label className="text-[11px] text-content-secondary block mb-1">Preço unitário (R$)</label>
+                            <input
+                              className="oe-input w-full text-xs text-right"
+                              inputMode="decimal"
+                              placeholder="R$ 0,00"
+                              value={manualForm.preco}
+                              onChange={(e) => setManualForm((prev) => ({ ...prev, preco: e.target.value }))}
+                            />
+                          </div>
+                        </div>
+                        <div className="flex justify-end gap-2">
+                          <Button size="sm" variant="secondary" onClick={() => setAddingManualCatId(null)}>
+                            Cancelar
+                          </Button>
+                          <Button size="sm" variant="primary" onClick={() => addManualItem(c.id)}>
+                            Salvar item
+                          </Button>
+                        </div>
+                      </div>
+                    ) : (
+                      <button
+                        type="button"
+                        className="min-h-[44px] text-xs font-medium text-[#156D61] hover:text-[#156D61]/80 hover:underline flex items-center gap-1.5 py-1 px-2 rounded"
+                        onClick={() => {
+                          setAddingManualCatId(c.id);
+                          setManualForm({ descricao: '', unidade: 'un', preco: '', qty: '1' });
+                        }}
+                      >
+                        <Plus size={14} />
+                        Adicionar item manual nesta categoria
+                      </button>
+                    )}
+                  </div>
                 </Card>
               );
             })}
@@ -882,6 +1117,46 @@ export function QuickBudgetPage() {
             </>
           )}
 
+          {/* Card de sucesso e atalho 1-clique para Proposta */}
+          {generatedResult && (
+            <Card className="border-emerald-500/30 bg-emerald-50/20 dark:bg-emerald-950/20 p-6 text-center space-y-4 animate-fade-in" data-testid="quick-budget-success-card">
+              <div className="mx-auto w-12 h-12 rounded-full bg-emerald-100 dark:bg-emerald-900/40 flex items-center justify-center text-emerald-600">
+                <CheckCircle2 size={28} />
+              </div>
+              <div>
+                <h2 className="text-xl font-bold text-content-primary">
+                  {t('quick_budget.generated_success_title', { defaultValue: 'Planilha orçamentária pronta para uso!' })}
+                </h2>
+                <p className="text-sm text-content-secondary mt-1">
+                  Valor total da obra:{' '}
+                  <span className="font-semibold text-content-primary">{fmtBRL(generatedResult.total)}</span>
+                </p>
+              </div>
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+                <Button
+                  variant="primary"
+                  icon={<FileText size={16} />}
+                  className="w-full sm:w-auto min-h-[44px] px-6"
+                  onClick={() =>
+                    navigate(`/offers?project=${generatedResult.project_id}&boqId=${generatedResult.boq_id}`)
+                  }
+                  data-testid="quick-budget-create-offer-btn"
+                >
+                  {t('quick_budget.create_offer_action', { defaultValue: 'Criar Proposta Comercial' })}
+                </Button>
+                <Button
+                  variant="secondary"
+                  icon={<Calculator size={16} />}
+                  className="w-full sm:w-auto min-h-[44px] px-6"
+                  onClick={() => navigate(`/boq/${generatedResult.boq_id}`)}
+                  data-testid="quick-budget-open-boq-btn"
+                >
+                  {t('quick_budget.open_boq_action', { defaultValue: 'Abrir Planilha Orçamentária' })}
+                </Button>
+              </div>
+            </Card>
+          )}
+
           <div className="flex justify-between">
             <Button variant="secondary" onClick={() => setStep(2)}>
               {t('quick_budget.back', { defaultValue: 'Voltar' })}
@@ -896,6 +1171,117 @@ export function QuickBudgetPage() {
             >
               {t('quick_budget.generate', { defaultValue: 'Gerar planilha orçamentária' })}
             </Button>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Detalhamento por Ambientes */}
+      {ambienteModalService && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" data-testid="quick-budget-ambiente-modal">
+          <div className="w-full max-w-lg bg-surface-primary rounded-xl border border-border shadow-2xl overflow-hidden animate-fade-in">
+            <div className="p-4 border-b border-border flex items-center justify-between bg-surface-secondary">
+              <div>
+                <h3 className="font-semibold text-sm text-content-primary flex items-center gap-2">
+                  <Home size={16} className="text-[#156D61]" />
+                  {t('quick_budget.environments_modal_title', { defaultValue: 'Detalhamento por ambiente' })}
+                </h3>
+                <p className="text-xs text-content-secondary mt-0.5 line-clamp-1">
+                  {ambienteModalService.descricao} ({ambienteModalService.unidade.toLowerCase()})
+                </p>
+              </div>
+              <button
+                type="button"
+                className="min-h-[36px] min-w-[36px] flex items-center justify-center text-content-tertiary hover:text-content-primary p-1 rounded"
+                onClick={() => setAmbienteModalService(null)}
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            <div className="p-4 space-y-3 max-h-[60vh] overflow-y-auto">
+              <p className="text-xs text-content-tertiary">
+                Lance os cômodos ou ambientes onde o serviço será executado. A soma das medidas atualizará automaticamente a quantidade do serviço.
+              </p>
+
+              <div className="space-y-2">
+                {tempAmbientes.map((amb, idx) => (
+                  <div key={idx} className="flex items-center gap-2">
+                    <input
+                      type="text"
+                      className="oe-input flex-1 text-xs"
+                      placeholder="Ex: Sala de estar, Cozinha, Quarto 1"
+                      value={amb.nome}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setTempAmbientes((prev) =>
+                          prev.map((a, i) => (i === idx ? { ...a, nome: val } : a))
+                        );
+                      }}
+                    />
+                    <div className="flex items-center gap-1 w-32">
+                      <input
+                        type="text"
+                        inputMode="decimal"
+                        className="oe-input w-full text-xs text-right"
+                        placeholder="0,00"
+                        value={amb.quantidade}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          setTempAmbientes((prev) =>
+                            prev.map((a, i) => (i === idx ? { ...a, quantidade: val } : a))
+                          );
+                        }}
+                      />
+                      <span className="text-xs text-content-secondary shrink-0">
+                        {ambienteModalService.unidade.toLowerCase()}
+                      </span>
+                    </div>
+                    <button
+                      type="button"
+                      className="min-h-[44px] min-w-[36px] flex items-center justify-center text-content-tertiary hover:text-rose-600 transition-colors"
+                      onClick={() => setTempAmbientes((prev) => prev.filter((_, i) => i !== idx))}
+                      disabled={tempAmbientes.length <= 1}
+                      title="Remover cômodo"
+                    >
+                      <Trash2 size={15} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+
+              <button
+                type="button"
+                className="min-h-[44px] text-xs font-medium text-[#156D61] hover:underline flex items-center gap-1.5 py-1"
+                onClick={() => setTempAmbientes((prev) => [...prev, { nome: '', quantidade: '' }])}
+              >
+                <Plus size={14} />
+                {t('quick_budget.add_environment', { defaultValue: 'Adicionar cômodo / ambiente' })}
+              </button>
+
+              <div className="pt-3 border-t border-border flex items-center justify-between text-xs font-semibold">
+                <span className="text-content-secondary">Total acumulado:</span>
+                <span className="text-[#156D61] text-sm tabular-nums">
+                  {fmtQty(
+                    String(
+                      tempAmbientes.reduce(
+                        (acc, a) => acc + (parseDecimalInput(a.quantidade) ?? 0),
+                        0
+                      )
+                    )
+                  )}{' '}
+                  {ambienteModalService.unidade.toLowerCase()}
+                </span>
+              </div>
+            </div>
+
+            <div className="p-4 border-t border-border bg-surface-secondary flex justify-end gap-2">
+              <Button variant="secondary" onClick={() => setAmbienteModalService(null)}>
+                {t('common.cancel', { defaultValue: 'Cancelar' })}
+              </Button>
+              <Button variant="primary" onClick={saveAmbientes}>
+                {t('quick_budget.apply_environments', { defaultValue: 'Aplicar medidas ao serviço' })}
+              </Button>
+            </div>
           </div>
         </div>
       )}
