@@ -1,0 +1,3 @@
+source_ref=preview/evolux-licenca-brl
+source_sha=6150d309b59d55805d98c423350f6671486065cd
+backend=https://erp-teste.evolux-erp.workers.dev
