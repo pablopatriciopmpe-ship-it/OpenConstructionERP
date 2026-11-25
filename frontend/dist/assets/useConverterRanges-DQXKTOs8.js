@@ -1,0 +1,1 @@
+import{u as n}from"./vendor-query-wpw2X9UX.js";import{aF as s}from"./index-BsQ2cdZh.js";function m(t){const{data:r}=n({queryKey:["bim-converters"],queryFn:()=>s(),staleTime:6e4}),o=new Map(((r==null?void 0:r.converters)??[]).filter(e=>!e.disabled&&e.health!=="disabled").map(e=>[e.id,e.format_range]));return t.map(e=>o.get(e)).filter(e=>!!e).join(" · ")}export{m as u};

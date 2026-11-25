@@ -1,0 +1,3 @@
+source_ref=preview/ptbr-evolux
+source_sha=0bcba59c6679b461b74559d6e990145eccc127fa
+backend=https://erp-teste.evolux-erp.workers.dev
