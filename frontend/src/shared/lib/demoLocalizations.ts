@@ -12,6 +12,7 @@ export type DemoLocalizableKind =
   | 'resource'
   | 'assembly'
   | 'waste_factor_label'
+  | 'waste_factor_note'
   | 'price_index_series';
 
 const DEMO_RESOURCE_NAMES: Record<string, string> = {
@@ -79,6 +80,29 @@ const DEMO_WASTE_FACTOR_LABELS: Record<string, string> = {
   'Timber / carpentry (offcuts)': 'Madeira e carpintaria (sobras de corte)',
 };
 
+const DEMO_WASTE_FACTOR_NOTES: Record<string, string> = {
+  'Breakage and cutting waste on masonry blockwork.':
+    'Perdas por quebras e cortes de blocos de alvenaria.',
+  'Breakage and cutting waste on facing and common brickwork.':
+    'Perdas por quebras e cortes de tijolos comuns e de fachada.',
+  'Allowance for over-pour, spillage and surface irregularity.':
+    'Reserva para excesso de concretagem, derramamento e irregularidades da superfície.',
+  'Cutting and fitting waste on board and roll insulation.':
+    'Perdas por recortes e ajustes de placas e mantas de isolamento.',
+  'Mixing loss and spillage on wet plaster and render.':
+    'Perdas na mistura e aplicação da argamassa.',
+  'Covers lap lengths and bar offcuts beyond the net scheduled steel.':
+    'Considera transpasses e sobras de corte além do aço previsto em projeto.',
+  'Spillage and level tolerance on sand-cement screed.':
+    'Perdas na aplicação e tolerância de nivelamento do contrapiso.',
+  'Small offcut allowance on fabricated structural steel.':
+    'Pequena reserva para sobras no corte do aço estrutural.',
+  'Edge cuts and breakage on wall and floor tiling.':
+    'Recortes de borda e quebras em pisos e paredes.',
+  'Offcuts and defect cutting on structural and joinery timber.':
+    'Sobras de corte e descarte de peças de madeira com defeito.',
+};
+
 const DEMO_PRICE_INDEX_SERIES: Record<string, string> = {
   'General Construction Cost Index': 'Índice Geral de Custo da Construção',
 };
@@ -87,6 +111,7 @@ const MAPS: Record<DemoLocalizableKind, Record<string, string>> = {
   resource: DEMO_RESOURCE_NAMES,
   assembly: DEMO_ASSEMBLY_NAMES,
   waste_factor_label: DEMO_WASTE_FACTOR_LABELS,
+  waste_factor_note: DEMO_WASTE_FACTOR_NOTES,
   price_index_series: DEMO_PRICE_INDEX_SERIES,
 };
 

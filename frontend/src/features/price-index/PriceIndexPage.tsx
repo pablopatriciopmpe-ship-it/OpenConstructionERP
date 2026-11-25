@@ -30,7 +30,6 @@ import {
   Building2,
   Library,
   Download,
-  Upload,
 } from 'lucide-react';
 import { Button, Badge, Card, CardHeader, EmptyState, ErrorState, Input, PageHeader } from '@/shared/ui';
 import { useToastStore } from '@/stores/useToastStore';
@@ -44,7 +43,6 @@ import {
   listSeries,
   fetchSeries,
   createSeries,
-  importStatsSaP0151,
   deleteSeries,
   addPoint,
   deletePoint,
@@ -78,7 +76,6 @@ const QK = {
 
 export function PriceIndexPage() {
   const { t } = useTranslation();
-  const navigate = useNavigate();
 
   return (
     <div className="space-y-5">
@@ -88,12 +85,6 @@ export function PriceIndexPage() {
           defaultValue:
             'Bring an old rate library or a foreign benchmark to current-period money and your region using cost index series and regional factors.',
         })}
-        actions={
-          <Button variant="secondary" size="sm" onClick={() => navigate('/price-index/resource-index')}>
-            <Calculator className="mr-1 h-4 w-4" aria-hidden />
-            {t('price_index.ri.open', { defaultValue: 'Resource-index estimate (Russia)' })}
-          </Button>
-        }
       />
       <PriceIndexContent />
     </div>
@@ -145,30 +136,6 @@ function PriceIndexContent() {
       queryClient.invalidateQueries({ queryKey: QK.series });
       setNewSeriesName('');
       setSelectedSeriesId(created.id);
-    },
-    onError,
-  });
-
-  const importP0151Mut = useMutation({
-    mutationFn: (file: File) => importStatsSaP0151(file),
-    onSuccess: (res) => {
-      queryClient.invalidateQueries({ queryKey: QK.series });
-      addToast({
-        type: 'success',
-        title: t('price_index.p0151.done', {
-          defaultValue: '{{series}} work group series, {{created}} new and {{updated}} revised values',
-          series: res.series.length,
-          created: res.points_created,
-          updated: res.points_updated,
-        }),
-        message:
-          res.skipped.length > 0
-            ? t('price_index.p0151.skipped', {
-                defaultValue: '{{count}} cells without a number were skipped',
-                count: res.skipped.length,
-              })
-            : undefined,
-      });
     },
     onError,
   });
@@ -358,34 +325,6 @@ function PriceIndexContent() {
               >
                 {t('price_index.add_series', { defaultValue: 'Add series' })}
               </Button>
-            </div>
-
-            <div className="flex flex-wrap items-center gap-2 text-xs text-content-secondary">
-              <label className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-border-light px-2.5 py-1.5 font-medium text-content-primary hover:bg-surface-secondary">
-                {importP0151Mut.isPending ? (
-                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                ) : (
-                  <Upload className="h-3.5 w-3.5" />
-                )}
-                {t('price_index.p0151.import', { defaultValue: 'Import Stats SA P0151.1 (South Africa CPAP)' })}
-                <input
-                  type="file"
-                  accept=".xlsx,.csv"
-                  className="sr-only"
-                  disabled={importP0151Mut.isPending}
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    if (file) importP0151Mut.mutate(file);
-                    e.target.value = '';
-                  }}
-                />
-              </label>
-              <span>
-                {t('price_index.p0151.hint', {
-                  defaultValue:
-                    'Upload the release file from Stats SA. Table 1 becomes one series per work group, with the Stats SA acknowledgement.',
-                })}
-              </span>
             </div>
 
             {/* Selected series points */}

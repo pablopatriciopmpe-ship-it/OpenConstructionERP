@@ -222,7 +222,7 @@ function WasteFactorsContent() {
                         {demoName('waste_factor_label', f.label)}
                       </span>
                     )}
-                    {f.note && <div className="truncate text-xs text-content-tertiary">{f.note}</div>}
+                    {f.note && <div className="truncate text-xs text-content-tertiary">{demoName('waste_factor_note', f.note)}</div>}
                   </span>
                   <span className="flex shrink-0 items-center gap-3">
                     <Badge variant="blue" size="sm">
