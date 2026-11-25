@@ -388,7 +388,12 @@ export function AssemblyEditorPage() {
           </div>
           <div className="mt-2 flex flex-wrap items-center gap-3 text-sm text-content-secondary">
             {assembly.category && (
-              <span className="capitalize">{assembly.category}</span>
+              <span>
+                {t(
+                  `assemblies.category_${assembly.category.trim().toLowerCase().replace(/[\s-]+/g, '_')}`,
+                  { defaultValue: assembly.category },
+                )}
+              </span>
             )}
             <span className="text-content-tertiary">/</span>
             <span title={unitLabel(assembly.unit, t)}>{unitGlyph(assembly.unit)}</span>

@@ -27,66 +27,68 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 # category, label, factor (>= 1, gross = net * factor), note.
+# Categories stay canonical English so existing data and integrations keep a
+# stable key; labels are localised to Portuguese for the Brazilian demo.
 DEFAULT_WASTE_FACTORS: list[dict[str, object]] = [
     {
-        "category": "concrete",
-        "label": "Concrete (over-pour + spillage)",
+        "category": 'concrete',
+        "label": 'Concreto (excesso de concretagem e derramamento)',
         "factor": Decimal("1.03"),
-        "note": "Allowance for over-pour, spillage and surface irregularity.",
+        "note": 'Reserva para excesso de concretagem, derramamento e irregularidades da superfície.',
     },
     {
-        "category": "rebar",
-        "label": "Reinforcement bar (laps + offcuts)",
+        "category": 'rebar',
+        "label": 'Aço para armadura (transpasses e sobras)',
         "factor": Decimal("1.10"),
-        "note": "Covers lap lengths and bar offcuts beyond the net scheduled steel.",
+        "note": 'Considera transpasses e sobras de corte além do aço previsto em projeto.',
     },
     {
-        "category": "tiling",
-        "label": "Tiling (cuts + breakage)",
+        "category": 'tiling',
+        "label": 'Revestimento cerâmico (recortes e quebras)',
         "factor": Decimal("1.10"),
-        "note": "Edge cuts and breakage on wall and floor tiling.",
+        "note": 'Recortes de borda e quebras em pisos e paredes.',
     },
     {
-        "category": "blockwork",
-        "label": "Blockwork (breakage + cuts)",
+        "category": 'blockwork',
+        "label": 'Alvenaria de blocos (quebras e cortes)',
         "factor": Decimal("1.05"),
-        "note": "Breakage and cutting waste on masonry blockwork.",
+        "note": 'Perdas por quebras e cortes de blocos de alvenaria.',
     },
     {
-        "category": "brickwork",
-        "label": "Brickwork (breakage + cuts)",
+        "category": 'brickwork',
+        "label": 'Alvenaria de tijolos (quebras e cortes)',
         "factor": Decimal("1.05"),
-        "note": "Breakage and cutting waste on facing and common brickwork.",
+        "note": 'Perdas por quebras e cortes de tijolos comuns e de fachada.',
     },
     {
-        "category": "plaster",
-        "label": "Plaster / render (mixing + spillage)",
+        "category": 'plaster',
+        "label": 'Reboco e revestimento argamassado (mistura e perdas)',
         "factor": Decimal("1.15"),
-        "note": "Mixing loss and spillage on wet plaster and render.",
+        "note": 'Perdas na mistura e aplicação da argamassa.',
     },
     {
-        "category": "screed",
-        "label": "Floor screed (spillage)",
+        "category": 'screed',
+        "label": 'Contrapiso (perdas na aplicação)',
         "factor": Decimal("1.05"),
-        "note": "Spillage and level tolerance on sand-cement screed.",
+        "note": 'Perdas na aplicação e tolerância de nivelamento do contrapiso.',
     },
     {
-        "category": "timber",
-        "label": "Timber / carpentry (offcuts)",
+        "category": 'timber',
+        "label": 'Madeira e carpintaria (sobras de corte)',
         "factor": Decimal("1.10"),
-        "note": "Offcuts and defect cutting on structural and joinery timber.",
+        "note": 'Sobras de corte e descarte de peças de madeira com defeito.',
     },
     {
-        "category": "insulation",
-        "label": "Insulation (cuts + fitting)",
+        "category": 'insulation',
+        "label": 'Isolamento (recortes e instalação)',
         "factor": Decimal("1.07"),
-        "note": "Cutting and fitting waste on board and roll insulation.",
+        "note": 'Perdas por recortes e ajustes de placas e mantas de isolamento.',
     },
     {
-        "category": "structural steel",
-        "label": "Structural steel (offcuts)",
+        "category": 'structural steel',
+        "label": 'Aço estrutural (sobras de corte)',
         "factor": Decimal("1.02"),
-        "note": "Small offcut allowance on fabricated structural steel.",
+        "note": 'Pequena reserva para sobras no corte do aço estrutural.',
     },
 ]
 

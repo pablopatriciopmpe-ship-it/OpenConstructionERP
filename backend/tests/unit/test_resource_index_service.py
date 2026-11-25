@@ -44,12 +44,7 @@ from app.modules.price_index.resource_index_service import (
     map_boq_positions,
 )
 from app.modules.price_index.router import router as price_index_router
-from app.modules.price_index.seed import (
-    RESOURCE_INDEX_SEED_KEY,
-    SAMPLE_QUARTER,
-    SAMPLE_REGION,
-    seed_resource_index_samples,
-)
+from app.modules.price_index.seed import seed_resource_index_samples
 from app.modules.projects.models import Project
 from app.modules.users.models import User
 from tests._pg import transactional_session
@@ -388,50 +383,24 @@ def test_machine_without_operator_line_is_excluded_not_priced_with_otm_zero() ->
 
 
 @pytest.mark.asyncio
-async def test_sample_seed_is_flagged_and_only_fills_empty_tables(session: AsyncSession) -> None:
+async def test_russian_sample_seed_is_disabled(session: AsyncSession) -> None:
     await session.execute(delete(PriceIndexSeedMarker))
     await session.execute(delete(ResourceIndexValue))
     await session.execute(delete(WorkTypeOverheadNorm))
-    first = await seed_resource_index_samples(session)
-    assert first == {"resource_indices": 4, "overhead_norms": 4}
-
-    rows = (await session.execute(select(ResourceIndexValue))).scalars().all()
-    assert {r.resource_group for r in rows} == set(rim.INDEX_GROUPS)
-    assert all(r.is_sample and r.region_code == SAMPLE_REGION and r.quarter == SAMPLE_QUARTER for r in rows)
-    assert all("SAMPLE" in r.source and "not an official value" in r.source for r in rows)
-    norms = (await session.execute(select(WorkTypeOverheadNorm))).scalars().all()
-    assert norms and all(n.is_sample and "812/pr" in n.source for n in norms)
-
-    # Idempotent: a second boot adds nothing.
-    assert await seed_resource_index_samples(session) == {"resource_indices": 0, "overhead_norms": 0}
-
-    # Once a person replaced the samples with their own rows, a reboot never
-    # brings the samples back next to them.
-    await session.execute(delete(ResourceIndexValue))
-    session.add(ResourceIndexValue(region_code="RU-SPE", quarter="2026-Q2", resource_group="labor", index_value=D("2")))
-    await session.flush()
-    assert (await seed_resource_index_samples(session))["resource_indices"] == 0
-
-
-@pytest.mark.asyncio
-async def test_deleted_samples_stay_deleted_after_a_restart(session: AsyncSession) -> None:
-    await session.execute(delete(PriceIndexSeedMarker))
-    await session.execute(delete(ResourceIndexValue))
-    await session.execute(delete(WorkTypeOverheadNorm))
-    assert await seed_resource_index_samples(session) == {"resource_indices": 4, "overhead_norms": 4}
-
-    # The person clears every sample row before typing in the official letter,
-    # which leaves both tables exactly as empty as on a fresh install.
-    await session.execute(delete(ResourceIndexValue))
-    await session.execute(delete(WorkTypeOverheadNorm))
-    await session.flush()
-
-    # The next boot puts nothing back.
     assert await seed_resource_index_samples(session) == {"resource_indices": 0, "overhead_norms": 0}
     assert (await session.execute(select(ResourceIndexValue.id))).first() is None
     assert (await session.execute(select(WorkTypeOverheadNorm.id))).first() is None
-    markers = (await session.execute(select(PriceIndexSeedMarker))).scalars().all()
-    assert [m.seed_key for m in markers] == [RESOURCE_INDEX_SEED_KEY]
+
+
+@pytest.mark.asyncio
+async def test_disabled_sample_seed_remains_idempotent(session: AsyncSession) -> None:
+    await session.execute(delete(PriceIndexSeedMarker))
+    await session.execute(delete(ResourceIndexValue))
+    await session.execute(delete(WorkTypeOverheadNorm))
+    for _ in range(2):
+        assert await seed_resource_index_samples(session) == {"resource_indices": 0, "overhead_norms": 0}
+    assert (await session.execute(select(ResourceIndexValue.id))).first() is None
+    assert (await session.execute(select(WorkTypeOverheadNorm.id))).first() is None
 
 
 @pytest.mark.asyncio

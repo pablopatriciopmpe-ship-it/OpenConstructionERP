@@ -18,6 +18,7 @@ from datetime import UTC, datetime, timedelta
 from decimal import Decimal
 from typing import Sequence
 
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.modules.resources.models import (
@@ -38,44 +39,14 @@ def _make_resources(rng: random.Random) -> list[Resource]:
     resources: list[Resource] = []
     # 50 people
     first_names = [
-        "Anna",
-        "Bob",
-        "Carlos",
-        "Dmitri",
-        "Eva",
-        "Felix",
-        "Gao",
-        "Hana",
-        "Igor",
-        "Julia",
-        "Karl",
-        "Liu",
-        "Mateo",
-        "Nadia",
-        "Oleg",
-        "Pia",
-        "Quinn",
-        "Ravi",
-        "Sofia",
-        "Tariq",
-        "Uma",
-        "Viktor",
-        "Wei",
-        "Xenia",
-        "Yusuf",
-        "Zhang",
+        "Ana", "Bruno", "Carlos", "Daniela", "Eduardo", "Fernanda", "Gabriel",
+        "Helena", "Igor", "Juliana", "Kaique", "Larissa", "Marcos", "Natália",
+        "Otávio", "Patrícia", "Queila", "Rafael", "Sofia", "Tiago", "Úrsula",
+        "Vinícius", "William", "Ximena", "Yasmin", "Zeca",
     ]
     last_names = [
-        "Schmidt",
-        "Müller",
-        "Rossi",
-        "Garcia",
-        "Jones",
-        "Yamamoto",
-        "Petrov",
-        "Khan",
-        "Singh",
-        "Silva",
+        "Silva", "Santos", "Oliveira", "Souza", "Costa", "Pereira",
+        "Almeida", "Ferreira", "Rodrigues", "Lima",
     ]
     for i in range(50):
         fn = first_names[i % len(first_names)]
@@ -86,7 +57,7 @@ def _make_resources(rng: random.Random) -> list[Resource]:
                 name=f"{fn} {ln}",
                 resource_type="person",
                 default_cost_rate=Decimal(str(35 + rng.randint(0, 60))),
-                currency="EUR",
+                currency="BRL",
                 # One full-time person can absorb 100% per bucket.
                 capacity_percent=100,
                 status="active" if rng.random() > 0.05 else "on_leave",
@@ -97,17 +68,17 @@ def _make_resources(rng: random.Random) -> list[Resource]:
         resources.append(
             Resource(
                 code=f"C-{i + 1:03d}",
-                name=f"Crew {chr(65 + i)}",
+                name=f"Equipe {chr(65 + i)}",
                 resource_type="crew",
                 default_cost_rate=Decimal(str(150 + rng.randint(0, 100))),
-                currency="EUR",
+                currency="BRL",
                 # A multi-member crew can split across up to three sites.
                 capacity_percent=300,
                 status="active",
             )
         )
     # 30 equipment
-    eq_kinds = ["Excavator", "Crane", "Loader", "Concrete Mixer", "Dump Truck"]
+    eq_kinds = ["Escavadeira", "Guindaste", "Pá carregadeira", "Betoneira", "Caminhão basculante"]
     for i in range(30):
         kind = eq_kinds[i % len(eq_kinds)]
         resources.append(
@@ -116,7 +87,7 @@ def _make_resources(rng: random.Random) -> list[Resource]:
                 name=f"{kind} #{i + 1}",
                 resource_type="equipment",
                 default_cost_rate=Decimal(str(80 + rng.randint(0, 200))),
-                currency="EUR",
+                currency="BRL",
                 # A single machine works one place at a time.
                 capacity_percent=100,
                 status="active" if rng.random() > 0.1 else "inactive",
@@ -131,10 +102,10 @@ def _make_resources(rng: random.Random) -> list[Resource]:
         resources.append(
             Resource(
                 code=f"S-{i + 1:03d}",
-                name=f"Subcontractor {chr(65 + (i % 26))}{i + 1} GmbH",
+                name=f"Subcontratada {chr(65 + (i % 26))}{i + 1} Ltda.",
                 resource_type="subcontractor",
                 default_cost_rate=Decimal(str(200 + rng.randint(0, 500))),
-                currency="EUR",
+                currency="BRL",
                 status="active",
             )
         )
@@ -143,31 +114,31 @@ def _make_resources(rng: random.Random) -> list[Resource]:
 
 def _make_skills() -> list[Skill]:
     return [
-        Skill(code="trade.carpentry", name="Carpentry", category="trade"),
-        Skill(code="trade.masonry", name="Masonry", category="trade"),
-        Skill(code="trade.concrete", name="Concrete Work", category="trade"),
-        Skill(code="trade.steelwork", name="Steel Work", category="trade"),
-        Skill(code="trade.welding", name="Welding", category="trade"),
-        Skill(code="trade.plumbing", name="Plumbing", category="trade"),
-        Skill(code="trade.electrical", name="Electrical", category="trade"),
-        Skill(code="trade.hvac", name="HVAC", category="trade"),
-        Skill(code="trade.roofing", name="Roofing", category="trade"),
-        Skill(code="trade.tiling", name="Tiling", category="trade"),
-        Skill(code="trade.plastering", name="Plastering", category="trade"),
-        Skill(code="trade.painting", name="Painting", category="trade"),
-        Skill(code="trade.scaffolding", name="Scaffolding", category="trade"),
-        Skill(code="trade.glazing", name="Glazing", category="trade"),
-        Skill(code="cert.crane_op", name="Crane Operator", category="certification"),
-        Skill(code="cert.excavator_op", name="Excavator Operator", category="certification"),
-        Skill(code="cert.first_aid", name="First Aid", category="certification"),
-        Skill(code="cert.scaffolding_inspector", name="Scaffolding Inspector", category="certification"),
-        Skill(code="cert.confined_space", name="Confined Space Entry", category="certification"),
-        Skill(code="lang.en", name="English", category="language"),
-        Skill(code="lang.de", name="German", category="language"),
-        Skill(code="lang.es", name="Spanish", category="language"),
-        Skill(code="lang.ru", name="Russian", category="language"),
-        Skill(code="lang.it", name="Italian", category="language"),
-        Skill(code="other.gps_surveying", name="GPS Surveying", category="other"),
+        Skill(code="trade.carpentry", name="Carpintaria", category="trade"),
+        Skill(code="trade.masonry", name="Alvenaria", category="trade"),
+        Skill(code="trade.concrete", name="Concretagem", category="trade"),
+        Skill(code="trade.steelwork", name="Estruturas metálicas", category="trade"),
+        Skill(code="trade.welding", name="Soldagem", category="trade"),
+        Skill(code="trade.plumbing", name="Instalações hidráulicas", category="trade"),
+        Skill(code="trade.electrical", name="Instalações elétricas", category="trade"),
+        Skill(code="trade.hvac", name="Climatização", category="trade"),
+        Skill(code="trade.roofing", name="Cobertura", category="trade"),
+        Skill(code="trade.tiling", name="Assentamento de revestimentos", category="trade"),
+        Skill(code="trade.plastering", name="Reboco", category="trade"),
+        Skill(code="trade.painting", name="Pintura", category="trade"),
+        Skill(code="trade.scaffolding", name="Montagem de andaimes", category="trade"),
+        Skill(code="trade.glazing", name="Vidraçaria", category="trade"),
+        Skill(code="cert.crane_op", name="Operador de guindaste", category="certification"),
+        Skill(code="cert.excavator_op", name="Operador de escavadeira", category="certification"),
+        Skill(code="cert.first_aid", name="Primeiros socorros", category="certification"),
+        Skill(code="cert.scaffolding_inspector", name="Inspetor de andaimes", category="certification"),
+        Skill(code="cert.confined_space", name="Entrada em espaço confinado", category="certification"),
+        Skill(code="lang.en", name="Inglês", category="language"),
+        Skill(code="lang.de", name="Alemão", category="language"),
+        Skill(code="lang.es", name="Espanhol", category="language"),
+        Skill(code="lang.ru", name="Russo", category="language"),
+        Skill(code="lang.it", name="Italiano", category="language"),
+        Skill(code="other.gps_surveying", name="Levantamento com GPS", category="other"),
     ]
 
 
@@ -175,15 +146,15 @@ def _make_certifications(rng: random.Random, resources: Sequence[Resource]) -> l
     """15 certifications spread across persons."""
     persons = [r for r in resources if r.resource_type == "person"]
     cert_types = [
-        "Crane Operator",
-        "Excavator Operator",
-        "First Aid",
-        "Welding Class A",
-        "Scaffolding Inspector",
-        "Confined Space Entry",
-        "Forklift Operator",
-        "Working at Heights",
-        "Hot Work Permit",
+        "Operador de guindaste",
+        "Operador de escavadeira",
+        "Primeiros socorros",
+        "Soldagem classe A",
+        "Inspetor de andaimes",
+        "Entrada em espaço confinado",
+        "Operador de empilhadeira",
+        "Trabalho em altura",
+        "Permissão para trabalho a quente",
     ]
     out: list[Certification] = []
     for i in range(15):
@@ -196,7 +167,7 @@ def _make_certifications(rng: random.Random, resources: Sequence[Resource]) -> l
                 resource_id=person.id,
                 cert_type=cert_types[i % len(cert_types)],
                 cert_number=f"CERT-{1000 + i}",
-                issued_by="LocalAuthority",
+                issued_by="Autoridade local",
                 issue_date=issued.isoformat(),
                 valid_until=valid_until.isoformat(),
                 status="valid" if valid_until >= datetime.now(UTC).date() else "expired",
@@ -233,7 +204,7 @@ def _make_assignments(
                 allocation_percent=rng.choice([25, 50, 75, 100]),
                 status=rng.choices(statuses, weights=weights, k=1)[0],
                 cost_rate=r.default_cost_rate,
-                currency=r.currency or "EUR",
+                currency=r.currency or "BRL",
             )
         )
     return out
@@ -252,14 +223,14 @@ def _make_requests(
     weights = [60, 30, 10]
     priorities = ["low", "med", "high", "critical"]
     titles = [
-        "Need carpenter for formwork",
-        "Need crane operator next week",
-        "Need additional masons",
-        "Need welder for steel structure",
-        "Need scaffolder",
-        "Need first-aid trained worker",
-        "Need excavator operator",
-        "Need painters for finishes",
+        "Carpinteiro para formas",
+        "Operador de guindaste na próxima semana",
+        "Pedreiros adicionais",
+        "Soldador para estrutura metálica",
+        "Montador de andaimes",
+        "Trabalhador treinado em primeiros socorros",
+        "Operador de escavadeira",
+        "Pintores para acabamentos",
     ]
     for i in range(30):
         proj = project_ids[rng.randint(0, len(project_ids) - 1)]
@@ -275,7 +246,7 @@ def _make_requests(
             ResourceRequest(
                 project_id=proj,
                 title=titles[i % len(titles)],
-                description=f"Cover required on site for {duration} days from {start:%d %b %Y}.",
+                description=f"Profissional necessário no canteiro por {duration} dias a partir de {start:%d/%m/%Y}.",
                 required_skills=[str(s) for s in req_skills],
                 start_at=start,
                 end_at=end,
@@ -302,7 +273,7 @@ def _make_links(rng: random.Random, resources: Sequence[Resource]) -> list[Resou
                 primary_resource_id=e.id,
                 secondary_resource_id=p.id,
                 link_type="operator",
-                notes="Designated operator",
+                notes="Operador designado",
             )
         )
     return out
@@ -321,6 +292,15 @@ async def seed_resources_demo(
     Returns:
         Dict with per-table insert counts.
     """
+    # O código estável identifica uma instalação anterior; não recriar recursos
+    # nem suas relações, inclusive se o usuário editou os registros depois.
+    existing = (await session.execute(select(Resource.id).where(Resource.code == "P-001").limit(1))).first()
+    if existing is not None:
+        return {
+            "resources": 0, "skills": 0, "resource_skills": 0,
+            "certifications": 0, "availability_windows": 0,
+            "assignments": 0, "requests": 0, "links": 0,
+        }
     rng = random.Random(_SEED)
 
     resources = _make_resources(rng)
@@ -364,7 +344,7 @@ async def seed_resources_demo(
                 window_type="available",
                 start_at=base,
                 end_at=base + timedelta(days=30),
-                note="Default working window",
+                note="Jornada de trabalho padrão",
             )
         )
         win_count += 1

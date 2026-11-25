@@ -2,7 +2,7 @@
 # Copyright (c) 2026 Artem Boiko / DataDrivenConstruction
 """Starter labor rate template library.
 
-Loads a small set of all-in rate build-ups so the rate library, the template
+Loads a small set of Brazilian reference rate build-ups so the rate library, the template
 picker on the labor rates page and the labour-rate selector on the norm
 expansion page are all useful out of the box. Without it a fresh install opens
 the build panel on an empty picker and answers with "No labour-rate templates
@@ -46,146 +46,57 @@ logger = logging.getLogger(__name__)
 # percentage of the base wage or a flat amount of currency per hour, which is
 # the only two kinds the build-up math knows (see ``rate_math``).
 DEFAULT_RATE_TEMPLATES: list[dict[str, Any]] = [
-    {
-        "name": "Bricklayer, journeyman",
-        "currency": "EUR",
-        "base_wage": Decimal("22.50"),
-        "description": "Productive bricklayer wage burdened with statutory charges, leave and supervision.",
-        "components": [
-            ("Statutory social charges", "percentage", Decimal("21.5")),
-            ("Leave and holiday provision", "percentage", Decimal("13.0")),
-            ("Supervision", "percentage", Decimal("8.0")),
-            ("Small tools and consumables", "fixed", Decimal("1.10")),
-        ],
-    },
-    {
-        "name": "Carpenter, journeyman",
-        "currency": "EUR",
-        "base_wage": Decimal("24.50"),
-        "description": "Formwork and joinery carpenter, same on-cost structure as the bricklayer build-up.",
-        "components": [
-            ("Statutory social charges", "percentage", Decimal("21.5")),
-            ("Leave and holiday provision", "percentage", Decimal("13.0")),
-            ("Supervision", "percentage", Decimal("8.0")),
-            ("Small tools and consumables", "fixed", Decimal("1.40")),
-        ],
-    },
-    {
-        "name": "General site labourer",
-        "currency": "EUR",
-        "base_wage": Decimal("17.00"),
-        "description": "Unskilled site labour for clearing, handling and attendance work.",
-        "components": [
-            ("Statutory social charges", "percentage", Decimal("21.5")),
-            ("Leave and holiday provision", "percentage", Decimal("13.0")),
-            ("Supervision", "percentage", Decimal("6.0")),
-            ("Small tools and consumables", "fixed", Decimal("0.60")),
-        ],
-    },
-    {
-        "name": "Groundworker",
-        "currency": "GBP",
-        "base_wage": Decimal("17.50"),
-        "description": "Groundworks operative with employer national insurance and a holiday pay provision.",
-        "components": [
-            ("Employer national insurance", "percentage", Decimal("13.8")),
-            ("Holiday pay provision", "percentage", Decimal("12.07")),
-            ("Site supervision", "percentage", Decimal("7.0")),
-            ("Small tools and PPE", "fixed", Decimal("0.80")),
-        ],
-    },
-    {
-        "name": "Carpenter, agreement scale",
-        "currency": "USD",
-        "base_wage": Decimal("36.00"),
-        "description": "Agreement-scale carpenter with payroll taxes, workers compensation and fringe benefits.",
-        "components": [
-            ("Payroll taxes", "percentage", Decimal("9.0")),
-            ("Workers compensation insurance", "percentage", Decimal("12.5")),
-            ("Fringe benefits", "percentage", Decimal("24.0")),
-            ("Small tools and consumables", "fixed", Decimal("1.75")),
-        ],
-    },
-    {
-        "name": "General labourer, Gulf site",
-        "currency": "AED",
-        "base_wage": Decimal("15.00"),
-        "description": "Site labour on a Gulf project, where accommodation and transport are carried per hour.",
-        "components": [
-            ("End of service gratuity provision", "percentage", Decimal("8.33")),
-            ("Site supervision", "percentage", Decimal("6.0")),
-            ("Accommodation and transport", "fixed", Decimal("3.20")),
-            ("Medical insurance and visa", "fixed", Decimal("1.10")),
-        ],
-    },
+    {"name": 'Pedreiro', "currency": "BRL", "base_wage": Decimal('16.00'),
+     "description": 'Execução de alvenaria e revestimentos.' + " Valores demonstrativos por hora; ajustar à convenção e localidade.",
+     "components": [
+         ("INSS patronal (referência)", "percentage", Decimal("20.0")),
+         ("FGTS (referência)", "percentage", Decimal("8.0")),
+         ("Férias e 13º (provisão)", "percentage", Decimal("20.0")),
+         ("Seguro (estimativa)", "percentage", Decimal("3.0")),
+         ("Supervisão (estimativa)", "percentage", Decimal("6.0")),
+         ("Ferramentas e EPI (estimativa)", "fixed", Decimal("1.00")),
+     ]},
+    {"name": 'Carpinteiro', "currency": "BRL", "base_wage": Decimal('17.50'),
+     "description": 'Execução de formas e estruturas de madeira.' + " Valores demonstrativos por hora; ajustar à convenção e localidade.",
+     "components": [
+         ("INSS patronal (referência)", "percentage", Decimal("20.0")),
+         ("FGTS (referência)", "percentage", Decimal("8.0")),
+         ("Férias e 13º (provisão)", "percentage", Decimal("20.0")),
+         ("Seguro (estimativa)", "percentage", Decimal("3.0")),
+         ("Supervisão (estimativa)", "percentage", Decimal("6.0")),
+         ("Ferramentas e EPI (estimativa)", "fixed", Decimal("1.00")),
+     ]},
+    {"name": 'Servente', "currency": "BRL", "base_wage": Decimal('11.00'),
+     "description": 'Apoio geral e movimentação de materiais.' + " Valores demonstrativos por hora; ajustar à convenção e localidade.",
+     "components": [
+         ("INSS patronal (referência)", "percentage", Decimal("20.0")),
+         ("FGTS (referência)", "percentage", Decimal("8.0")),
+         ("Férias e 13º (provisão)", "percentage", Decimal("20.0")),
+         ("Seguro (estimativa)", "percentage", Decimal("3.0")),
+         ("Supervisão (estimativa)", "percentage", Decimal("6.0")),
+         ("Ferramentas e EPI (estimativa)", "fixed", Decimal("1.00")),
+     ]},
+    {"name": 'Operador de máquinas', "currency": "BRL", "base_wage": Decimal('20.00'),
+     "description": 'Operação de máquinas no canteiro.' + " Valores demonstrativos por hora; ajustar à convenção e localidade.",
+     "components": [
+         ("INSS patronal (referência)", "percentage", Decimal("20.0")),
+         ("FGTS (referência)", "percentage", Decimal("8.0")),
+         ("Férias e 13º (provisão)", "percentage", Decimal("20.0")),
+         ("Seguro (estimativa)", "percentage", Decimal("3.0")),
+         ("Supervisão (estimativa)", "percentage", Decimal("6.0")),
+         ("Ferramentas e EPI (estimativa)", "fixed", Decimal("1.00")),
+     ]},
+    {"name": 'Encarregado', "currency": "BRL", "base_wage": Decimal('25.00'),
+     "description": 'Coordenação das equipes no canteiro.' + " Valores demonstrativos por hora; ajustar à convenção e localidade.",
+     "components": [
+         ("INSS patronal (referência)", "percentage", Decimal("20.0")),
+         ("FGTS (referência)", "percentage", Decimal("8.0")),
+         ("Férias e 13º (provisão)", "percentage", Decimal("20.0")),
+         ("Seguro (estimativa)", "percentage", Decimal("3.0")),
+         ("Supervisão (estimativa)", "percentage", Decimal("6.0")),
+         ("Ferramentas e EPI (estimativa)", "fixed", Decimal("1.00")),
+     ]},
 ]
-
-
-def _egyptian_templates() -> list[dict[str, Any]]:
-    """Two Egyptian build-ups whose statutory on-costs come from the labour catalogue.
-
-    The social insurance rate and the leave provision are read from
-    ``app/core/country_data/labour_standards.json`` rather than typed here, so
-    a corrected statutory figure reaches the template without a second edit.
-    The leave provision spreads the paid annual leave and public holidays over
-    the remaining days of a five-day week: (21 + 15) / (260 - 36) = 16.07%.
-
-    Social insurance is the general-scheme employer rate on the wage. On a
-    construction contract the authority also assesses a deemed wage from the
-    contract value, which is not modelled; the description says so, because an
-    estimator should not carry both. Base wages are starting points above the
-    statutory minimum, not a market survey.
-    """
-    from datetime import date as _date
-
-    from app.core.labour_standards import hard_standard
-
-    on = _date(2026, 1, 1)
-
-    def fact(key: str) -> Decimal:
-        row = hard_standard("EG", key, on)
-        if row is None:
-            raise RuntimeError(f"labour standard EG/{key} is missing or awaits review")
-        return row.value
-
-    leave = fact("annual_leave_days") + fact("public_holiday_days")
-    provision = (leave / (Decimal(5 * 52) - leave) * 100).quantize(Decimal("0.01"))
-    insurance = fact("employer_social_insurance_pct")
-    note = (
-        " Social insurance is the general-scheme employer share; a contract assessed on a deemed wage "
-        "from its value should drop it here."
-    )
-    return [
-        {
-            "name": "General site labourer, Egypt",
-            "currency": "EGP",
-            "base_wage": Decimal("50.00"),
-            "description": "Unskilled site labour on an Egyptian project, Sunday to Thursday week." + note,
-            "components": [
-                ("Employer social insurance, general scheme", "percentage", insurance),
-                ("Annual leave and public holiday provision", "percentage", provision),
-                ("Site supervision", "percentage", Decimal("6.0")),
-                ("Transport and site meals", "fixed", Decimal("6.00")),
-            ],
-        },
-        {
-            "name": "Mason, Egypt",
-            "currency": "EGP",
-            "base_wage": Decimal("90.00"),
-            "description": "Blockwork and plaster mason on an Egyptian project." + note,
-            "components": [
-                ("Employer social insurance, general scheme", "percentage", insurance),
-                ("Annual leave and public holiday provision", "percentage", provision),
-                ("Site supervision", "percentage", Decimal("8.0")),
-                ("Small tools and consumables", "fixed", Decimal("2.50")),
-                ("Transport and site meals", "fixed", Decimal("6.00")),
-            ],
-        },
-    ]
-
-
-DEFAULT_RATE_TEMPLATES.extend(_egyptian_templates())
-
 
 async def seed_labor_rates(session: AsyncSession, owner_id: UUID) -> dict[str, int]:
     """Idempotently insert the starter rate templates for one owner.

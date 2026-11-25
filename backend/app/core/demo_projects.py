@@ -12496,6 +12496,38 @@ async def _seed_module_data(
                 ],
             ),
         ]
+        if demo_id == "residential-saopaulo":
+            _asm_specs = [
+                (
+                    "Parede de concreto armado C30/37, 25 cm",
+                    "m3",
+                    [
+                        ("Concreto usinado C30/37", "material", 1.05, "m3", 118.0),
+                        ("Aço para armadura BSt 500", "material", 110.0, "kg", 1.35),
+                        ("Fôrmas nas duas faces", "material", 4.0, "m2", 28.0),
+                        ("Equipe de concretagem e fôrmas", "labor", 6.5, "h", 48.0),
+                        ("Bomba de concreto e vibrador", "equipment", 0.8, "h", 85.0),
+                    ],
+                ),
+                (
+                    "Parede de alvenaria, 24 cm",
+                    "m2",
+                    [
+                        ("Blocos e argamassa", "material", 1.0, "m2", 32.0),
+                        ("Pedreiros", "labor", 1.1, "h", 48.0),
+                        ("Andaimes e ferramentas", "equipment", 0.2, "h", 35.0),
+                    ],
+                ),
+                (
+                    "Reboco e pintura internos",
+                    "m2",
+                    [
+                        ("Materiais para reboco e pintura", "material", 1.0, "m2", 9.0),
+                        ("Rebocadores e pintores", "labor", 0.7, "h", 44.0),
+                        ("Ferramentas", "equipment", 0.1, "h", 25.0),
+                    ],
+                ),
+            ]
         _asm_codes = [f"{_demo_slug}-ASM{i + 1}" for i in range(len(_asm_specs))]
 
         async def _assembly_owners(rows: list[Any]) -> dict[Any, str | None]:
@@ -12541,7 +12573,7 @@ async def _seed_module_data(
                 id=_id(),
                 code=_asm_codes[a_idx],
                 name=a_name,
-                description=f"Assembly used on {template.project_name}",
+                description=(f"Composição usada em {template.project_name}" if demo_id == "residential-saopaulo" else f"Assembly used on {template.project_name}"),
                 unit=a_unit,
                 category="structure",
                 classification={},

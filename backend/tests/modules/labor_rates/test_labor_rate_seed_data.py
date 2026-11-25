@@ -81,12 +81,5 @@ def test_template_names_are_unique():
     assert len(names) == len(set(names)), f"duplicate template names: {names}"
 
 
-def test_the_library_spans_several_currencies():
-    """One currency is a library that suits one project in the demo portfolio.
-
-    The picker exists to be chosen from, and the demo projects are priced in
-    euro, sterling, dollars and dirham, so a single-currency library would send
-    every other project to the manual build-up.
-    """
-    currencies = {row["currency"] for row in DEFAULT_RATE_TEMPLATES}
-    assert len(currencies) >= 3, f"the starter library only covers {sorted(currencies)}"
+def test_the_library_uses_brazilian_currency():
+    assert {row["currency"] for row in DEFAULT_RATE_TEMPLATES} == {"BRL"}

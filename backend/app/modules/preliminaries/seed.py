@@ -23,6 +23,7 @@ from app.modules.preliminaries.models import ITEM_TYPE_FIXED, ITEM_TYPE_TIME_REL
 
 # (label, category, item_type). Categories match the model docstring buckets:
 # site_establishment, site_staff, temporary_works, standing_plant, welfare, general.
+# Labels are canonical English keys; the frontend translates them via i18n.
 _STARTER_CHECKLIST: list[tuple[str, str, str]] = [
     ("Site office and cabins", "site_establishment", ITEM_TYPE_TIME_RELATED),
     ("Site set-up and mobilisation", "site_establishment", ITEM_TYPE_FIXED),

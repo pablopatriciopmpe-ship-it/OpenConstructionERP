@@ -59,9 +59,29 @@ const CATEGORY_COLORS: Record<string, 'blue' | 'success' | 'warning' | 'error' |
   earthwork: 'warning',
   insulation: 'blue',
   finishing: 'success',
+  finishes: 'success',
   roofing: 'warning',
+  roof: 'warning',
+  structure: 'blue',
+  substructure: 'warning',
+  openings: 'neutral',
+  drywall: 'neutral',
   general: 'neutral',
 };
+
+function assemblyCategoryColor(raw?: string | null): 'blue' | 'success' | 'warning' | 'error' | 'neutral' {
+  if (!raw) return 'neutral';
+  return CATEGORY_COLORS[raw.trim().toLowerCase()] ?? 'neutral';
+}
+
+function assemblyCategoryLabel(
+  t: (key: string, opts?: Record<string, unknown>) => string,
+  raw: string,
+): string {
+  const norm = raw.trim().toLowerCase().replace(/[\s-]+/g, '_');
+  if (!norm) return raw;
+  return t(`assemblies.category_${norm}`, { defaultValue: raw });
+}
 
 const UNIT_OPTIONS = ['m', 'm2', 'm3', 'kg', 't', 'pcs', 'lsum', 'h', 'set', 'lm'];
 
@@ -611,7 +631,7 @@ export function AssembliesPage() {
             label={t('assemblies.stat_top_categories', { defaultValue: 'Top categories' })}
             value={
               banner.topCategories.length > 0
-                ? fmtList(banner.topCategories.map(([c, n]) => `${c} (${n})`))
+                ? fmtList(banner.topCategories.map(([c, n]) => `${assemblyCategoryLabel(t, c)} (${n})`))
                 : '—'
             }
             valueClassName="text-xs leading-snug"
@@ -660,7 +680,7 @@ export function AssembliesPage() {
                   }`}
                   title={t('assemblies.filter_by_category', { defaultValue: 'Filter by category' })}
                 >
-                  <span className="capitalize">{cat}</span>
+                  <span>{assemblyCategoryLabel(t, cat)}</span>
                   <span className={active ? 'text-white/80' : 'text-content-tertiary'}>({count})</span>
                 </button>
               );
@@ -1219,7 +1239,7 @@ function AssemblyTable({
                   <td className="font-mono text-content-tertiary">{a.code}</td>
                   <td>
                     {a.category ? (
-                      <Badge variant={CATEGORY_COLORS[a.category] ?? 'neutral'} size="sm">{a.category}</Badge>
+                      <Badge variant={assemblyCategoryColor(a.category)} size="sm">{assemblyCategoryLabel(t, a.category)}</Badge>
                     ) : (
                       <span className="text-content-quaternary">—</span>
                     )}
@@ -1691,7 +1711,7 @@ function AIGenerateModal({
                             <td className="truncate max-w-[250px]">{comp.name}</td>
                             <td className="text-center">
                               <span className={`inline-block px-1.5 py-0.5 rounded text-2xs font-medium ${typeBadge}`}>
-                                {comp.type}
+                                {t(`assemblies.type_${comp.type}`, { defaultValue: comp.type })}
                               </span>
                             </td>
                             <td className="text-center text-content-secondary font-mono">{comp.unit}</td>
@@ -1776,7 +1796,7 @@ function AssemblyCard({
     hoverTimer.current = setTimeout(() => setHoverPreview(true), 400);
   }, []);
   useEffect(() => () => { if (hoverTimer.current) clearTimeout(hoverTimer.current); }, []);
-  const badgeVariant = CATEGORY_COLORS[assembly.category] ?? 'neutral';
+  const badgeVariant = assemblyCategoryColor(assembly.category);
 
   return (
     <Card
@@ -1961,7 +1981,7 @@ function AssemblyCard({
         <div className="mt-1.5 flex flex-wrap items-center gap-1">
           {assembly.category && (
             <Badge variant={badgeVariant} size="sm">
-              {assembly.category}
+              {assemblyCategoryLabel(t, assembly.category)}
             </Badge>
           )}
           <span

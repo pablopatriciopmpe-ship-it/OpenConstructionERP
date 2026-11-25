@@ -109,41 +109,9 @@ def test_the_egyptian_schedule_day_fits_the_statutory_limits() -> None:
     assert week <= ls.hard_standard("EG", "max_hours_per_week", on).value
 
 
-_EGP = [row for row in DEFAULT_RATE_TEMPLATES if row["currency"] == "EGP"]
-
-
 @pytest.mark.unit
-def test_there_are_egyptian_rate_templates() -> None:
-    assert len(_EGP) >= 2
-
-
-@pytest.mark.unit
-@pytest.mark.parametrize("row", _EGP, ids=lambda r: r["name"])
-def test_egyptian_templates_pay_at_least_the_minimum_wage(row) -> None:
-    on = date(2026, 1, 1)
-    monthly = ls.hard_standard("EG", "minimum_wage_monthly", on).value
-    weekly_hours = ls.hard_standard("EG", "max_hours_per_week", on).value
-    # The most hours a month can lawfully hold is the floor's worst case: the
-    # same monthly minimum spread over more hours is the lowest hourly figure.
-    hourly_floor = monthly / (weekly_hours * 52 / 12)
-    assert row["base_wage"] >= hourly_floor
-
-
-@pytest.mark.unit
-@pytest.mark.parametrize("row", _EGP, ids=lambda r: r["name"])
-def test_egyptian_templates_take_their_on_costs_from_the_catalogue(row) -> None:
-    on = date(2026, 1, 1)
-    components = {label: (kind, value) for label, kind, value in row["components"]}
-    employer = ls.hard_standard("EG", "employer_social_insurance_pct", on).value
-    assert any(kind == "percentage" and value == employer for kind, value in components.values())
-
-    leave = ls.hard_standard("EG", "annual_leave_days", on).value
-    holidays = ls.hard_standard("EG", "public_holiday_days", on).value
-    productive = Decimal(5 * 52) - leave - holidays
-    provision = (leave + holidays) / productive * 100
-    assert any(
-        kind == "percentage" and value == provision.quantize(Decimal("0.01")) for kind, value in components.values()
-    )
+def test_starter_rate_templates_are_brazilian() -> None:
+    assert {row["currency"] for row in DEFAULT_RATE_TEMPLATES} == {"BRL"}
 
 
 def _row(**over):

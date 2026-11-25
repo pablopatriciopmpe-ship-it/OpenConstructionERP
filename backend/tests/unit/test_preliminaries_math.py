@@ -191,7 +191,7 @@ def test_starter_checklist_is_non_empty_and_well_formed() -> None:
     checklist = starter_checklist()
     assert len(checklist) >= 5
     labels = {row["label"] for row in checklist}
-    # The labels the spec calls out are present.
+    # The labels the spec calls out are present (canonical English keys).
     assert any("office" in label.lower() for label in labels)
     assert any("supervision" in label.lower() for label in labels)
     assert any("power" in label.lower() for label in labels)

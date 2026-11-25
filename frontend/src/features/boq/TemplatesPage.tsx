@@ -27,6 +27,7 @@ import { PageHeader } from '@/shared/ui/PageHeader';
 import { useToastStore } from '@/stores/useToastStore';
 import { apiGet, apiPost, ApiError } from '@/shared/lib/api';
 import { fmtNumber } from '@/shared/lib/formatters';
+import { formatCurrency } from '@/shared/lib/money';
 import { useDisplayQuantity } from '@/shared/hooks/useDisplayQuantity';
 import { parseDecimalInput } from '@/shared/lib/parseDecimal';
 import { projectsApi, type Project } from '@/features/projects/api';
@@ -395,7 +396,9 @@ export function TemplatesPage() {
               )}
               {tpl.avg_cost_per_m2 > 0 && (
                 <Badge variant={isSelected ? 'blue' : 'neutral'} size="sm">
-                  ~{fmt.format(tpl.avg_cost_per_m2 / areaUnitScale)} {tpl.currency}/{areaRateUnit}
+                  {tpl.currency?.toUpperCase() === 'BRL'
+                    ? `~${formatCurrency(tpl.avg_cost_per_m2 / areaUnitScale, 'BRL', undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}/${areaRateUnit}`
+                    : `~${fmt.format(tpl.avg_cost_per_m2 / areaUnitScale)} ${tpl.currency}/${areaRateUnit}`}
                 </Badge>
               )}
             </button>
@@ -539,8 +542,14 @@ export function TemplatesPage() {
                     {t('boq.estimated_total', { defaultValue: 'Estimated total' })}
                   </p>
                   <p className="mt-0.5 text-lg font-semibold text-content-primary tabular-nums">
-                    ~{fmtCurrency.format(estimatedTotal)}{' '}
-                    <span className="text-sm font-normal text-content-secondary">{selected.currency}</span>
+                    {selected.currency?.toUpperCase() === 'BRL' ? (
+                      <>~{formatCurrency(estimatedTotal, 'BRL')}</>
+                    ) : (
+                      <>
+                        ~{fmtCurrency.format(estimatedTotal)}{' '}
+                        <span className="text-sm font-normal text-content-secondary">{selected.currency}</span>
+                      </>
+                    )}
                   </p>
                 </div>
                   </>

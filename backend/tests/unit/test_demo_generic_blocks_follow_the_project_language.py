@@ -207,7 +207,7 @@ def test_english_stays_the_default_for_other_languages() -> None:
     template = DEMO_TEMPLATES["warehouse-dubai"]
     assert language_of(template.locale) == "en"
     assert generated_text(template.locale, "task_0") == "Mobilise site and establish welfare facilities"
-    assert generated_text("pt-BR", "task_0") == GENERATED_TEXT["en"]["task_0"]
+    assert generated_text("pt-BR", "task_0") == GENERATED_TEXT["pt"]["task_0"]
     assert localise("en", {"a": ["Piling crew"]}) == {"a": ["Piling crew"]}
 
 

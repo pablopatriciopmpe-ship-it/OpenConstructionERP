@@ -242,7 +242,7 @@ function WasteFactorsContent() {
               label={t('waste_factors.category', { defaultValue: 'Category' })}
               value={newCategory}
               onChange={(e) => setNewCategory(e.target.value)}
-              placeholder="rebar"
+              placeholder={t('waste_factors.category_ph', { defaultValue: 'rebar' })}
               className="font-mono"
             />
             <Input
@@ -349,7 +349,7 @@ function WasteFactorsContent() {
               onChange={(e) => setApplyText(e.target.value)}
               rows={5}
               spellCheck={false}
-              placeholder={'concrete 12.5\nrebar 340\ntiling 85'}
+              placeholder={t('waste_factors.net_lines_ph', { defaultValue: 'concrete 12.5\nrebar 340\ntiling 85' })}
               className="oe-textarea font-mono"
             />
           </label>
