@@ -56,6 +56,7 @@ import {
 import { ParametersPanel } from './ParametersPanel';
 import { ExpandPreviewModal } from './ExpandPreviewModal';
 import { getNumberLocale } from '@/stores/usePreferencesStore';
+import { useDemoDisplayName } from '@/shared/hooks/useDemoDisplayName';
 
 /* -- Component ------------------------------------------------------------ */
 
@@ -64,6 +65,7 @@ export function AssemblyEditorPage() {
   const navigate = useNavigate();
   const { assemblyId } = useParams<{ assemblyId: string }>();
   const queryClient = useQueryClient();
+  const demoName = useDemoDisplayName();
   // Seed new component units from the user's measurement system (imperial ->
   // sqft, metric -> m2) the same way the BOQ editor does, so an imperial user
   // no longer lands on a hardcoded metric unit. Storage stays free-text.
@@ -357,7 +359,7 @@ export function AssemblyEditorPage() {
       <Breadcrumb
         items={[
           { label: t('nav.assemblies', 'Assemblies'), to: '/assemblies' },
-          { label: assembly.name },
+          { label: demoName('assembly', assembly.name) },
         ]}
       />
 
@@ -380,7 +382,7 @@ export function AssemblyEditorPage() {
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-3">
             <h1 className="text-2xl font-semibold text-content-primary truncate">
-              {assembly.name}
+              {demoName('assembly', assembly.name)}
             </h1>
             <Badge variant="blue" size="md">
               {assembly.code}
@@ -823,7 +825,7 @@ export function AssemblyEditorPage() {
       {applyModalOpen && (
         <ApplyToBOQModal
           assemblyId={assemblyId!}
-          assemblyName={assembly.name}
+          assemblyName={demoName('assembly', assembly.name)}
           regionalFactors={assembly.regional_factors}
           parameters={parameters}
           onClose={() => setApplyModalOpen(false)}

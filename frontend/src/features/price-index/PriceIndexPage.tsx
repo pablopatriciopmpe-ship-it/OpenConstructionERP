@@ -36,6 +36,7 @@ import { Button, Badge, Card, CardHeader, EmptyState, ErrorState, Input, PageHea
 import { useToastStore } from '@/stores/useToastStore';
 import { useProjectContextStore } from '@/stores/useProjectContextStore';
 import { getErrorMessage } from '@/shared/lib/api';
+import { useDemoDisplayName } from '@/shared/hooks/useDemoDisplayName';
 import { fetchProjectList } from '@/shared/lib/projectList';
 import { parseDecimalInput, toDecimalPayloadString } from '@/shared/lib/parseDecimal';
 import type { Project } from '@/features/projects/api';
@@ -109,6 +110,7 @@ function PriceIndexContent() {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
   const addToast = useToastStore((s) => s.addToast);
+  const demoName = useDemoDisplayName();
 
   const [selectedSeriesId, setSelectedSeriesId] = useState<string | null>(null);
 
@@ -314,7 +316,7 @@ function PriceIndexContent() {
                         : 'border-border text-content-secondary hover:border-content-tertiary')
                     }
                   >
-                    {s.name}
+                    {demoName('price_index_series', s.name)}
                     <span className="ml-2 text-xs text-content-tertiary">
                       {t('price_index.point_count', { defaultValue: '{{count}} pts', count: s.point_count })}
                     </span>
@@ -391,7 +393,8 @@ function PriceIndexContent() {
               <div className="rounded-lg border border-border-light p-3">
                 <div className="mb-2 flex items-center justify-between">
                   <span className="text-sm font-medium text-content-primary">
-                    {seriesDetail?.name ?? t('price_index.points', { defaultValue: 'Index points' })}
+                    {demoName('price_index_series', seriesDetail?.name) ??
+                      t('price_index.points', { defaultValue: 'Index points' })}
                   </span>
                   <Button
                     variant="ghost"
@@ -589,7 +592,7 @@ function PriceIndexContent() {
                 )}
                 {seriesList.map((s) => (
                   <option key={s.id} value={s.id}>
-                    {s.name}
+                    {demoName('price_index_series', s.name)}
                   </option>
                 ))}
               </select>
@@ -959,7 +962,7 @@ function EscalatePanel({ seriesList }: { seriesList: CostIndexSeries[] }) {
                   )}
                   {seriesList.map((s) => (
                     <option key={s.id} value={s.id}>
-                      {s.name}
+                      {demoName('price_index_series', s.name)}
                     </option>
                   ))}
                 </select>

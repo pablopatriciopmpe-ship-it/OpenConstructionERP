@@ -108,6 +108,7 @@ import { buildResourcesInsights } from './resourcesInsights';
 import { fmtPercent } from '@/shared/lib/formatters';
 import { compareNames } from '@/shared/lib/collator';
 import { useWeekStartsOn, type WeekStartsOn } from '@/shared/lib/weekStart';
+import { useDemoDisplayName } from '@/shared/hooks/useDemoDisplayName';
 
 type Tab = 'resources' | 'requests' | 'assignments';
 
@@ -1271,7 +1272,7 @@ function InlineRateCell({ resource, pending, onSave }: InlineRateCellProps) {
         className="oe-input w-24 text-right tabular-nums"
         aria-label={t('resources.edit_rate_aria', {
           defaultValue: 'Edit rate for {{name}}',
-          name: resource.name,
+          name: demoName('resource', resource.name),
         })}
         data-testid={`resource-rate-input-${resource.id}`}
       />
@@ -1349,6 +1350,7 @@ function ResourceTable({
   pendingRateId,
 }: ResourceTableProps) {
   const { t } = useTranslation();
+  const demoName = useDemoDisplayName();
 
   // Three-way empty state — see header comment above.
   if (rows.length === 0) {
@@ -1522,7 +1524,7 @@ function ResourceTable({
                     {r.code}
                   </td>
                   <td>
-                    {r.name}
+                    {demoName('resource', r.name)}
                   </td>
                   <td>
                     <Badge variant={TYPE_VARIANT[r.resource_type]} size="sm">
@@ -1563,7 +1565,7 @@ function ResourceTable({
                         className="rounded p-1 text-content-secondary hover:text-oe-blue-text hover:bg-oe-blue-subtle"
                         aria-label={t('resources.edit_aria', {
                           defaultValue: 'Edit {{name}}',
-                          name: r.name,
+                          name: demoName('resource', r.name),
                         })}
                         title={t('resources.edit_title', {
                           defaultValue: 'Edit resource',
@@ -1582,7 +1584,7 @@ function ResourceTable({
                         className="rounded p-1 text-content-secondary hover:text-semantic-error hover:bg-semantic-error-bg"
                         aria-label={t('resources.delete_aria', {
                           defaultValue: 'Delete {{name}}',
-                          name: r.name,
+                          name: demoName('resource', r.name),
                         })}
                         title={t('resources.delete_title', {
                           defaultValue: 'Delete resource',
@@ -2969,6 +2971,7 @@ function AssignmentsTab({
   const qc = useQueryClient();
   const addToast = useToastStore((s) => s.addToast);
   const userRole = useAuthStore((s) => s.userRole);
+  const demoName = useDemoDisplayName();
   // Editor / manager / admin can mutate. Lower roles see a read-only view
   // with the action buttons hidden (the backend RBAC will reject anyway,
   // but we hide the affordance to keep the UI honest).
@@ -3013,7 +3016,8 @@ function AssignmentsTab({
   const flat: FlatAssignment[] = useMemo(() => {
     const out: FlatAssignment[] = [];
     for (const entry of boardQ.data?.entries ?? []) {
-      const name = entry.resource.name ?? idToName[entry.resource.id] ?? '';
+      const name =
+        demoName('resource', entry.resource.name ?? idToName[entry.resource.id] ?? '');
       for (const a of entry.assignments) {
         out.push({ ...a, resource_name: name });
       }
@@ -3524,7 +3528,7 @@ function AssignmentsTab({
                     onClick={() => onSelectResource(c.resource_id)}
                   >
                     <p className="text-sm font-medium text-content-primary">
-                      {idToName[c.resource_id] || c.resource_name}
+                      {demoName('resource', idToName[c.resource_id] || c.resource_name)}
                     </p>
                     <p className="mt-0.5 text-xs text-content-secondary">
                       {t('resources.overlap_count_n', {
@@ -3815,6 +3819,7 @@ function ResourceDrawer({
   const { t } = useTranslation();
   const qc = useQueryClient();
   const addToast = useToastStore((s) => s.addToast);
+  const demoName = useDemoDisplayName();
 
   const dashQ = useQuery({
     queryKey: ['resources', 'dashboard', resourceId],
@@ -3871,7 +3876,7 @@ function ResourceDrawer({
     <SideDrawer
       open
       onClose={onClose}
-      title={data?.resource.name ?? t('common.loading', { defaultValue: 'Loading…' })}
+      title={demoName('resource', data?.resource.name) ?? t('common.loading', { defaultValue: 'Loading…' })}
       subtitle={data ? <span className="font-mono">{data.resource.code}</span> : undefined}
       widthClass="max-w-xl"
     >
