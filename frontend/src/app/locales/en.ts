@@ -25729,6 +25729,7 @@ const resource = {
     "assemblies.export_json": "Export as JSON",
     "assemblies.copy_data": "Copy to Clipboard",
     "assemblies.components": "components",
+    "assemblies.component": "component",
     "assemblies.times_used": "used in BOQ",
     "assemblies.draft": "draft",
     "assemblies.no_components_hint": "No components yet",
@@ -60878,6 +60879,7 @@ const resource = {
     "preliminaries.starter_final_clean_on_completion": "Final clean on completion",
     "preliminaries.starter_insurances_and_bonds": "Insurances and bonds",
     "assemblies.other_currency_notice": "{{count}} assemblies use a different currency from this project ({{currency}}). Prices have not been converted; check the currency before using an assembly.",
+    "assemblies.not_project_currency": "Not converted to the project currency",
   }
 } as { translation: Record<string, string> };
 

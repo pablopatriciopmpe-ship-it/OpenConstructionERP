@@ -26750,6 +26750,7 @@ const resource = {
     "assemblies.col_updated": "Atualizado",
     "assemblies.col_usage": "Usado em Planilha orçamentária",
     "assemblies.components": "componentes",
+    "assemblies.component": "componente",
     "assemblies.components_added_from_db": "Componentes adicionados do banco de dados de custo",
     "assemblies.components_count": "Componentes ({{count}})",
     "assemblies.confirm_delete_component": "Remover este componente da assembly?",
@@ -62513,6 +62514,7 @@ const resource = {
     "preliminaries.starter_final_clean_on_completion": "Limpeza final de entrega",
     "preliminaries.starter_insurances_and_bonds": "Seguros e garantias contratuais",
     "assemblies.other_currency_notice": "{{count}} composições usam moeda diferente da deste projeto ({{currency}}). Os preços não foram convertidos; confira a moeda antes de usar uma composição.",
+    "assemblies.not_project_currency": "Não convertido para a moeda do projeto",
   }
 } as { translation: Record<string, string> };
 

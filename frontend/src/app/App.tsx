@@ -421,10 +421,6 @@ const UserManagementPage = lazy(() =>
 const TimelinePage = lazy(() =>
   import('@/features/timeline').then((m) => ({ default: m.TimelinePage }))
 );
-// Admin: read-only audit-log timeline (`audit.view` Manager+).
-const AuditLogPage = lazy(() =>
-  import('@/features/admin/AuditLogPage').then((m) => ({ default: m.AuditLogPage }))
-);
 // (PermissionsMatrixPage now mounts inside GovernancePage — see below.)
 // Admin: Epic B / B11 — outbound notification webhook targets.
 const WebhookTargetsPage = lazy(() =>
@@ -1724,7 +1720,7 @@ export default function App() {
             per-project and edited by the project owner, not deployment-wide
             policy set by an administrator. */}
         <Route path="/teams" element={<P title="Teams and Visibility"><TeamsPage /></P>} />
-        <Route path="/admin/audit-log" element={<P title="Audit Log"><AuditLogPage /></P>} />
+        <Route path="/admin/audit-log" element={<Navigate to="/settings" replace />} />
         {/* Governance — merged home for Permissions, Approval Routes and
             Validation Rules (three /modules-style top tabs). The active
             tab is driven by ?tab=permissions|approvals|validation. */}

@@ -297,7 +297,7 @@ export const JOURNEY_PHASES: readonly JourneyPhase[] = [
       { to: '/bi-dashboards', labelKey: 'nav.bi_dashboards', label: 'BI Painéis' },
       { to: '/reports', labelKey: 'nav.reports', label: 'Reports' },
     ],
-    extraRoutes: ['/analytics', '/reporting', '/dashboards', '/admin/audit-log'],
+    extraRoutes: ['/analytics', '/reporting', '/dashboards'],
   },
   {
     key: 'close',

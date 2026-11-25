@@ -152,12 +152,8 @@ type AdminGridItem = NavItem & { onClick?: () => void };
 // appear as their own sidebar tiles - they are reached from inside Settings
 // (Settings -> Modules / Governance links), which declutters the left menu.
 // Their routes stay live, so any deep link or the Settings entries still work.
-// Audit Log used to sit here as a role-gated tile. It moved into Settings
-// (Settings -> Audit log, Manager+ only) so the admin grid stays short and
-// the security surfaces live together under Settings. Its route
-// (`/admin/audit-log`) stays live for deep links. The slot it vacated now
-// holds the "Edit menu" action tile (see `editMenuGridItem` below), which
-// opens the sidebar customiser in place.
+// The slot once used by Audit Log holds the "Edit menu" action tile
+// (see `editMenuGridItem` below), which opens the sidebar customiser.
 const adminGridItems: NavItem[] = [
   { labelKey: 'sidebar.admin_grid.settings', to: '/settings', icon: Settings },
   { labelKey: 'sidebar.admin_grid.users', to: '/users', icon: Users },

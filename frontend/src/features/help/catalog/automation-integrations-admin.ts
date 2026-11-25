@@ -259,29 +259,4 @@ export const automationIntegrationsAdminModules: ModuleExplanation[] = [
     whenKey: 'howto.governance.when',
     whenDefault: 'Configure these once the team is set up, and revisit when your sign-off process or policies change.',
   },
-  {
-    id: 'audit-log',
-    route: '/admin/audit-log',
-    icon: 'ClipboardCheck',
-    category: 'admin',
-    keywords: 'audit trail history who did what changes diff export accountability',
-    titleKey: 'howto.audit-log.title',
-    titleDefault: 'Audit Log',
-    summaryKey: 'howto.audit-log.summary',
-    summaryDefault: 'The trail of who did what, with a before-and-after view of every change.',
-    whatKey: 'howto.audit-log.what',
-    whatDefault:
-      'The Audit Log is a read-only timeline of every change recorded across the system - who made it, when, from where, and to what. Filter it down to a person, module, action or date range, then open any entry to see a side-by-side before-and-after of exactly what changed.',
-    how: [
-      { key: 'howto.audit-log.how.1', default: 'Open the log to see the most recent changes first; use the filters to narrow by user, module, action or date.' },
-      { key: 'howto.audit-log.how.2', default: 'Search across the entries to find a specific change, then open an entry for its full detail.' },
-      { key: 'howto.audit-log.how.3', default: 'Inspect the before-and-after view in the drawer to see precisely what a change altered.' },
-      { key: 'howto.audit-log.how.4', default: 'Export the current view to CSV or JSON when you need a record outside the app.' },
-    ],
-    tips: [
-      { key: 'howto.audit-log.tip.1', default: 'The log is read-only and access is reserved for managers and administrators, so the trail itself cannot be edited.' },
-    ],
-    whenKey: 'howto.audit-log.when',
-    whenDefault: 'Turn to it to answer "who changed this and when", or to produce an accountability record for a review.',
-  },
 ];

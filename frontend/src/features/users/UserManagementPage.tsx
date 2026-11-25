@@ -987,10 +987,6 @@ export function UserManagementPage() {
         }
         links={[
           { label: t('nav.governance', { defaultValue: 'Governance' }), onClick: () => navigate('/governance') },
-          {
-            label: t('nav.audit_log', { defaultValue: 'Audit Log' }),
-            onClick: () => navigate('/admin/audit-log'),
-          },
         ]}
       >
         {t('users.intro_body', {

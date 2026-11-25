@@ -67,7 +67,6 @@ import {
   Wrench,
   LayoutGrid,
   Users,
-  ScrollText,
   Building2,
   Boxes,
   Database,
@@ -97,7 +96,6 @@ import {
 } from '@/features/ai/api';
 import { BIMConverterStatusBanner } from '@/features/bim/BIMConverterStatusBanner';
 import { converterName, converterVersionLabel } from '@/features/bim/converterText';
-import { DataSecurityPanel } from '@/features/data-security';
 import { DeleteAccountDialog } from './DeleteAccountDialog';
 import { DemoLeftoversPanel } from './DemoLeftoversPanel';
 import { ReferenceDataPanel } from './ReferenceDataPanel';
@@ -107,9 +105,6 @@ import { invalidateProjectLists } from '@/features/projects/invalidateProjectLis
 // grid). We reuse the exact same page component - lazy-loaded so its filter /
 // table code only enters the bundle when an admin actually opens the tab.
 const DeveloperTab = lazy(() => import('./DeveloperTab'));
-const AuditLogPanel = lazy(() =>
-  import('@/features/admin/AuditLogPage').then((m) => ({ default: m.AuditLogPage })),
-);
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -1472,7 +1467,7 @@ function _DemoLoginAdminRow() {
 
 // ── Tab definitions ──────────────────────────────────────────────────────────
 
-type SettingsTab = 'general' | 'dashboard' | 'team' | 'company' | 'account' | 'market' | 'einvoice' | 'converters' | 'ai' | 'security' | 'integrations' | 'datafeeds' | 'developer' | 'packages' | 'modules' | 'governance' | 'identity' | 'audit' | 'advanced';
+type SettingsTab = 'general' | 'dashboard' | 'team' | 'company' | 'account' | 'market' | 'einvoice' | 'converters' | 'ai' | 'integrations' | 'datafeeds' | 'developer' | 'packages' | 'modules' | 'governance' | 'identity' | 'advanced';
 
 interface TabDef {
   id: SettingsTab;
@@ -1505,7 +1500,6 @@ const TABS: readonly TabDef[] = [
   { id: 'einvoice',     labelKey: 'settings.tab_einvoice',     defaultLabel: 'E-invoice',    icon: ReceiptText, descKey: 'settings.tab_einvoice_desc',  descDefault: 'Seller identity and bank account for electronic invoices' },
   { id: 'converters',   labelKey: 'settings.tab_converters',   defaultLabel: 'Converters',  icon: Layers,   descKey: 'settings.tab_converters_desc',   descDefault: 'DDC converters - installed versions and GitHub sources' },
   { id: 'ai',           labelKey: 'settings.tab_ai',           defaultLabel: 'IA',           icon: Sparkles, descKey: 'settings.tab_ai_desc',           descDefault: 'IA provider and semantic search' },
-  { id: 'security',     labelKey: 'settings.tab_security',     defaultLabel: 'Data & Security', icon: ShieldCheck, descKey: 'settings.tab_security_desc', descDefault: 'Where your data lives and what leaves this instance' },
   { id: 'integrations', labelKey: 'settings.tab_integrations', defaultLabel: 'Integrations', icon: Plug,     descKey: 'settings.tab_integrations_desc', descDefault: 'Slack, Teams, Telegram, webhooks' },
   { id: 'datafeeds',    labelKey: 'settings.tab_datafeeds',    defaultLabel: 'Data feeds',   icon: Database, descKey: 'settings.tab_datafeeds_desc',    descDefault: 'Tables for Excel, Power Query and BI tools' },
   { id: 'developer',    labelKey: 'settings.tab_developer',    defaultLabel: 'Developer',    icon: KeyRound, descKey: 'settings.tab_developer_desc',    descDefault: 'API keys and signed webhooks for your own systems' },
@@ -1520,7 +1514,6 @@ const TABS: readonly TabDef[] = [
   { id: 'governance',   labelKey: 'settings.tab_governance',   defaultLabel: 'Governance',   icon: Scale,    descKey: 'settings.tab_governance_desc',   descDefault: 'Permissions, approval routes, and validation rules' },
   // Single sign-on provisioning (SCIM). Admin only: it hands out a token that creates accounts.
   { id: 'identity',     labelKey: 'settings.tab_identity',     defaultLabel: 'Identity',     icon: KeyRound, descKey: 'settings.tab_identity_desc',     descDefault: 'Connect your identity provider: SCIM provisioning and group roles' },
-  { id: 'audit',        labelKey: 'settings.tab_audit',        defaultLabel: 'Audit log',    icon: ScrollText, descKey: 'settings.tab_audit_desc',      descDefault: 'Read-only timeline of every recorded change' },
   { id: 'advanced',     labelKey: 'settings.tab_advanced',     defaultLabel: 'Advanced',     icon: Wrench,   descKey: 'settings.tab_advanced_desc',     descDefault: 'Backup, databases, setup wizard' },
 ];
 
@@ -1651,7 +1644,6 @@ export function SettingsPage() {
   // never lands on a section that 403s on load. The backend `audit.view`
   // permission stays authoritative; this just keeps the strip tidy.
   const userRole = useAuthStore((s) => s.userRole);
-  const canViewAudit = userRole === 'admin' || userRole === 'manager';
   // Seller identity and the bank account are Manager+ for the same reason:
   // saving them is `finance.einvoice_settings`, so the only action this panel
   // offers would 403 for anyone else, and a form that cannot be submitted is
@@ -1662,11 +1654,10 @@ export function SettingsPage() {
       TABS.filter(
         (tab) =>
           !["einvoice", "converters", "developer", "modules", "market", "packages", "ai", "integrations", "identity", "advanced", "datafeeds"].includes(tab.id) &&
-          (tab.id !== 'audit' || canViewAudit) &&
           (tab.id !== 'einvoice' || canEditEInvoice) &&
           (tab.id !== 'identity' || userRole === 'admin'),
       ),
-    [canViewAudit, canEditEInvoice, userRole],
+    [canEditEInvoice, userRole],
   );
 
   const rawTab = searchParams.get('tab') ?? '';
@@ -2176,13 +2167,6 @@ export function SettingsPage() {
             </>
           )}
 
-          {/* ── DATA & SECURITY ──────────────────────────────────── */}
-          {activeTab === 'security' && (
-            <div className="lg:col-span-2">
-              <DataSecurityPanel />
-            </div>
-          )}
-
           {/* ── E-INVOICE ────────────────────────────────────────── */}
           {activeTab === 'einvoice' && canEditEInvoice && (
             <div className="lg:col-span-2">
@@ -2306,22 +2290,6 @@ export function SettingsPage() {
           {activeTab === 'identity' && userRole === 'admin' && (
             <div className="lg:col-span-2">
               <ScimPanel />
-            </div>
-          )}
-
-          {/* ── AUDIT LOG ────────────────────────────────────────── */}
-          {activeTab === 'audit' && canViewAudit && (
-            <div className="lg:col-span-2">
-              <Suspense
-                fallback={
-                  <div className="space-y-3" aria-busy="true">
-                    <Skeleton className="h-24 w-full rounded-2xl" />
-                    <Skeleton className="h-64 w-full rounded-2xl" />
-                  </div>
-                }
-              >
-                <AuditLogPanel />
-              </Suspense>
             </div>
           )}
 

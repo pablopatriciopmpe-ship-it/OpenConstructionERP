@@ -96,10 +96,6 @@ function IntegrationRail() {
             <ModLink to="/validation">
               {t('governance.mod_validation', { defaultValue: 'Validation' })}
             </ModLink>
-            {' · '}
-            <ModLink to="/admin/audit-log">
-              {t('governance.mod_audit', { defaultValue: 'Audit Log' })}
-            </ModLink>
           </span>
         </div>
       </nav>

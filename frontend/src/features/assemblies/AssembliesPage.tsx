@@ -16,7 +16,7 @@ import { PageHeader } from '@/shared/ui/PageHeader';
 import { apiGet, apiPost, apiDelete } from '@/shared/lib/api';
 import { fmtList, getIntlLocale } from '@/shared/lib/formatters';
 import { useNameCollator } from '@/shared/lib/collator';
-import { unitLabel } from '@/shared/lib/unitLabels';
+import { unitLabel, localizedUnitCode } from '@/shared/lib/unitLabels';
 import { copyToClipboard } from '@/shared/lib/browser';
 import { useToastStore } from '@/stores/useToastStore';
 import {
@@ -41,19 +41,6 @@ type ViewMode = 'grid' | 'table';
 /* -- Constants ------------------------------------------------------------ */
 
 // Labels are resolved via t() at render time; keep value-only entries here
-const CATEGORY_VALUES = [
-  { value: '', key: 'assemblies.category_all' },
-  { value: 'concrete', key: 'assemblies.category_concrete' },
-  { value: 'masonry', key: 'assemblies.category_masonry' },
-  { value: 'steel', key: 'assemblies.category_steel' },
-  { value: 'mep', key: 'assemblies.category_mep' },
-  { value: 'earthwork', key: 'assemblies.category_earthwork' },
-  { value: 'insulation', key: 'assemblies.category_insulation' },
-  { value: 'finishing', key: 'assemblies.category_finishing' },
-  { value: 'roofing', key: 'assemblies.category_roofing' },
-  { value: 'general', key: 'assemblies.category_general' },
-] as const;
-
 const CATEGORY_COLORS: Record<string, 'blue' | 'success' | 'warning' | 'error' | 'neutral'> = {
   concrete: 'blue',
   masonry: 'warning',
@@ -84,6 +71,19 @@ function assemblyCategoryLabel(
   const norm = raw.trim().toLowerCase().replace(/[\s-]+/g, '_');
   if (!norm) return raw;
   return t(`assemblies.category_${norm}`, { defaultValue: raw });
+}
+
+function categoryKey(raw: string): string {
+  return raw.trim().toLowerCase().replace(/[\s-]+/g, '_');
+}
+
+function formatAssemblyRate(value: number, currency: string | null | undefined, locale: string): string {
+  if (currency) {
+    try {
+      return new Intl.NumberFormat(locale, { style: 'currency', currency: currency.toUpperCase() }).format(value);
+    } catch { /* Unknown stored currency: show its code without inventing a symbol. */ }
+  }
+  return `${new Intl.NumberFormat(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value)}${currency ? ` ${currency}` : ''}`;
 }
 
 const UNIT_OPTIONS = ['m', 'm2', 'm3', 'kg', 't', 'pcs', 'lsum', 'h', 'set', 'lm'];
@@ -187,8 +187,6 @@ export function AssembliesPage() {
     placeholderData: (prev) => prev,
   });
 
-  const total = data?.total ?? 0;
-
   // Stats banner — backend /stats/ returns total, by_category, most_used.
   // For avg-rate / total-components / unused-count we need the full set,
   // which is small enough (<500) to fetch in one shot.
@@ -202,6 +200,37 @@ export function AssembliesPage() {
     queryFn: () => assembliesApi.list({ limit: '500', offset: '0' }),
     staleTime: 60_000,
   });
+
+  // The seed data contains both "Structure" and "structure". When the full
+  // collection fits in the stats fetch, filter it locally so one category
+  // chip includes both spellings without changing stored user data.
+  const completeCollection = Boolean(allForBanner && statsData && allForBanner.items.length === statsData.total);
+  const categoryCounts = useMemo(() => {
+    const counts = new Map<string, number>();
+    if (completeCollection) {
+      for (const assembly of allForBanner?.items ?? []) {
+        const key = categoryKey(assembly.category || 'uncategorized');
+        counts.set(key, (counts.get(key) ?? 0) + 1);
+      }
+    } else {
+      for (const [raw, count] of Object.entries(statsData?.by_category ?? {})) {
+        // Keep the server's distinct keys if the 500-item fetch is incomplete.
+        counts.set(raw, count);
+      }
+    }
+    return [...counts.entries()].sort((a, b) => b[1] - a[1]);
+  }, [allForBanner, completeCollection, statsData]);
+  const filteredData = useMemo(() => {
+    if (!category || !completeCollection || !allForBanner) return data;
+    const search = debouncedQuery.trim().toLocaleLowerCase();
+    const tag = tagFilter.trim().toLocaleLowerCase();
+    const matches = allForBanner.items.filter((assembly) =>
+      categoryKey(assembly.category || 'uncategorized') === categoryKey(category)
+      && (!search || `${assembly.name} ${assembly.code} ${assembly.description ?? ''}`.toLocaleLowerCase().includes(search))
+      && (!tag || (assembly.tags ?? []).some((item) => item.toLocaleLowerCase().includes(tag))));
+    return { items: matches.slice(offset, offset + PAGE_SIZE), total: matches.length };
+  }, [category, completeCollection, allForBanner, data, debouncedQuery, tagFilter, offset]);
+  const total = filteredData?.total ?? 0;
 
   const banner = useMemo(() => {
     const all = allForBanner?.items ?? [];
@@ -241,10 +270,7 @@ export function AssembliesPage() {
       ? all.filter((a) => a.currency && a.currency.toUpperCase() !== projectCurrency).length
       : 0;
     const unusedCount = all.filter((a) => (a.usage_count ?? 0) === 0).length;
-    const byCategory = statsData?.by_category ?? {};
-    const topCategories = Object.entries(byCategory)
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 3);
+    const topCategories = categoryCounts.slice(0, 3);
     // Tag chips: all distinct tags across the full set with counts.
     const tagCounts = new Map<string, number>();
     for (const a of all) {
@@ -268,7 +294,7 @@ export function AssembliesPage() {
       topTags,
       mostUsed,
     };
-  }, [statsData, allForBanner, projectCurrency]);
+  }, [statsData, allForBanner, projectCurrency, categoryCounts]);
 
   // Assembly names are user data; the name column orders them in this
   // reader's language. `code` stays on a plain compare because it is an
@@ -277,7 +303,7 @@ export function AssembliesPage() {
 
   // Sort + unused filter (FE-side over the current page slice).
   const items = useMemo(() => {
-    let raw = data?.items ?? [];
+    let raw = filteredData?.items ?? [];
     if (onlyUnused) raw = raw.filter((a) => (a.usage_count ?? 0) === 0);
     const dir = sortDir === 'asc' ? 1 : -1;
     const cmp = (a: Assembly, b: Assembly) => {
@@ -293,7 +319,7 @@ export function AssembliesPage() {
       }
     };
     return [...raw].sort(cmp);
-  }, [data, sortKey, sortDir, onlyUnused, compareNames]);
+  }, [filteredData, sortKey, sortDir, onlyUnused, compareNames]);
 
   // Multi-select helpers — selection survives filtering/paging (set of ids).
   const allOnPageSelected = items.length > 0 && items.every((a) => selected.has(a.id));
@@ -382,8 +408,7 @@ export function AssembliesPage() {
     const ids = Array.from(selected);
     const results = await Promise.allSettled(
       ids.map((id) => {
-        const asm = (data?.items ?? []).find((a) => a.id === id)
-          ?? (allForBanner?.items ?? []).find((a) => a.id === id);
+        const asm = (allForBanner?.items ?? data?.items ?? []).find((a) => a.id === id);
         const existing = new Set(asm?.tags ?? []);
         for (const t2 of tagsToAdd) existing.add(t2);
         return assembliesApi.updateTags(id, [...existing]);
@@ -678,7 +703,7 @@ export function AssembliesPage() {
       {/* Category quick-chips — clickable badges with counts pulled from
           /stats/. Acts as a faster category picker than the dropdown and
           telegraphs distribution at a glance. */}
-      {Object.keys(statsData?.by_category ?? {}).length > 0 && (
+      {categoryCounts.length > 0 && (
         <div className="flex flex-wrap items-center gap-1.5">
           <button
             type="button"
@@ -691,9 +716,7 @@ export function AssembliesPage() {
           >
             {t('assemblies.category_all', { defaultValue: 'All' })} ({banner.totalCount})
           </button>
-          {Object.entries(statsData?.by_category ?? {})
-            .sort((a, b) => b[1] - a[1])
-            .map(([cat, count]) => {
+          {categoryCounts.map(([cat, count]) => {
               const active = category === cat;
               return (
                 <button
@@ -784,10 +807,9 @@ export function AssembliesPage() {
               })}
               className="oe-select sm:w-44"
             >
-              {CATEGORY_VALUES.map((c) => (
-                <option key={c.value} value={c.value}>
-                  {t(c.key, { defaultValue: c.value || 'All categories' })}
-                </option>
+              <option value="">{t('assemblies.category_all', { defaultValue: 'All categories' })}</option>
+              {categoryCounts.map(([key]) => (
+                <option key={key} value={key}>{assemblyCategoryLabel(t, key)}</option>
               ))}
             </select>
           </div>
@@ -942,6 +964,7 @@ export function AssembliesPage() {
                   key={assembly.id}
                   assembly={assembly}
                   fmt={fmt}
+                  projectCurrency={projectCurrency}
                   selected={selected.has(assembly.id)}
                   onToggleSelect={() => toggleSelect(assembly.id)}
                   onClick={() => navigate(`/assemblies/${assembly.id}`)}
@@ -972,7 +995,7 @@ export function AssembliesPage() {
           ) : (
             <AssemblyTable
               items={items}
-              fmt={fmt}
+              projectCurrency={projectCurrency}
               selected={selected}
               onToggleSelect={toggleSelect}
               onToggleAll={toggleSelectAll}
@@ -1171,7 +1194,7 @@ function StatTile({
 
 function AssemblyTable({
   items,
-  fmt,
+  projectCurrency,
   selected,
   onToggleSelect,
   onToggleAll,
@@ -1184,7 +1207,7 @@ function AssemblyTable({
   onDelete,
 }: {
   items: Assembly[];
-  fmt: (n: number) => string;
+  projectCurrency?: string;
   selected: Set<string>;
   onToggleSelect: (id: string) => void;
   onToggleAll: () => void;
@@ -1196,7 +1219,7 @@ function AssemblyTable({
   onOpen: (id: string) => void;
   onDelete: (id: string) => void;
 }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const demoName = useDemoDisplayName();
   // Two-step inline confirm for per-row delete (id armed for deletion). Keeps
   // the table compact while still guarding against an accidental click.
@@ -1272,12 +1295,14 @@ function AssemblyTable({
                       <span className="text-content-quaternary">—</span>
                     )}
                   </td>
-                  <td className="text-content-secondary">{a.unit}</td>
+                  <td className="text-content-secondary">{localizedUnitCode(a.unit, i18n.language)}</td>
                   <td className="text-right tabular-nums font-semibold">
-                    {a.total_rate > 0 ? fmt(a.total_rate) : <span className="text-content-quaternary font-normal">—</span>}
+                    {a.total_rate > 0 ? formatAssemblyRate(a.total_rate, a.currency, getIntlLocale()) : <span className="text-content-quaternary font-normal">—</span>}
                   </td>
                   <td className="text-content-tertiary">
-                    {a.currency || (
+                    {a.currency && projectCurrency && a.currency.toUpperCase() !== projectCurrency
+                      ? <span className="text-semantic-warning" title={t('assemblies.not_project_currency', { defaultValue: 'Not converted' })}>{a.currency} *</span>
+                      : a.currency || (
                       <span title={t('projects.currency_not_set', { defaultValue: 'Currency not set' })}>—</span>
                     )}
                   </td>
@@ -1791,6 +1816,7 @@ function AIGenerateModal({
 function AssemblyCard({
   assembly,
   fmt,
+  projectCurrency,
   onClick,
   onDuplicate,
   onDelete,
@@ -1800,6 +1826,7 @@ function AssemblyCard({
 }: {
   assembly: Assembly;
   fmt: (n: number) => string;
+  projectCurrency?: string;
   onClick: () => void;
   onDuplicate: () => void;
   onDelete: () => void;
@@ -1807,7 +1834,7 @@ function AssemblyCard({
   selected: boolean;
   onToggleSelect: () => void;
 }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const demoName = useDemoDisplayName();
   const [menuOpen, setMenuOpen] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -1981,7 +2008,9 @@ function AssemblyCard({
         {/* Component count + usage count */}
         <div className="mt-1 flex items-center gap-2 text-2xs text-content-tertiary">
           <span>
-            {assembly.component_count ?? 0} {t('assemblies.components', { defaultValue: 'components' })}
+            {assembly.component_count ?? 0} {assembly.component_count === 1
+              ? t('assemblies.component', { defaultValue: 'component' })
+              : t('assemblies.components', { defaultValue: 'components' })}
           </span>
           {(assembly.usage_count ?? 0) > 0 && (
             <>
@@ -1995,9 +2024,9 @@ function AssemblyCard({
 
         {/* Rate */}
         <p className="mt-1.5 text-base font-semibold tabular-nums" style={{ color: assembly.total_rate > 0 ? undefined : 'var(--color-content-tertiary)' }}>
-          {assembly.total_rate > 0 ? fmt(assembly.total_rate) : '0,00'}
+          {formatAssemblyRate(assembly.total_rate || 0, assembly.currency, getIntlLocale())}
           <span className="ml-1 text-xs font-normal text-content-tertiary">
-            / {assembly.unit}
+            / {localizedUnitCode(assembly.unit, i18n.language)}
           </span>
           {assembly.total_rate === 0 && (
             <span className="ml-2 text-2xs font-medium text-semantic-warning">
@@ -2020,10 +2049,15 @@ function AssemblyCard({
                 : t('projects.currency_not_set', { defaultValue: 'Currency not set' })
             }
           >
-            <Badge variant="neutral" size="sm">
+            <Badge variant={projectCurrency && assembly.currency && assembly.currency.toUpperCase() !== projectCurrency ? 'warning' : 'neutral'} size="sm">
               {assembly.currency || '—'}
             </Badge>
           </span>
+          {projectCurrency && assembly.currency && assembly.currency.toUpperCase() !== projectCurrency && (
+            <span className="text-2xs text-semantic-warning" title={t('assemblies.not_project_currency', { defaultValue: 'Not converted to the project currency' })}>
+              {t('assemblies.not_project_currency', { defaultValue: 'Not converted' })}
+            </span>
+          )}
           {assembly.bid_factor !== 1.0 && (
             <Badge variant="blue" size="sm">
               BF {assembly.bid_factor}

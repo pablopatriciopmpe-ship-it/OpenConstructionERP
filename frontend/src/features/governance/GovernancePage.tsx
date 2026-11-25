@@ -132,10 +132,6 @@ export function GovernancePage() {
         links={[
           { label: t('nav.users', { defaultValue: 'User Management' }), onClick: () => navigate('/users') },
           { label: t('nav.validation', { defaultValue: 'Validation' }), onClick: () => navigate('/validation') },
-          {
-            label: t('nav.audit_log', { defaultValue: 'Audit Log' }),
-            onClick: () => navigate('/admin/audit-log'),
-          },
         ]}
       >
         {t('governance.intro_body', {
