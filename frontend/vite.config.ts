@@ -528,6 +528,17 @@ export default defineConfig({
       },
     },
     rollupOptions: {
+      // 46 locale catalogues total ~287 MB of TypeScript. Parsing all of
+      // them exceeds the 8 GB test runner, so the test build skips every
+      // locale chunk except the four needed for pt-BR QA. Repo files stay
+      // untouched, and any locale that is absent falls back to English at
+      // runtime via loadLocaleChunk's catch.
+      external:
+        process.env.OE_BUILD_LOW_MEMORY === '1'
+          ? (id: string) =>
+              /src[\\/]app[\\/]locales[\\/][^/\\]+\.ts$/.test(id) &&
+              !/src[\\/]app[\\/]locales[\\/](en|pt|pt-BR|es)\.ts$/.test(id)
+          : undefined,
       // The 8 GB Vercel build runner OOMs while rendering chunks with
       // Rollup's default 20 concurrent file ops. The test-site build sets
       // OE_BUILD_LOW_MEMORY=1 so chunks are written two at a time; the
