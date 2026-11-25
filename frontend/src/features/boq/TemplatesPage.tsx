@@ -216,6 +216,10 @@ export function TemplatesPage() {
     () => templates.find((tpl) => tpl.id === selectedId) ?? null,
     [templates, selectedId],
   );
+  const projectCurrency = (projects ?? []).find((project) => project.id === projectId)?.currency?.toUpperCase();
+  const selectedCurrencyMismatch = Boolean(
+    selected && projectCurrency && selected.currency && selected.currency.toUpperCase() !== projectCurrency,
+  );
 
   const areaNum = parseDecimalInput(area) ?? 1000;
 
@@ -337,6 +341,9 @@ export function TemplatesPage() {
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
         {templates.map((tpl) => {
           const isSelected = selectedId === tpl.id;
+          const currencyMismatch = Boolean(
+            projectCurrency && tpl.currency && tpl.currency.toUpperCase() !== projectCurrency,
+          );
           return (
             <button
               key={tpl.id}
@@ -394,7 +401,14 @@ export function TemplatesPage() {
                   {t('boq_templates.mine', { defaultValue: 'My template' })}
                 </Badge>
               )}
-              {tpl.avg_cost_per_m2 > 0 && (
+              {currencyMismatch ? (
+                <Badge variant="neutral" size="sm">
+                  {t('boq_templates.currency_mismatch_badge', {
+                    defaultValue: 'No benchmark in {{currency}}',
+                    currency: projectCurrency,
+                  })}
+                </Badge>
+              ) : tpl.avg_cost_per_m2 > 0 && (
                 <Badge variant={isSelected ? 'blue' : 'neutral'} size="sm">
                   {tpl.currency?.toUpperCase() === 'BRL'
                     ? `~${formatCurrency(tpl.avg_cost_per_m2 / areaUnitScale, 'BRL', undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}/${areaRateUnit}`
@@ -472,6 +486,15 @@ export function TemplatesPage() {
 
             {/* Panel body */}
             <div className="px-6 py-6 space-y-5">
+              {selectedCurrencyMismatch && (
+                <p className="rounded-lg border border-semantic-warning/40 bg-semantic-warning-bg px-4 py-3 text-sm text-content-primary" role="alert">
+                  {t('boq_templates.currency_mismatch_warning', {
+                    defaultValue: 'This template uses {{templateCurrency}} prices. Select a project in the same currency or use a template with {{projectCurrency}} prices; values are not converted automatically.',
+                    templateCurrency: selected.currency,
+                    projectCurrency,
+                  })}
+                </p>
+              )}
               {/* Project selector */}
               <div>
                 <label className="oe-label">
@@ -534,7 +557,7 @@ export function TemplatesPage() {
                     {selected.position_count} {t('boq.positions', { defaultValue: 'positions' })}
                   </p>
                 </div>
-                {selected.avg_cost_per_m2 > 0 && (
+                {selected.avg_cost_per_m2 > 0 && !selectedCurrencyMismatch && (
                   <>
                 <div className="h-8 w-px bg-border-light" />
                 <div>
@@ -568,7 +591,7 @@ export function TemplatesPage() {
                   )
                 }
                 onClick={handleCreate}
-                disabled={!projectId || createMutation.isPending}
+                disabled={!projectId || selectedCurrencyMismatch || createMutation.isPending}
                 className="w-full btn-shimmer"
               >
                 {createMutation.isPending

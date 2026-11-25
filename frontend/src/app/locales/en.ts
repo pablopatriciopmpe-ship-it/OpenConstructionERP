@@ -40290,6 +40290,8 @@ const resource = {
     "boq_templates.deleted": "Template deleted",
     "boq_templates.delete_failed": "Could not delete the template",
     "boq_templates.mine": "My template",
+    "boq_templates.currency_mismatch_badge": "No benchmark in {{currency}}",
+    "boq_templates.currency_mismatch_warning": "This template uses {{templateCurrency}} prices. Select a project in the same currency or use a template with {{projectCurrency}} prices; values are not converted automatically.",
     "boq_templates.edit": "Edit",
     "boq_templates.duplicate": "Duplicate",
     "boq_templates.delete_confirm": "Delete this template? Bills already made from it are not affected.",

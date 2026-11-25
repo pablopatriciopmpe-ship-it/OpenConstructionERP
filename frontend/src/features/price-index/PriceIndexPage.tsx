@@ -442,7 +442,7 @@ function PriceIndexContent() {
                   <li key={lf.id} className="flex items-center justify-between py-1.5 text-sm">
                     <span className="min-w-0">
                       <span className="font-mono text-content-primary">{lf.region_code}</span>
-                      {lf.label && <span className="ml-2 text-content-tertiary">{lf.label}</span>}
+                      {lf.label && <span className="ml-2 text-content-tertiary">{demoName('price_index_region', lf.label)}</span>}
                     </span>
                     <span className="flex items-center gap-3">
                       <span className="inline-flex items-center gap-1 font-medium text-content-primary">

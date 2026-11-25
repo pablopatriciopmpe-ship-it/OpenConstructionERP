@@ -13,7 +13,8 @@ export type DemoLocalizableKind =
   | 'assembly'
   | 'waste_factor_label'
   | 'waste_factor_note'
-  | 'price_index_series';
+  | 'price_index_series'
+  | 'price_index_region';
 
 const DEMO_RESOURCE_NAMES: Record<string, string> = {
   'Project Manager': 'Gerente de projetos',
@@ -107,12 +108,19 @@ const DEMO_PRICE_INDEX_SERIES: Record<string, string> = {
   'General Construction Cost Index': 'Índice Geral de Custo da Construção',
 };
 
+const DEMO_PRICE_INDEX_REGIONS: Record<string, string> = {
+  'High-cost metro area': 'Área metropolitana de custo elevado',
+  'Low-cost rural area': 'Área rural de custo reduzido',
+  'National average': 'Média nacional',
+};
+
 const MAPS: Record<DemoLocalizableKind, Record<string, string>> = {
   resource: DEMO_RESOURCE_NAMES,
   assembly: DEMO_ASSEMBLY_NAMES,
   waste_factor_label: DEMO_WASTE_FACTOR_LABELS,
   waste_factor_note: DEMO_WASTE_FACTOR_NOTES,
   price_index_series: DEMO_PRICE_INDEX_SERIES,
+  price_index_region: DEMO_PRICE_INDEX_REGIONS,
 };
 
 export function isPortugueseLocale(locale: string | undefined): boolean {

@@ -44863,6 +44863,8 @@ const resource = {
     "boq_templates.deleted": "Modelo excluído",
     "boq_templates.delete_failed": "Não foi possível excluir o modelo",
     "boq_templates.mine": "Meu modelo",
+    "boq_templates.currency_mismatch_badge": "Sem referência em {{currency}}",
+    "boq_templates.currency_mismatch_warning": "Este modelo usa preços em {{templateCurrency}}. Selecione um projeto nessa moeda ou um modelo com preços em {{projectCurrency}}; os valores não são convertidos automaticamente.",
     "boq_templates.edit": "Editar",
     "boq_templates.duplicate": "Duplicar",
     "boq_templates.delete_confirm": "Excluir este modelo? Orçamentos já criados a partir dele não serão afetados.",
