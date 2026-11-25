@@ -44865,6 +44865,7 @@ const resource = {
     "boq_templates.mine": "Meu modelo",
     "boq_templates.currency_mismatch_badge": "Sem referência em {{currency}}",
     "boq_templates.currency_mismatch_warning": "Este modelo usa preços em {{templateCurrency}}. Selecione um projeto nessa moeda ou um modelo com preços em {{projectCurrency}}; os valores não são convertidos automaticamente.",
+    "price_index.generic_demo_warning": "O índice genérico e os fatores regionais são exemplos, não referências oficiais brasileiras. Confirme a fonte dos dados antes de usá-los em um orçamento.",
     "boq_templates.edit": "Editar",
     "boq_templates.duplicate": "Duplicar",
     "boq_templates.delete_confirm": "Excluir este modelo? Orçamentos já criados a partir dele não serão afetados.",

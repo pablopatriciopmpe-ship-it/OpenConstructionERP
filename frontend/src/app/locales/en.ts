@@ -40292,6 +40292,7 @@ const resource = {
     "boq_templates.mine": "My template",
     "boq_templates.currency_mismatch_badge": "No benchmark in {{currency}}",
     "boq_templates.currency_mismatch_warning": "This template uses {{templateCurrency}} prices. Select a project in the same currency or use a template with {{projectCurrency}} prices; values are not converted automatically.",
+    "price_index.generic_demo_warning": "The generic index and regional factors are examples, not official Brazilian references. Confirm the data source before using them in a budget.",
     "boq_templates.edit": "Edit",
     "boq_templates.duplicate": "Duplicate",
     "boq_templates.delete_confirm": "Delete this template? Bills already made from it are not affected.",

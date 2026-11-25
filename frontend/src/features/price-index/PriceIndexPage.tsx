@@ -115,6 +115,8 @@ function PriceIndexContent() {
 
   const seriesList = useMemo(() => seriesListQ.data ?? [], [seriesListQ.data]);
   const locations = useMemo(() => locationsQ.data ?? [], [locationsQ.data]);
+  const hasGenericDemoData = seriesList.some((series) => series.name === 'General Construction Cost Index')
+    || locations.some((location) => ['HIGH_COST_METRO', 'LOW_COST_RURAL', 'NATIONAL_AVG'].includes(location.region_code));
 
   // Auto-select the first series once the list arrives so the points panel and
   // the adjust dropdown are never empty when data exists.
@@ -245,6 +247,13 @@ function PriceIndexContent() {
 
   return (
     <div className="space-y-5">
+      {hasGenericDemoData && (
+        <p className="rounded-lg border border-semantic-warning/40 bg-semantic-warning-bg px-4 py-3 text-sm text-content-primary" role="note">
+          {t('price_index.generic_demo_warning', {
+            defaultValue: 'The generic index and regional factors are examples, not official Brazilian references. Confirm the data source before using them in a budget.',
+          })}
+        </p>
+      )}
       <div className="grid gap-5 lg:grid-cols-2">
         {/* ── Index series ─────────────────────────────────────────── */}
         <Card>
