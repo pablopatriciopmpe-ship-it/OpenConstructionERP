@@ -505,6 +505,13 @@ export default defineConfig({
     ],
   },
   build: {
+    // The 8 GB test-site runner cannot minify this bundle without being
+    // OOM-killed mid-build. When OE_BUILD_LOW_MEMORY=1 (set by
+    // scripts/build-dist.mjs for FORCE_VITE_BUILD), skip minification and
+    // the gzip size report: same code and chunks, just a larger payload.
+    // Normal/production builds keep esbuild minification.
+    minify: process.env.OE_BUILD_LOW_MEMORY === '1' ? false : 'esbuild',
+    reportCompressedSize: process.env.OE_BUILD_LOW_MEMORY !== '1',
     // Keep heavy, route-only vendor chunks out of the entry HTML's eager
     // <link rel="modulepreload"> set. They are reached only through lazy()
     // routes (geo hub globe, flow editor, 3D viewer, PDF/takeoff, Excel
