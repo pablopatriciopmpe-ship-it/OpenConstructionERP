@@ -64,6 +64,11 @@ execFileSync('npm', ['install', '--no-audit', '--no-fund', '--legacy-peer-deps']
 });
 execFileSync(
   'node',
-  ['--max-old-space-size=5120', './node_modules/vite/bin/vite.js', 'build'],
-  { cwd: rootDir, stdio: 'inherit' },
+  ['--max-old-space-size=6144', './node_modules/vite/bin/vite.js', 'build'],
+  {
+    cwd: rootDir,
+    stdio: 'inherit',
+    // Low-memory Rollup settings for the 8 GB test runner (see vite.config.ts).
+    env: { ...process.env, OE_BUILD_LOW_MEMORY: '1' },
+  },
 );

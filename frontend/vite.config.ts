@@ -521,6 +521,11 @@ export default defineConfig({
       },
     },
     rollupOptions: {
+      // The 8 GB Vercel build runner OOMs while rendering chunks with
+      // Rollup's default 20 concurrent file ops. The test-site build sets
+      // OE_BUILD_LOW_MEMORY=1 so chunks are written two at a time; the
+      // emitted bundle is identical, only build-time memory drops.
+      maxParallelFileOps: process.env.OE_BUILD_LOW_MEMORY === '1' ? 2 : undefined,
       output: {
         manualChunks(id) {
           // i18n locales: each ``src/app/locales/<code>.ts`` is fetched
