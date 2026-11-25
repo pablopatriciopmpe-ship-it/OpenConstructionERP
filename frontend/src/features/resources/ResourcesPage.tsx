@@ -1218,6 +1218,7 @@ interface InlineRateCellProps {
 
 function InlineRateCell({ resource, pending, onSave }: InlineRateCellProps) {
   const { t } = useTranslation();
+  const demoName = useDemoDisplayName();
   const [editing, setEditing] = useState(false);
   const [value, setValue] = useState(String(resource.default_cost_rate ?? '0'));
   const inputRef = useRef<HTMLInputElement>(null);

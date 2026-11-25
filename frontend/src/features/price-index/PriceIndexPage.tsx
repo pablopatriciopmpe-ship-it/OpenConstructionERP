@@ -726,6 +726,7 @@ type EscalateScope = 'catalogue' | 'project';
 
 function EscalatePanel({ seriesList }: { seriesList: CostIndexSeries[] }) {
   const { t } = useTranslation();
+  const demoName = useDemoDisplayName();
   const addToast = useToastStore((s) => s.addToast);
   const activeProjectId = useProjectContextStore((s) => s.activeProjectId);
 
