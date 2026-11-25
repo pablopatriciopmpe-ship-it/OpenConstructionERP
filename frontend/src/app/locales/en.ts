@@ -60877,6 +60877,7 @@ const resource = {
     "preliminaries.starter_site_cleaning": "Site cleaning",
     "preliminaries.starter_final_clean_on_completion": "Final clean on completion",
     "preliminaries.starter_insurances_and_bonds": "Insurances and bonds",
+    "assemblies.other_currency_notice": "{{count}} assemblies use a different currency from this project ({{currency}}). Prices have not been converted; check the currency before using an assembly.",
   }
 } as { translation: Record<string, string> };
 

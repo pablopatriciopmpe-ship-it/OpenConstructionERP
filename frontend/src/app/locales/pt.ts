@@ -69541,6 +69541,7 @@ const resource = {
     "preliminaries.starter_site_cleaning": "Limpeza periódica do estaleiro",
     "preliminaries.starter_final_clean_on_completion": "Limpeza final de entrega",
     "preliminaries.starter_insurances_and_bonds": "Seguros e garantias contratuais",
+    "assemblies.other_currency_notice": "{{count}} composições usam moeda diferente da deste projeto ({{currency}}). Os preços não foram convertidos; confirme a moeda antes de usar uma composição.",
   }
 } as { translation: Record<string, string> };
 

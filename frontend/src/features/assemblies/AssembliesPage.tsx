@@ -29,6 +29,8 @@ import { CreateAssemblyModal } from './CreateAssemblyPage';
 import { assembliesGuide } from './assembliesGuide';
 import { getNumberLocale } from '@/stores/usePreferencesStore';
 import { useDemoDisplayName } from '@/shared/hooks/useDemoDisplayName';
+import { useActiveProjectId } from '@/shared/hooks/useActiveProjectId';
+import { projectsApi } from '@/features/projects/api';
 
 /* -- Sort + view types --------------------------------------------------- */
 
@@ -110,6 +112,13 @@ export function AssembliesPage() {
   const location = useLocation();
   const queryClient = useQueryClient();
   const addToast = useToastStore((s) => s.addToast);
+  const activeProjectId = useActiveProjectId();
+  const { data: projects } = useQuery({
+    queryKey: ['projects'],
+    queryFn: projectsApi.list,
+    staleTime: 5 * 60_000,
+  });
+  const projectCurrency = projects?.find((project) => project.id === activeProjectId)?.currency?.toUpperCase();
 
   // Create assembly modal
   const [createModalOpen, setCreateModalOpen] = useState(false);
@@ -220,11 +229,17 @@ export function AssembliesPage() {
     let avgRateCurrency = '';
     let avgRateMixed = false;
     const dominant = [...byCurrency.entries()].sort((x, y) => y[1].count - x[1].count)[0];
-    if (dominant) {
-      avgRateCurrency = dominant[0];
-      avgRate = dominant[1].count ? dominant[1].sum / dominant[1].count : 0;
+    const selectedCurrency = (projectCurrency && byCurrency.get(projectCurrency))
+      ? [projectCurrency, byCurrency.get(projectCurrency)!] as const
+      : dominant;
+    if (selectedCurrency) {
+      avgRateCurrency = selectedCurrency[0];
+      avgRate = selectedCurrency[1].count ? selectedCurrency[1].sum / selectedCurrency[1].count : 0;
       avgRateMixed = byCurrency.size > 1;
     }
+    const otherCurrencyCount = projectCurrency
+      ? all.filter((a) => a.currency && a.currency.toUpperCase() !== projectCurrency).length
+      : 0;
     const unusedCount = all.filter((a) => (a.usage_count ?? 0) === 0).length;
     const byCategory = statsData?.by_category ?? {};
     const topCategories = Object.entries(byCategory)
@@ -247,12 +262,13 @@ export function AssembliesPage() {
       avgRate,
       avgRateCurrency,
       avgRateMixed,
+      otherCurrencyCount,
       unusedCount,
       topCategories,
       topTags,
       mostUsed,
     };
-  }, [statsData, allForBanner]);
+  }, [statsData, allForBanner, projectCurrency]);
 
   // Assembly names are user data; the name column orders them in this
   // reader's language. `code` stays on a plain compare because it is an
@@ -573,6 +589,16 @@ export function AssembliesPage() {
         })}
       </DismissibleInfo>
 
+      {banner.otherCurrencyCount > 0 && projectCurrency && (
+        <p className="rounded-lg border border-semantic-warning/40 bg-semantic-warning-bg px-4 py-3 text-sm text-content-primary" role="note">
+          {t('assemblies.other_currency_notice', {
+            count: banner.otherCurrencyCount,
+            currency: projectCurrency,
+            defaultValue: '{{count}} assemblies use a different currency from this project ({{currency}}). Their prices have not been converted; check the currency badge before using one.',
+          })}
+        </p>
+      )}
+
       {/* Stats banner — surfaces aggregated insight from /stats/ + the
           full-set fetch so the list feels like an estimating tool, not a
           plain table. Five tiles: total, total components, avg rate, top
@@ -621,7 +647,7 @@ export function AssembliesPage() {
                 : banner.avgRateMixed
                   ? t('assemblies.stat_avg_rate_mixed_hint', {
                       defaultValue:
-                        'Composições span multiple currencies; showing the average for the most common one ({{currency}}).',
+                        'Composições span multiple currencies; showing the average in {{currency}}.',
                       currency: banner.avgRateCurrency,
                     })
                   : undefined
