@@ -473,7 +473,10 @@ export function BaseCatalogBrowser({
         .map((family) => ({
           family,
           variants: family.variants.filter(
-            (v) => variantMatches(v, family, query) && (offersMarkets || v.market_catalog === ''),
+            (v) =>
+              // Evolux Obras: euro-priced bases are not offered.
+              String(v.currency ?? '').toUpperCase() !== 'EUR' &&
+              variantMatches(v, family, query) && (offersMarkets || v.market_catalog === ''),
           ),
         }))
         .filter((row) => row.variants.length > 0),
