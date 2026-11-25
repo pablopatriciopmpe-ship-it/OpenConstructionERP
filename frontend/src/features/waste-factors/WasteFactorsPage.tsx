@@ -20,6 +20,7 @@ import { Button, Badge, Card, CardHeader, EmptyState, ErrorState, Input, PageHea
 import { useToastStore } from '@/stores/useToastStore';
 import { useProjectContextStore } from '@/stores/useProjectContextStore';
 import { getErrorMessage } from '@/shared/lib/api';
+import { useDemoDisplayName } from '@/shared/hooks/useDemoDisplayName';
 import { parseDecimalInput, toDecimalPayloadString } from '@/shared/lib/parseDecimal';
 import { getResourceStatement } from '@/features/resource-summary/api';
 import {
@@ -61,6 +62,7 @@ function WasteFactorsContent() {
   const queryClient = useQueryClient();
   const addToast = useToastStore((s) => s.addToast);
   const activeProjectId = useProjectContextStore((s) => s.activeProjectId);
+  const demoName = useDemoDisplayName();
 
   const factorsQ = useQuery({ queryKey: QK.factors, queryFn: () => listFactors() });
   const factors = useMemo(() => factorsQ.data ?? [], [factorsQ.data]);
@@ -215,8 +217,12 @@ function WasteFactorsContent() {
                 <li key={f.id} className="flex items-center justify-between gap-3 py-1.5 text-sm">
                   <span className="min-w-0">
                     <span className="font-mono text-content-primary">{f.category}</span>
-                    {f.label && <span className="ml-2 text-content-tertiary">{f.label}</span>}
-                    {f.note && <div className="truncate text-xs text-content-tertiary">{f.note}</div>}
+                    {f.label && (
+                      <span className="ml-2 text-content-tertiary">
+                        {demoName('waste_factor_label', f.label)}
+                      </span>
+                    )}
+                    {f.note && <div className="truncate text-xs text-content-tertiary">{demoName('waste_factor_note', f.note)}</div>}
                   </span>
                   <span className="flex shrink-0 items-center gap-3">
                     <Badge variant="blue" size="sm">
@@ -242,7 +248,7 @@ function WasteFactorsContent() {
               label={t('waste_factors.category', { defaultValue: 'Category' })}
               value={newCategory}
               onChange={(e) => setNewCategory(e.target.value)}
-              placeholder="rebar"
+              placeholder={t('waste_factors.category_ph', { defaultValue: 'rebar' })}
               className="font-mono"
             />
             <Input
@@ -349,7 +355,7 @@ function WasteFactorsContent() {
               onChange={(e) => setApplyText(e.target.value)}
               rows={5}
               spellCheck={false}
-              placeholder={'concrete 12.5\nrebar 340\ntiling 85'}
+              placeholder={t('waste_factors.net_lines_ph', { defaultValue: 'concrete 12.5\nrebar 340\ntiling 85' })}
               className="oe-textarea font-mono"
             />
           </label>

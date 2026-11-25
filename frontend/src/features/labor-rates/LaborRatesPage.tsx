@@ -36,6 +36,8 @@ import {
 } from './api';
 import { fmtList, fmtPercent } from '@/shared/lib/formatters';
 import { PageHeader } from '@/shared/ui/PageHeader';
+import { projectsApi } from '@/features/projects/api';
+import { useActiveProjectId } from '@/shared/hooks/useActiveProjectId';
 
 /** Debounce any value so the live compute does not fire on every keystroke. */
 function useDebounced<T>(value: T, delay: number): T {
@@ -74,9 +76,19 @@ export function LaborRatesPage() {
   const addToast = useToastStore((s) => s.addToast);
   const confirmState = useConfirm();
   const { confirm } = confirmState;
+  const activeProjectId = useActiveProjectId();
+  const { data: projects } = useQuery({
+    queryKey: ['projects'],
+    queryFn: projectsApi.list,
+    staleTime: 5 * 60_000,
+  });
+  const projectCurrency = projects?.find((project) => project.id === activeProjectId)?.currency?.toUpperCase();
 
   const [baseWage, setBaseWage] = useState('30');
   const [currency, setCurrency] = useState('');
+  useEffect(() => {
+    if (!currency && projectCurrency) setCurrency(projectCurrency);
+  }, [currency, projectCurrency]);
   // Seed a fresh build-up with common on-cost labels (editable by the user).
   const [onCosts, setOnCosts] = useState<OnCostRowInput[]>(() => [
     newOnCost(t('laborRates.seed.statutory', { defaultValue: 'Statutory charges' }), 'percentage'),
@@ -567,7 +579,7 @@ export function LaborRatesPage() {
                   maxLength={3}
                   value={currency}
                   onChange={(e) => setCurrency(e.target.value.toUpperCase())}
-                  placeholder="EUR"
+                  placeholder={t('laborRates.currency_placeholder', { defaultValue: 'EUR' })}
                   aria-label={t('laborRates.currency', { defaultValue: 'Currency' })}
                 />
               </label>

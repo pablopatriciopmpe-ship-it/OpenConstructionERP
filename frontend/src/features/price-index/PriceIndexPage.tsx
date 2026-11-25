@@ -30,12 +30,12 @@ import {
   Building2,
   Library,
   Download,
-  Upload,
 } from 'lucide-react';
 import { Button, Badge, Card, CardHeader, EmptyState, ErrorState, Input, PageHeader } from '@/shared/ui';
 import { useToastStore } from '@/stores/useToastStore';
 import { useProjectContextStore } from '@/stores/useProjectContextStore';
 import { getErrorMessage } from '@/shared/lib/api';
+import { useDemoDisplayName } from '@/shared/hooks/useDemoDisplayName';
 import { fetchProjectList } from '@/shared/lib/projectList';
 import { parseDecimalInput, toDecimalPayloadString } from '@/shared/lib/parseDecimal';
 import type { Project } from '@/features/projects/api';
@@ -43,7 +43,6 @@ import {
   listSeries,
   fetchSeries,
   createSeries,
-  importStatsSaP0151,
   deleteSeries,
   addPoint,
   deletePoint,
@@ -106,6 +105,7 @@ function PriceIndexContent() {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
   const addToast = useToastStore((s) => s.addToast);
+  const demoName = useDemoDisplayName();
 
   const [selectedSeriesId, setSelectedSeriesId] = useState<string | null>(null);
 
@@ -119,6 +119,8 @@ function PriceIndexContent() {
 
   const seriesList = useMemo(() => seriesListQ.data ?? [], [seriesListQ.data]);
   const locations = useMemo(() => locationsQ.data ?? [], [locationsQ.data]);
+  const hasGenericDemoData = seriesList.some((series) => series.name === 'General Construction Cost Index')
+    || locations.some((location) => ['HIGH_COST_METRO', 'LOW_COST_RURAL', 'NATIONAL_AVG'].includes(location.region_code));
 
   // Auto-select the first series once the list arrives so the points panel and
   // the adjust dropdown are never empty when data exists.
@@ -140,30 +142,6 @@ function PriceIndexContent() {
       queryClient.invalidateQueries({ queryKey: QK.series });
       setNewSeriesName('');
       setSelectedSeriesId(created.id);
-    },
-    onError,
-  });
-
-  const importP0151Mut = useMutation({
-    mutationFn: (file: File) => importStatsSaP0151(file),
-    onSuccess: (res) => {
-      queryClient.invalidateQueries({ queryKey: QK.series });
-      addToast({
-        type: 'success',
-        title: t('price_index.p0151.done', {
-          defaultValue: '{{series}} work group series, {{created}} new and {{updated}} revised values',
-          series: res.series.length,
-          created: res.points_created,
-          updated: res.points_updated,
-        }),
-        message:
-          res.skipped.length > 0
-            ? t('price_index.p0151.skipped', {
-                defaultValue: '{{count}} cells without a number were skipped',
-                count: res.skipped.length,
-              })
-            : undefined,
-      });
     },
     onError,
   });
@@ -273,6 +251,13 @@ function PriceIndexContent() {
 
   return (
     <div className="space-y-5">
+      {hasGenericDemoData && (
+        <p className="rounded-lg border border-semantic-warning/40 bg-semantic-warning-bg px-4 py-3 text-sm text-content-primary" role="note">
+          {t('price_index.generic_demo_warning', {
+            defaultValue: 'The generic index and regional factors are examples, not official Brazilian references. Confirm the data source before using them in a budget.',
+          })}
+        </p>
+      )}
       <div className="grid gap-5 lg:grid-cols-2">
         {/* ── Index series ─────────────────────────────────────────── */}
         <Card>
@@ -311,7 +296,7 @@ function PriceIndexContent() {
                         : 'border-border text-content-secondary hover:border-content-tertiary')
                     }
                   >
-                    {s.name}
+                    {demoName('price_index_series', s.name)}
                     <span className="ml-2 text-xs text-content-tertiary">
                       {t('price_index.point_count', { defaultValue: '{{count}} pts', count: s.point_count })}
                     </span>
@@ -355,40 +340,13 @@ function PriceIndexContent() {
               </Button>
             </div>
 
-            <div className="flex flex-wrap items-center gap-2 text-xs text-content-secondary">
-              <label className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-border-light px-2.5 py-1.5 font-medium text-content-primary hover:bg-surface-secondary">
-                {importP0151Mut.isPending ? (
-                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                ) : (
-                  <Upload className="h-3.5 w-3.5" />
-                )}
-                {t('price_index.p0151.import', { defaultValue: 'Import Stats SA P0151.1 (South Africa CPAP)' })}
-                <input
-                  type="file"
-                  accept=".xlsx,.csv"
-                  className="sr-only"
-                  disabled={importP0151Mut.isPending}
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    if (file) importP0151Mut.mutate(file);
-                    e.target.value = '';
-                  }}
-                />
-              </label>
-              <span>
-                {t('price_index.p0151.hint', {
-                  defaultValue:
-                    'Upload the release file from Stats SA. Table 1 becomes one series per work group, with the Stats SA acknowledgement.',
-                })}
-              </span>
-            </div>
-
             {/* Selected series points */}
             {selectedSeriesId && (
               <div className="rounded-lg border border-border-light p-3">
                 <div className="mb-2 flex items-center justify-between">
                   <span className="text-sm font-medium text-content-primary">
-                    {seriesDetail?.name ?? t('price_index.points', { defaultValue: 'Index points' })}
+                    {demoName('price_index_series', seriesDetail?.name) ??
+                      t('price_index.points', { defaultValue: 'Index points' })}
                   </span>
                   <Button
                     variant="ghost"
@@ -497,7 +455,7 @@ function PriceIndexContent() {
                   <li key={lf.id} className="flex items-center justify-between py-1.5 text-sm">
                     <span className="min-w-0">
                       <span className="font-mono text-content-primary">{lf.region_code}</span>
-                      {lf.label && <span className="ml-2 text-content-tertiary">{lf.label}</span>}
+                      {lf.label && <span className="ml-2 text-content-tertiary">{demoName('price_index_region', lf.label)}</span>}
                     </span>
                     <span className="flex items-center gap-3">
                       <span className="inline-flex items-center gap-1 font-medium text-content-primary">
@@ -586,7 +544,7 @@ function PriceIndexContent() {
                 )}
                 {seriesList.map((s) => (
                   <option key={s.id} value={s.id}>
-                    {s.name}
+                    {demoName('price_index_series', s.name)}
                   </option>
                 ))}
               </select>
@@ -781,6 +739,7 @@ type EscalateScope = 'catalogue' | 'project';
 
 function EscalatePanel({ seriesList }: { seriesList: CostIndexSeries[] }) {
   const { t } = useTranslation();
+  const demoName = useDemoDisplayName();
   const addToast = useToastStore((s) => s.addToast);
   const activeProjectId = useProjectContextStore((s) => s.activeProjectId);
 
@@ -956,7 +915,7 @@ function EscalatePanel({ seriesList }: { seriesList: CostIndexSeries[] }) {
                   )}
                   {seriesList.map((s) => (
                     <option key={s.id} value={s.id}>
-                      {s.name}
+                      {demoName('price_index_series', s.name)}
                     </option>
                   ))}
                 </select>

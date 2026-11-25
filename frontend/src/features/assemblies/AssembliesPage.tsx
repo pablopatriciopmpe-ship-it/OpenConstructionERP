@@ -28,6 +28,7 @@ import {
 import { CreateAssemblyModal } from './CreateAssemblyPage';
 import { assembliesGuide } from './assembliesGuide';
 import { getNumberLocale } from '@/stores/usePreferencesStore';
+import { useDemoDisplayName } from '@/shared/hooks/useDemoDisplayName';
 
 /* -- Sort + view types --------------------------------------------------- */
 
@@ -59,9 +60,29 @@ const CATEGORY_COLORS: Record<string, 'blue' | 'success' | 'warning' | 'error' |
   earthwork: 'warning',
   insulation: 'blue',
   finishing: 'success',
+  finishes: 'success',
   roofing: 'warning',
+  roof: 'warning',
+  structure: 'blue',
+  substructure: 'warning',
+  openings: 'neutral',
+  drywall: 'neutral',
   general: 'neutral',
 };
+
+function assemblyCategoryColor(raw?: string | null): 'blue' | 'success' | 'warning' | 'error' | 'neutral' {
+  if (!raw) return 'neutral';
+  return CATEGORY_COLORS[raw.trim().toLowerCase()] ?? 'neutral';
+}
+
+function assemblyCategoryLabel(
+  t: (key: string, opts?: Record<string, unknown>) => string,
+  raw: string,
+): string {
+  const norm = raw.trim().toLowerCase().replace(/[\s-]+/g, '_');
+  if (!norm) return raw;
+  return t(`assemblies.category_${norm}`, { defaultValue: raw });
+}
 
 const UNIT_OPTIONS = ['m', 'm2', 'm3', 'kg', 't', 'pcs', 'lsum', 'h', 'set', 'lm'];
 
@@ -611,7 +632,7 @@ export function AssembliesPage() {
             label={t('assemblies.stat_top_categories', { defaultValue: 'Top categories' })}
             value={
               banner.topCategories.length > 0
-                ? fmtList(banner.topCategories.map(([c, n]) => `${c} (${n})`))
+                ? fmtList(banner.topCategories.map(([c, n]) => `${assemblyCategoryLabel(t, c)} (${n})`))
                 : '—'
             }
             valueClassName="text-xs leading-snug"
@@ -660,7 +681,7 @@ export function AssembliesPage() {
                   }`}
                   title={t('assemblies.filter_by_category', { defaultValue: 'Filter by category' })}
                 >
-                  <span className="capitalize">{cat}</span>
+                  <span>{assemblyCategoryLabel(t, cat)}</span>
                   <span className={active ? 'text-white/80' : 'text-content-tertiary'}>({count})</span>
                 </button>
               );
@@ -1150,6 +1171,7 @@ function AssemblyTable({
   onDelete: (id: string) => void;
 }) {
   const { t } = useTranslation();
+  const demoName = useDemoDisplayName();
   // Two-step inline confirm for per-row delete (id armed for deletion). Keeps
   // the table compact while still guarding against an accidental click.
   const [confirmId, setConfirmId] = useState<string | null>(null);
@@ -1213,13 +1235,13 @@ function AssemblyTable({
                   </td>
                   <td>
                     <span className="font-medium text-content-primary group-hover:text-oe-blue transition-colors">
-                      {a.name}
+                      {demoName('assembly', a.name)}
                     </span>
                   </td>
                   <td className="font-mono text-content-tertiary">{a.code}</td>
                   <td>
                     {a.category ? (
-                      <Badge variant={CATEGORY_COLORS[a.category] ?? 'neutral'} size="sm">{a.category}</Badge>
+                      <Badge variant={assemblyCategoryColor(a.category)} size="sm">{assemblyCategoryLabel(t, a.category)}</Badge>
                     ) : (
                       <span className="text-content-quaternary">—</span>
                     )}
@@ -1270,7 +1292,7 @@ function AssemblyTable({
                         title={t('assemblies.delete_confirm', { defaultValue: 'Delete assembly?' })}
                         aria-label={t('a11y.assemblies.delete_row', {
                           defaultValue: 'Delete assembly {{name}}',
-                          name: a.name,
+                          name: demoName('assembly', a.name),
                         })}
                       >
                         <Trash2 size={14} />
@@ -1691,7 +1713,7 @@ function AIGenerateModal({
                             <td className="truncate max-w-[250px]">{comp.name}</td>
                             <td className="text-center">
                               <span className={`inline-block px-1.5 py-0.5 rounded text-2xs font-medium ${typeBadge}`}>
-                                {comp.type}
+                                {t(`assemblies.type_${comp.type}`, { defaultValue: comp.type })}
                               </span>
                             </td>
                             <td className="text-center text-content-secondary font-mono">{comp.unit}</td>
@@ -1760,6 +1782,7 @@ function AssemblyCard({
   onToggleSelect: () => void;
 }) {
   const { t } = useTranslation();
+  const demoName = useDemoDisplayName();
   const [menuOpen, setMenuOpen] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
@@ -1776,7 +1799,7 @@ function AssemblyCard({
     hoverTimer.current = setTimeout(() => setHoverPreview(true), 400);
   }, []);
   useEffect(() => () => { if (hoverTimer.current) clearTimeout(hoverTimer.current); }, []);
-  const badgeVariant = CATEGORY_COLORS[assembly.category] ?? 'neutral';
+  const badgeVariant = assemblyCategoryColor(assembly.category);
 
   return (
     <Card
@@ -1800,7 +1823,7 @@ function AssemblyCard({
               <Trash2 size={20} className="text-semantic-error" />
             </div>
             <p className="text-sm font-semibold text-content-primary mb-1">{t('assemblies.delete_confirm', { defaultValue: 'Delete assembly?' })}</p>
-            <p className="text-xs text-content-tertiary mb-4 max-w-[180px] mx-auto line-clamp-1">{assembly.name}</p>
+            <p className="text-xs text-content-tertiary mb-4 max-w-[180px] mx-auto line-clamp-1">{demoName('assembly', assembly.name)}</p>
             <div className="flex items-center justify-center gap-2">
               <Button variant="danger" size="sm" onClick={() => { onDelete(); setConfirmDelete(false); }}>
                 {t('common.delete')}
@@ -1817,7 +1840,7 @@ function AssemblyCard({
       {previewOpen && (
         <QuickPreview
           assemblyId={assembly.id}
-          assemblyName={assembly.name}
+          assemblyName={demoName('assembly', assembly.name)}
           onClose={() => setPreviewOpen(false)}
         />
       )}
@@ -1849,7 +1872,7 @@ function AssemblyCard({
               title={t('assemblies.quick_preview', { defaultValue: 'Quick preview' })}
               aria-label={t('a11y.assemblies.quick_preview', {
                 defaultValue: 'Quick preview of {{name}}',
-                name: assembly.name,
+                name: demoName('assembly', assembly.name),
               })}
             >
               <Eye size={14} />
@@ -1863,7 +1886,7 @@ function AssemblyCard({
               className="opacity-60 group-hover:opacity-100 flex h-6 w-6 items-center justify-center rounded-md text-content-tertiary hover:bg-surface-secondary hover:text-content-primary transition-all"
               aria-label={t('a11y.assemblies.card_actions', {
                 defaultValue: 'Actions for assembly {{name}}',
-                name: assembly.name,
+                name: demoName('assembly', assembly.name),
               })}
               aria-haspopup="menu"
               aria-expanded={menuOpen}
@@ -1926,7 +1949,7 @@ function AssemblyCard({
 
         {/* Name */}
         <h3 className="oe-card-title line-clamp-2 group-hover:text-oe-blue transition-colors">
-          {assembly.name}
+          {demoName('assembly', assembly.name)}
         </h3>
 
         {/* Component count + usage count */}
@@ -1961,7 +1984,7 @@ function AssemblyCard({
         <div className="mt-1.5 flex flex-wrap items-center gap-1">
           {assembly.category && (
             <Badge variant={badgeVariant} size="sm">
-              {assembly.category}
+              {assemblyCategoryLabel(t, assembly.category)}
             </Badge>
           )}
           <span

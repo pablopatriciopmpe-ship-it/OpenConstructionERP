@@ -11,6 +11,7 @@ import { PageHeader } from '@/shared/ui/PageHeader';
 import { useToastStore } from '@/stores/useToastStore';
 import { useProjectContextStore } from '@/stores/useProjectContextStore';
 import { useDisplayQuantity } from '@/shared/hooks/useDisplayQuantity';
+import { useDemoDisplayName } from '@/shared/hooks/useDemoDisplayName';
 import { unitGlyph } from '@/shared/lib/unitLabels';
 import { currencyFractionDigits } from '@/shared/lib/money';
 import { projectsApi } from '@/features/projects/api';
@@ -77,6 +78,7 @@ function roleLabel(role: string, t: Translate): string {
 
 export function AssemblyLibraryPage() {
   const { t, i18n } = useTranslation();
+  const demoName = useDemoDisplayName();
   const navigate = useNavigate();
 
   const [search, setSearch] = useState('');
@@ -105,7 +107,7 @@ export function AssemblyLibraryPage() {
 
   const lang = ((i18n.language || 'en').split('-')[0] ?? 'en') as string;
   const localisedName = (tpl: AssemblyTemplate): string =>
-    tpl.name_translations?.[lang] || tpl.name;
+    tpl.name_translations?.[lang] || demoName('assembly', tpl.name);
 
   return (
     <div className="space-y-5 animate-fade-in">

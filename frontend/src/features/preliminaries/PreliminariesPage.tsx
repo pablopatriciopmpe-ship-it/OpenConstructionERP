@@ -118,6 +118,23 @@ function useCategoryLabel(): (key: string) => string {
     t(`preliminaries.category_${key}`, { defaultValue: humanize(key) });
 }
 
+function starterSlug(label: string): string {
+  return label
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '_')
+    .replace(/^_+|_+$/g, '');
+}
+
+function starterItemLabel(
+  t: (key: string, opts?: Record<string, unknown>) => string,
+  rawLabel: string,
+): string {
+  const slug = starterSlug(rawLabel);
+  if (!slug) return rawLabel;
+  return t(`preliminaries.starter_${slug}`, { defaultValue: rawLabel });
+}
+
 export function PreliminariesPage() {
   const { t } = useTranslation();
   const { projectId: routeProjectId } = useParams<{ projectId: string }>();
@@ -495,19 +512,22 @@ function StarterChecklistBar({
         })}
       </p>
       <div className="flex flex-wrap gap-2">
-        {checklist.map((suggestion) => (
-          <button
-            key={`${suggestion.category}:${suggestion.label}`}
-            type="button"
-            disabled={disabled}
-            onClick={() => onPick(suggestion)}
-            title={categoryLabel(suggestion.category)}
-            className="inline-flex items-center gap-1 rounded-full border border-border-light bg-surface-secondary px-3 py-1 text-xs text-content-secondary hover:border-oe-blue hover:text-content-primary disabled:opacity-50"
-          >
-            <Plus size={12} className="shrink-0" />
-            {suggestion.label}
-          </button>
-        ))}
+        {checklist.map((suggestion) => {
+          const localizedLabel = starterItemLabel(t, suggestion.label);
+          return (
+            <button
+              key={`${suggestion.category}:${suggestion.label}`}
+              type="button"
+              disabled={disabled}
+              onClick={() => onPick({ ...suggestion, label: localizedLabel })}
+              title={categoryLabel(suggestion.category)}
+              className="inline-flex items-center gap-1 rounded-full border border-border-light bg-surface-secondary px-3 py-1 text-xs text-content-secondary hover:border-oe-blue hover:text-content-primary disabled:opacity-50"
+            >
+              <Plus size={12} className="shrink-0" />
+              {localizedLabel}
+            </button>
+          );
+        })}
       </div>
     </Card>
   );
