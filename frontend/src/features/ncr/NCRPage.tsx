@@ -1156,7 +1156,7 @@ export function NCRPage() {
   const projectName = activeProject?.name || '';
   // Active project's currency, so cost impact renders in the project's own
   // currency rather than a hardcoded dollar symbol (matches Risk Register).
-  const projectCurrency = activeProject?.currency || 'EUR';
+  const projectCurrency = activeProject?.currency || 'BRL';
   // Genuinely-selected project (route param or shared context) — used for
   // the breadcrumb so the trail never shows a first-project guess.
   const selectedProjectId = routeProjectId || activeProjectId || '';

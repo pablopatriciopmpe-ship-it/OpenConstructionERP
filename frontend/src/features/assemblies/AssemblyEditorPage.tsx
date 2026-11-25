@@ -816,7 +816,7 @@ export function AssemblyEditorPage() {
           assemblyId={assemblyId}
           parameters={parameters}
           unit={assembly.unit}
-          currency={assembly.currency || 'EUR'}
+          currency={assembly.currency || 'BRL'}
           onClose={() => setPreviewOpen(false)}
         />
       )}

@@ -405,7 +405,7 @@ export function PriceListsPanel({ vendors }: { vendors: Vendor[] }) {
                       <td className="truncate max-w-[280px]">{r.name}</td>
                       <td className="font-mono text-content-secondary">{r.vendor_sku || '—'}</td>
                       <td className="text-right tabular-nums text-content-secondary">
-                        <MoneyDisplay amount={String(r.gross_price)} currency={pl?.currency ?? 'EUR'} />
+                        <MoneyDisplay amount={String(r.gross_price)} currency={pl?.currency ?? 'BRL'} />
                       </td>
                       <td>
                         {r.discount_source === 'none' ? (
@@ -418,7 +418,7 @@ export function PriceListsPanel({ vendors }: { vendors: Vendor[] }) {
                         )}
                       </td>
                       <td className="text-right tabular-nums">
-                        <MoneyDisplay amount={String(r.net_price)} currency={pl?.currency ?? 'EUR'} />
+                        <MoneyDisplay amount={String(r.net_price)} currency={pl?.currency ?? 'BRL'} />
                         <span className="ml-1 text-xs font-normal text-content-tertiary">/ {r.unit_of_measure}</span>
                       </td>
                       <td>

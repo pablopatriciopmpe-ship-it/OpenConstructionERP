@@ -257,7 +257,7 @@ export function ForecastPanel({ projectId, onAlertCountChange }: ForecastPanelPr
   }
 
   const fc = data?.latest_forecast ?? null;
-  const currency = data?.currency || 'EUR';
+  const currency = data?.currency || 'BRL';
 
   if (!fc) {
     return (

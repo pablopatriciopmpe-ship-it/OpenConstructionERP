@@ -191,7 +191,7 @@ export function CostControlPage() {
   });
 
   const data = report.data;
-  const currency = data?.currency || 'EUR';
+  const currency = data?.currency || 'BRL';
 
   // A finding names a cost line by its key; on the contract axis that line is not a row, so switch first.
   useEffect(() => {

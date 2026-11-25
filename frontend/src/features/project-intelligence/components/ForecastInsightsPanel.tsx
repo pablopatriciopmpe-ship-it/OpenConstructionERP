@@ -188,7 +188,7 @@ export function ForecastInsightsPanel({ projectId }: ForecastInsightsPanelProps)
   if (!data) return null;
 
   const { cost, schedule, risk } = data;
-  const currency = data.currency || cost.currency || 'EUR';
+  const currency = data.currency || cost.currency || 'BRL';
   const band = BAND_STYLE[risk.band] ?? BAND_STYLE.green!;
   const scorePct = Math.round(risk.score * 100);
   const confidencePct = Math.round(risk.confidence * 100);

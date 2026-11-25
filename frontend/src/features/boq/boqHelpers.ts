@@ -975,7 +975,7 @@ export const RESOURCE_TYPE_BADGE: Record<string, { bg: string; label: string }> 
  */
 export const COMMON_CURRENCIES: readonly string[] = [
   // Most-used global trade currencies first
-  'USD', 'EUR', 'GBP', 'CHF', 'JPY', 'CNY',
+  'USD', 'GBP', 'CHF', 'JPY', 'CNY',
   // Major regional currencies
   'CAD', 'AUD', 'NZD', 'SGD', 'HKD', 'KRW',
   // Emerging-market & commodity currencies

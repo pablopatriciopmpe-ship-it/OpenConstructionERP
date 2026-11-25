@@ -222,7 +222,7 @@ function WholeLifeDashboard({
   }
 
   const wl = wlQ.data;
-  const costCurrency = wl?.cost.currency || currency || 'EUR';
+  const costCurrency = wl?.cost.currency || currency || 'BRL';
 
   return (
     <div className="space-y-4">
@@ -460,7 +460,7 @@ function CarbonBreakdownCard({ carbon }: { carbon: WholeLifeCarbonBreakdown }) {
 
 function CostBreakdownCard({ cost }: { cost: WholeLifeCostBreakdown }) {
   const { t } = useTranslation();
-  const currency = cost.currency || 'EUR';
+  const currency = cost.currency || 'BRL';
   const entryCount = cost.entry_count ?? 0;
 
   return (
@@ -1413,7 +1413,7 @@ function LccComputeModal({
   const [form, setForm] = useState<LccForm>({
     discount_rate: '0.035',
     study_period_years: 60,
-    currency: currency || 'EUR',
+    currency: currency || 'BRL',
     opex_rate_pct: '2.0',
     eol_rate_pct: '10.0',
     default_service_life_years: 30,
@@ -1453,7 +1453,7 @@ function LccComputeModal({
     return {
       discount_rate: Number(form.discount_rate) || 0,
       study_period_years: form.study_period_years,
-      currency: form.currency || 'EUR',
+      currency: form.currency || 'BRL',
       default_capex: form.default_capex.trim() !== '' ? Number(form.default_capex) : undefined,
       opex_rate_pct: Number(form.opex_rate_pct) || 0,
       eol_rate_pct: Number(form.eol_rate_pct) || 0,
@@ -1726,7 +1726,7 @@ function LccComputeModal({
           isPending={previewMut.isPending}
           preview={preview}
           summary={summary}
-          currency={form.currency || 'EUR'}
+          currency={form.currency || 'BRL'}
         />
       </div>
     </WideModal>

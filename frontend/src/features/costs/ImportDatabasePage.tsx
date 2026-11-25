@@ -47,7 +47,6 @@ import {
 } from '@/features/match-elements/catalogues-payload';
 import { fetchCostCatalogs, type CostCatalog } from './api';
 import { ResourcePriceSheetPanel } from './ResourcePriceSheetPanel';
-import { RegionalPriceListImport } from './RegionalPriceListImport';
 import { MatchIndexSection } from './MatchIndexSection';
 import { BaseCatalogBrowser } from './BaseCatalogBrowser';
 import { BaseCatalogError } from './BaseCatalogError';
@@ -1911,7 +1910,7 @@ export function VectorDatabaseSection() {
           <>
             {/* Region grid — same style as CWICR */}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 mb-5">
-              {CWICR_DATABASES.map((db) => {
+              {CWICR_DATABASES.filter((db) => db.currency !== 'EUR').map((db) => {
                 const isLoadingThis = loadingRegion === db.id;
                 const isVectorized = vectorizedRegions.has(db.id);
                 const vecCount = vectorCountByRegion[db.id] ?? 0;
@@ -3030,7 +3029,7 @@ export function ImportDatabasePage() {
       <ResourcePriceSheetPanel />
 
       {/* Regional price lists (prezzari regionali) from the file the region publishes. */}
-      <RegionalPriceListImport />
+      {/* Evolux Obras: Italian regional price lists are EUR-only; not offered. */}
 
       {/* An imported price list becomes searchable by CAD-BIM Match once indexed. */}
       <MatchIndexSection />

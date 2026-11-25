@@ -1756,7 +1756,7 @@ export function CostDatabaseSearchModal({
           null;
       }
     }
-    return { total: sum, currency: currency || 'EUR' };
+    return { total: sum, currency: currency || 'BRL' };
   }, [selected, items, rowQuantity]);
 
   return (

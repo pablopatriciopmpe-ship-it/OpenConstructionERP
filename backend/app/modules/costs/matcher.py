@@ -84,7 +84,7 @@ class MatchResult(BaseModel):
     description: str = Field(..., description="Human-readable description")
     unit: str = Field(..., description="Unit of measurement (m, m2, m3, ...)")
     unit_rate: float = Field(..., description="Numeric unit rate (0 if unparseable)")
-    currency: str = Field(default="EUR", description="ISO 4217 currency code")
+    currency: str = Field(default="BRL", description="ISO 4217 currency code")
     score: float = Field(..., ge=0.0, le=1.0, description="Relevance score 0..1 (higher = better)")
     source: str = Field(
         default="lexical",

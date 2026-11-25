@@ -194,7 +194,7 @@ class BidCreate(BaseModel):
     company_name: str = Field(..., min_length=1, max_length=255)
     contact_email: str = Field(default="", max_length=255)
     total_amount: str = Field(default="0", max_length=50)
-    currency: str = Field(default="EUR", max_length=10)
+    currency: str = Field(default="BRL", max_length=10)
     submitted_at: str | None = Field(default=None, max_length=20)
     status: str = Field(default="pending", pattern=r"^(pending|submitted|accepted|rejected)$")
     notes: str = Field(default="", max_length=10000)

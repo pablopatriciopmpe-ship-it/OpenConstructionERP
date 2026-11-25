@@ -81,7 +81,7 @@ export function CostSpinePanel({ projectId, currency, boqId }: CostSpinePanelPro
     retry: false,
   });
 
-  const resolvedCurrency = data?.currency || currency || 'EUR';
+  const resolvedCurrency = data?.currency || currency || 'BRL';
 
   const columns: { key: ColumnKey; label: string }[] = useMemo(
     () => [

@@ -487,7 +487,7 @@ export default function CostBenchmarksPage() {
   const [yearFrom, setYearFrom] = useState('');
   const [yearTo, setYearTo] = useState('');
   const [baseDate, setBaseDate] = useState('');
-  const [currency, setCurrency] = useState('EUR');
+  const [currency, setCurrency] = useState('BRL');
   const [measure, setMeasure] = useState<BenchmarkMeasure>('gfa');
   const [minProjects, setMinProjects] = useState('5');
   const [result, setResult] = useState<CompareResult | null>(null);
@@ -538,7 +538,7 @@ export default function CostBenchmarksPage() {
     if (!estimateId) return;
     const req: CompareRequest = {
       estimate_id: estimateId,
-      reporting_currency: currency.trim().toUpperCase() || 'EUR',
+      reporting_currency: currency.trim().toUpperCase() || 'BRL',
       measure,
       min_projects: Math.max(1, Number(minProjects) || 5),
       stale_months: 12,
@@ -556,7 +556,7 @@ export default function CostBenchmarksPage() {
 
   const handleExport = async (format: 'json' | 'csv') => {
     try {
-      await downloadAnonymised(format, result?.basis.reporting_currency || currency || 'EUR');
+      await downloadAnonymised(format, result?.basis.reporting_currency || currency || 'BRL');
     } catch (err) {
       onError(err);
     }

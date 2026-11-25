@@ -973,7 +973,7 @@ export function FinancePage() {
   });
   const insights = useModuleInsights('finance');
   const { datasets: insightDatasets, builtins: insightBuiltins } = useMemo(
-    () => buildFinanceInsights(insightInvoices, insightDashboard?.currency || 'EUR', t),
+    () => buildFinanceInsights(insightInvoices, insightDashboard?.currency || 'BRL', t),
     [insightInvoices, insightDashboard, t],
   );
 

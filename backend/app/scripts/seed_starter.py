@@ -188,6 +188,14 @@ async def seed_starter_data(session: AsyncSession) -> dict[str, int]:
         logger.info("Starter seed skipped via OE_SKIP_STARTER_SEED.")
         return {"cost_items": 0, "assemblies": 0}
 
+    # Evolux Obras is a Brazilian edition: the starter rows are EUR-priced, so
+    # they are never seeded unless an operator explicitly sets the edition
+    # currency to EUR. This keeps new workspaces free of euro prices.
+    edition_currency = os.environ.get("OE_EDITION_CURRENCY", "BRL").strip().upper() or "BRL"
+    if edition_currency != "EUR":
+        logger.info("Starter seed skipped: rows are EUR-priced and edition currency is %s.", edition_currency)
+        return {"cost_items": 0, "assemblies": 0}
+
     # A configured partner/country pack means a regional catalogue is about to
     # be (or already is) loaded; do not force English/EUR starter rows into
     # that workspace. Installs without a pack keep the seed-of-last-resort.

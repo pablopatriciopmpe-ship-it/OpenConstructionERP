@@ -300,7 +300,7 @@ export function ClashCostImpactColumn({
   }
 
   const impact = query.data;
-  const displayCurrency = currency || impact.currency || 'EUR';
+  const displayCurrency = currency || impact.currency || 'BRL';
   const c = impact.components;
 
   // Build the hover breakdown from i18n'd labels so the rework/labour math

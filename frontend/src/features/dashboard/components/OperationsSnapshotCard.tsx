@@ -60,7 +60,7 @@ export function OperationsSnapshotCard({ projects }: { projects?: ProjectRef[] }
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { isLoading, byWidget } = useDashboardRollupContext();
-  const fallbackCurrency = projects?.[0]?.currency ?? 'EUR';
+  const fallbackCurrency = projects?.[0]?.currency ?? 'BRL';
 
   const dash = '—';
   const iconCls = 'text-content-tertiary';

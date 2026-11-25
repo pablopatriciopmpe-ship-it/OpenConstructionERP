@@ -63,6 +63,9 @@ import { costsGuide } from './costsGuide';
 import { UsageBadge } from './UsageBadge';
 import { EscalationCalculator } from './EscalationCalculator';
 import { RegionalAdjustPanel } from './RegionalAdjustPanel';
+
+/** Evolux Obras: regional factors only cover foreign (EUR/GBP/USD) cities. */
+const SHOW_REGIONAL_ADJUST = false as boolean;
 import { useDemoScope } from '@/shared/lib/useDemoScope';
 import { CostCategoryTree } from '@/features/boq/CostCategoryTree';
 import { fetchCategoryTree, type CategoryTreeNode } from '@/features/boq/api';
@@ -1332,7 +1335,8 @@ export function CostsPage() {
       )}
 
       {/* Regional Adjust panel (collapsible, v3.12.0) */}
-      {showRegionalAdjust && (
+      {/* Evolux Obras: regional factors only cover foreign cities (EUR/GBP/USD). */}
+      {SHOW_REGIONAL_ADJUST && showRegionalAdjust && (
         <RegionalAdjustPanel
           className="animate-fade-in"
           onApplyPreview={(preview) => {
@@ -2994,7 +2998,7 @@ function CreateCostItemModal({
                 className="oe-select w-full"
               >
                 <option value="">{t('costs_catalogs.currency_not_set', { defaultValue: 'Not set' })}</option>
-                {['EUR', 'USD', 'GBP', 'CHF', 'CAD', 'AUD', 'AED', 'RUB', 'CNY', 'INR', 'BRL'].map((c) => (
+                {['BRL', 'USD', 'GBP', 'CHF', 'CAD', 'AUD', 'AED', 'RUB', 'CNY', 'INR'].map((c) => (
                   <option key={c} value={c}>{c}</option>
                 ))}
               </select>
@@ -3105,7 +3109,7 @@ function EditCostItemModal({
     return () => document.removeEventListener('keydown', handler);
   }, [onClose]);
 
-  const currencyOptions = ['EUR', 'USD', 'GBP', 'CHF', 'CAD', 'AUD', 'AED', 'RUB', 'CNY', 'INR', 'BRL'];
+  const currencyOptions = ['BRL', 'USD', 'GBP', 'CHF', 'CAD', 'AUD', 'AED', 'RUB', 'CNY', 'INR'];
   // Keep a non-standard existing code selectable so opening + saving without
   // touching the currency never silently rewrites it.
   if (form.currency && !currencyOptions.includes(form.currency)) {

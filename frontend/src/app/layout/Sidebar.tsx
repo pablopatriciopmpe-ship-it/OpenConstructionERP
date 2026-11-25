@@ -2242,24 +2242,11 @@ export function Sidebar({ onClose }: { onClose?: () => void }) {
             )}
             <div className="flex items-center justify-center gap-1.5 min-w-0">
               <span className="text-2xs text-content-tertiary">Evolux Obras</span>
-              <span className="text-2xs text-content-quaternary/40">·</span>
-              <a
-                href="/api/source"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-2xs text-content-tertiary hover:text-content-secondary transition-colors"
-              >
-                Código-fonte (AGPL)
-              </a>
             </div>
           </div>
         ))}
         <div className="flex items-center justify-center gap-1.5 min-w-0 pb-2 pt-1">
           <span className="text-2xs text-content-tertiary">Evolux Obras</span>
-          <span className="text-2xs text-content-quaternary/40">·</span>
-          <a href="/api/source" target="_blank" rel="noopener noreferrer" className="text-2xs text-content-tertiary hover:text-content-secondary transition-colors">
-            Código-fonte (AGPL)
-          </a>
         </div>
         </SidebarToolsCollapse>
       </div>

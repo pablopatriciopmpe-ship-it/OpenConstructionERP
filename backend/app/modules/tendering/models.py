@@ -72,7 +72,7 @@ class TenderBid(Base):
     company_name: Mapped[str] = mapped_column(String(255), nullable=False)
     contact_email: Mapped[str] = mapped_column(String(255), nullable=False, default="")
     total_amount: Mapped[str] = mapped_column(String(50), nullable=False, default="0")
-    currency: Mapped[str] = mapped_column(String(10), nullable=False, default="EUR")
+    currency: Mapped[str] = mapped_column(String(10), nullable=False, default="BRL")
     submitted_at: Mapped[str | None] = mapped_column(String(100), nullable=True)
     status: Mapped[str] = mapped_column(String(50), nullable=False, default="pending")
     notes: Mapped[str] = mapped_column(Text, nullable=False, default="")

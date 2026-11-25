@@ -163,7 +163,7 @@ export function CostLineRollupDrawer({
   });
 
   const rollup = data ?? initial ?? null;
-  const currency = rollup?.currency || 'EUR';
+  const currency = rollup?.currency || 'BRL';
 
   // CONN-38: turn the linked-record id lists into navigable deep links.
   // Each group points at the module that owns the record. BOQ positions use

@@ -239,7 +239,7 @@ export function SectionFullWidthRenderer(params: ICellRendererParams) {
   // view conversion. Mirrors `totalFormatter` in columnDefs.ts.
   const dc = ctx.displayCurrency;
   const displayedSubtotal = dc && dc.rate > 0 ? subtotal / dc.rate : subtotal;
-  const displayCode = dc && dc.rate > 0 ? dc.code : (ctx.currencyCode ?? 'EUR');
+  const displayCode = dc && dc.rate > 0 ? dc.code : (ctx.currencyCode ?? 'BRL');
   const formattedSubtotal = ctx.fmt
     ? fmtWithCurrency(displayedSubtotal, ctx.locale ?? getNumberLocale(), displayCode)
     : `${fmtFixed(displayedSubtotal, 2)}`;
@@ -4199,7 +4199,7 @@ export function EditableResourceRow({ data, ctx, slots, leftPad }: { data: Recor
   const displayRate = ctx.displayQuantity
     ? ctx.displayQuantity.convertRate(rate, resourceUnitForDisplay)
     : rate;
-  const baseCurrency = ctx.currencyCode ?? 'EUR';
+  const baseCurrency = ctx.currencyCode ?? 'BRL';
   const resourceCurrency = (data._resourceCurrency as string | undefined) || baseCurrency;
   const isForeign = resourceCurrency !== baseCurrency;
 
@@ -5054,7 +5054,7 @@ function VariantHeaderResourceRow({
   const chosenLabel = data._variantHeaderChosenLabel as string | null;
   const chosenPrice = data._variantHeaderChosenPrice as number | null;
   const optCount = (data._variantHeaderCount as number) || 0;
-  const currency = (data._variantHeaderCurrency as string) || 'EUR';
+  const currency = (data._variantHeaderCurrency as string) || 'BRL';
   const qty = (data._variantHeaderQty as number) || 0;
   const unitLabel = (data._variantHeaderUnit as string) || '';
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -5456,7 +5456,7 @@ export function ResourceFullWidthRenderer(params: ICellRendererParams) {
       }
       const dc = ctx.displayCurrency;
       const shown = dc && dc.rate > 0 ? baseValue / dc.rate : baseValue;
-      const code = dc && dc.rate > 0 ? dc.code : (ctx.currencyCode ?? 'EUR');
+      const code = dc && dc.rate > 0 ? dc.code : (ctx.currencyCode ?? 'BRL');
       return (
         <span
           key={key}

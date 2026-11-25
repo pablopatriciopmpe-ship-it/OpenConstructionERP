@@ -2341,7 +2341,7 @@ function LeadDrawer({
         title: convForm.title.trim(),
         stage_id: convForm.stage_id,
         estimated_value: Number(convForm.estimated_value) || 0,
-        currency: convForm.currency || 'EUR',
+        currency: convForm.currency || 'BRL',
         probability_percent: Number(convForm.probability_percent) || 0,
       }),
     onSuccess: (opp) => {
@@ -3089,7 +3089,7 @@ function CreateModal({
           account_id: accountId,
           title: dealForm.title.trim(),
           estimated_value: Number(dealForm.estimated_value) || 0,
-          currency: dealForm.currency || 'EUR',
+          currency: dealForm.currency || 'BRL',
           probability_percent: Number(dealForm.probability_percent) || 0,
           stage_id: dealForm.stage_id,
           expected_close_date: dealForm.expected_close_date || null,

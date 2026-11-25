@@ -195,8 +195,8 @@ export function ProjectKPIHero({ projectId }: ProjectKPIHeroProps) {
         <p className="text-2xs text-content-tertiary mt-1">
           {t('project_intelligence.kpi.variance_sub', {
             defaultValue: 'Budget {{budget}} · Current {{current}}',
-            budget: formatMoney(variance?.budget ?? 0, variance?.currency ?? 'EUR'),
-            current: formatMoney(variance?.current ?? 0, variance?.currency ?? 'EUR'),
+            budget: formatMoney(variance?.budget ?? 0, variance?.currency ?? 'BRL'),
+            current: formatMoney(variance?.current ?? 0, variance?.currency ?? 'BRL'),
           })}
         </p>
       </div>
@@ -243,13 +243,13 @@ export function ProjectKPIHero({ projectId }: ProjectKPIHeroProps) {
         <div className="flex items-baseline gap-2 mt-2">
           <ShieldAlert size={20} className={riskStyle.text} />
           <span className={`text-2xl font-semibold tabular-nums ${riskStyle.text}`}>
-            {formatMoney(pointEstimate, variance?.currency ?? 'EUR')}
+            {formatMoney(pointEstimate, variance?.currency ?? 'BRL')}
           </span>
         </div>
         <p className="text-2xs text-content-tertiary mt-1">
           {t('project_intelligence.kpi.risk_sub', {
             defaultValue: '±{{band}} (90% CI, {{count}} anomalies)',
-            band: formatMoney(ciWidth, variance?.currency ?? 'EUR'),
+            band: formatMoney(ciWidth, variance?.currency ?? 'BRL'),
             count: anomalyCount,
           })}
         </p>

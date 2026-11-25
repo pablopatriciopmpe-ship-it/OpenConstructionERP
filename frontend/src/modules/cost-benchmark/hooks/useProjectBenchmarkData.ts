@@ -143,7 +143,7 @@ async function loadProjectBenchmarkData(projectId: string): Promise<ProjectBench
     buildingType: mapProjectType(project.project_type),
     totalCost,
     gfa: readProjectArea(project),
-    currency: project.currency || 'EUR',
+    currency: project.currency || 'BRL',
   };
 }
 

@@ -522,7 +522,7 @@ export function ProcurementPage() {
   });
   const insights = useModuleInsights('procurement');
   const { datasets: insightDatasets, builtins: insightBuiltins } = useMemo(
-    () => buildProcurementInsights(insightOrders, insightDashboard?.currency || 'EUR', t),
+    () => buildProcurementInsights(insightOrders, insightDashboard?.currency || 'BRL', t),
     [insightOrders, insightDashboard, t],
   );
 

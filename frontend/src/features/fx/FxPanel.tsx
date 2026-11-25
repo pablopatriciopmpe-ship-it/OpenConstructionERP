@@ -184,7 +184,7 @@ function ConvertTab({ projectId }: { projectId: string | null }) {
   const addToast = useToastStore((s) => s.addToast);
 
   const [amount, setAmount] = useState('1000');
-  const [from, setFrom] = useState('EUR');
+  const [from, setFrom] = useState('BRL');
   const [to, setTo] = useState('USD');
   const [mode, setMode] = useState<ConvertMode>('market');
   const [onDate, setOnDate] = useState('');

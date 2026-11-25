@@ -302,7 +302,7 @@ class AssemblyCreate(BaseModel):
     unit: str = Field(..., min_length=1, max_length=20)
     category: str = ""
     classification: dict[str, Any] = Field(default_factory=dict)
-    currency: str = Field(default="EUR", max_length=10)
+    currency: str = Field(default="BRL", max_length=10)
     # Bound bid_factor exactly like ComponentCreate.factor (ASM-002 /
     # NEW-ASM-101): ``allow_inf_nan=False`` rejects the raw NaN /
     # Infinity JSON literals Starlette's json.loads otherwise accepts,
@@ -588,7 +588,7 @@ class AssemblyExport(BaseModel):
     unit: str = Field(..., min_length=1, max_length=20)
     category: str = Field(default="", max_length=100)
     classification: dict[str, Any] = Field(default_factory=dict)
-    currency: str = Field(default="EUR", max_length=10)
+    currency: str = Field(default="BRL", max_length=10)
     bid_factor: float = Field(default=1.0, ge=0.0, le=1e6, allow_inf_nan=False)
     regional_factors: dict[str, Any] = Field(default_factory=dict)
     tags: list[str] = Field(default_factory=list, max_length=100)

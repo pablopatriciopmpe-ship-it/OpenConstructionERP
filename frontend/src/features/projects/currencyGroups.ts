@@ -28,7 +28,6 @@ export const CURRENCY_GROUPS: OptionGroup[] = [
   {
     group: 'Europe',
     options: [
-      { value: 'EUR', label: 'EUR (€) - Euro' },
       { value: 'GBP', label: 'GBP (£) - British Pound' },
       { value: 'CHF', label: 'CHF (Fr.) - Swiss Franc' },
       { value: 'SEK', label: 'SEK (kr) - Swedish Krona' },

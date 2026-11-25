@@ -2362,7 +2362,7 @@ function DashboardPageInner() {
     // Fallback: group the per-project rows by their own currency.
     const sums = new Map<string, number>();
     for (const row of scopedBoqSummary.by_project) {
-      const cur = row.currency || 'EUR';
+      const cur = row.currency || 'BRL';
       sums.set(cur, (sums.get(cur) ?? 0) + (Number(row.total_value) || 0));
     }
     const byCurrency: CurrencyTotal[] = Array.from(sums.entries())
@@ -3019,7 +3019,7 @@ function AnalyticsSection({ projects }: { projects: ProjectSummary[] }) {
     } else {
       const sums = new Map<string, number>();
       for (const row of boqSummary.by_project) {
-        const cur = row.currency || 'EUR';
+        const cur = row.currency || 'BRL';
         sums.set(cur, (sums.get(cur) ?? 0) + (Number(row.total_value) || 0));
       }
       byCurrency = Array.from(sums.entries())
@@ -3038,7 +3038,7 @@ function AnalyticsSection({ projects }: { projects: ProjectSummary[] }) {
       const prev = valueByName.get(row.project_name);
       valueByName.set(row.project_name, {
         value: (prev?.value ?? 0) + v,
-        currency: prev?.currency ?? row.currency ?? 'EUR',
+        currency: prev?.currency ?? row.currency ?? 'BRL',
       });
     }
     const projectValues: { name: string; value: number; currency: string }[] = Array.from(
@@ -3129,7 +3129,7 @@ function AnalyticsSection({ projects }: { projects: ProjectSummary[] }) {
             </div>
             {stats.byCurrency.length === 0 ? (
               <div className="mt-1 text-xl font-semibold tabular-nums text-content-primary">
-                {fmtCompact(0, projects[0]?.currency ?? 'EUR')}
+                {fmtCompact(0, projects[0]?.currency ?? 'BRL')}
               </div>
             ) : stats.multiCurrency ? (
               <div className="mt-1 flex flex-wrap gap-x-3 gap-y-1">
@@ -3146,7 +3146,7 @@ function AnalyticsSection({ projects }: { projects: ProjectSummary[] }) {
               <div className="mt-1 text-xl font-semibold tabular-nums text-content-primary">
                 {fmtCompact(
                   Number(stats.byCurrency[0]?.total_value) || 0,
-                  stats.byCurrency[0]?.currency ?? 'EUR',
+                  stats.byCurrency[0]?.currency ?? 'BRL',
                 )}
               </div>
             )}

@@ -352,7 +352,7 @@ function CompareModal({ boqIdA, boqIdB, currencyA, currencyB, onClose }: Compare
               ) : (
                 (() => {
                   const diff = totalB - totalA;
-                  const currency = currencyA || currencyB || 'EUR';
+                  const currency = currencyA || currencyB || 'BRL';
                   return (
                     <div className={`rounded-xl border p-4 text-center ${diff > 0 ? 'border-semantic-error/30 bg-semantic-error-bg' : diff < 0 ? 'border-semantic-success/30 bg-semantic-success-bg' : 'border-border-light bg-surface-secondary'}`}>
                       <div className="oe-overline mb-1">

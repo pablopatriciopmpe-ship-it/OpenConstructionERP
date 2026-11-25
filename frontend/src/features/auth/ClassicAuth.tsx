@@ -9,7 +9,6 @@
 import { useTranslation } from 'react-i18next';
 import { APP_VERSION } from '@/shared/lib/version';
 import { useBrandingStore } from '@/stores/useBrandingStore';
-import { BRAND } from '@/brand';
 
 export function ClassicAuthAside() {
   const { t } = useTranslation();
@@ -42,8 +41,6 @@ export function ClassicAuthFooter() {
       <a href="/api/health" target="_blank" rel="noopener noreferrer">
         {t('auth_classic.status', { defaultValue: 'Status' })}
       </a>
-      <span aria-hidden>·</span>
-      <a href="/api/source" target="_blank" rel="noopener noreferrer">{BRAND.sourceLabel}</a>
       {operator && (
         <>
           <span aria-hidden>·</span>

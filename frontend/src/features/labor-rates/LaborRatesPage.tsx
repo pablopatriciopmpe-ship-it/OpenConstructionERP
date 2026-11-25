@@ -579,7 +579,7 @@ export function LaborRatesPage() {
                   maxLength={3}
                   value={currency}
                   onChange={(e) => setCurrency(e.target.value.toUpperCase())}
-                  placeholder={t('laborRates.currency_placeholder', { defaultValue: 'EUR' })}
+                  placeholder={t('laborRates.currency_placeholder', { defaultValue: 'BRL' })}
                   aria-label={t('laborRates.currency', { defaultValue: 'Currency' })}
                 />
               </label>

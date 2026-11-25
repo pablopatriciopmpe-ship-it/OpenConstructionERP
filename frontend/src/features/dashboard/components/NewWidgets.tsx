@@ -162,7 +162,7 @@ export function BOQSummaryWidget({ projects }: { projects?: ProjectRef[] }) {
     );
   }
 
-  const currency = projects?.[0]?.currency ?? 'EUR';
+  const currency = projects?.[0]?.currency ?? 'BRL';
   const pctMissingQty =
     payload.position_count > 0
       ? Math.round((payload.positions_missing_quantity / payload.position_count) * 100)
@@ -432,7 +432,7 @@ export function BudgetVarianceWidget({ projects }: { projects?: ProjectRef[] }) 
   const { isLoading, byWidget } = useDashboardRollupContext();
   const payload = byWidget('budget_variance');
 
-  const fallbackCurrency = projects?.[0]?.currency ?? 'EUR';
+  const fallbackCurrency = projects?.[0]?.currency ?? 'BRL';
 
   const title = t('dashboard.layout.w_budget', { defaultValue: 'Budget Variance' });
   const subtitle = t('dashboard.budget_subtitle', { defaultValue: 'Planned vs actual across budgets' });
@@ -496,7 +496,7 @@ export function ChangeOrdersWidget({ projects }: { projects?: ProjectRef[] }) {
   const { isLoading, byWidget } = useDashboardRollupContext();
   const payload = byWidget('change_orders');
 
-  const fallbackCurrency = projects?.[0]?.currency ?? 'EUR';
+  const fallbackCurrency = projects?.[0]?.currency ?? 'BRL';
 
   const title = t('dashboard.layout.w_changeorders', { defaultValue: 'Alterações de contrato' });
   const subtitle = t('dashboard.change_orders_subtitle', { defaultValue: 'Open Alterações de contrato and impact' });

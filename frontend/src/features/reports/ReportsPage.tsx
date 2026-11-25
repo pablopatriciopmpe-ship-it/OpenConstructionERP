@@ -1384,7 +1384,7 @@ export function ReportsPage() {
                 htmlParts.push(`<h2>${esc(t('reports.section_summary', { defaultValue: 'Executive Summary' }))}</h2>`);
                 try {
                   const dashboard = await getDashboard();
-                  const cur = dashboard.currency || 'EUR';
+                  const cur = dashboard.currency || 'BRL';
                   htmlParts.push('<div>');
                   htmlParts.push(`<div class="metric"><div class="metric-label">${esc(t('reports.html_total_budget', { defaultValue: 'Total Budget' }))}</div><div class="metric-value">${Number(dashboard.total_budget || 0).toLocaleString(lang)} ${esc(cur)}</div></div>`);
                   htmlParts.push(`<div class="metric"><div class="metric-label">${esc(t('reports.html_total_actual', { defaultValue: 'Total Actual' }))}</div><div class="metric-value">${Number(dashboard.total_actual || 0).toLocaleString(lang)} ${esc(cur)}</div></div>`);

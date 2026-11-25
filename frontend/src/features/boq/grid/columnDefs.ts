@@ -217,7 +217,7 @@ function totalFormatter(params: ValueFormatterParams): string {
   if (dc && dc.rate > 0) {
     return fmtWithCurrency(params.value / dc.rate, locale, dc.code);
   }
-  const currencyCode = ctx?.currencyCode ?? 'EUR';
+  const currencyCode = ctx?.currencyCode ?? 'BRL';
   return fmtWithCurrency(params.value, locale, currencyCode);
 }
 
@@ -242,7 +242,7 @@ function totalTooltip(params: ITooltipParams): string | undefined {
 
   const t = ctx.t;
   const locale = ctx.locale ?? 'de-DE';
-  const baseCode = ctx.currencyCode ?? 'EUR';
+  const baseCode = ctx.currencyCode ?? 'BRL';
   const meta = (d.metadata || d.metadata_ || {}) as Record<string, unknown>;
   const resources = meta.resources;
   const hasResources = Array.isArray(resources) && resources.length > 0;
@@ -481,7 +481,7 @@ function rateBuildupTooltip(
 
   const t = ctx.t;
   const locale = ctx.locale ?? 'de-DE';
-  const currency = (meta.currency as string | undefined) || ctx.currencyCode || 'EUR';
+  const currency = (meta.currency as string | undefined) || ctx.currencyCode || 'BRL';
 
   const entries: Array<[string, number, number]> = [];
   for (const [type, key, fallback] of RATE_BUILDUP_TYPES) {

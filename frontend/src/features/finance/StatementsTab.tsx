@@ -643,7 +643,7 @@ export function StatementsTab({ projectId }: { projectId: string }) {
       apiGet<{ currency?: string }>(`/v1/finance/dashboard/?project_id=${projectId}`),
   });
   const projectCurrency = dashboard?.currency || '';
-  const currency = currencyOverride || projectCurrency || 'EUR';
+  const currency = currencyOverride || projectCurrency || 'BRL';
 
   const currencyChoices = useMemo(() => {
     const set = new Set<string>();

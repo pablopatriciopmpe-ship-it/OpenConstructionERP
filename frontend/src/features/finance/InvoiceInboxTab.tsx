@@ -490,7 +490,7 @@ export function InvoiceInboxTab({ projectId }: { projectId: string }) {
                       {c.invoice_date ? <DateDisplay value={c.invoice_date} /> : '-'}
                     </td>
                     <td className="text-right">
-                      <MoneyDisplay amount={c.amount_gross} currency={c.currency_code || 'EUR'} />
+                      <MoneyDisplay amount={c.amount_gross} currency={c.currency_code || 'BRL'} />
                     </td>
                     <td className="text-content-secondary" title={c.source_sender ?? undefined}>
                       {t(`finance.inbox.source_${captureSourceOf(c.source)}`, {

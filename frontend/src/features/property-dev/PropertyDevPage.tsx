@@ -2186,7 +2186,7 @@ function ConvertLeadModal({
   const [form, setForm] = useState({
     plot_id: eligiblePlots[0]?.id ?? '',
     deposit_amount: '0',
-    currency: lead.currency || prefCurrency || 'EUR',
+    currency: lead.currency || prefCurrency || 'BRL',
     cooling_off_days: '7',
     expires_at: todayIso(30),
     create_buyer: true,
@@ -2754,7 +2754,7 @@ function CreateReservationModal({
     plot_id: availablePlots[0]?.id ?? '',
     buyer_id: '',
     deposit_amount: '10000',
-    currency: prefCurrency || 'EUR',
+    currency: prefCurrency || 'BRL',
     cooling_off_days: '7',
     expires_at: todayIso(30),
   });
@@ -2886,7 +2886,7 @@ function ConvertReservationModal({
   const [form, setForm] = useState({
     signing_date: todayIso(),
     total_value: String(defaultValue || ''),
-    currency: reservation?.currency || prefCurrency || 'EUR',
+    currency: reservation?.currency || prefCurrency || 'BRL',
     governing_law: '',
     language: 'en',
   });

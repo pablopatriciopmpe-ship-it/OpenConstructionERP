@@ -2219,7 +2219,7 @@ function FiveDDashboard({ project }: { project: Project }) {
     },
   });
 
-  const currency = dashboard?.currency || project.currency || 'EUR';
+  const currency = dashboard?.currency || project.currency || 'BRL';
   const hasBudget = (dashboard?.total_budget ?? 0) > 0;
 
   const handleCreateSnapshot = useCallback(() => {
@@ -2708,7 +2708,7 @@ const ProjectCard = memo(function ProjectCard({
           )}
         </div>
         <Badge variant="blue" size="sm">
-          {project.currency || 'EUR'}
+          {project.currency || 'BRL'}
         </Badge>
         <Badge variant="neutral" size="sm">
           {project.classification_standard === 'din276' ? 'DIN 276' : project.classification_standard?.toUpperCase() || '-'}

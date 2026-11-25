@@ -29,7 +29,7 @@ class CatalogResource(Base):
     base_price: Mapped[str] = mapped_column(String(50), nullable=False)  # Stored as string for SQLite compatibility
     min_price: Mapped[str] = mapped_column(String(50), nullable=False, default="0")
     max_price: Mapped[str] = mapped_column(String(50), nullable=False, default="0")
-    currency: Mapped[str] = mapped_column(String(10), nullable=False, default="EUR")
+    currency: Mapped[str] = mapped_column(String(10), nullable=False, default="BRL")
     usage_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     source: Mapped[str] = mapped_column(
         String(50), nullable=False, default="cwicr_extraction"

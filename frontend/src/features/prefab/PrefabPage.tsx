@@ -1168,7 +1168,7 @@ export function PrefabPage() {
   // Prefab is one of the few registers with real money on the record:
   // cost_basis comes from the linked BOQ position or assembly, and
   // earned_value is that basis times the stage machine's completed fraction.
-  const projectCurrency = projects.find((p) => p.id === projectId)?.currency || 'EUR';
+  const projectCurrency = projects.find((p) => p.id === projectId)?.currency || 'BRL';
   const insights = useModuleInsights('prefab');
   const { datasets: insightDatasets, builtins: insightBuiltins } = useMemo(
     () => buildPrefabInsights(allUnits, projectCurrency, t),

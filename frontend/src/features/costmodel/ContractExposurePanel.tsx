@@ -65,7 +65,7 @@ export function ContractExposurePanel({ projectId, currency }: ContractExposureP
     retry: false,
   });
 
-  const resolvedCurrency = data?.currency || currency || 'EUR';
+  const resolvedCurrency = data?.currency || currency || 'BRL';
 
   // Reuse the Budget-by-Category labels so a cost group reads the same in both
   // surfaces; an unknown group falls back to its raw key.

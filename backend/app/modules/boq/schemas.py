@@ -1561,7 +1561,7 @@ class TemplateInfo(BaseModel):
     avg_cost_per_m2: float = Field(
         default=0.0, description="Benchmark cost per m2 of gross floor area: sum of rate x qty_factor"
     )
-    currency: str = Field(default="EUR", description="ISO 4217 currency of the template rates")
+    currency: str = Field(default="BRL", description="ISO 4217 currency of the template rates")
     builtin: bool = Field(default=True, description="False for a template the user owns and can edit")
     classification_standard: str = ""
     origin: str = "builtin"

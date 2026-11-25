@@ -232,7 +232,7 @@ function CurrencySelect({
       id={id}
       aria-label={ariaLabel}
       className={clsx(inputCls, className)}
-      value={value || 'EUR'}
+      value={value || 'BRL'}
       onChange={(e) => onChange(e.target.value)}
     >
       {[...extra, ...CURRENCY_OPTIONS].map((o) => (
@@ -625,11 +625,11 @@ function RuleTypePreview({
         {t(
           'propdev.pricing.help.preview_line',
           'For a {{base}} base price, this rule applies as:',
-          { base: fmtMoney(basePrice, currency || 'EUR') },
+          { base: fmtMoney(basePrice, currency || 'BRL') },
         )}
       </p>
       <p className="mt-1 font-mono">
-        {fmtMoney(basePrice, currency || 'EUR')}{' '}
+        {fmtMoney(basePrice, currency || 'BRL')}{' '}
         <span
           className={clsx(
             direction === 'discount' && 'text-semantic-success',
@@ -637,11 +637,11 @@ function RuleTypePreview({
           )}
         >
           {delta >= 0 ? '+' : '−'}
-          {fmtMoney(Math.abs(delta), currency || 'EUR')}
+          {fmtMoney(Math.abs(delta), currency || 'BRL')}
         </span>{' '}
         ={' '}
         <span className="font-semibold">
-          {fmtMoney(total, currency || 'EUR')}
+          {fmtMoney(total, currency || 'BRL')}
         </span>
       </p>
     </div>
@@ -1981,7 +1981,7 @@ function HistoryDetailDrawer({
               {snap.base_price !== undefined ? (
                 <MoneyDisplay
                   amount={snap.base_price}
-                  currency={snap.currency ?? reservation.currency ?? 'EUR'}
+                  currency={snap.currency ?? reservation.currency ?? 'BRL'}
                 />
               ) : (
                 '—'
@@ -1996,7 +1996,7 @@ function HistoryDetailDrawer({
               {snap.total !== undefined ? (
                 <MoneyDisplay
                   amount={snap.total}
-                  currency={snap.currency ?? reservation.currency ?? 'EUR'}
+                  currency={snap.currency ?? reservation.currency ?? 'BRL'}
                 />
               ) : (
                 '—'
@@ -2028,7 +2028,7 @@ function HistoryDetailDrawer({
                     <td className="text-right tabular-nums">
                       <MoneyDisplay
                         amount={l.amount}
-                        currency={snap.currency ?? reservation.currency ?? 'EUR'}
+                        currency={snap.currency ?? reservation.currency ?? 'BRL'}
                       />
                     </td>
                   </tr>
@@ -2387,7 +2387,7 @@ function QuoteHistoryTab({ devId }: { devId: string }): JSX.Element {
                         {snap.base_price ? (
                           <MoneyDisplay
                             amount={snap.base_price}
-                            currency={snap.currency ?? r.currency ?? 'EUR'}
+                            currency={snap.currency ?? r.currency ?? 'BRL'}
                           />
                         ) : (
                           '—'
@@ -2397,7 +2397,7 @@ function QuoteHistoryTab({ devId }: { devId: string }): JSX.Element {
                         {snap.total ? (
                           <MoneyDisplay
                             amount={snap.total}
-                            currency={snap.currency ?? r.currency ?? 'EUR'}
+                            currency={snap.currency ?? r.currency ?? 'BRL'}
                           />
                         ) : (
                           '—'
