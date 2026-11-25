@@ -218,6 +218,10 @@ async def seed_labor_rates(session: AsyncSession, owner_id: UUID) -> dict[str, i
     skipped = 0
     for row in DEFAULT_RATE_TEMPLATES:
         name = str(row["name"])
+        # Evolux Obras is a Brazilian edition: euro-priced build-ups are never seeded.
+        if str(row["currency"]).upper() == "EUR":
+            skipped += 1
+            continue
         if name.strip().casefold() in existing:
             skipped += 1
             continue
